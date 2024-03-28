@@ -71,6 +71,55 @@ export async function createFrame({
     return frame
 }
 
+export async function updateFrameName(id: string, name: string) {
+    const db = drizzle(getRequestContext().env.DB)
+
+    console.log('GOT HERE')
+    console.log(id, name)
+
+    await db.update(frameTable).set({ name }).where(eq(frameTable.id, id)).run()
+
+    // revalidatePath(`/frame/${id}`)
+}
+
+// called only internally
+export async function updateFrameConfig(id: string, config: any) {
+    const db = drizzle(getRequestContext().env.DB)
+
+    await db.update(frameTable).set({ config }).where(eq(frameTable.id, id)).run()
+
+    // revalidatePath(`/frame/${id}`)
+}
+
+// called only internally
+export async function updateFrameState(id: string, state: any) {
+    const db = drizzle(getRequestContext().env.DB)
+
+    await db.update(frameTable).set({ state }).where(eq(frameTable.id, id)).run()
+
+    // revalidatePath(`/frame/${id}`)
+}
+
+export async function updateFrameCalls(id: string, calls: number) {
+    const db = drizzle(getRequestContext().env.DB)
+
+    await db.update(frameTable).set({ currentMonthCalls: calls }).where(eq(frameTable.id, id)).run()
+
+    // revalidatePath(`/frame/${id}`)
+}
+
+export async function updateFramePreview(id: string, preview: string) {
+    const db = drizzle(getRequestContext().env.DB)
+
+    // extract whats after "property="og:image" content="data:image/svg+xml;base64," from preview
+    let previewImage = preview.split('data:image/svg+xml;base64,')[1]
+    previewImage = previewImage.split('"')[0]
+
+    await db.update(frameTable).set({ preview: previewImage }).where(eq(frameTable.id, id)).run()
+
+    // revalidatePath(`/frame/${id}`)
+}
+
 export async function deleteFrame(id: string) {
     const sesh = await auth()
 
