@@ -13,9 +13,16 @@
     "build-cf-types": "wrangler types --env-interface CloudflareEnv env.d.ts"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@mui/joy": "^5.0.0-beta.32",
+    "@mui/material": "^5.15.14",
+    "canvas-confetti": "^1.9.2",
+    "framer-motion": "^11.0.22",
     "next": "14.1.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-feather": "^2.0.10"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.11.0",
