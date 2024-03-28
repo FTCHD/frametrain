@@ -1,6 +1,7 @@
 'use client'
 import AccountButton from '@/components/foundation/AccountButton'
 import type { frameTable } from '@/db/schema'
+import { getFrameList } from '@/lib/actions'
 import templates from '@/templates'
 import {
     AspectRatio,
@@ -18,7 +19,7 @@ import type { InferSelectModel } from 'drizzle-orm'
 import { useSession } from 'next-auth/react'
 import NextImage from 'next/image'
 import NextLink from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus } from 'react-feather'
 
 export const runtime = 'edge'
@@ -27,6 +28,19 @@ export default function Home() {
     const sesh = useSession()
 
     const [frames, setFrames] = useState<InferSelectModel<typeof frameTable>[]>([])
+
+    useEffect(() => {
+        if (!sesh || sesh.status !== 'authenticated') {
+            return
+        }
+
+        async function loadFrames() {
+            const frames = await getFrameList()
+            setFrames(frames)
+        }
+
+        loadFrames()
+    }, [sesh])
 
     return (
         <Stack height={'100%'} width={'100%'}>
