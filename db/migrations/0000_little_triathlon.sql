@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS `frame`;
+
 CREATE TABLE `frame` (
 	`id` text PRIMARY KEY NOT NULL,
 	`owner` text NOT NULL,

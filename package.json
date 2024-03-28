@@ -13,7 +13,7 @@
         "deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
         "build-cf-types": "wrangler types --env-interface CloudflareEnv env.d.ts",
         "studio": "cross-env DB=$(find .wrangler/state/v3/d1/miniflare-D1DatabaseObject -type f -name '*.sqlite' -print -quit) drizzle-kit studio",
-        "db:init": "wrangler d1 execute frametrain --local --file=./db/migrations/0000_tearful_devos.sql",
+        "db:init": "wrangler d1 execute frametrain --local --file=./db/migrations/0000_little_triathlon.sql",
         "db:generate": "drizzle-kit generate:sqlite",
         "db:up": "drizzle-kit up:sqlite"
     },
