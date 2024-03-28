@@ -2,6 +2,7 @@ import ThemeRegistry from '@/components/foundation/ThemeRegistry'
 import { SessionProvider } from 'next-auth/react'
 import type React from 'react'
 import { Toaster } from 'react-hot-toast'
+import './global.css'
 
 export default function Layout(props: { children: React.ReactNode }) {
     return (
