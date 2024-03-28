@@ -1,5 +1,4 @@
-import ThemeRegistry from "@/components/foundation/ThemeRegistry";
-import type { Metadata } from "next";
+import ThemeRegistry from '@/components/foundation/ThemeRegistry'
 import type React from "react";
 import { Toaster } from "react-hot-toast";
 
