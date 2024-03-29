@@ -1,3 +1,4 @@
+import { dimensionsForRatio } from '@/lib/constants'
 import * as dayjs from 'dayjs'
 
 export default function HistoryView(streamData: any, streamHistory: any) {
@@ -32,8 +33,8 @@ export default function HistoryView(streamData: any, streamHistory: any) {
                 display: 'flex',
                 flexFlow: 'column',
                 justifyContent: 'space-between',
-                height: '302px',
-                width: '540px',
+                height: dimensionsForRatio['1.91/1'].height + 'px',
+                width: dimensionsForRatio['1.91/1'].width + 'px',
                 backgroundImage: 'linear-gradient(to right, #e26200, #d88502, #e26200)',
                 color: '#ffffff',
                 padding: '20px',
@@ -43,7 +44,7 @@ export default function HistoryView(streamData: any, streamHistory: any) {
             <span
                 style={{
                     fontSize: '24px',
-                    fontWeight: 'bold',
+                    fontWeight: '900',
                 }}
             >
                 LATEST
@@ -107,8 +108,26 @@ export default function HistoryView(streamData: any, streamHistory: any) {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <span style={{ fontSize: '8px', fontStyle: 'italic', color: '#0052ff' }}>
-                    Powered by Sablier
+                <span
+                    style={{
+                        fontSize: '7px',
+                        fontStyle: 'italic',
+                        fontWeight: '500',
+                        color: 'white',
+                        backgroundColor: '#0052ff',
+                        padding: '5px',
+                        paddingLeft: '10px',
+                        paddingRight: '10px',
+                        borderRadius: '14px',
+                    }}
+                >
+                    Powered by
+                    <img
+                        src="https://docs.sablier.com/img/icon.svg"
+                        style={{ width: '8px', height: '8px', marginLeft: '4px' }}
+                        alt=""
+                    />
+                    <span style={{ fontWeight: 'bold', fontStyle: 'normal' }}>Sablier</span>
                 </span>
             </div>
         </div>

@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { chainToEndpoint, contractTypes, typeToAddressMainnet } from './constants'
+import { chainToEndpoint, chainToTypeMap, contractTypes } from './constants'
 import { getActions_ByStream, getStream_ById } from './queries'
 
 function parseStreamId(id: string) {
@@ -12,7 +12,11 @@ function parseStreamId(id: string) {
 
     if (Object.keys(contractTypes).includes(categoryOrContract)) {
         const typeKey = categoryOrContract as keyof typeof contractTypes
-        contract = typeToAddressMainnet[typeKey]
+        const typeMap = chainToTypeMap[chainId as keyof typeof chainToTypeMap]
+        console.log('typeKey', typeKey)
+        console.log('chainId', chainId)
+        console.log('typeMap', typeMap)
+        contract = typeMap[typeKey]
     } else {
         if (!categoryOrContract.startsWith('0x')) {
             throw new Error('Invalid contract address')
@@ -37,6 +41,10 @@ export async function getStreamData(id: string) {
 
     const { contract, chainId, streamId } = parseStreamId(id)
 
+    console.log('chainId', chainId)
+    console.log('contract', contract)
+    console.log('streamId', streamId)
+
     const res: any = await fetch(chainToEndpoint[chainId as keyof typeof chainToEndpoint], {
         method: 'POST',
         headers: {
@@ -45,7 +53,7 @@ export async function getStreamData(id: string) {
         body: JSON.stringify({
             query: getStream_ById,
             variables: {
-                chainId: Number(chainId),
+                chainId: chainId,
                 streamId: `${contract}-${chainId}-${streamId}`,
             },
             operationName: 'getStream_ById',
@@ -298,3 +306,20 @@ export function isCliffExponential(stream: any): boolean {
     )
 }
 
+export async function getLogoForToken(chainId: number, address: string) {
+    const tokenList = await fetch(
+        'https://community-token-list-sablier.vercel.app/sablier-community.tokenlist.json'
+    )
+        .then((res) => res.json())
+        .then((res) => res.tokens)
+
+    return (
+        tokenList
+            .filter(
+                (token: any) =>
+                    token.address.toLowerCase() == address.toLowerCase() && token.chainId == chainId
+            )
+            .map((token: any) => token.logoURI)[0] ??
+        'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZyBjbGlwLXBhdGg9InVybCgjY2xpcDBfMjcyXzIzMzI1KSIgdmVjdG9yRWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiPgogICAgPGNpcmNsZQogICAgICByPSI5IgogICAgICBjeD0iOSIKICAgICAgY3k9IjkiCiAgICAgIGZpbGw9IiNGRkZGRkYiCiAgICAvPgogICAgPHBhdGgKICAgICAgZD0iTTYuMTg3NSAxMy41MDAxTDguNDM3NSA0LjUwMDEyTTkuNTYyNSAxMy41MDAxTDExLjgxMjUgNC41MDAxMk01LjYyNSA3LjMxMjYySDEzLjVNNC41IDEwLjY4NzZIMTIuMzc1IgogICAgICBzdHJva2U9IiMyOTJGM0IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiAvPgogIDwvZz4KICA8ZGVmcz4KICAgIDxjbGlwUGF0aCBpZD0iY2xpcDBfMjcyXzIzMzI1Ij4KICAgICAgPHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiAvPgogICAgPC9jbGlwUGF0aD4KICA8L2RlZnM+Cjwvc3ZnPg=='
+    )
+}

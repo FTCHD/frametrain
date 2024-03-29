@@ -1,10 +1,11 @@
 'use server'
+import { dimensionsForRatio } from '@/lib/constants'
 import type { FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/lib/fonts'
 import { buildFramePage } from '@/lib/sdk'
 import satori from 'satori'
 import type { Config, State } from '..'
-import { getStreamData, getStreamHistory } from '../utils/actions'
+import { getLogoForToken, getStreamData, getStreamHistory } from '../utils/actions'
 import HistoryView from '../views/History'
 import TokenView from '../views/Token'
 import initial from './initial'
@@ -23,14 +24,22 @@ export default async function page(
 
     switch (buttonIndex) {
         case 2: {
-            const roboto = await loadGoogleFontAllVariants('Roboto')
+            const urbanist = await loadGoogleFontAllVariants('Urbanist')
 
-            const data = await getStreamData(config.streamId)
+            const streamData = await getStreamData(config.streamId)
+
+            const tokenLogo = await getLogoForToken(streamData.chainId, streamData.asset.address)
+
+            const data = Object.assign(
+                {},
+                streamData,
+                { shape: config.shape },
+                { asset: { ...streamData.asset, logo: tokenLogo } }
+            )
 
             const r = await satori(TokenView(data), {
-                height: 302,
-                width: 540,
-                fonts: roboto,
+                ...dimensionsForRatio['1.91/1'],
+                fonts: urbanist,
             })
 
             frame = await buildFramePage({
@@ -46,6 +55,8 @@ export default async function page(
                     },
                     {
                         label: 'Create',
+                        action: 'link',
+                        target: 'https://sablier.com/create',
                     },
                 ],
                 image: 'data:image/svg+xml;base64,' + Buffer.from(r).toString('base64'),
@@ -58,16 +69,15 @@ export default async function page(
         }
 
         case 3: {
-            const roboto = await loadGoogleFontAllVariants('Roboto')
+            const urbanist = await loadGoogleFontAllVariants('Urbanist')
 
             const data = await getStreamData(config.streamId)
 
             const history = await getStreamHistory(config.streamId)
 
             const r = await satori(HistoryView(data, history), {
-                height: 302,
-                width: 540,
-                fonts: roboto,
+                ...dimensionsForRatio['1.91/1'],
+                fonts: urbanist,
             })
 
             frame = await buildFramePage({
@@ -83,6 +93,8 @@ export default async function page(
                     },
                     {
                         label: 'Create',
+                        action: 'link',
+                        target: 'https://sablier.com/create',
                     },
                 ],
                 image: 'data:image/svg+xml;base64,' + Buffer.from(r).toString('base64'),

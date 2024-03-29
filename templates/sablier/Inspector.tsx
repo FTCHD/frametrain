@@ -1,5 +1,5 @@
 'use client'
-import { FormControl, FormHelperText, FormLabel, Input, Stack, Typography } from '@mui/joy'
+import { FormHelperText, Input, Stack, Typography } from '@mui/joy'
 import { useEffect, useRef } from 'react'
 import type { Config } from '.'
 import { getStreamData, getStreamType } from './utils/actions'
@@ -33,14 +33,17 @@ export default function Inspector({
 
     return (
         <Stack width={'100%'} height={'100%'} gap={5}>
-            <Typography level="h2">Sablier</Typography>
-            <FormControl size="lg">
-                <FormLabel>Stream ID</FormLabel>
-                <Input slotProps={{ input: { ref: inputRef } }} onChange={handleInputChange} />
+            <Stack direction={'column'} gap={2}>
+                <Typography level="title-lg">Stream ID</Typography>
+                <Input
+                    size="lg"
+                    slotProps={{ input: { ref: inputRef } }}
+                    onChange={handleInputChange}
+                />
                 <FormHelperText>
-                    In <pre>XX-YY-ZZ</pre> format, eg. <code>LL-1-121</code>.
+                    In "XX-YY-ZZ" format, eg. <code>LL-1-121</code>.
                 </FormHelperText>
-            </FormControl>
+            </Stack>
         </Stack>
     )
 }
