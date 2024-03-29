@@ -12,15 +12,15 @@ export interface State extends BaseState {}
 export const initialState: State = {}
 
 export default {
-    name: 'Basic Template',
-    description: 'Template for a Frame',
+    name: 'Sablier Template',
+    description: 'Get the latest details about a Sablier stream.',
     creatorFid: '91716',
-    creatorName: 'Korinna',
-    cover,
+    creatorName: 'Paul',
     enabled: true,
     Inspector,
     functions,
-    initialState,
+    initialState: {} as State,
     initialConfig: {} as Config,
-    requiresValidation: false,
+    cover,
+    requiresValidation: true,
 } satisfies BaseTemplate
