@@ -39,8 +39,6 @@ export async function loadGoogleFontAllVariants(
     const response = await fetch(googleFontUrl)
     const cssText = await response.text()
 
-    console.log('CSS', cssText)
-
     // Split the CSS text into individual @font-face rules
     const fontFaceRules = cssText.split('@font-face').slice(1)
 

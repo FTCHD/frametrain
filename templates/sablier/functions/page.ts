@@ -1,5 +1,6 @@
 'use server'
 import type { FrameActionPayload } from '@/lib/farcaster'
+import { loadGoogleFontAllVariants } from '@/lib/fonts'
 import { buildFramePage } from '@/lib/sdk'
 import satori from 'satori'
 import type { Config, State } from '..'
@@ -22,21 +23,14 @@ export default async function page(
 
     switch (buttonIndex) {
         case 2: {
-            const roboto = await fetch(
-                'https://github.com/openmaptiles/fonts/raw/master/roboto/Roboto-Medium.ttf'
-            ).then((res) => res.arrayBuffer())
+            const roboto = await loadGoogleFontAllVariants('Roboto')
 
             const data = await getStreamData(config.streamId)
 
             const r = await satori(TokenView(data), {
                 height: 302,
                 width: 540,
-                fonts: [
-                    {
-                        name: 'Roboto',
-                        data: roboto,
-                    },
-                ],
+                fonts: roboto,
             })
 
             frame = await buildFramePage({
@@ -64,9 +58,7 @@ export default async function page(
         }
 
         case 3: {
-            const roboto = await fetch(
-                'https://github.com/openmaptiles/fonts/raw/master/roboto/Roboto-Medium.ttf'
-            ).then((res) => res.arrayBuffer())
+            const roboto = await loadGoogleFontAllVariants('Roboto')
 
             const data = await getStreamData(config.streamId)
 
@@ -75,12 +67,7 @@ export default async function page(
             const r = await satori(HistoryView(data, history), {
                 height: 302,
                 width: 540,
-                fonts: [
-                    {
-                        name: 'Roboto',
-                        data: roboto,
-                    },
-                ],
+                fonts: roboto,
             })
 
             frame = await buildFramePage({
