@@ -1,26 +1,15 @@
 'use client'
 import AccountButton from '@/components/foundation/AccountButton'
+import Header from '@/components/foundation/Header'
+import ProjectCard from '@/components/home/ProjectCard'
+import TemplateCard from '@/components/home/TemplateCard'
 import type { frameTable } from '@/db/schema'
 import { getFrameList } from '@/lib/actions'
 import templates from '@/templates'
-import {
-    AspectRatio,
-    Card,
-    CardContent,
-    CardOverflow,
-    Chip,
-    Divider,
-    IconButton,
-    Link,
-    Stack,
-    Typography,
-} from '@mui/joy'
+import { Stack, Typography } from '@mui/joy'
 import type { InferSelectModel } from 'drizzle-orm'
 import { useSession } from 'next-auth/react'
-import NextImage from 'next/image'
-import NextLink from 'next/link'
 import { useEffect, useState } from 'react'
-import { Plus } from 'react-feather'
 
 export const runtime = 'edge'
 
@@ -44,17 +33,7 @@ export default function Home() {
 
     return (
         <Stack height={'100%'} width={'100%'}>
-            <Stack direction={'row'} justifyContent={'space-between'} paddingX={3} paddingY={2}>
-                <Typography
-                    level="h1"
-                    sx={{ textDecoration: 'none' }}
-                    component={NextLink}
-                    href={'/'}
-                >
-                    FrameTrain
-                </Typography>
-                {sesh.status === 'authenticated' && <AccountButton />}
-            </Stack>
+            <Header />
 
             <Stack
                 gap={5}
@@ -94,61 +73,7 @@ export default function Home() {
                                     gap={2}
                                 >
                                     {frames.map((frame) => (
-                                        <Card
-                                            key={frame.id}
-                                            variant="outlined"
-                                            orientation="horizontal"
-                                            sx={{
-                                                width: 320,
-                                                '&:hover': {
-                                                    boxShadow: 'md',
-                                                    borderColor: 'neutral.outlinedHoverBorder',
-                                                },
-                                            }}
-                                        >
-                                            <AspectRatio ratio="1" sx={{ width: 90 }}>
-                                                <NextImage
-                                                    src={`data:image/svg+xml;base64,${frame.preview}`}
-                                                    alt={frame.name}
-                                                    fill={true}
-                                                    objectFit="cover"
-                                                />
-                                            </AspectRatio>
-                                            <CardContent
-                                                sx={{
-                                                    gap: 2,
-                                                }}
-                                            >
-                                                <Link
-                                                    overlay={true}
-                                                    href={`/frame/${frame.id}`}
-                                                    underline="none"
-                                                    sx={{
-                                                        color: 'text.tertiary',
-                                                        textDecoration: 'none',
-                                                    }}
-                                                    component={NextLink}
-                                                >
-                                                    <Typography
-                                                        level="title-lg"
-                                                        id="card-description"
-                                                    >
-                                                        {frame.name}
-                                                    </Typography>
-                                                </Link>
-
-                                                <Chip
-                                                    variant="outlined"
-                                                    color="primary"
-                                                    size="sm"
-                                                    sx={{ pointerEvents: 'none' }}
-                                                >
-                                                    {frame.currentMonthCalls === 0
-                                                        ? 'Not used yet'
-                                                        : `${frame.currentMonthCalls} calls`}
-                                                </Chip>
-                                            </CardContent>
-                                        </Card>
+                                        <ProjectCard key={frame.id} frame={frame as any} />
                                     ))}
                                 </Stack>
                             ) : (
@@ -169,60 +94,13 @@ export default function Home() {
                                 }}
                                 gap={2}
                             >
-                                {Object.keys(templates).map((id) => {
-                                    const template = templates[id as keyof typeof templates] as any
-
-                                    return (
-                                        <Card variant="outlined" sx={{ width: 350 }}>
-                                            <CardOverflow>
-                                                <AspectRatio ratio="1.5">
-                                                    <NextImage
-                                                        src={template.cover}
-                                                        alt={template.name}
-                                                        fill={true}
-                                                        objectPosition="center"
-                                                    />
-                                                </AspectRatio>
-                                                <IconButton
-                                                    size="lg"
-                                                    variant="solid"
-                                                    color="danger"
-                                                    sx={{
-                                                        position: 'absolute',
-                                                        zIndex: 2,
-                                                        borderRadius: '50%',
-                                                        right: '1rem',
-                                                        bottom: 0,
-                                                        transform: 'translateY(50%)',
-                                                    }}
-                                                >
-                                                    <Plus size={32} />
-                                                </IconButton>
-                                            </CardOverflow>
-                                            <CardContent>
-                                                <Typography level="title-lg">
-                                                    {template.name}
-                                                </Typography>
-                                            </CardContent>
-                                            <CardContent
-                                                sx={{
-                                                    justifyContent: 'center',
-                                                    alignItems: 'start',
-                                                }}
-                                            >
-                                                <Typography>{template.description}</Typography>
-                                            </CardContent>
-                                            <CardOverflow variant="soft">
-                                                <Divider inset="context" />
-                                                <CardContent orientation="horizontal">
-                                                    <Typography level="body-xs">
-                                                        Created by {template.creatorName}
-                                                    </Typography>
-                                                </CardContent>
-                                            </CardOverflow>
-                                        </Card>
-                                    )
-                                })}
+                                {Object.keys(templates).map((id) => (
+                                    <TemplateCard
+                                        key={id}
+                                        template={templates[id as keyof typeof templates] as any}
+                                        id={id}
+                                    />
+                                ))}
                             </Stack>
                         </Stack>
                     </>
