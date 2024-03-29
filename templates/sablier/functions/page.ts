@@ -4,7 +4,6 @@ import { buildFramePage } from '@/lib/sdk'
 import satori from 'satori'
 import type { Config, State } from '..'
 import { getStreamData, getStreamHistory } from '../utils/actions'
-import CreateView from '../views/Create'
 import HistoryView from '../views/History'
 import TokenView from '../views/Token'
 import initial from './initial'
@@ -108,40 +107,6 @@ export default async function page(
             break
         }
 
-        case 4: {
-            const roboto = await fetch(
-                'https://github.com/openmaptiles/fonts/raw/master/roboto/Roboto-Medium.ttf'
-            ).then((res) => res.arrayBuffer())
-
-            const r = await satori(CreateView(), {
-                height: 400,
-                width: 600,
-                fonts: [
-                    {
-                        name: 'Roboto',
-                        data: roboto,
-                    },
-                ],
-            })
-
-            frame = await buildFramePage({
-                buttons: [
-                    {
-                        label: 'Back',
-                    },
-                    {
-                        label: 'Create',
-                    },
-                ],
-                image: 'data:image/svg+xml;base64,' + Buffer.from(r).toString('base64'),
-                inputText: 'Enter an address',
-                aspectRatio: '1.91:1',
-                config: config,
-                function: 'create',
-            })
-
-            break
-        }
 
         default: {
             frame = await initial(config, state)
