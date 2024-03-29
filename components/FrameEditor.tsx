@@ -200,7 +200,7 @@ export default function FrameEditor({
                     <Stack width={'100%'} height={'100%'} alignItems={'center'}>
                         <FramePreview />
                     </Stack>
-                    {frame.config?.requiresValidation && <MockOptionsToggle />}
+                    {template.requiresValidation && <MockOptionsToggle />}
                 </Stack>
 
                 <Stack
