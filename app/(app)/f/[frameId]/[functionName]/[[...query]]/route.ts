@@ -1,6 +1,6 @@
 import { frameTable } from '@/db/schema'
 import { updateFrameCalls, updateFramePreview, updateFrameState } from '@/lib/actions'
-import type { FrameActionPayload, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { FrameActionPayload, FrameActionPayloadUnion } from '@/lib/farcaster'
 import { validatePayload } from '@/lib/sdk'
 import templates from '@/templates'
 import { getRequestContext } from '@cloudflare/next-on-pages'
@@ -43,8 +43,7 @@ export async function POST(
 
     console.log('Got template', JSON.stringify(template).substring(0, 20))
 
-    //! Convert to union type (FrameActionPayload & FrameValidatedActionPayload)
-    let body: FrameActionPayload | FrameValidatedActionPayload =
+    let body: FrameActionPayload | FrameActionPayloadUnion =
         (await request.json()) as FrameActionPayload
 
     console.log('Got body', JSON.stringify(body).substring(0, 20))
@@ -62,9 +61,9 @@ export async function POST(
     if (!isPreview && frame.config.requiresValidation) {
         console.log('frame requires validation')
 
-        body = await validatePayload(body)
+        body = Object.assign({}, body, await validatePayload(body))
 
-        if (!body.valid) {
+        if (!(body as FrameActionPayloadUnion).validatedData.valid) {
             throw new Error('NOT VALID')
         }
     } else {
