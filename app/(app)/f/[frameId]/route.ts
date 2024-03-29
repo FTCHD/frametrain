@@ -25,13 +25,15 @@ export async function GET(request: Request, { params }: { params: { frameId: str
     console.log('Handlers list', template.functions)
 
     const { initial } = template.functions
+	
+	const configWithMetadata = Object.assign({}, frame.config, {
+    frameId: frame.id,
+    requiresValidation: template.requiresValidation,
+})
 
-    return new Response(
-        await initial({ ...frame.config, frameId: frame.id } as typeof template.initialConfig),
-        {
-            headers: {
-                'Content-Type': 'text/html',
-            },
-        }
-    )
+    return new Response(await initial(configWithMetadata as any), {
+        headers: {
+            'Content-Type': 'text/html',
+        },
+    })
 }

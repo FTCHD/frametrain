@@ -29,4 +29,5 @@ export interface BaseTemplate {
     initialState?: any
     initialConfig?: any
     cover: StaticImageData
+    requiresValidation: boolean
 }

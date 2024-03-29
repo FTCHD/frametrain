@@ -23,4 +23,5 @@ export default {
     functions,
     initialState,
     initialConfig: {} as Config,
+    requiresValidation: false,
 } satisfies BaseTemplate

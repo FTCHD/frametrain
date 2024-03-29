@@ -40,7 +40,7 @@ export async function POST(
     }
 
     const template = templates[frame.template]
-
+	
     console.log('Got template', JSON.stringify(template).substring(0, 20))
 
     let body: FrameActionPayload | FrameActionPayloadUnion =
@@ -57,8 +57,13 @@ export async function POST(
     if (!handler) {
         notFound()
     }
+	
+	const configWithMetadata = Object.assign({}, frame.config, {
+        frameId: frame.id,
+        requiresValidation: template.requiresValidation,
+    })
 
-    if (!isPreview && frame.config.requiresValidation) {
+    if (!isPreview && configWithMetadata.requiresValidation) {
         console.log('frame requires validation')
 
         body = Object.assign({}, body, await validatePayload(body))
@@ -70,11 +75,9 @@ export async function POST(
         console.log('frame does not require validation')
     }
 
-    const configWithId = Object.assign({}, frame.config, { frameId: frame.id })
-
     const { frame: rFrame, state: rState } = await handler(
         body,
-        configWithId as typeof template.initialConfig,
+        configWithMetadata as any,
         frame.state as typeof template.initialState,
         searchParams
     )
