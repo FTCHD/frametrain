@@ -3,7 +3,16 @@ import { useRefreshPreview } from '@/components/editor/useRefreshPreview'
 import type { frameTable } from '@/db/schema'
 import { updateFrameConfig, updateFrameName } from '@/lib/actions'
 import type templates from '@/templates'
-import { Button, CircularProgress, IconButton, Input, Sheet, Stack, Typography } from '@mui/joy'
+import {
+    Box,
+    Button,
+    CircularProgress,
+    IconButton,
+    Input,
+    Sheet,
+    Stack,
+    Typography,
+} from '@mui/joy'
 import type { InferSelectModel } from 'drizzle-orm'
 import NextLink from 'next/link'
 import { useEffect, useState } from 'react'
@@ -210,16 +219,18 @@ export default function FrameEditor({
                     }}
                     height={'100%'}
                     overflow="scroll"
-                    padding={2}
-                    gap={5}
+                    paddingX={2}
+                    gap={3}
                     bgcolor={'background.surface'}
                 >
-                    <Typography level="h2">Configuration</Typography>
+                    <Typography level="h1">Configuration</Typography>
 
-                    <Inspector
-                        config={frameConfig}
-                        update={(value: Record<string, any>) => debouncedUpdateConfig(value)}
-                    />
+                    <Box paddingBottom={10}>
+                        <Inspector
+                            config={frameConfig}
+                            update={(value: Record<string, any>) => debouncedUpdateConfig(value)}
+                        />
+                    </Box>
                 </Stack>
             </Stack>
         </Stack>

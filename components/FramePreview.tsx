@@ -70,9 +70,9 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                 <Stack direction={'column'} height={'100%'}>
                     <img
                         style={{
-                            objectFit: 'cover',
+                            // objectFit: 'cover',
                             width: '100%',
-                            height: '100%',
+                            // height: '100%',
                             borderRadius: '12px 12px 0 0',
                             aspectRatio: metadata.image.aspectRatio === '1:1' ? '1' : '1.91/1',
                         }}
@@ -175,7 +175,7 @@ function FrameButton({
                     hash: '0xthisisnotreal',
                 },
                 inputText,
-                fid: 0,
+                fid: 123123,
                 messageHash: '0xthisisnotreal',
                 network: 0,
                 timestamp: 0,
@@ -223,11 +223,11 @@ function FrameButton({
 const ButtonIcon = ({ action }: { action?: string }) => {
     switch (action) {
         case 'link':
-            return <ExternalLink />
+            return <ExternalLink size={14} />
         case 'post_redirect':
-            return <Delete />
+            return <Delete size={14} />
         case 'mint':
-            return <PlusCircle />
+            return <PlusCircle size={14} />
         default:
             return null
     }
