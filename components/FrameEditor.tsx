@@ -9,6 +9,7 @@ import NextLink from 'next/link'
 import { useEffect, useState } from 'react'
 import { ArrowLeft, Copy } from 'react-feather'
 import toast from 'react-hot-toast'
+import { useDebouncedCallback } from 'use-debounce'
 import { FramePreview } from './FramePreview'
 import MockOptionsToggle from './editor/MockToggle'
 
@@ -46,6 +47,10 @@ export default function FrameEditor({
 
         setUpdating(false)
     }
+
+    const debouncedUpdateConfig = useDebouncedCallback((value: Record<string, any>) => {
+        updateConfig(value)
+    }, 1000)
 
     async function updateName() {
         setUpdating(true)
@@ -211,7 +216,10 @@ export default function FrameEditor({
                 >
                     <Typography level="h2">Configuration</Typography>
 
-                    <Inspector config={frameConfig} update={updateConfig} />
+                    <Inspector
+                        config={frameConfig}
+                        update={(value: Record<string, any>) => debouncedUpdateConfig(value)}
+                    />
                 </Stack>
             </Stack>
         </Stack>

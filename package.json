@@ -28,6 +28,7 @@
         "@neynar/nodejs-sdk": "^1.13.1",
         "@paralleldrive/cuid2": "^2.2.2",
         "@resvg/resvg-js": "^2.6.2",
+        "bignumber.js": "^9.1.2",
         "canvas-confetti": "^1.9.2",
         "dayjs": "^1.11.10",
         "drizzle-kit": "^0.20.14",
@@ -44,6 +45,7 @@
         "react-hot-toast": "^2.4.1",
         "satori": "^0.10.13",
         "satori-html": "^0.3.2",
+        "use-debounce": "^10.0.0",
         "usehooks-ts": "^3.0.2",
         "viem": "^2.9.4",
         "zod": "^3.22.4",
@@ -56,6 +58,7 @@
         "@types/react": "^18",
         "@types/react-dom": "^18",
         "better-sqlite3": "^9.4.3",
+        "cross-env": "^7.0.3",
         "typescript": "^5",
         "vercel": "^33.6.1",
         "wrangler": "^3.39.0"
