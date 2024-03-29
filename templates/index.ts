@@ -1,11 +1,11 @@
-import basic from './basic'
+// import basic from './basic'
 import pdf from './pdf'
+import poll from './poll'
 import sablier from './sablier'
-import twitter from './twitter'
 
 export default {
-    basic,
-    sablier,
+    // basic,
     pdf,
-    twitter,
+    poll,
+    sablier,
 }
