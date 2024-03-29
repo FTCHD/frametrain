@@ -8,6 +8,7 @@ import type { FrameActionPayload as FramesJSFrameActionPayload } from 'frames.js
 // We use the version from OnchainKit because it doesn't set the `action` and `target` fields as required.
 export type FrameButtonMetadata = OnchainKitFrameButtonMetadata
 
+// Can also use FrameRequest type from onchainkit
 export type FrameActionPayload = FramesJSFrameActionPayload
 
 export type FrameValidatedActionPayload = NeynarValidatedFrameActionResponse

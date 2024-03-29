@@ -1,3 +1,5 @@
+import type { StaticImageData } from 'next/image'
+
 export interface BaseConfig {
     requiresValidation: boolean
 
@@ -26,4 +28,5 @@ export interface BaseTemplate {
     functions: BaseFunctions
     initialState?: any
     initialConfig?: any
+    cover: StaticImageData
 }
