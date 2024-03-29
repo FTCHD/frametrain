@@ -1,22 +1,40 @@
+import { dimensionsForRatio } from '@/lib/constants'
 
-export default function CoverView() {
+export default function CoverView({
+    title,
+    subtitle,
+    backgroundColor,
+    textColor,
+}: { title: string; subtitle: string; backgroundColor?: string; textColor?: string }) {
     return (
         <div
             style={{
-                width: '600px',
-                height: '400px',
-                backgroundColor: 'red',
+                width: dimensionsForRatio['1/1'].width + 'px',
+                height: dimensionsForRatio['1/1'].height + 'px',
                 display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                backgroundColor: backgroundColor || 'black',
+                color: textColor || 'white',
             }}
         >
             <span
                 style={{
                     fontFamily: 'Roboto',
-                    color: 'black',
-                    fontSize: '20px',
+                    fontSize: '48px',
                 }}
             >
-                Hello
+                {title ?? 'Title'}
+            </span>
+            <span
+                style={{
+                    fontFamily: 'Roboto',
+                    fontSize: '24px',
+                    opacity: '0.8',
+                }}
+            >
+                {subtitle ?? 'Subtitle'}
             </span>
         </div>
     )

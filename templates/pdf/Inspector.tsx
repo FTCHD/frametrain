@@ -1,5 +1,5 @@
 'use client'
-import { Button, Option, Select, Stack, SvgIcon, Typography, styled } from '@mui/joy'
+import { Button, Input, Option, Select, Stack, SvgIcon, Typography, styled } from '@mui/joy'
 import { useEffect, useState } from 'react'
 import type { Config } from '.'
 import getPdfDocument, { createPDFPage, renderPDFToCanvas } from './utils'
@@ -78,7 +78,42 @@ export default function Inspector({
     return (
         <Stack width={'100%'} height={'100%'} gap={2}>
             <Stack direction={'column'} gap={2}>
-                <Typography level="title-lg">File & Content</Typography>
+                <Typography level="h2">Cover</Typography>
+                <Stack direction={'column'} gap={2}>
+                    <Typography level="title-lg">Title</Typography>
+                    <Input
+                        size="lg"
+                        defaultValue={config.title}
+                        onChange={(e) => update({ title: e.target.value })}
+                    />
+                </Stack>
+                <Stack direction={'column'} gap={2}>
+                    <Typography level="title-lg">Subtitle</Typography>
+                    <Input
+                        size="lg"
+                        defaultValue={config.subtitle}
+                        onChange={(e) => update({ subtitle: e.target.value })}
+                    />
+                </Stack>
+                <Stack direction={'column'} gap={2}>
+                    <Typography level="title-lg">Background Color</Typography>
+                    <Input
+                        size="lg"
+                        defaultValue={config.backgroundColor}
+                        onChange={(e) => update({ backgroundColor: e.target.value })}
+                    />
+                </Stack>
+                <Stack direction={'column'} gap={2}>
+                    <Typography level="title-lg">Text Color</Typography>
+                    <Input
+                        size="lg"
+                        defaultValue={config.textColor}
+                        onChange={(e) => update({ textColor: e.target.value })}
+                    />
+                </Stack>
+            </Stack>
+            <Stack direction={'column'} gap={2}>
+                <Typography level="h2">File & Content</Typography>
                 {!file && !responseData.length && (
                     <Button
                         component="label"
