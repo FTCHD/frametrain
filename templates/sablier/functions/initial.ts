@@ -46,7 +46,7 @@ export default async function initial(config: Config, state: State) {
             {
                 label: 'Create',
                 action: 'link',
-                target: 'https://sablier.com/create',
+                target: 'https://app.sablier.com/gallery/group',
             },
         ],
         image: 'data:image/svg+xml;base64,' + Buffer.from(reactSvg).toString('base64'),

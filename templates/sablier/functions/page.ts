@@ -18,7 +18,7 @@ export default async function page(
 ) {
     const buttonIndex = body.untrustedData.buttonIndex
 
-    console.log('body', body)
+    // console.log('body', body)
 
     let frame
 
@@ -56,7 +56,7 @@ export default async function page(
                     {
                         label: 'Create',
                         action: 'link',
-                        target: 'https://sablier.com/create',
+                        target: 'https://app.sablier.com/gallery/group',
                     },
                 ],
                 image: 'data:image/svg+xml;base64,' + Buffer.from(r).toString('base64'),
@@ -94,7 +94,7 @@ export default async function page(
                     {
                         label: 'Create',
                         action: 'link',
-                        target: 'https://sablier.com/create',
+                        target: 'https://app.sablier.com/gallery/group',
                     },
                 ],
                 image: 'data:image/svg+xml;base64,' + Buffer.from(r).toString('base64'),

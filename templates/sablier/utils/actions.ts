@@ -237,15 +237,6 @@ export function isUnlockLinear(stream: any): boolean {
     const EXPECTED_SEGMENTS = 2
     const UNLOCK_DURATION = 1000
 
-    // if (!Object.keys(stream.segments[0]).includes('duration')) {
-    // }
-
-    // const DURATION = milestone - starttime // in seconds, convert to ms
-    console.log(
-        BigNumber(stream.segments[1].exponent)
-            .dividedBy(10 ** 18)
-            .isEqualTo(new BigNumber(1))
-    )
     return (
         stream.category === StreamCategory.LOCKUP_DYNAMIC &&
         stream.segments.length === EXPECTED_SEGMENTS &&
