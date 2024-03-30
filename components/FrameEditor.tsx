@@ -174,9 +174,7 @@ export default function FrameEditor({
                             size="lg"
                             endDecorator={<Copy size={18} />}
                             onClick={() => {
-                                navigator.clipboard.writeText(
-                                    `https://frametrain.com/f/${frame.id}`
-                                )
+                                navigator.clipboard.writeText(`https://frametra.in/f/${frame.id}`)
                                 toast.success('Copied to clipboard!')
                             }}
                         >
