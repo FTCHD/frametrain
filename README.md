@@ -1,68 +1,67 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`c3`](https://developers.cloudflare.com/pages/get-started/c3).
+### FrameTrain is Canva for Farcaster Frames.
 
-## Getting Started
+- Open Source
+- Revenue Sharing
+- Integrated Farcaster Hub APIs, so you can just build™️
 
-First, run the development server:
+# Templates
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Templates live in the **`templates`** folder. Each template follows a clear starting folder structure:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `functions` — a collection of 1 or more handlers, used as controllers for displaying the `views`. Must contain at least an `initial` handler.
+- `views` — a collection of 1 or more React components, rendered as the Frames’ image using `satori`. Must contain at least a `Cover` view.
+- `Inspector` — a React component displayed in the Frame Editor. Used to get input from the** user, transform it as needed and saving it as the Frame’s config. This config will be used by the **`functions`** to properly display the `views`.
+- `cover` — a cover image for the template, used in the template selection screen.
+# Integrated Hub API
 
-## Cloudflare integration
+FT validates each message without requiring template creators to integrate any APIs. In order to enable message validation for your template, just set the **`requireValidation`** flag in the template config.
 
-Besides the `dev` script mentioned above `c3` has added a few extra scripts that allow you to integrate the application with the [Cloudflare Pages](https://pages.cloudflare.com/) environment, these are:
-  - `pages:build` to build the application for Pages using the [`@cloudflare/next-on-pages`](https://github.com/cloudflare/next-on-pages) CLI
-  - `preview` to locally preview your Pages application using the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI
-  - `deploy` to deploy your Pages application using the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI
+Right now, the API provider used is Neynar. Neynar requests seem (and are) cheap at first, but having hundreds or thousands of Frames making requests hasn't been modeled.
 
-> __Note:__ while the `dev` script is optimal for local development you should preview your Pages application as well (periodically or before deployments) in order to make sure that it can properly work in the Pages environment (for more details see the [`@cloudflare/next-on-pages` recommended workflow](https://github.com/cloudflare/next-on-pages/blob/05b6256/internal-packages/next-dev/README.md#recommended-workflow))
+The choice stands between an internal Hub run by FT, continuing to use Neynar, or switching to Airstack. It’s not clear right now which option is the right one.
 
-### Bindings
+If Neynar or Airstack want to reach out and provide a solution where everyone wins, I'm all ears!
 
-Cloudflare [Bindings](https://developers.cloudflare.com/pages/functions/bindings/) are what allows you to interact with resources available in the Cloudflare Platform.
+# Revenue Sharing
 
-You can use bindings during development, when previewing locally your application and of course in the deployed application:
+Currently all FT templates have been created by me, so I would be sharing revenue with myself. 
 
-- To use bindings in dev mode you need to define them in the `next.config.js` file under `setupDevBindings`, this mode uses the `next-dev` `@cloudflare/next-on-pages` submodule. For more details see its [documentation](https://github.com/cloudflare/next-on-pages/blob/05b6256/internal-packages/next-dev/README.md).
+Soon you will be able to subscribe and host your Frames with no imposed limits (as opposed to the free tier which would have limits).
 
-- To use bindings in the preview mode you need to add them to the `pages:preview` script accordingly to the `wrangler pages dev` command. For more details see its [documentation](https://developers.cloudflare.com/workers/wrangler/commands/#dev-1) or the [Pages Bindings documentation](https://developers.cloudflare.com/pages/functions/bindings/).
+The lack of such functionality is intentional, as requiring a subscription day 1 would make the service dead on arrival. The functionality to count usage is implemented though.
 
-- To use bindings in the deployed application you will need to configure them in the Cloudflare [dashboard](https://dash.cloudflare.com/). For more details see the  [Pages Bindings documentation](https://developers.cloudflare.com/pages/functions/bindings/).
+Usage is counted as calls coming from a Farcaster client to any of the template’s **`functions`**. The more a Frame that uses a template is interacted with, the more that template creator earns.
 
-#### KV Example
+The revenue from subscriptions will be shared with the template creators, depending which templates were used during that month.
 
-`c3` has added for you an example showing how you can use a KV binding.
+At the end of the month, costs are subtracted, the number of calls are added to calculate a ratio, and each creator is rewarded accordingly.
 
-In order to enable the example:
-- Search for javascript/typescript lines containing the following comment:
-  ```ts
-  // KV Example:
-  ```
-  and uncomment the commented lines below it.
-- Do the same in the `wrangler.toml` file, where
-  the comment is:
-  ```
-  # KV Example:
-  ```
-- If you're using TypeScript run the `build-cf-types` script to update the `env.d.ts` file:
-  ```bash
-  npm run build-cf-types
-  # or
-  yarn build-cf-types
-  # or
-  pnpm build-cf-types
-  # or
-  bun build-cf-types
-  ```
+This part is still a WIP, and the platform has to run for a bit for us to collect useful data and make further decisions on the exact mechanism.
 
-After doing this you can run the `dev` or `preview` script and visit the `/api/hello` route to see the example in action.
+Being awarded a prize a the ETH Bucharest hackathon means the reward will be further given away as incentives for template developers. 
 
-Finally, if you also want to see the example work in the deployed application make sure to add a `MY_KV_NAMESPACE` binding to your Pages application in its [dashboard kv bindings settings section](https://dash.cloudflare.com/?to=/:account/pages/view/:pages-project/settings/functions#kv_namespace_bindings_section). After having configured it make sure to re-deploy your application.
+# Included APIs
+
+- `validate`
+- `upload` (wip)
+- `scrape` (wip)
+    - Call this in your Inspector or functions to get the contents of a webpage.
+    - Pass `readability` to true to convert it to readability
+    - Pass `markdown` to true to convert it to markdown
+
+# Contributing
+
+Thank you for considering making FrameTrain better.
+
+The project currently needs help with (in order of importance):
+
+- TS Generics. I skipped **[generics class](https://www.youtube.com/watch?v=ATdXeuQh_Ws&t=1m40s)** and I've tried implementing them but it always leads to spaghetti. I know, I feel the shame and disgust too, maybe you’re the chad that knows how to solve this. The base template types should be generics, this would make everything much more cleaner and modular.
+- Image Uploading. This would require calculating the storage costs of each user each month, and subtract that from the revenue. It hasn’t been implemented yet, and I’m still thinking if there aren’t better ways for this. Contenders for hosting are Cloudflare or Pinata.
+- Template Versioning. Users should be able to choose if they want to update to a new version of the template. This requires some changes in how templates currently work.
+- Bug Fixes & More. If you see something that sucks, and you know how to do it better, open a PR and let’s see that confidence. I would really appreciate it actually.
+
+For a good experience, please install the Biome extension. This repository uses Biome, not ESLint.
+
+# Gotchas
+
+The FT app is deployed on Cloudflare Pages. This means everything is running on the **`edge`** runtime. Node specific stuff does not run, not that you will actually encounter issues if you know what you’re doing.
