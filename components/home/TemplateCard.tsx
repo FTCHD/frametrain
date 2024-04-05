@@ -1,19 +1,12 @@
 'use client'
 import { createFrame } from '@/lib/actions'
 import type templates from '@/templates'
-import {
-    AspectRatio,
-    Card,
-    CardContent,
-    CardOverflow,
-    Divider,
-    IconButton,
-    Typography,
-} from '@mui/joy'
 import type { StaticImageData } from 'next/image'
 import NextImage from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Plus } from 'react-feather'
+import { Button } from '../ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
 
 export const runtime = 'edge'
 
@@ -34,52 +27,39 @@ export default function TemplateCard({
     const { name, description, creatorName, cover } = template
 
     return (
-        <Card variant="outlined" sx={{ width: 350 }}>
-            <CardOverflow>
-                <AspectRatio ratio="1.5">
-                    <NextImage src={cover} alt={name} fill={true} objectPosition="center" />
-                </AspectRatio>
-                <IconButton
-                    size="lg"
-                    variant="solid"
-                    color="danger"
-                    sx={{
-                        position: 'absolute',
-                        zIndex: 2,
-                        borderRadius: '50%',
-                        right: '1rem',
-                        bottom: 0,
-                        transform: 'translateY(50%)',
-                    }}
-                    onClick={async () => {
-                        const newFrame = await createFrame({
-                            name: 'My Frame',
-                            template: id as keyof typeof templates,
-                        })
+        <>
+            <Card className="w-[350px] h-[400px]  rounded">
+                <CardHeader className=" p-0 relative ">
+                    <NextImage
+                        src={cover}
+                        alt={name}
+                        className="object-cover rounded h-64 "
+                        objectPosition="center "
+                    />
+                    <Button
+                        className="rounded-full h-12 w-12 absolute right-4 -bottom-12 transform -translate-y-1/2 "
+                        onClick={async () => {
+                            const newFrame = await createFrame({
+                                name: 'My Frame',
+                                template: id as keyof typeof templates,
+                            })
 
-                        router.push('/frame/' + newFrame.id)
-                    }}
-                >
-                    <Plus size={32} />
-                </IconButton>
-            </CardOverflow>
-            <CardContent>
-                <Typography level="title-lg">{name}</Typography>
-            </CardContent>
-            <CardContent
-                sx={{
-                    justifyContent: 'center',
-                    alignItems: 'start',
-                }}
-            >
-                <Typography>{description}</Typography>
-            </CardContent>
-            <CardOverflow variant="soft">
-                <Divider inset="context" />
-                <CardContent orientation="horizontal">
-                    <Typography level="body-xs">Created by {creatorName}</Typography>
+                            router.push('/frame/' + newFrame.id)
+                        }}
+                        variant="outline"
+                    >
+                        <Plus size={32} />
+                    </Button>
+                </CardHeader>
+                <CardContent className="flex flex-col items-start space-y-2 h-20 ">
+                    <CardTitle className="mt-2 text-lg">{name}</CardTitle>
+                    <CardDescription>{description}</CardDescription>
                 </CardContent>
-            </CardOverflow>
-        </Card>
+                <hr className=" w-full mt-7 border-gray-800" />
+                <CardFooter>
+                    <p>Created by {creatorName}</p>
+                </CardFooter>
+            </Card>
+        </>
     )
 }
