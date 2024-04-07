@@ -1,6 +1,4 @@
 'use client'
-// import { AspectRatio, Card, CardContent, Chip, Link, Typography } from '@mui/joy'
-// import { Card } from 'card';
 import NextImage from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader } from '../ui/card'

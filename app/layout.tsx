@@ -18,8 +18,6 @@ export const metadata: Metadata = {
 export default function Layout(props: { children: React.ReactNode }) {
     return (
         <SessionProvider>
-            {/* Theme Registry will get removed once every component is a shadcn component */}
-            {/* <ThemeRegistry> */}
             <html lang="en">
                 <body
                     style={{
@@ -41,7 +39,6 @@ export default function Layout(props: { children: React.ReactNode }) {
                     </ThemeProvider>
                 </body>
             </html>
-            {/* </ThemeRegistry> */}
         </SessionProvider>
     )
 }
