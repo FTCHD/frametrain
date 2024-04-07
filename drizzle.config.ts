@@ -3,7 +3,6 @@ import type { Config } from 'drizzle-kit'
 export default process.env.DB
     ? ({
           schema: './db/schema.ts',
-          out: './db/migrations',
           driver: 'better-sqlite',
           dbCredentials: {
               url: process.env.DB!,
