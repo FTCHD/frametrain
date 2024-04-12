@@ -1,5 +1,6 @@
 'use client'
-import { Button, IconButton, Input, Stack, Typography } from '@mui/joy'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useRef } from 'react'
 import { X } from 'react-feather'
 import type { Config } from '.'
@@ -16,26 +17,26 @@ export default function Inspector({
     const questionInputRef = useRef<HTMLInputElement>(null)
 
     return (
-        <Stack width={'100%'} height={'100%'} gap={5}>
+        <div className="w-full h-full space-y-4">
             {/* <pre>{JSON.stringify(vote, null, 2)}</pre> */}
 
-            <Stack direction={'column'} gap={2}>
-                <Typography level="title-lg">Question</Typography>
+            <div className="flex flex-col space-y-2">
+                <h2 className="text-lg font-bold">Question</h2>
                 <Input
-                    size="lg"
                     placeholder="The poll question"
                     defaultValue={config.question}
                     onChange={(e) => update({ question: e.target.value })}
+                    className=""
                 />
-            </Stack>
+            </div>
 
-            <Stack direction={'column'} gap={2}>
+            <div className="flex flex-col space-y-2">
                 {options?.map((option, index) => (
-                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                        <Typography key={index} level="body-md" variant="soft" padding={1}>
-                            {option.displayLabel}
-                        </Typography>
-                        <IconButton
+                    <div className="flex flex-row justify-between items-center ">
+                        <h2 className="text-base p-2 ">{option.displayLabel}</h2>
+                        <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() =>
                                 update({
                                     options: [
@@ -46,25 +47,17 @@ export default function Inspector({
                             }
                         >
                             <X />
-                        </IconButton>
-                    </Stack>
+                        </Button>
+                    </div>
                 ))}
-            </Stack>
+            </div>
             {(!options || options.length < 4) && (
-                <Stack direction={'column'} gap={2}>
-                    <Stack direction={'column'} gap={2}>
-                        <Typography level="title-lg">Voting Options</Typography>
-                        <Input
-                            size="lg"
-                            placeholder="Results Page Label"
-                            slotProps={{ input: { ref: displayLabelInputRef } }}
-                        />
-                        <Input
-                            size="lg"
-                            placeholder="Button Label"
-                            slotProps={{ input: { ref: buttonLabelInputRef } }}
-                        />
-                    </Stack>
+                <div className="flex flex-col space-y-4">
+                    <div className="flex flex-col space-y-4">
+                        <h1 className="text-lg font-bold">Voting Options</h1>
+                        <Input placeholder="Results Page Label" ref={displayLabelInputRef} />
+                        <Input placeholder="Button Label" ref={buttonLabelInputRef} />
+                    </div>
                     <Button
                         onClick={() => {
                             if (!displayLabelInputRef.current?.value) return
@@ -91,10 +84,10 @@ export default function Inspector({
                     >
                         Add Option
                     </Button>
-                </Stack>
+                </div>
             )}
 
             <Button onClick={() => update({ options: [] })}>Delete All</Button>
-        </Stack>
+        </div>
     )
 }
