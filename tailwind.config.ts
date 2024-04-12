@@ -3,7 +3,7 @@ import type { Config } from 'tailwindcss'
 const config = {
     darkMode: ['class'],
     content: [
-        './pages/**/*.{ts,tsx, js, jsx,mdx}',
+         './pages/**/*.{ts,tsx, js, jsx,mdx}',
         './components/**/*.{ts,tsx,js, jsx,mdx}',
         './app/**/*.{ts,tsx,js, jsx,mdx}',
         './src/**/*.{ts,tsx,js, jsx,mdx}',
@@ -19,7 +19,7 @@ const config = {
         },
         extend: {
             colors: {
-                border: 'hsl(var(--border))',
+                border: 'var(--border)',
                 input: 'hsl(var(--input))',
                 ring: 'hsl(var(--ring))',
                 background: 'hsl(var(--background))',
@@ -31,6 +31,8 @@ const config = {
                 secondary: {
                     DEFAULT: 'hsl(var(--secondary))',
                     foreground: 'hsl(var(--secondary-foreground))',
+					border: 'var(--secondary-border)',
+					background: 'var(--secondary-background)',
                 },
                 destructive: {
                     DEFAULT: 'hsl(var(--destructive))',
