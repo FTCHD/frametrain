@@ -1,46 +1,57 @@
-import { Stack, Typography } from '@mui/joy'
-import Button from '@mui/joy/Button'
-import ToggleButtonGroup from '@mui/joy/ToggleButtonGroup'
+
 import { useState } from 'react'
+import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group'
 
 export default function MockOptionsToggle() {
     const [value, setValue] = useState<string[]>([])
     return (
-        <Stack
-            direction={{
-                xs: 'column',
-                md: 'row',
-            }}
-            gap={3}
-            justifyContent={'center'}
-            alignItems={'center'}
-            width={'100%'}
-        >
-            <Typography level="title-lg">SIMULATE TOGGLES</Typography>
-            <ToggleButtonGroup
-                size="lg"
-                variant="soft"
-                // sx={{
-                //     width: '100%',
-                // }}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full">
+            <h1 className="text-lg font-bold">SIMULATE TOGGLES</h1>
+            <ToggleGroup
+                type="multiple"
                 value={value}
-                onChange={(_, newValue) => {
+                onValueChange={(_, newValue) => {
                     setValue(newValue)
                 }}
+                className="flex flex-row  bg-primary-foreground"
             >
-                <Button fullWidth={true} startDecorator="👀" value="recasted">
-                    Recasted
-                </Button>
-                <Button fullWidth={true} startDecorator="❤️" value="liked">
-                    Liked
-                </Button>
-                <Button fullWidth={true} startDecorator="👥" value="following">
-                    Following
-                </Button>
-                <Button fullWidth={true} startDecorator="👤" value="follower">
-                    Follower
-                </Button>
-            </ToggleButtonGroup>
-        </Stack>
+                <ToggleGroupItem
+                    value="recasted"
+                    className="items-center justify-center gap-2 w-full  "
+                >
+                    <span className="flex items-center gap-2">
+                        <span>👀</span>
+                        <span>Recasted</span>
+                    </span>
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                    value="liked"
+                    className="items-center justify-center gap-2 w-full "
+                >
+                    <span className="flex items-center gap-2">
+                        <span>❤️</span>
+                        <span>Liked</span>
+                    </span>
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                    value="following"
+                    className="items-center justify-center gap-2 w-full "
+                >
+                    <span className="flex items-center gap-2">
+                        <span>👥</span>
+                        <span>Following</span>
+                    </span>
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                    value="follower"
+                    className="items-center justify-center gap-2 w-full "
+                >
+                    <span className="flex items-center gap-2">
+                        <span>👤</span>
+                        <span>Follower</span>
+                    </span>
+                </ToggleGroupItem>
+            </ToggleGroup>
+        </div>
     )
 }
