@@ -37,7 +37,7 @@ export default function TemplateCard({
                         objectPosition="center "
                     />
                     <Button
-                        className="rounded-full h-12 w-12 absolute right-4 -bottom-12 transform -translate-y-1/2 "
+                        className="rounded-full h-12 w-12 absolute right-4 -bottom-12 transform -translate-y-1/2 hover:bg-primary-foreground"
                         onClick={async () => {
                             const newFrame = await createFrame({
                                 name: 'My Frame',
