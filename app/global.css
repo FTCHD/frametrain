@@ -78,3 +78,16 @@
 		display: none !important;
 	}
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--foreground);
+  border-radius: 5px;
+}
