@@ -1,5 +1,6 @@
 'use client'
 import { useRefreshPreview } from '@/components/editor/useRefreshPreview'
+import { useToast } from '@/components/shadcn/use-toast'
 import type { frameTable } from '@/db/schema'
 import { updateFrameConfig, updateFrameName } from '@/lib/actions'
 import type templates from '@/templates'
@@ -17,7 +18,6 @@ import type { InferSelectModel } from 'drizzle-orm'
 import NextLink from 'next/link'
 import { useEffect, useState } from 'react'
 import { ArrowLeft, Copy } from 'react-feather'
-import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { FramePreview } from './FramePreview'
 import MockOptionsToggle from './editor/MockToggle'
@@ -29,6 +29,8 @@ export default function FrameEditor({
     frame: InferSelectModel<typeof frameTable>
     template: (typeof templates)[keyof typeof templates]
 }) {
+	const { toast } = useToast()
+	
     const [frameConfig, setFrameConfig] = useState(frame.config as typeof template.initialConfig)
 
     const [editingTitle, setEditingTitle] = useState(false)
@@ -175,7 +177,7 @@ export default function FrameEditor({
                             endDecorator={<Copy size={18} />}
                             onClick={() => {
                                 navigator.clipboard.writeText(`https://frametra.in/f/${frame.id}`)
-                                toast.success('Copied to clipboard!')
+                                toast({ variant: 'default', title: 'Copied to clipboard' })
                             }}
                         >
                             URL

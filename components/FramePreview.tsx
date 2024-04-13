@@ -4,21 +4,19 @@ import type { FrameMetadataWithImageObject } from '@/debugger/frameResultToFrame
 import { postFrame } from '@/debugger/postFrame'
 import { frameResultsAtom, mockFrameOptionsAtom } from '@/debugger/store'
 import type { FrameButtonMetadata } from '@/lib/farcaster'
-import {
-    Button,
-    CircularProgress,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Input,
-    Modal,
-    ModalDialog,
-    Sheet,
-    Stack,
-} from '@mui/joy'
 import { useAtom } from 'jotai'
 import { type ChangeEvent, type PropsWithChildren, useCallback, useState } from 'react'
 import { Delete, ExternalLink, PlusCircle } from 'react-feather'
+import { Button } from './shadcn/Button'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from './shadcn/Dialog'
+import { Input } from './shadcn/Input'
 
 export function FramePreview() {
     const [results] = useAtom(frameResultsAtom)
@@ -34,15 +32,17 @@ export function FramePreview() {
 
 function PlaceholderFrame() {
     return (
-        <Stack height={'100%'} width={'100%'} justifyContent={'center'} alignItems={'center'}>
-            <CircularProgress variant="solid" size="lg" />
-        </Stack>
+        <div className="h-full w-full flex justify-center items-center">
+            <div className="w-8 h-8 border-4 border-blue-500 rounded-full border-r-transparent animate-spin" />
+        </div>
     )
 }
 
 function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
     const [inputText, setInputText] = useState('')
     const { image, input, buttons } = metadata
+	const imageAspectRatioClassname =
+    metadata.image.aspectRatio === '1:1' ? 'aspect-square' : 'aspect-[1.91/1]'
 
     const [modalOpen, setModalOpen] = useState(false)
     const [modalFn, setModalFn] = useState<any>()
@@ -59,45 +59,24 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
 
     return (
         <>
-            <Sheet
-                variant="solid"
-                sx={{
-                    borderRadius: '12px',
-                    width: '100%', //! Added
-                    height: '100%', //! Added
-                }}
-            >
-                <Stack direction={'column'} height={'100%'}>
+            <div className="h-full w-full rounded-xl ">
+                <div className="flex flex-col h-full">
                     <img
-                        style={{
-                            // objectFit: 'cover',
-                            width: '100%',
-                            // height: '100%',
-                            borderRadius: '12px 12px 0 0',
-                            aspectRatio: metadata.image.aspectRatio === '1:1' ? '1' : '1.91/1',
-                        }}
+                        className={`w-full rounded-t-xl ${imageAspectRatioClassname} object-cover`}
                         src={image.src}
-                        alt="Frame"
+                        alt=""
                     />
 
-                    <Stack
-                        direction={'column'}
-                        paddingY={1}
-                        paddingX={2}
-                        gap={1.5}
-                        // bgcolor={'blue'}
-                        height={'100%'}
-                    >
+                    <div className="flex flex-col py-1 px-2 gap-1.5 h-full">
                         {!!input && (
                             <Input
-                                fullWidth={true}
-                                size="lg"
                                 type="text"
+                                className="border bg-primary text-primary-foreground"
                                 placeholder={input.text}
                                 onChange={handleInputChange}
                             />
                         )}
-                        <Stack direction={'row'} gap={1}>
+                        <div className="flex flex-row gap-1">
                             {buttons?.map((button, index) =>
                                 button ? (
                                     <FrameButton
@@ -112,20 +91,22 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                                     </FrameButton>
                                 ) : null
                             )}
-                        </Stack>
-                    </Stack>
-                </Stack>
-            </Sheet>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-                <ModalDialog>
-                    <DialogTitle>Leaving website</DialogTitle>
-                    <DialogContent>
-                        If you connect your wallet and the site is malicious, you may lose funds.
-                    </DialogContent>
-                    <DialogActions>
+            <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Leaving website</DialogTitle>
+                        <DialogDescription>
+                            If you connect your wallet and the site is malicious, you may lose
+                            funds.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
                         <Button
-                            variant="solid"
                             onClick={() => {
                                 modalFn()
                                 setModalOpen(false)
@@ -133,12 +114,12 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                         >
                             I understand
                         </Button>
-                        <Button variant="plain" color="neutral" onClick={() => setModalOpen(false)}>
+                        <Button color="neutral" onClick={() => setModalOpen(false)}>
                             Cancel
                         </Button>
-                    </DialogActions>
-                </ModalDialog>
-            </Modal>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }
@@ -210,17 +191,20 @@ function FrameButton({
 
     return (
         <Button
-            fullWidth={true}
+            className="border-button flex w-[45%] grow items-center justify-center gap-1 rounded-lg border bg-white px-4 py-2 text-black"
+            type="button"
             onClick={handleClick}
-            disabled={isLoading || action === 'mint'}
-            endDecorator={<ButtonIcon action={action} />}
+            disabled={isLoading || button?.action === 'mint'}
         >
-            {children}
+            <span className="block max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap">
+                {children}
+            </span>
+            {buttonIcon({ action })}
         </Button>
     )
 }
 
-const ButtonIcon = ({ action }: { action?: string }) => {
+const buttonIcon = ({ action }: { action?: string }) => {
     switch (action) {
         case 'link':
             return <ExternalLink size={14} />

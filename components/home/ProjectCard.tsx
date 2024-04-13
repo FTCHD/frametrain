@@ -1,5 +1,4 @@
 'use client'
-import { AspectRatio, Card, CardContent, Chip, Link, Typography } from '@mui/joy'
 import NextImage from 'next/image'
 import NextLink from 'next/link'
 
@@ -8,47 +7,27 @@ export default function ProjectCard({
 }: { frame: { id: string; name: string; preview: string; currentMonthCalls: number } }) {
     const { id, name, preview, currentMonthCalls } = frame
     return (
-        <Card
+        <NextLink
+            href={`/frame/${id}`}
+            style={{ textDecoration: 'none' }}
+            className="w-[320px] bg-[#0B0D0E] p-5  border-[#32383E] border rounded-lg hover:drop-shadow-2xl"
             key={id}
-            variant="outlined"
-            orientation="horizontal"
-            sx={{
-                width: 320,
-                '&:hover': {
-                    boxShadow: 'md',
-                    borderColor: 'neutral.outlinedHoverBorder',
-                },
-            }}
         >
-            <AspectRatio ratio="1" sx={{ width: 90 }}>
+            <div className="flex flex-row gap-5 justify-center w-full h-full">
                 <NextImage
                     src={`data:image/svg+xml;base64,${preview}`}
                     alt={name}
-                    fill={true}
-                    objectFit="cover"
+                    width={90}
+                    height={90}
+                    className="object-cover rounded-md"
                 />
-            </AspectRatio>
-            <CardContent
-                sx={{
-                    gap: 2,
-                }}
-            >
-                <Link
-                    overlay={true}
-                    href={`/frame/${id}`}
-                    underline="none"
-                    sx={{ color: 'text.tertiary', textDecoration: 'none' }}
-                    component={NextLink}
-                >
-                    <Typography level="title-lg" id="card-description">
-                        {name}
-                    </Typography>
-                </Link>
-
-                <Chip variant="outlined" color="primary" size="sm" sx={{ pointerEvents: 'none' }}>
-                    {currentMonthCalls === 0 ? 'Not used yet' : `${currentMonthCalls} calls`}
-                </Chip>
-            </CardContent>
-        </Card>
+                <div className="flex flex-col gap-4 items-start w-full h-full">
+                    <h1 className="font-medium">{name}</h1>
+                    <div className="px-2 py-1 text-xs font-medium rounded-full text-[#c7dff7] border border-[#12467B]">
+                        {currentMonthCalls === 0 ? 'Not used yet' : `${currentMonthCalls} calls`}
+                    </div>
+                </div>
+            </div>
+        </NextLink>
     )
 }

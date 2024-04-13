@@ -33,7 +33,8 @@
                 "useNamingConvention": "off"
             },
             "suspicious": {
-                "all": false
+                "all": false,
+                "noExplicitAny": "off"
             }
         },
         "ignore": ["node_modules/*", "dist/*", ".work/*"]
