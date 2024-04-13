@@ -1,17 +1,9 @@
 'use client'
 
-import {
-    Button,
-    Chip,
-    IconButton,
-    Input,
-    Modal,
-    ModalClose,
-    ModalDialog,
-    Stack,
-    Textarea,
-    Typography,
-} from '@mui/joy'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { useEffect, useRef, useState } from 'react'
 import { Trash } from 'react-feather'
 import type { Config } from '.'
@@ -57,100 +49,94 @@ export default function Inspector({
 
     return (
         <>
-            <Stack width={'100%'} height={'100%'} gap={5}>
+            <div className=" flex flex-col h-full w-full space-y-4">
                 {/* <pre>{JSON.stringify(config, null, 2)}</pre> */}
-                <Stack width={'100%'} gap={2}>
-                    <Typography level="h2">Cover</Typography>
-                    <Stack width={'100%'} gap={1}>
-                        <Typography level="title-lg">Title</Typography>
+                <div className="flex flex-col space-y-2 w-full">
+                    <h2 className="text-2xl font-bold">Cover</h2>
+                    <div className="flex flex-col gap-1 w-full">
+                        <h2 className="text-lg font-bold">Title</h2>
                         <Input
-                            slotProps={{ input: { ref: titleInputRef } }}
+                            ref={titleInputRef}
                             // value={config?.title}
-                            size="lg"
+
                             onChange={(e) => update({ title: e.target.value })}
                         />
-                    </Stack>
-                    <Stack width={'100%'} gap={1}>
-                        <Typography level="title-lg">Profile Username</Typography>
+                    </div>
+                    <div className="flex flex-col gap-1 w-full">
+                        <h2 className="text-lg font-bold">Profile Username</h2>
                         <Input
-                            slotProps={{ input: { ref: profileInputRef } }}
+                            ref={profileInputRef}
                             // value={config?.profile}
-                            size="lg"
                             onChange={(e) => update({ profile: e.target.value })}
                         />
-                    </Stack>
-                </Stack>
-                <Stack width={'100%'} gap={2}>
-                    <Typography level="h2">Tweets</Typography>
+                    </div>
+                </div>
+                <div className="w-full space-y-4">
+                    <h2 className="text-2xl font-bold">Tweets</h2>
 
-                    <Stack gap={2}>
-                        <Typography level="title-lg">Add Tweet</Typography>
-                        <Input
-                            slotProps={{ input: { ref: tweetInputRef } }}
-                            type="url"
-                            size="lg"
-                            placeholder="https://twitter.com/username/status/..."
-                            endDecorator={
-                                <Button
-                                    loading={loading}
-                                    onClick={async () => {
-                                        if (!tweetInputRef.current?.value) return
+                    <div className="flex flex-col space-y-2">
+                        <h2 className="text-lg font-bold">Add Tweet</h2>
+                        <div className="flex items-center">
+                            <Input
+                                ref={tweetInputRef}
+                                type="url"
+                                placeholder="https://twitter.com/username/status/..."
+                            />
+                            <Button
+                                onClick={async () => {
+                                    if (!tweetInputRef.current?.value) return
 
-                                        if (
-                                            config?.tweets?.find(
-                                                (t: any) => t.link === tweetInputRef.current?.value
-                                            )
-                                        ) {
-                                            alert('Already exists')
-                                            return
-                                        }
+                                    if (
+                                        config?.tweets?.find(
+                                            (t: any) => t.link === tweetInputRef.current?.value
+                                        )
+                                    ) {
+                                        alert('Already exists')
+                                        return
+                                    }
 
-                                        setLoading(true)
+                                    setLoading(true)
 
-                                        const tweetContent = await fetch('/api/scrape/twitter', {
-                                            method: 'POST',
-                                            body: tweetInputRef.current.value,
-                                        })
-                                            .then((res) => res.json())
-                                            .catch(console.error)
+                                    const tweetContent = await fetch('/api/scrape/twitter', {
+                                        method: 'POST',
+                                        body: tweetInputRef.current.value,
+                                    })
+                                        .then((res) => res.json())
+                                        .catch(console.error)
 
-                                        const newTweets = [
-                                            ...(config?.tweets || []),
-                                            {
-                                                link: tweetInputRef.current.value,
-                                                content: (tweetContent as any).content.trim(),
-                                            },
-                                        ]
+                                    const newTweets = [
+                                        ...(config?.tweets || []),
+                                        {
+                                            link: tweetInputRef.current.value,
+                                            content: (tweetContent as any).content.trim(),
+                                        },
+                                    ]
 
-                                        update({ tweets: newTweets })
+                                    update({ tweets: newTweets })
 
-                                        setTweets(newTweets)
+                                    setTweets(newTweets)
 
-                                        setLoading(false)
+                                    setLoading(false)
 
-                                        tweetInputRef.current.value = ''
-                                    }}
-                                >
-                                    ADD
-                                </Button>
-                            }
-                        />
-                    </Stack>
+                                    tweetInputRef.current.value = ''
+                                }}
+                            >
+                                ADD
+                            </Button>
+                        </div>
+                    </div>
 
                     {tweets?.map((tweet, index) => (
-                        <Stack
-                            direction={'row'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                            key={index}
-                        >
-                            <Stack direction={'row'} gap={1}>
-                                <Chip># {index}</Chip>
-                                <Typography key={index} level="body-md" variant="soft" padding={1}>
+                        <div className="flex justify-between items-center" key={tweet.link}>
+                            <div className="flex flex-row space-x-2">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary">
+                                    # {index}
+                                </span>
+                                <h2 className="text-md p-1">
                                     {tweet.content.substring(0, 20) + '...'}
-                                </Typography>
-                            </Stack>
-                            <Stack direction={'row'} gap={1}>
+                                </h2>
+                            </div>
+                            <div className="fle flex-row  p-1">
                                 <Button
                                     onClick={() => {
                                         setCurrentTweet(tweet)
@@ -159,8 +145,8 @@ export default function Inspector({
                                 >
                                     View
                                 </Button>
-                                <IconButton
-                                    color="danger"
+                                <Button
+                                    variant="destructive"
                                     onClick={() =>
                                         update({
                                             tweets: config.tweets.filter(
@@ -170,23 +156,16 @@ export default function Inspector({
                                     }
                                 >
                                     <Trash />
-                                </IconButton>
-                            </Stack>
-                        </Stack>
+                                </Button>
+                            </div>
+                        </div>
                     ))}
-                </Stack>
-            </Stack>
+                </div>
+            </div>
 
-            <Modal
-                open={open}
-                onClose={() => {
-                    alert('close')
-                    setOpen(false)
-                }}
-            >
-                <ModalDialog>
-                    <ModalClose />
-                    <Typography>{currentTweet.link}</Typography>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent>
+                    <h2 className="text-lg">{currentTweet.link}</h2>
                     <Textarea
                         onChange={(e) => {
                             setCurrentTweet({
@@ -208,8 +187,8 @@ export default function Inspector({
                     >
                         Save
                     </Button>
-                </ModalDialog>
-            </Modal>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }
