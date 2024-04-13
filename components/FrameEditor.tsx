@@ -3,16 +3,6 @@ import { useRefreshPreview } from '@/components/editor/useRefreshPreview'
 import type { frameTable } from '@/db/schema'
 import { updateFrameConfig, updateFrameName } from '@/lib/actions'
 import type templates from '@/templates'
-import {
-    Box,
-    Button,
-    CircularProgress,
-    IconButton,
-    Input,
-    Sheet,
-    Stack,
-    Typography,
-} from '@mui/joy'
 import type { InferSelectModel } from 'drizzle-orm'
 import NextLink from 'next/link'
 import { useEffect, useState } from 'react'
@@ -21,6 +11,8 @@ import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { FramePreview } from './FramePreview'
 import MockOptionsToggle from './editor/MockToggle'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
 
 export default function FrameEditor({
     frame,
@@ -92,146 +84,69 @@ export default function FrameEditor({
     const { Inspector } = template as any
 
     return (
-        <Stack width={'100%'} height={'100%'} spacing={0}>
-            <Sheet variant="plain">
-                <Stack
-                    direction={{
-                        xs: 'row',
-                        md: 'row',
-                    }}
-                    width={'100%'}
-                    minHeight={80}
-                    justifyContent={'space-between'}
-                    padding={2}
-                    gap={{
-                        xs: 2,
-                        md: 0,
-                    }}
-                >
-                    <Stack direction={'row'} gap={2}>
-                        <NextLink style={{ textDecoration: 'none' }} href={'/'}>
-                            <IconButton size="lg">
-                                <ArrowLeft />
-                            </IconButton>
-                        </NextLink>
-                        {editingTitle ? (
-                            <Input
-                                size="lg"
-                                value={temporaryTitle}
-                                onChange={(e) => {
-                                    setTemporaryTitle(e.target.value)
-                                }}
-                                variant="plain"
-                                slotProps={{
-                                    input: {
-                                        style: {
-                                            fontSize: '2.2rem',
-                                            fontWeight: '700',
-                                        },
-                                    },
-                                }}
-                                sx={{
-                                    '--Input-radius': '0px',
-                                    borderBottom: '2px solid',
-                                    borderColor: 'neutral.outlinedBorder',
-                                    '&:hover': {
-                                        borderColor: 'neutral.outlinedHoverBorder',
-                                    },
-                                    '&::before': {
-                                        border: '1px solid var(--Input-focusedHighlight)',
-                                        transform: 'scaleX(0)',
-                                        left: 0,
-                                        right: 0,
-                                        bottom: '-2px',
-                                        top: 'unset',
-                                        transition: 'transform .15s cubic-bezier(0.1,0.9,0.2,1)',
-                                        borderRadius: 0,
-                                    },
-                                    '&:focus-within::before': {
-                                        transform: 'scaleX(1)',
-                                    },
-                                }}
-                            />
-                        ) : (
-                            <Typography
-                                level="h1"
-                                sx={{
-                                    cursor: 'pointer',
-                                }}
-                                onClick={() => {
+        <div className="flex flex-col h-full w-full">
+            <div className=" p-3 flex justify-between items-center bg-secondary-background">
+                <div className="flex items-center gap-4">
+                    <NextLink style={{ textDecoration: 'none' }} href={'/'}>
+                        <div className="p-3 hover:bg-primary-foreground rounded-md">
+                            <ArrowLeft />
+                        </div>
+                    </NextLink>
+                    {editingTitle ? (
+                        <Input
+                            value={temporaryTitle}
+                            onChange={(e) => setTemporaryTitle(e.target.value)}
+                            onKeyDown={handleEnter}
+                            className="font-bold text-2xl border-none focus:border-none  focus:bg-transparent hover:bg-transparent "
+                        />
+                    ) : (
+                        <h1
+                            className="text-2xl font-bold cursor-pointer "
+                            onClick={() => setEditingTitle(true)}
+                            onKeyUp={(e) => {
+                                if (e.key === 'Enter') {
                                     setEditingTitle(true)
-                                }}
-                            >
-                                {frame.name}
-                            </Typography>
-                        )}
-                    </Stack>
-                    <Stack direction={'row'} gap={2} alignItems={'center'}>
-                        {updating && <CircularProgress />}
-
-                        <Button
-                            variant="outlined"
-                            size="lg"
-                            endDecorator={<Copy size={18} />}
-                            onClick={() => {
-                                navigator.clipboard.writeText(`https://frametra.in/f/${frame.id}`)
-                                toast.success('Copied to clipboard!')
+                                }
                             }}
                         >
-                            URL
-                        </Button>
-                    </Stack>
-                </Stack>
-            </Sheet>
-            <Stack
-                direction={{
-                    xs: 'column',
-                    lg: 'row',
-                }}
-                width={'100%'}
-                height={'100%'}
-                overflow={'hidden'}
-            >
-                <Stack
-                    height={'100%'}
-                    width={'100%'}
-                    alignItems={'center'}
-                    justifyContent={'space-between'}
-                    sx={{
-                        backgroundImage: 'url(/dots.svg)',
-                    }}
-                    padding={10}
-                    gap={5}
-                >
-                    {/* //! Added 100% instead of 700 */}
-                    <Stack width={'100%'} height={'100%'} alignItems={'center'}>
+                            {frame.name}
+                        </h1>
+                    )}
+                </div>
+                <div className="flex flex-row items-center space-x-4">
+                    {updating && (
+                        <div className="w-8 h-8 border-4 border-blue-500 rounded-full border-r-transparent animate-spin " />
+                    )}
+
+                    <Button
+                        onClick={() => {
+                            navigator.clipboard.writeText(`https://frametra.in/f/${frame.id}`)
+                            toast.success('Copied to clipboard!')
+                        }}
+                        className="border border-border bg-transparent text-primary hover:bg-secondary-border gap-4"
+                    >
+                        <span className="text-normal">URL</span> <Copy size={18} />
+                    </Button>
+                </div>
+            </div>
+            <div className="flex-1 flex  bg-secondary-backround overflow-y-auto">
+                <div className="flex flex-col items-center justify-between w-full p-10 gap-5 bg-[url('/dots.svg')]">
+                    <div className="w-full h-full flex items-center justify-center">
                         <FramePreview />
-                    </Stack>
+                    </div>
                     {template.requiresValidation && <MockOptionsToggle />}
-                </Stack>
-
-                <Stack
-                    width={{
-                        xs: '100%',
-                        lg: '40%',
-                    }}
-                    height={'100%'}
-                    overflow="scroll"
-                    paddingX={2}
-                    gap={3}
-                    bgcolor={'background.surface'}
-                >
-                    <Typography level="h1">Configuration</Typography>
-
-                    <Box paddingBottom={10}>
+                </div>
+                <div className="w-[30%] h-full overflow-auto p-4 ">
+                    <h1 className="text-2xl font-bold mb-4">Configuration</h1>
+                    <div className="pb-10">
                         <Inspector
                             config={frameConfig}
                             update={(value: Record<string, any>) => debouncedUpdateConfig(value)}
                         />
-                    </Box>
-                </Stack>
-            </Stack>
-        </Stack>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 
