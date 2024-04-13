@@ -6,10 +6,10 @@ import {
     useProfile,
 } from '@farcaster/auth-kit'
 import '@farcaster/auth-kit/styles.css'
-import { IconButton } from '@mui/joy'
 import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react'
 import { useCallback } from 'react'
 import { LogOut } from 'react-feather'
+import { Button } from '../ui/button'
 
 export default function AccountButton() {
     const sesh = useSession()
@@ -35,13 +35,14 @@ export default function AccountButton() {
     return (
         <AuthKitProvider>
             {isAuthenticated || sesh?.status === 'authenticated' ? (
-                <IconButton
+                <Button
+                    className="p-3  rounded-md "
                     onClick={() => {
                         signOut()
                     }}
                 >
                     <LogOut size={16} />
-                </IconButton>
+                </Button>
             ) : (
                 <SignInButton
                     nonce={getNonce}
