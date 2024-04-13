@@ -107,5 +107,5 @@ export const {
         verifyRequest: '/', // (used for check email message)
         // newUser: null // If set, new users will be directed here on first sign in
     },
-    debug: true,
+    debug:false,
 })
