@@ -53,7 +53,7 @@ export default function CoverView(streamData: any) {
         >
             <span
                 style={{
-                    fontSize: '24px',
+                    fontSize: '48px',
                     fontWeight: 'bold',
                 }}
             >
@@ -73,11 +73,11 @@ export default function CoverView(streamData: any) {
                     borderRadius: '4px',
                     background: 'rgba(255, 255, 255, 0.2)',
                     color: '#fff',
-                    fontSize: '14px',
+                    fontSize: '28px',
                     gap: '10px',
                 }}
             >
-                <svg width="120" height="120" viewBox="0 0 200 200">
+                <svg width="240" height="240" viewBox="0 0 200 200">
                     <defs>
                         <linearGradient id="outerGradient" gradientTransform="rotate(90)">
                             <stop offset="0%" stop-color="#0099ff" />
@@ -154,16 +154,18 @@ export default function CoverView(streamData: any) {
                         <div
                             style={{
                                 display: 'flex',
+                                fontSize: '36px',
                             }}
                         >
                             {funder.slice(0, 5) + '...' + funder.slice(-3)}
                         </div>
-                        <span style={{ fontSize: '24px', paddingLeft: '5px', paddingRight: '5px' }}>
+                        <span style={{ fontSize: '48px', paddingLeft: '5px', paddingRight: '5px' }}>
                             →
                         </span>
                         <div
                             style={{
                                 display: 'flex',
+                                fontSize: '36px',
                             }}
                         >
                             {recipient.slice(0, 5) + '...' + recipient.slice(-3)}
@@ -173,14 +175,15 @@ export default function CoverView(streamData: any) {
                         style={{
                             display: 'flex',
                             gap: '5px',
+                            fontSize: '24px',
                         }}
                     >
                         <img
                             src={asset.logo}
                             style={{ borderRadius: '50%' }}
                             alt=""
-                            width={20}
-                            height={20}
+                            width={40}
+                            height={40}
                         />
                         {depositAmount / 10 ** asset.decimals} {asset.symbol} (total)
                     </div>
@@ -189,14 +192,15 @@ export default function CoverView(streamData: any) {
                         style={{
                             display: 'flex',
                             gap: '5px',
+                            fontSize: '24px',
                         }}
                     >
                         <img
                             src={asset.logo}
                             style={{ borderRadius: '50%' }}
                             alt=""
-                            width={20}
-                            height={20}
+                            width={40}
+                            height={40}
                         />
                         {withdrawnAmount
                             ? (withdrawnAmount / 10 ** asset.decimals).toFixed(2)
@@ -264,7 +268,7 @@ export default function CoverView(streamData: any) {
                             d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"
                         />
                     </svg>
-                    <div style={{ display: 'flex', fontSize: '14px' }}>{shape.toUpperCase()}</div>
+                    <div style={{ display: 'flex', fontSize: '28px' }}>{shape.toUpperCase()}</div>
                 </div>
 
                 <div
@@ -279,9 +283,9 @@ export default function CoverView(streamData: any) {
                         padding: '5px',
                     }}
                 >
-                    <img src={chainIdToMetadata[chainId].icon} alt="" width={20} height={20} />
+                    <img src={chainIdToMetadata[chainId].icon} alt="" width={40} height={40} />
 
-                    <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex', fontSize: '28px' }}>
                         {chainIdToMetadata[chainId].name.toUpperCase()}{' '}
                     </div>
                 </div>

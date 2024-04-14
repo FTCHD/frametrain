@@ -9,9 +9,10 @@ import { drizzle } from 'drizzle-orm/d1'
 import { notFound } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 
-export const dynamic = 'auto'
+export const dynamic = 'force-dynamic'
 export const dynamicParams = true
 export const runtime = 'edge'
+export const fetchCache = 'force-no-store'
 
 export async function POST(
     request: NextRequest,
@@ -66,8 +67,10 @@ export async function POST(
     if (!isPreview && configWithMetadata.requiresValidation) {
         console.log('frame requires validation')
 
-        body = Object.assign({}, body, await validatePayload(body))
-
+        body = Object.assign({}, body, {
+            validatedData: await validatePayload(body),
+        })
+		
         if (!(body as FrameActionPayloadUnion).validatedData.valid) {
             throw new Error('NOT VALID')
         }

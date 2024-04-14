@@ -15,7 +15,7 @@ export default function ProjectCard({
         >
             <div className="flex flex-row gap-5 justify-center w-full h-full">
                 <NextImage
-                    src={`data:image/svg+xml;base64,${preview}`}
+                    src={`data:image/png;base64,${preview}`}
                     alt={name}
                     width={90}
                     height={90}

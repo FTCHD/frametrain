@@ -2,19 +2,19 @@
 import { dimensionsForRatio } from '@/lib/constants'
 import { loadGoogleFontAllVariants } from '@/lib/fonts'
 import { buildFramePage } from '@/lib/sdk'
-import satori from 'satori'
+import { ImageResponse } from '@vercel/og'
 import type { Config, State } from '..'
 import { getLogoForToken, getStreamData } from '../utils/actions'
 import CoverView from '../views/Cover'
 
 export default async function initial(config: Config, state: State) {
+    console.log('initial', config, state)
+
     const urbanist = await loadGoogleFontAllVariants('Urbanist')
 
     console.log('config', config)
-	
 
-	
-	const streamData = await getStreamData(config.streamId)
+    const streamData = await getStreamData(config.streamId)
 
     const tokenLogo = await getLogoForToken(streamData.chainId, streamData.asset.address)
 
@@ -27,10 +27,14 @@ export default async function initial(config: Config, state: State) {
 
     console.log('data', data)
 
-    const reactSvg = await satori(CoverView(data), {
+    const r = new ImageResponse(CoverView(data), {
         ...dimensionsForRatio['1.91/1'],
         fonts: urbanist,
     })
+
+    // get image data from vercel/og ImageResponse
+    const bufferData = Buffer.from(await r.arrayBuffer())
+    const imageData = bufferData.toString('base64')
 
     return buildFramePage({
         buttons: [
@@ -49,7 +53,7 @@ export default async function initial(config: Config, state: State) {
                 target: 'https://app.sablier.com/gallery/group',
             },
         ],
-        image: 'data:image/svg+xml;base64,' + Buffer.from(reactSvg).toString('base64'),
+        image: 'data:image/png;base64,' + imageData,
         config: config,
         aspectRatio: '1.91:1',
         function: 'page',

@@ -3,11 +3,10 @@ import { dimensionsForRatio } from '@/lib/constants'
 import type { FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/lib/fonts'
 import { buildFramePage } from '@/lib/sdk'
-import satori from 'satori'
+import { ImageResponse } from '@vercel/og'
 import type { Config, State } from '..'
 import { getLogoForToken, getStreamData, getStreamHistory } from '../utils/actions'
 import HistoryView from '../views/History'
-import TokenView from '../views/Token'
 import initial from './initial'
 
 export default async function page(
@@ -37,10 +36,14 @@ export default async function page(
                 { asset: { ...streamData.asset, logo: tokenLogo } }
             )
 
-            const r = await satori(TokenView(data), {
+            const resp = new ImageResponse(HistoryView(data, history), {
                 ...dimensionsForRatio['1.91/1'],
                 fonts: urbanist,
             })
+
+            // get image data from vercel/og ImageResponse
+            const bufferData = Buffer.from(await resp.arrayBuffer())
+            const imageData = bufferData.toString('base64')
 
             frame = await buildFramePage({
                 buttons: [
@@ -59,7 +62,7 @@ export default async function page(
                         target: 'https://app.sablier.com/gallery/group',
                     },
                 ],
-                image: 'data:image/svg+xml;base64,' + Buffer.from(r).toString('base64'),
+                image: 'data:image/png;base64,' + imageData,
                 aspectRatio: '1.91:1',
                 config: config,
                 function: 'page',
@@ -75,10 +78,14 @@ export default async function page(
 
             const history = await getStreamHistory(config.streamId)
 
-            const r = await satori(HistoryView(data, history), {
+            const resp = new ImageResponse(HistoryView(data, history), {
                 ...dimensionsForRatio['1.91/1'],
                 fonts: urbanist,
             })
+
+            // get image data from vercel/og ImageResponse
+            const bufferData = Buffer.from(await resp.arrayBuffer())
+            const imageData = bufferData.toString('base64')
 
             frame = await buildFramePage({
                 buttons: [
@@ -97,7 +104,7 @@ export default async function page(
                         target: 'https://app.sablier.com/gallery/group',
                     },
                 ],
-                image: 'data:image/svg+xml;base64,' + Buffer.from(r).toString('base64'),
+                image: 'data:image/png;base64,' + imageData,
                 aspectRatio: '1.91:1',
                 config: config,
                 function: 'page',
@@ -105,7 +112,6 @@ export default async function page(
 
             break
         }
-
 
         default: {
             frame = await initial(config, state)

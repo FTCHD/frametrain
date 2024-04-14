@@ -5,9 +5,10 @@ import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
 import { notFound } from 'next/navigation'
 
-export const dynamic = 'auto'
+export const dynamic = 'force-dynamic'
 export const dynamicParams = true
 export const runtime = 'edge'
+export const fetchCache = 'force-no-store'
 
 export async function GET(request: Request, { params }: { params: { frameId: string } }) {
     const db = drizzle(getRequestContext().env.DB)
@@ -25,11 +26,11 @@ export async function GET(request: Request, { params }: { params: { frameId: str
     console.log('Handlers list', template.functions)
 
     const { initial } = template.functions
-	
-	const configWithMetadata = Object.assign({}, frame.config, {
-    frameId: frame.id,
-    requiresValidation: template.requiresValidation,
-})
+
+    const configWithMetadata = Object.assign({}, frame.config, {
+        frameId: frame.id,
+        requiresValidation: template.requiresValidation,
+    })
 
     return new Response(await initial(configWithMetadata as any), {
         headers: {

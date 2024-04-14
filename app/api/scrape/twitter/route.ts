@@ -1,5 +1,7 @@
 import { parseWebpage } from '@/lib/scrape'
 
+export const runtime = 'edge'
+
 export async function POST(req: Request) {
     const r = await parseWebpage(await req.text())
 

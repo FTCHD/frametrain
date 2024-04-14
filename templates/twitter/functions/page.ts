@@ -3,10 +3,10 @@ import { dimensionsForRatio } from '@/lib/constants'
 import type { FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/lib/fonts'
 import { buildFramePage } from '@/lib/sdk'
-import satori from 'satori'
 import type { Config, State } from '..'
 import PageView from '../views/Page'
 import initial from './initial'
+import { ImageResponse } from '@vercel/og'
 
 export default async function page(
     body: FrameActionPayload,

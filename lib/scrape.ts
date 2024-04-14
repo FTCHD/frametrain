@@ -1,16 +1,36 @@
 'use server'
 import { Readability } from '@mozilla/readability'
-import { JSDOM } from 'jsdom'
 import { unstable_noStore as noStore } from 'next/cache'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
+import { Parser } from 'htmlparser2';
 
 function htmlToMarkdown(html: string, url: string) {
     noStore()
 
-    const doc = new JSDOM(html, { url })
-
-    const article = new Readability(doc.window.document).parse()
+	const parser = new Parser({
+		onopentag(name, attributes) {
+		  // Handle opening tags if needed
+		},
+		ontext(text) {
+		  // Handle text content if needed
+		},
+		onclosetag(tagname) {
+		  // Handle closing tags if needed
+		},
+	  }, {
+		decodeEntities: true,
+	  });
+	  
+	  parser.write(html);
+	  parser.end();
+	  
+	  
+	const doc = parser.dom
+	
+    const article = new Readability(doc, url).parse()
     // return article!
+	
+	console.log('PARSED', doc)
 
     const content = NodeHtmlMarkdown.translate(article?.content || '', {})
 
