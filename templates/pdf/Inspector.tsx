@@ -1,20 +1,16 @@
 'use client'
-import { Button, Input, Option, Select, Stack, SvgIcon, Typography, styled } from '@mui/joy'
+import { Button } from '@/components/shadcn/Button'
+import { Input } from '@/components/shadcn/Input'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/shadcn/Select'
 import { useEffect, useState } from 'react'
 import type { Config } from '.'
 import getPdfDocument, { createPDFPage, renderPDFToCanvas } from './utils'
-
-const VisuallyHiddenInput = styled('input')`
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  height: 1px;
-  overflow: hidden;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  white-space: nowrap;
-  width: 1px;
-`
 
 export default function Inspector({
     config,
@@ -76,69 +72,56 @@ export default function Inspector({
     }, [responseData])
 
     return (
-        <Stack width={'100%'} height={'100%'} gap={2}>
-            <Stack direction={'column'} gap={2}>
-                <Typography level="h2">Cover</Typography>
-                <Stack direction={'column'} gap={2}>
-                    <Typography level="title-lg">Title</Typography>
+        <div className=" h-full space-y-8 flex flex-col">
+            <div className="w-full h-full space-y-4 flex flex-col">
+                <h1 className="text-2xl font-bold">Cover</h1>
+                <div className="flex flex-col space-y-2">
+                    <h2 className="text-lg font-semibold">Title</h2>
                     <Input
-                        size="lg"
+                        className="py-2 text-lg  w-96"
                         defaultValue={config.title}
                         onChange={(e) => update({ title: e.target.value })}
+                        placeholder="Title"
                     />
-                </Stack>
-                <Stack direction={'column'} gap={2}>
-                    <Typography level="title-lg">Subtitle</Typography>
+                </div>
+                <div className="flex flex-col space-y-2">
+                    <h2 className="text-lg font-semibold">Subtitle</h2>
                     <Input
-                        size="lg"
+                        className="py-2 text-lg  w-96"
                         defaultValue={config.subtitle}
                         onChange={(e) => update({ subtitle: e.target.value })}
+                        placeholder="Subtitle"
                     />
-                </Stack>
-                <Stack direction={'column'} gap={2}>
-                    <Typography level="title-lg">Background Color</Typography>
+                </div>
+                <div className="flex flex-col space-y-2">
+                    <h2 className="text-lg font-semibold">Background Color</h2>
                     <Input
-                        size="lg"
+                        className="py-2 text-lg w-96"
                         defaultValue={config.backgroundColor}
                         onChange={(e) => update({ backgroundColor: e.target.value })}
+                        placeholder="red"
                     />
-                </Stack>
-                <Stack direction={'column'} gap={2}>
-                    <Typography level="title-lg">Text Color</Typography>
+                </div>
+                <div className="flex flex-col space-y-2">
+                    <h2 className="text-lg font-semibold">Text Color</h2>
                     <Input
-                        size="lg"
+                        className="py-2 text-lg  w-96"
                         defaultValue={config.textColor}
                         onChange={(e) => update({ textColor: e.target.value })}
+                        placeholder="blue"
                     />
-                </Stack>
-            </Stack>
-            <Stack direction={'column'} gap={2}>
-                <Typography level="h2">File & Content</Typography>
+                </div>
+            </div>
+            <div className="flex flex-col space-y-4 ">
+                <h2 className="text-2xl font-bold">File & Content</h2>
                 {!file && !responseData.length && (
-                    <Button
-                        component="label"
-                        variant="outlined"
-                        color="neutral"
-                        startDecorator={
-                            <SvgIcon>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                                    />
-                                </svg>
-                            </SvgIcon>
-                        }
+                    <label
+                        htmlFor="uploadFile"
+                        className="flex cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
                     >
                         Upload a file
-                        <VisuallyHiddenInput
+                        <Input
+                            id="uploadFile"
                             accept="application/pdf"
                             type="file"
                             onChange={(e) => {
@@ -146,36 +129,19 @@ export default function Inspector({
                                     setFile(e.target.files?.[0])
                                 }
                             }}
+                            className="sr-only w-96"
                         />
-                    </Button>
+                    </label>
                 )}
                 {(file || responseData.length) && (
-                    <Stack direction={'row'} gap={2}>
-                        <Button
-                            fullWidth={true}
-                            component="label"
-                            variant="outlined"
-                            color="neutral"
-                            startDecorator={
-                                <SvgIcon>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth={1.5}
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                                        />
-                                    </svg>
-                                </SvgIcon>
-                            }
+                    <div className="flex flex-row space-x-4 w-full">
+                        <label
+                            htmlFor="uploadFile"
+                            className="flex w-full cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border text-primary hover:bg-secondary-border"
                         >
-                            Upload another file
-                            <VisuallyHiddenInput
+                            Upload Another file
+                            <Input
+                                id="uploadFile"
                                 accept="application/pdf"
                                 type="file"
                                 onChange={(e) => {
@@ -183,44 +149,45 @@ export default function Inspector({
                                         setFile(e.target.files?.[0])
                                     }
                                 }}
+                                className="sr-only w-80"
                             />
-                        </Button>
+                        </label>
                         <Button
-                            fullWidth={true}
-                            color="danger"
+                            variant="destructive"
                             onClick={() => {
                                 setFile(undefined)
                                 update({ slides: [] })
                             }}
+                            className="w-full"
                         >
                             Remove
                         </Button>
-                    </Stack>
+                    </div>
                 )}
-            </Stack>
-            <Stack direction={'column'} gap={2}>
-                <Typography level="title-lg">Slides</Typography>
-                <Stack direction={'row'} gap={2} flexWrap={'wrap'}>
+            </div>
+            <div className="flex flex-col space-y-4">
+                <h2 className="text-lg font-semibold">Slides</h2>
+                <div className="flex flex-row flex-wrap gap-4">
                     {responseData.map((data, i) => (
                         <img key={i} src={data} width={200} height={200} alt="" />
                     ))}
-                </Stack>
-            </Stack>
-            <Stack direction={'column'} gap={2}>
-                <Typography level="title-lg">Aspect Ratio</Typography>
+                </div>
+            </div>
+            <div className="flex flex-col space-y-4 ">
+                <h2 className="text-lg font-semibold">Aspect Ratio</h2>
                 <Select
-                    placeholder="Aspect Ratio"
-                    size="lg"
                     defaultValue={'1/1'}
-                    variant="outlined"
-                    onChange={(_: React.SyntheticEvent | null, newValue: string | null) =>
-                        update({ aspectRatio: newValue ?? '1/1' })
-                    }
+                    onValueChange={(value) => update({ aspectRatio: value })}
                 >
-                    <Option value={'1/1'}>Square</Option>
-                    <Option value={'1.91/1'}>Wide</Option>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Aspect Ratio" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value={'1/1'}>Square</SelectItem>
+                        <SelectItem value={'1.91/1'}>Wide</SelectItem>
+                    </SelectContent>
                 </Select>
-            </Stack>
-        </Stack>
+            </div>
+        </div>
     )
 }
