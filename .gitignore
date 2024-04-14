@@ -40,3 +40,5 @@ next-env.d.ts
 .dev.vars
 .env*
 !.env.example
+.vscode
+.work
