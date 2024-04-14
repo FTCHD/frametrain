@@ -1,6 +1,5 @@
 
 import { Progress } from '@/components/shadcn/Progress'
-import {} from '@mui/joy'
 
 const FUNNY_MESSAGES = [
     "It's not always #000000 and #FFFFFF",
