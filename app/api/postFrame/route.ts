@@ -1,7 +1,9 @@
 import { getMockFrameRequest } from '@coinbase/onchainkit/frame'
 
 export const dynamic = 'force-dynamic'
+export const dynamicParams = true
 export const runtime = 'edge'
+export const fetchCache = 'force-no-store'
 
 export async function POST(req: Request) {
     const data = (await req.json()) as any
