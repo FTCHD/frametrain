@@ -7,6 +7,7 @@ import { ImageResponse } from '@vercel/og'
 import type { Config, State } from '..'
 import { getLogoForToken, getStreamData, getStreamHistory } from '../utils/actions'
 import HistoryView from '../views/History'
+import TokenView from '../views/Token'
 import initial from './initial'
 
 export default async function page(
@@ -36,7 +37,7 @@ export default async function page(
                 { asset: { ...streamData.asset, logo: tokenLogo } }
             )
 
-            const resp = new ImageResponse(HistoryView(data, history), {
+            const resp = new ImageResponse(TokenView(data), {
                 ...dimensionsForRatio['1.91/1'],
                 fonts: urbanist,
             })
