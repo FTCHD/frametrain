@@ -15,7 +15,9 @@
         "studio": "cross-env DB=$(find .wrangler/state/v3/d1/miniflare-D1DatabaseObject -type f -name '*.sqlite' -print -quit) drizzle-kit studio",
         "db:init": "wrangler d1 execute frametrain --local --file=./db/migrations/0000_little_triathlon.sql",
         "db:generate": "drizzle-kit generate:sqlite",
-        "db:up": "drizzle-kit up:sqlite"
+        "db:up": "drizzle-kit up:sqlite",
+        "tw": "npm run tw:ts-to-js && tailwind-config-viewer -c ./.tw/tailwind.config.js -o -p 3003",
+        "tw:ts-to-js": "tsc tailwind.config.ts --outDir ./.tw"
     },
     "dependencies": {
         "@coinbase/onchainkit": "^0.11.0",
@@ -81,6 +83,8 @@
         "react-hook-form": "^7.51.3",
         "react-hot-toast": "^2.4.1",
         "satori": "^0.10.13",
+        "tailwind-merge": "^2.2.2",
+        "tailwindcss-animate": "^1.0.7",
         "use-debounce": "^10.0.0",
         "usehooks-ts": "^3.0.2",
         "vaul": "^0.9.0",
@@ -100,6 +104,7 @@
         "better-sqlite3": "^9.4.3",
         "cross-env": "^7.0.3",
         "postcss": "^8.4.38",
+        "tailwind-config-viewer": "^2.0.1",
         "tailwindcss": "^3.4.3",
         "typescript": "^5",
         "vercel": "^33.6.1",
