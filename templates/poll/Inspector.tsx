@@ -17,23 +17,25 @@ export default function Inspector({
     const questionInputRef = useRef<HTMLInputElement>(null)
 
     return (
-        <div className="w-full h-full space-y-4">
+        <div className="w-full h-full space-y-8">
             {/* <pre>{JSON.stringify(vote, null, 2)}</pre> */}
 
-            <div className="flex flex-col space-y-2">
-                <h2 className="text-lg font-bold">Question</h2>
+            <div className="flex flex-col space-y-4">
+                <h2 className="text-lg font-semibold">Question</h2>
                 <Input
                     placeholder="The poll question"
                     defaultValue={config.question}
                     onChange={(e) => update({ question: e.target.value })}
-                    className=""
+                    className=" py-2 text-lg"
                 />
             </div>
 
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-4">
                 {options?.map((option, index) => (
                     <div className="flex flex-row justify-between items-center ">
-                        <h2 className="text-base p-2 ">{option.displayLabel}</h2>
+                        <h2 className="text-lg font-semibold p-2 bg-secondary rounded-md">
+                            {option.displayLabel}
+                        </h2>
                         <Button
                             variant="ghost"
                             size="sm"
@@ -54,9 +56,17 @@ export default function Inspector({
             {(!options || options.length < 4) && (
                 <div className="flex flex-col space-y-4">
                     <div className="flex flex-col space-y-4">
-                        <h1 className="text-lg font-bold">Voting Options</h1>
-                        <Input placeholder="Results Page Label" ref={displayLabelInputRef} />
-                        <Input placeholder="Button Label" ref={buttonLabelInputRef} />
+                        <h1 className="text-lg font-semibold">Voting Options</h1>
+                        <Input
+                            className="text-lg"
+                            placeholder="Results Page Label"
+                            ref={displayLabelInputRef}
+                        />
+                        <Input
+                            className="text-lg"
+                            placeholder="Button Label"
+                            ref={buttonLabelInputRef}
+                        />
                     </div>
                     <Button
                         onClick={() => {
@@ -81,13 +91,20 @@ export default function Inspector({
                             displayLabelInputRef.current.value = ''
                             buttonLabelInputRef.current.value = ''
                         }}
+                        className="w-full bg-border hover:bg-secondary-border text-primary"
                     >
                         Add Option
                     </Button>
                 </div>
             )}
 
-            <Button onClick={() => update({ options: [] })}>Delete All</Button>
+            <Button
+                className="w-full  text-primary"
+                onClick={() => update({ options: [] })}
+                variant="destructive"
+            >
+                Delete All
+            </Button>
         </div>
     )
 }
