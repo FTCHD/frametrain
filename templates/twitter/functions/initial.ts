@@ -2,17 +2,21 @@
 import { dimensionsForRatio } from '@/lib/constants'
 import { loadGoogleFontAllVariants } from '@/lib/fonts'
 import { buildFramePage } from '@/lib/sdk'
-import satori from 'satori'
 import type { Config, State } from '..'
 import CoverView from '../views/Cover'
+import { ImageResponse } from '@vercel/og'
 
 export default async function initial(config: Config, state: State) {
     const roboto = await loadGoogleFontAllVariants('Roboto')
-
-    const reactSvg = await satori(CoverView({ title: config.title, profile: config.profile }), {
+	
+    const r = new ImageResponse(CoverView({ title: config.title, profile: config.profile }), {
         ...dimensionsForRatio['1.91/1'],
         fonts: roboto,
     })
+
+    // get image data from vercel/og ImageResponse
+    const bufferData = Buffer.from(await r.arrayBuffer())
+    const imageData = bufferData.toString('base64')
 
     return buildFramePage({
         buttons: [
@@ -20,7 +24,7 @@ export default async function initial(config: Config, state: State) {
                 label: 'Begin',
             },
         ],
-        image: 'data:image/svg+xml;base64,' + Buffer.from(reactSvg).toString('base64'),
+        image: 'data:image/png;base64,' + imageData,
         config: config,
         aspectRatio: '1.91:1',
         function: 'page',

@@ -1,30 +1,28 @@
 'use server'
+import { dimensionsForRatio } from '@/lib/constants'
+import { loadGoogleFontAllVariants } from '@/lib/fonts'
 import { buildFramePage } from '@/lib/sdk'
-import satori from 'satori'
+import { ImageResponse } from '@vercel/og'
 import type { Config, State } from '..'
 import CoverView from '../views/Cover'
 
 export default async function initial(config: Config, state: State) {
-    const roboto = await fetch(
-        'https://github.com/openmaptiles/fonts/raw/master/roboto/Roboto-Medium.ttf'
-    ).then((res) => res.arrayBuffer())
+    const roboto = await loadGoogleFontAllVariants('Roboto')
 
-    const reactSvg = await satori(CoverView(), {
-        height: 400,
-        width: 600,
-        fonts: [
-            {
-                name: 'Roboto',
-                data: roboto,
-            },
-        ],
+    const r = new ImageResponse(CoverView(), {
+        ...dimensionsForRatio['1/1'],
+        fonts: roboto,
     })
+
+    // get image data from vercel/og ImageResponse
+    const bufferData = Buffer.from(await r.arrayBuffer())
+    const imageData = bufferData.toString('base64')
 
     return buildFramePage({
         buttons: [],
-        image: 'data:image/svg+xml;base64,' + Buffer.from(reactSvg).toString('base64'),
+        image: 'data:image/png;base64,' + imageData,
         config: config,
-        aspectRatio: '1.91:1',
+        aspectRatio: '1:1',
         function: 'vote',
     })
 }

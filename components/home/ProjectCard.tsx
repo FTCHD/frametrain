@@ -22,7 +22,7 @@ export default function ProjectCard({
         >
             <AspectRatio ratio="1" sx={{ width: 90 }}>
                 <NextImage
-                    src={`data:image/svg+xml;base64,${preview}`}
+                    src={`data:image/png;base64,${preview}`}
                     alt={name}
                     fill={true}
                     objectFit="cover"

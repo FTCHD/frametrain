@@ -3,10 +3,10 @@ import { dimensionsForRatio } from '@/lib/constants'
 import type { FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/lib/fonts'
 import { buildFramePage } from '@/lib/sdk'
-import satori from 'satori'
 import type { Config, State } from '..'
 import PageView from '../views/Page'
 import initial from './initial'
+import { ImageResponse } from '@vercel/og'
 
 export default async function page(
     body: FrameActionPayload,
@@ -52,20 +52,22 @@ export default async function page(
 
         const pageData = config.tweets[nextPage - 1]
 
-        const r = await satori(
-            PageView({
-                profile: config.profile,
-                content: pageData.content,
-            }),
-            {
-                ...dimensionsForRatio['1.91/1'],
-                fonts: roboto,
-            }
-        )
+		
+		const r = new ImageResponse( PageView({
+			profile: config.profile,
+			content: pageData.content,
+		}), {
+			...dimensionsForRatio['1.91/1'],
+			fonts: roboto,
+		})
+	
+		// get image data from vercel/og ImageResponse
+		const bufferData = Buffer.from(await r.arrayBuffer())
+		const imageData = bufferData.toString('base64')
 
         frame = await buildFramePage({
             buttons: buttons,
-            image: 'data:image/svg+xml;base64,' + Buffer.from(r).toString('base64'),
+            image: 'data:image/png;base64,' + imageData,
             aspectRatio: '1.91:1',
             config: config,
             function: 'page',
