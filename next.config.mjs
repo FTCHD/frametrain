@@ -20,6 +20,14 @@ const nextConfig = {
         // your project has type errors.
         ignoreBuildErrors: true,
     },
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'cdn.frametra.in',
+            },
+        ],
+    },
 }
 
 export default nextConfig;
