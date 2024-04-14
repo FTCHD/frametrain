@@ -1,5 +1,5 @@
 'use client'
-import { Button, Stack } from '@mui/joy'
+import { Button } from '@/components/shadcn/Button'
 import type { Config } from '.'
 
 
@@ -8,9 +8,15 @@ export default function Inspector({
     update,
 }: { config: Config; update: (props: any) => void }) {
     return (
-        <Stack width={'100%'} height={'100%'} gap={5}>
-            Add Images
-            <Button onClick={() => update({ vote: { buttons: [] } })}>Delete All</Button>
-        </Stack>
+        <div className="w-full h-full space-y-4">
+            <h2 className="text-base">Add Images</h2>
+            <Button
+                variant="destructive"
+                className="w-full "
+                onClick={() => update({ vote: { buttons: [] } })}
+            >
+                Delete All
+            </Button>
+        </div>
     )
 }
