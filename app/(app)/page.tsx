@@ -43,7 +43,7 @@ export default function Home() {
                         </div>
                     ) : (
                         <>
-                            <div className="flex flex-col space-y-8 md:pl-8 p-4 w-full">
+                            <div className="flex flex-col space-y-8 md:pl-4 p-4 w-full">
                                 <h1 className="text-3xl font-semibold">🖼️ Frames</h1>
                                 {frames.length ? (
                                     <div className="flex flex-wrap  justify-start gap-4">
@@ -59,7 +59,7 @@ export default function Home() {
                                 )}
                             </div>
 
-                            <div className="flex flex-col space-y-8 md:pl-8 p-4 ">
+                            <div className="flex flex-col space-y-8 md:pl-4 p-4 ">
                                 <h1 className="text-3xl font-semibold">💎 Templates</h1>
                                 <div className="flex flex-col items-start  md:flex-row gap-4 flex-wrap ">
                                     {Object.keys(templates).map((id) => (
