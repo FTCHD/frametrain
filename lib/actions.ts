@@ -7,7 +7,7 @@ import { type InferInsertModel, and, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
 import { revalidatePath } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { uploadImage } from './upload'
+import { uploadPreview } from './upload'
 
 export async function getFrameList() {
     const sesh = await auth()
@@ -114,11 +114,9 @@ export async function updateFramePreview(id: string, preview: string) {
     let previewImage = preview.split('data:image/png;base64,')[1]
     previewImage = previewImage.split('"')[0]
 
-    await uploadImage({
+    await uploadPreview({
         frameId: id,
         base64String: previewImage,
-        title: 'preview',
-        contentType: 'image/png',
     })
 }
 
