@@ -4,7 +4,7 @@ import { Button } from '@/components/shadcn/Button'
 import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
 import { Input } from '@/components/shadcn/Input'
 import { Textarea } from '@/components/shadcn/Textarea'
-import scrape from '@/lib/scrape'
+import { scrapeTwitterPost } from '@/lib/scrape'
 import { useEffect, useRef, useState } from 'react'
 import { Trash } from 'react-feather'
 import type { Config } from '.'
@@ -99,7 +99,7 @@ export default function Inspector({
                                         return
                                     }
 
-                                    const tweet = await scrape.twitter.tweet(tweetId)
+                                    const tweet = await scrapeTwitterPost(tweetId)
 
                                     const newTweets = [
                                         ...(config?.tweets || []),

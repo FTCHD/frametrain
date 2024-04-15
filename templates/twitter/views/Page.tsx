@@ -35,7 +35,7 @@ export default function PageView({ content, profile }: { content: string; profil
                 > */}
                 {/* <Markdown>{'# Hi, **Pluto**!'}</Markdown> */}
                 {/* </span> */}
-                CONTENT
+                {content}
             </div>
 
             <div
