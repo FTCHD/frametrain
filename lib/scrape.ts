@@ -1,6 +1,6 @@
 'use server'
 
-async function twitterUser(username: string): Promise<TWUser> {
+export async function scrapeTwitterUser(username: string): Promise<TWUser> {
     const res = await fetch(`${process.env.SCRAPER_URL}/twitter/profile/${username}`, {
         cache: 'no-store',
         headers: {
@@ -13,7 +13,7 @@ async function twitterUser(username: string): Promise<TWUser> {
     return res as TWUser
 }
 
-async function twitterTweet(id: string): Promise<TWTweet> {
+export async function scrapeTwitterPost(id: string): Promise<TWTweet> {
     const res = await fetch(`${process.env.SCRAPER_URL}/twitter/tweet/${id}`, {
         cache: 'no-store',
         headers: {
@@ -26,7 +26,7 @@ async function twitterTweet(id: string): Promise<TWTweet> {
     return res as TWTweet
 }
 
-async function scrape({
+export async function scrape({
     url,
     readability,
     markdown,
@@ -96,10 +96,10 @@ interface TWUser {
     profileImage: string
 }
 
-export default {
-    twitter: {
-        profile: twitterUser,
-        tweet: twitterTweet,
-    },
-    scrape,
-}
+// export default {
+//     twitter: {
+//         profile: twitterUser,
+//         tweet: twitterTweet,
+//     },
+//     scrape,
+// }
