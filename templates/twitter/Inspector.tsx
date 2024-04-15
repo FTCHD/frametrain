@@ -4,6 +4,7 @@ import { Button } from '@/components/shadcn/Button'
 import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
 import { Input } from '@/components/shadcn/Input'
 import { Textarea } from '@/components/shadcn/Textarea'
+import scrape from '@/lib/scrape'
 import { useEffect, useRef, useState } from 'react'
 import { Trash } from 'react-feather'
 import type { Config } from '.'
@@ -86,29 +87,25 @@ export default function Inspector({
                                 onClick={async () => {
                                     if (!tweetInputRef.current?.value) return
 
-                                    if (
-                                        config?.tweets?.find(
-                                            (t: any) => t.link === tweetInputRef.current?.value
-                                        )
-                                    ) {
-                                        alert('Already exists')
+                                    setLoading(true)
+
+                                    const tweetId = tweetInputRef.current.value
+                                        .split('/')
+                                        .pop()
+                                        ?.split('?')[0]
+
+                                    if (!tweetId) {
+                                        setLoading(false)
                                         return
                                     }
 
-                                    setLoading(true)
-
-                                    const tweetContent = await fetch('/api/scrape/twitter', {
-                                        method: 'POST',
-                                        body: tweetInputRef.current.value,
-                                    })
-                                        .then((res) => res.json())
-                                        .catch(console.error)
+                                    const tweet = await scrape.twitter.tweet(tweetId)
 
                                     const newTweets = [
                                         ...(config?.tweets || []),
                                         {
                                             link: tweetInputRef.current.value,
-                                            content: (tweetContent as any).content.trim(),
+                                            content: tweet.fullText,
                                         },
                                     ]
 
