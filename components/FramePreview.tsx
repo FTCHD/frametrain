@@ -16,7 +16,10 @@ import {
     DialogHeader,
     DialogTitle,
 } from './shadcn/Dialog'
-import { Input } from './shadcn/Input'
+
+const borderDefault = '#4c3a4ec0'
+const borderFaint = '#4c3a4e80'
+const textFaint = '#9fa3af'
 
 export function FramePreview() {
     const [results] = useAtom(frameResultsAtom)
@@ -32,17 +35,22 @@ export function FramePreview() {
 
 function PlaceholderFrame() {
     return (
-        <div className="h-full w-full flex justify-center items-center">
-            <div className="w-8 h-8 border-4 border-blue-500 rounded-full border-r-transparent animate-spin" />
+        <div className="flex justify-center items-center w-full h-full">
+            <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
         </div>
     )
 }
 
 function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
+	const aspectRatioStyle =
+    metadata.image.aspectRatio === '1:1' ? { aspectRatio: '1/1' } : { aspectRatio: '1.91/1' }
+	
     const [inputText, setInputText] = useState('')
     const { image, input, buttons } = metadata
-	const imageAspectRatioClassname =
-    metadata.image.aspectRatio === '1:1' ? 'aspect-square' : 'aspect-[1.91/1]'
+
+    const [loadingContainer, setLoadingContainer] = useState(false)
+
+   
 
     const [modalOpen, setModalOpen] = useState(false)
     const [modalFn, setModalFn] = useState<any>()
@@ -57,26 +65,44 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
         []
     )
 
+    const toggleLoadingContainer = useCallback(() => {
+        setLoadingContainer((prev) => !prev)
+    }, [])
+
     return (
         <>
-            <div className="h-full w-full rounded-xl ">
-                <div className="flex flex-col h-full">
-                    <img
-                        className={`w-full rounded-t-xl ${imageAspectRatioClassname} object-cover`}
-                        src={image.src}
-                        alt=""
-                    />
+            <div className="flex flex-col justify-center relative h-full bg-transparent p-[1.5px]">
+                <div
+                    className="relative overflow-hidden border-2 bg-[#2A2432] border-[#4c3a4e80]"
+                    style={{ borderRadius: '0.48rem' }}
+                >
+                    <div
+                        className="relative border-0 border-b cursor-pointer border-[#4c3a4e80] w-full md:w-[min(calc(100dvw-45dvw),calc(100dvh-30dvh))]"
+                        style={{
+                            ...aspectRatioStyle,
+                            // width: 'min(calc(100dvw - 45dvw), calc(100dvh - 30dvh))',
+                        }}
+                    >
+                        <img
+                            className={'object-cover absolute inset-0 w-full h-full'}
+                            src={image.src}
+                            alt=""
+                            style={{ ...aspectRatioStyle }}
+                        />
+                    </div>
 
-                    <div className="flex flex-col py-1 px-2 gap-1.5 h-full">
+                    <div className="space-y-2 rounded-lg rounded-t-none border border-t-0 px-4 py-2 border-[#4c3a4e80] bg-[#2A2432]">
                         {!!input && (
-                            <Input
-                                type="text"
-                                className="border bg-primary text-primary-foreground"
-                                placeholder={input.text}
-                                onChange={handleInputChange}
-                            />
+                            <div>
+                                <input
+                                    type="text"
+                                    className="p-2 w-full text-sm rounded border bg-input text-[#fff] px-[12px] py-[10px] border-[#4c3a4e80] bg-[#17101f]"
+                                    placeholder={input.text}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         )}
-                        <div className="flex flex-row gap-1">
+                        <div className="flex flex-row w-full items-center gap-[10px] ">
                             {buttons?.map((button, index) =>
                                 button ? (
                                     <FrameButton
@@ -86,6 +112,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                                         button={button}
                                         state={metadata.state}
                                         handleOpenModal={handleOpenModal}
+                                        toggleContainer={toggleLoadingContainer}
                                     >
                                         {button.label}
                                     </FrameButton>
@@ -93,6 +120,11 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                             )}
                         </div>
                     </div>
+
+                    <div
+                        className="pointer-events-none absolute inset-0 overflow-hidden bg-white/30 backdrop-blur-[80px]"
+                        style={{ opacity: loadingContainer ? 1 : 0 }}
+                    />
                 </div>
             </div>
 
@@ -111,6 +143,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                                 modalFn()
                                 setModalOpen(false)
                             }}
+                            variant={'destructive'}
                         >
                             I understand
                         </Button>
@@ -131,6 +164,7 @@ function FrameButton({
     inputText,
     state,
     handleOpenModal,
+    toggleContainer,
 }: PropsWithChildren<{
     //! Changed from NonNullable<FrameMetadataWithImageObject['buttons']>[0]
     button: FrameButtonMetadata
@@ -138,6 +172,7 @@ function FrameButton({
     inputText: string
     state: any
     handleOpenModal: (fn: any) => void
+    toggleContainer: () => void
 }>) {
     const [isLoading, setIsLoading] = useState(false)
     const [_, setFrameResults] = useAtom(frameResultsAtom)
@@ -171,12 +206,14 @@ function FrameButton({
     const handleClick = useCallback(async () => {
         if (action === 'post' || action === 'post_redirect') {
             // TODO: collect user options (follow, like, etc.) and include
+            toggleContainer()
             setIsLoading(true)
             if (action === 'post_redirect') {
                 handleOpenModal(() => confirmAction)
             } else {
-                confirmAction()
+                await confirmAction()
             }
+            toggleContainer()
             setIsLoading(false)
             return
         }
@@ -187,31 +224,29 @@ function FrameButton({
         }
 
         // TODO: implement other actions (mint, etc.)
-    }, [action, target, confirmAction, handleOpenModal])
+    }, [action, target, confirmAction, handleOpenModal, toggleContainer])
 
     return (
-        <Button
-            className="border-button flex w-[45%] grow items-center justify-center gap-1 rounded-lg border bg-white px-4 py-2 text-black"
+        <button
+            className="rounded-lg font-normal disabled:opacity-50 border border-[#4c3a4ec0] px-4 py-2 text-sm flex h-10 flex-row items-center justify-center  bg-[#ffffff1a] hover:bg-[#ffffff1a] w-full"
             type="button"
             onClick={handleClick}
             disabled={isLoading || button?.action === 'mint'}
         >
-            <span className="block max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap">
-                {children}
-            </span>
+            <span className="items-center font-normal text-white line-clamp-1">{children}</span>
             {buttonIcon({ action })}
-        </Button>
+        </button>
     )
 }
 
 const buttonIcon = ({ action }: { action?: string }) => {
     switch (action) {
         case 'link':
-            return <ExternalLink size={14} />
+            return <ExternalLink size={14} color="#9fa3af" className="ml-1" />
         case 'post_redirect':
-            return <Delete size={14} />
+            return <Delete size={14} color="#9fa3af" className="ml-1" />
         case 'mint':
-            return <PlusCircle size={14} />
+            return <PlusCircle size={14} color="#9fa3af" className="ml-1" />
         default:
             return null
     }
