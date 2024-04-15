@@ -22,5 +22,5 @@ export default {
     initialState: {} as State,
     initialConfig: {} as Config,
     cover,
-    requiresValidation: true,
+    requiresValidation: false,
 } satisfies BaseTemplate
