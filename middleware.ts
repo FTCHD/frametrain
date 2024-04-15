@@ -1,5 +1,33 @@
-export { auth as middleware } from '@/auth'
+import { NextResponse } from 'next/server'
+import { auth } from './auth'
 
-export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-}
+const publicRoutesRegex = [
+    '^/$',
+    '/f/(.*)',
+    '/api/(.*)',
+    '/_next/(.*)',
+    '/favicon.ico',
+    '/static/(.*)',
+    '/_next/image/(.*)',
+    '/sitemap.xml',
+    '/robots.txt',
+    '/dots.svg',
+    '/pdf.worker.mjs',
+]
+
+export default auth((req) => {
+    const pathname = req.nextUrl.pathname
+
+    if (publicRoutesRegex.some((route) => pathname.match(route))) {
+        return NextResponse.next()
+    }
+
+    console.log('PRIVATE', pathname)
+    console.log('REQ', req.auth)
+
+    if (!req.auth) {
+        console.log('NO AUTH')
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_HOST}`)
+    }
+})
+

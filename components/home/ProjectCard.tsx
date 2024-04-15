@@ -4,8 +4,8 @@ import NextLink from 'next/link'
 
 export default function ProjectCard({
     frame,
-}: { frame: { id: string; name: string; preview: string; currentMonthCalls: number } }) {
-    const { id, name, preview, currentMonthCalls } = frame
+}: { frame: { id: string; name: string; currentMonthCalls: number } }) {
+    const { id, name, currentMonthCalls } = frame
     return (
         <NextLink
             href={`/frame/${id}`}
@@ -15,7 +15,7 @@ export default function ProjectCard({
         >
             <div className="flex flex-row gap-5 justify-center w-full h-full">
                 <NextImage
-                    src={`data:image/png;base64,${preview}`}
+                    src={`https://cdn.frametra.in/frames/${id}/preview.png`}
                     alt={name}
                     width={90}
                     height={90}
