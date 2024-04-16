@@ -38,8 +38,6 @@ At the end of the month, costs are subtracted, the number of calls are added to 
 
 This part is still a WIP, and the platform has to run for a bit for us to collect useful data and make further decisions on the exact mechanism.
 
-Being awarded a prize a the ETH Bucharest hackathon means the reward will be further given away as incentives for template developers. 
-
 # Included APIs
 
 - `validate`
