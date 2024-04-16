@@ -9,7 +9,6 @@ import '@farcaster/auth-kit/styles.css'
 import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react'
 import { useCallback } from 'react'
 import { LogOut } from 'react-feather'
-import { Button } from '../shadcn/Button'
 
 export default function AccountButton() {
     const sesh = useSession()
@@ -35,9 +34,11 @@ export default function AccountButton() {
     return (
         <AuthKitProvider>
             {isAuthenticated || sesh?.status === 'authenticated' ? (
-                <Button variant="outline" onClick={() => signOut()}>
-                    <LogOut size={16} />
-                </Button>
+                <LogOut
+                    size={16}
+                    onClick={() => signOut()}
+                    className="cursor-pointer stroke-white/40"
+                />
             ) : (
                 <SignInButton
                     nonce={getNonce}

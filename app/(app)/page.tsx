@@ -31,22 +31,22 @@ export default function Home() {
     }, [sesh])
 
     return (
-        <div className="flex flex-col  h-full w-full">
+        <div className="flex flex-col p-5 w-full h-full">
             <Header />
-            <div className="flex-grow flex items-center justify-center">
+            <div className="flex flex-grow justify-center items-center">
                 <div className="flex flex-col w-full">
                     {sesh.status !== 'authenticated' ? (
-                        <div className="flex flex-col justify-center items-center h-full space-y-4">
+                        <div className="flex flex-col justify-center items-center space-y-4 h-full">
                             <h1 className="text-4xl font-bold">Welcome to Frametrain!</h1>
-                            <h1 className="text-xl ">Sign in with Farcaster to get started.</h1>
+                            <h1 className="text-xl">Sign in with Farcaster to get started.</h1>
                             <AccountButton />
                         </div>
                     ) : (
                         <>
-                            <div className="flex flex-col space-y-8 md:pl-4 p-4 w-full">
+                            <div className="flex flex-col p-4 space-y-8 w-full md:pl-4">
                                 <h1 className="text-3xl font-semibold">🖼️ Frames</h1>
                                 {frames.length ? (
-                                    <div className="flex flex-wrap  justify-start gap-4">
+                                    <div className="flex flex-wrap gap-4 justify-start">
                                         {frames.map((frame) => (
                                             <ProjectCard key={frame.id} frame={frame as any} />
                                         ))}
@@ -59,9 +59,9 @@ export default function Home() {
                                 )}
                             </div>
 
-                            <div className="flex flex-col space-y-8 md:pl-4 p-4 ">
+                            <div className="flex flex-col p-4 space-y-8 md:pl-4">
                                 <h1 className="text-3xl font-semibold">💎 Templates</h1>
-                                <div className="flex flex-col items-start  md:flex-row gap-4 flex-wrap ">
+                                <div className="flex flex-col flex-wrap gap-4 items-start md:flex-row">
                                     {Object.keys(templates).map((id) => (
                                         <TemplateCard
                                             key={id}

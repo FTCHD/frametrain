@@ -7,8 +7,8 @@ export default function Header() {
     const sesh = useSession()
 
     return (
-        <section className="flex flex-row px-4 py-2 justify-between ">
-            <NextLink href="/" className="text-3xl font-bold">
+        <section className="flex flex-row justify-between items-center px-4 py-2">
+            <NextLink href="/" className="text-5xl font-bold">
                 FrameTrain
             </NextLink>
             {sesh.status === 'authenticated' && <AccountButton />}
