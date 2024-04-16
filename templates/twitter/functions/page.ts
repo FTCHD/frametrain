@@ -14,8 +14,6 @@ export default async function page(
     state: State,
     params: any
 ) {
-    console.log('PAGE HANDLER', body, config, state, params)
-
     const nextPage =
         params?.currentPage !== undefined
             ? body.untrustedData.buttonIndex === 1
@@ -50,22 +48,32 @@ export default async function page(
     if (body.untrustedData.buttonIndex === 1 && nextPage === 0) {
         frame = await initial(config, state)
     } else {
+        const tweet = config.tweets[nextPage - 1]
+
+        const fonts = []
+
         const roboto = await loadGoogleFontAllVariants('Roboto')
+        fonts.push(...roboto)
 
-        const pageData = config.tweets[nextPage - 1]
+        if (tweet?.fontFamily) {
+            const font = await loadGoogleFontAllVariants(tweet.fontFamily)
+            fonts.push(...font)
+        }
 
-		
-		const r = new ImageResponse( PageView({
-			profile: config.profile,
-			content: pageData.content,
-		}), {
-			...dimensionsForRatio['1.91/1'],
-			fonts: roboto,
-		})
-	
-		// get image data from vercel/og ImageResponse
-		const bufferData = Buffer.from(await r.arrayBuffer())
-		const imageData = bufferData.toString('base64')
+        const r = new ImageResponse(
+            PageView({
+                profile: config.profile,
+                ...tweet,
+            }),
+            {
+                ...dimensionsForRatio['1.91/1'],
+                fonts: fonts,
+            }
+        )
+
+        // get image data from vercel/og ImageResponse
+        const bufferData = Buffer.from(await r.arrayBuffer())
+        const imageData = bufferData.toString('base64')
 
         frame = await buildFramePage({
             buttons: buttons,

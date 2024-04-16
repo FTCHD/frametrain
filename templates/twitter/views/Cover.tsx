@@ -1,10 +1,22 @@
-
 export default function CoverView(config: {
-    title: string
+    title: Record<string, string>
     profile: string
-    rightText?: string
+    bottom: Record<string, string>
+    background?: string
 }) {
-    const { title, profile, rightText } = config
+    const { title, profile, bottom, background } = config
+
+    const backgroundProp = {}
+
+    if (background) {
+        if (background?.startsWith('#')) {
+            backgroundProp['backgroundColor'] = background
+        } else {
+            backgroundProp['backgroundImage'] = background
+        }
+    } else {
+        backgroundProp['backgroundColor'] = '#0f0c29'
+    }
 
     return (
         <div
@@ -15,23 +27,23 @@ export default function CoverView(config: {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 // alignItems: 'center',
-                // backgroundImage: 'linear-gradient(to right, #0f0c29, #302b63, #24243e)',
-                backgroundColor: '#0f0c29',
                 padding: '40px',
+                ...backgroundProp,
             }}
         >
             <span
                 style={{
                     width: '100%',
-                    height: '70%',
-                    fontFamily: 'Roboto',
-                    color: 'white',
+                    height: '80%',
+                    fontFamily: title?.fontFamily || 'Roboto',
+                    color: title?.color || 'white',
                     fontSize: '7rem',
                     overflow: 'hidden',
-                    fontWeight: 300,
+                    fontWeight: title?.fontWeight || '300',
+                    paddingRight: '20px',
                 }}
             >
-                {title}
+                {title?.text}
             </span>
             <div
                 style={{
@@ -57,7 +69,17 @@ export default function CoverView(config: {
                     />
                     {profile}
                 </div>
-                {rightText}
+                {!!bottom?.text && (
+                    <span
+                        style={{
+                            fontFamily: 'Roboto',
+                            fontWeight: '500',
+                            color: bottom?.color || 'white',
+                        }}
+                    >
+                        {bottom.text}
+                    </span>
+                )}
             </div>
         </div>
     )

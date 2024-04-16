@@ -1,5 +1,9 @@
 'use client'
 
+import { ColorPicker } from '@/components/inspector/ColorPicker'
+import { FontFamilyPicker } from '@/components/inspector/FontFamilyPicker'
+import { FontStylePicker } from '@/components/inspector/FontStylePicker'
+import { FontWeightPicker } from '@/components/inspector/FontWeightPicker'
 import { Button } from '@/components/shadcn/Button'
 import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
 import { Input } from '@/components/shadcn/Input'
@@ -24,15 +28,20 @@ export default function Inspector({
 
     const profileInputRef = useRef<HTMLInputElement>(null)
     const titleInputRef = useRef<HTMLInputElement>(null)
-    const rightTextInputRef = useRef<HTMLInputElement>(null)
+    const bottomTextInputRef = useRef<HTMLInputElement>(null)
+
+    const [coverBg, setCoverBg] = useState<string>(config.background || '#0f0c29')
+
+    const [titleTextColor, setTitleTextColor] = useState<string>(config.title?.color || 'white')
+    const [bottomTextColor, setBottomTextColor] = useState<string>(config.bottom?.color || 'white')
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <>
     useEffect(() => {
         if (!titleInputRef.current) return
         if (titleInputRef.current.value) return
-        if (!config.title) return
+        if (!config.title?.text) return
 
-        titleInputRef.current.value = config.title
+        titleInputRef.current.value = config.title.text
     }, [titleInputRef.current])
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <>
@@ -46,12 +55,12 @@ export default function Inspector({
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <>
     useEffect(() => {
-        if (!rightTextInputRef.current) return
-        if (rightTextInputRef.current.value) return
-        if (!config.rightText) return
+        if (!bottomTextInputRef.current) return
+        if (bottomTextInputRef.current.value) return
+        if (!config.bottom?.text) return
 
-        rightTextInputRef.current.value = config.rightText
-    }, [rightTextInputRef.current])
+        bottomTextInputRef.current.value = config.bottom.text
+    }, [bottomTextInputRef.current])
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
@@ -64,25 +73,126 @@ export default function Inspector({
                 <div className="flex flex-col gap-4 w-full">
                     <h2 className="text-2xl font-bold">Cover</h2>
                     <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg">Title</h2>
+                        <h2 className="text-lg">Title Text</h2>
                         <Input
                             ref={titleInputRef}
-                            onChange={(e) => update({ title: e.target.value })}
+                            onChange={(e) =>
+                                update({
+                                    title: {
+                                        ...config.title,
+                                        text: e.target.value,
+                                    },
+                                })
+                            }
                             size={70}
                         />
                     </div>
                     <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg">Profile Username</h2>
+                        <h2 className="text-lg">Title Font</h2>
+                        <FontFamilyPicker
+                            onSelect={(font) => {
+                                update({
+                                    title: {
+                                        ...config.title,
+                                        fontFamily: font,
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Title Color</h2>
+                        <ColorPicker
+                            enabledPickers={['solid']}
+                            className="w-full"
+                            background={titleTextColor}
+                            setBackground={(value: string) => {
+                                setTitleTextColor(value)
+                                update({
+                                    title: {
+                                        ...config.title,
+                                        color: value,
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Title Weight</h2>
+                        <FontWeightPicker
+                            onSelect={(weight) =>
+                                update({
+                                    title: {
+                                        ...config.title,
+                                        fontWeight: weight,
+                                    },
+                                })
+                            }
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Title Style</h2>
+
+                        <FontStylePicker
+                            defaultValue={config.title.fontStyle}
+                            onSelect={(style) =>
+                                update({
+                                    title: {
+                                        ...config.title,
+                                        fontStyle: style,
+                                    },
+                                })
+                            }
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Bottom Handle</h2>
                         <Input
+                            placeholder="No @ or https:// prefix"
                             ref={profileInputRef}
                             onChange={(e) => update({ profile: e.target.value })}
                         />
                     </div>
                     <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg">Right Side Text</h2>
+                        <h2 className="text-lg">Bottom Text</h2>
                         <Input
-                            ref={rightTextInputRef}
-                            onChange={(e) => update({ rightText: e.target.value })}
+                            ref={bottomTextInputRef}
+                            onChange={(e) =>
+                                update({
+                                    bottom: {
+                                        ...config.bottom,
+                                        text: e.target.value,
+                                    },
+                                })
+                            }
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Bottom Text Color</h2>
+                        <ColorPicker
+                            enabledPickers={['solid']}
+                            className="w-full"
+                            background={bottomTextColor}
+                            setBackground={(value: string) => {
+                                setBottomTextColor(value)
+                                update({
+                                    bottom: {
+                                        ...config.bottom,
+                                        color: value,
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Background</h2>
+                        <ColorPicker
+                            className="w-full"
+                            background={coverBg}
+                            setBackground={(e) => {
+                                setCoverBg(e)
+                                update({ background: e })
+                            }}
                         />
                     </div>
                 </div>
@@ -147,11 +257,77 @@ export default function Inspector({
                                 <span className="flex flex-col justify-center items-center font-bold text-black bg-white rounded-full min-w-12 min-h-12">
                                     # {index}
                                 </span>
-                                <span className="text-md">
+                                {/* <span className="text-md">
                                     {tweet.content.substring(0, 25) + '...'}
-                                </span>
+                                </span> */}
+
+                                <Input
+                                    defaultValue={tweet.fontSize || '14px'}
+                                    onChange={(e) => {
+                                        const newTweets = config?.tweets?.map((t: any) =>
+                                            t.link === tweet.link
+                                                ? {
+                                                      ...t,
+                                                      fontSize: e.target.value,
+                                                  }
+                                                : t
+                                        )
+
+                                        update({ tweets: newTweets })
+                                    }}
+                                />
+
+                                <FontFamilyPicker
+                                    defaultValue={tweet.fontFamily}
+                                    onSelect={(font) => {
+                                        const newTweets = config?.tweets?.map((t: any) =>
+                                            t.link === tweet.link
+                                                ? {
+                                                      ...t,
+                                                      fontFamily: font,
+                                                  }
+                                                : t
+                                        )
+
+                                        update({ tweets: newTweets })
+                                    }}
+                                />
                             </div>
                             <div className="flex flex-row gap-2">
+                                <ColorPicker
+                                    enabledPickers={['solid']}
+                                    className="w-20"
+                                    background={tweet.color || 'white'}
+                                    setBackground={(value: string) => {
+                                        const newTweets = config?.tweets?.map((t: any) =>
+                                            t.link === tweet.link
+                                                ? {
+                                                      ...t,
+                                                      color: value,
+                                                  }
+                                                : t
+                                        )
+
+                                        update({ tweets: newTweets })
+                                    }}
+                                />
+                                <ColorPicker
+                                    enabledPickers={['solid', 'gradient', 'image']}
+                                    className="w-20"
+                                    background={tweet.background || '#0f0c29'}
+                                    setBackground={(value: string) => {
+                                        const newTweets = config?.tweets?.map((t: any) =>
+                                            t.link === tweet.link
+                                                ? {
+                                                      ...t,
+                                                      background: value,
+                                                  }
+                                                : t
+                                        )
+
+                                        update({ tweets: newTweets })
+                                    }}
+                                />
                                 <Button
                                     onClick={() => {
                                         setCurrentTweet(tweet)

@@ -7,11 +7,19 @@ import type { Config, State } from '..'
 import CoverView from '../views/Cover'
 
 export default async function initial(config: Config, state: State) {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts = []
+	
+	const roboto = await loadGoogleFontAllVariants('Roboto')
+	fonts.push(...roboto)
+
+    if (config?.title?.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(config.title.fontFamily)
+        fonts.push(...titleFont)
+    }
 	
     const r = new ImageResponse(CoverView(config), {
         ...dimensionsForRatio['1.91/1'],
-        fonts: roboto,
+        fonts: fonts,
     })
 
     // get image data from vercel/og ImageResponse

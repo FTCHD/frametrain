@@ -1,21 +1,24 @@
-export default function PageView({ content, profile }: { content: string; profile: string }) {
-    const paragraphs = content.split('\n').map((line) => line.trim())
+export default function PageView(config: {
+    content: string
+    profile: string
+    background: string
+    color: string
+}) {
+    const { profile, content, background, color, fontFamily, fontSize } = config
 
-    let fontSize = 2
+    const backgroundProp = {}
 
-    const numChars = content.length + 50 * paragraphs.length
-
-    if (numChars < 50) {
-        fontSize = 5.5
-    } else if (numChars >= 50 && numChars < 100) {
-        fontSize = 4.2
-    } else if (numChars >= 100 && numChars < 150) {
-        fontSize = 3.5
-    } else if (numChars >= 150 && numChars < 200) {
-        fontSize = 3
-    } else if (numChars >= 200 && numChars < 250) {
-        fontSize = 2.5
+    if (background) {
+        if (background?.startsWith('#')) {
+            backgroundProp['backgroundColor'] = background
+        } else {
+            backgroundProp['backgroundImage'] = background
+        }
+    } else {
+        backgroundProp['backgroundColor'] = '#0f0c29'
     }
+
+    const paragraphs = content.split('\n').map((line) => line.trim())
 
     return (
         <div
@@ -26,9 +29,10 @@ export default function PageView({ content, profile }: { content: string; profil
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                backgroundColor: '#0f0c29',
+
                 padding: '40px',
                 paddingBottom: '0px',
+                ...backgroundProp,
             }}
         >
             <div
@@ -46,9 +50,9 @@ export default function PageView({ content, profile }: { content: string; profil
                         key={i}
                         style={{
                             width: '100%',
-                            fontFamily: 'Roboto',
-                            color: 'white',
-                            fontSize: `${fontSize}rem`,
+                            fontFamily: fontFamily || 'Roboto',
+                            color: color || 'white',
+                            fontSize: fontSize || '1.5rem',
                             fontWeight: 300,
                             overflowWrap: 'break-word',
                             wordWrap: 'break-word',
