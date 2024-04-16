@@ -24,6 +24,7 @@ export default function Inspector({
 
     const profileInputRef = useRef<HTMLInputElement>(null)
     const titleInputRef = useRef<HTMLInputElement>(null)
+    const rightTextInputRef = useRef<HTMLInputElement>(null)
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <>
     useEffect(() => {
@@ -43,6 +44,15 @@ export default function Inspector({
         profileInputRef.current.value = config.profile
     }, [profileInputRef.current])
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <>
+    useEffect(() => {
+        if (!rightTextInputRef.current) return
+        if (rightTextInputRef.current.value) return
+        if (!config.rightText) return
+
+        rightTextInputRef.current.value = config.rightText
+    }, [rightTextInputRef.current])
+
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         setTweets(config.tweets)
@@ -50,40 +60,45 @@ export default function Inspector({
 
     return (
         <>
-            <div className=" flex flex-col h-full w-full space-y-4">
-                {/* <pre>{JSON.stringify(config, null, 2)}</pre> */}
-                <div className="flex flex-col space-y-2 w-full">
+            <div className="flex flex-col gap-5 w-full h-full">
+                <div className="flex flex-col gap-4 w-full">
                     <h2 className="text-2xl font-bold">Cover</h2>
-                    <div className="flex flex-col gap-1 w-full">
-                        <h2 className="text-lg font-bold">Title</h2>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Title</h2>
                         <Input
                             ref={titleInputRef}
-                            // value={config?.title}
-
                             onChange={(e) => update({ title: e.target.value })}
+                            size={70}
                         />
                     </div>
-                    <div className="flex flex-col gap-1 w-full">
-                        <h2 className="text-lg font-bold">Profile Username</h2>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Profile Username</h2>
                         <Input
                             ref={profileInputRef}
-                            // value={config?.profile}
                             onChange={(e) => update({ profile: e.target.value })}
                         />
                     </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Right Side Text</h2>
+                        <Input
+                            ref={rightTextInputRef}
+                            onChange={(e) => update({ rightText: e.target.value })}
+                        />
+                    </div>
                 </div>
-                <div className="w-full space-y-4">
+                <div className="flex flex-col gap-4 w-full">
                     <h2 className="text-2xl font-bold">Tweets</h2>
 
-                    <div className="flex flex-col space-y-2">
-                        <h2 className="text-lg font-bold">Add Tweet</h2>
-                        <div className="flex items-center">
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Add Tweet</h2>
+                        <div className="flex gap-5 items-center">
                             <Input
                                 ref={tweetInputRef}
                                 type="url"
                                 placeholder="https://twitter.com/username/status/..."
                             />
                             <Button
+                                size={'lg'}
                                 onClick={async () => {
                                     if (!tweetInputRef.current?.value) return
 
@@ -124,23 +139,26 @@ export default function Inspector({
                     </div>
 
                     {tweets?.map((tweet, index) => (
-                        <div className="flex justify-between items-center" key={tweet.link}>
-                            <div className="flex flex-row space-x-2">
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary">
+                        <div
+                            className="flex flex-row gap-2 justify-between items-center w-full h-full"
+                            key={tweet.link}
+                        >
+                            <div className="flex flex-row gap-2 justify-center items-center h-full">
+                                <span className="flex flex-col justify-center items-center font-bold text-black bg-white rounded-full min-w-12 min-h-12">
                                     # {index}
                                 </span>
-                                <h2 className="text-md p-1">
-                                    {tweet.content.substring(0, 20) + '...'}
-                                </h2>
+                                <span className="text-md">
+                                    {tweet.content.substring(0, 25) + '...'}
+                                </span>
                             </div>
-                            <div className="fle flex-row  p-1">
+                            <div className="flex flex-row gap-2">
                                 <Button
                                     onClick={() => {
                                         setCurrentTweet(tweet)
                                         setOpen(true)
                                     }}
                                 >
-                                    View
+                                    EDIT
                                 </Button>
                                 <Button
                                     variant="destructive"

@@ -1,12 +1,12 @@
 'use server'
 import { dimensionsForRatio } from '@/lib/constants'
-import type { FrameActionPayload } from '@/lib/farcaster'
+import type { FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/lib/fonts'
 import { buildFramePage } from '@/lib/sdk'
+import { ImageResponse } from '@vercel/og'
 import type { Config, State } from '..'
 import PageView from '../views/Page'
 import initial from './initial'
-import { ImageResponse } from '@vercel/og'
 
 export default async function page(
     body: FrameActionPayload,
@@ -25,21 +25,23 @@ export default async function page(
 
     const tweetCount = config.tweets.length
 
-    const buttons = [
+    const buttons: FrameButtonMetadata[] = [
         {
-            label: '<',
+            label: '←',
         },
     ]
 
     if (nextPage < tweetCount) {
         buttons.push({
-            label: '>',
+            label: '→',
         })
     }
 
     if (body.untrustedData.buttonIndex === 2 && nextPage === tweetCount) {
         buttons.push({
             label: 'Create Your Own',
+            action: 'link',
+            target: 'https://frametra.in',
         })
     }
 
