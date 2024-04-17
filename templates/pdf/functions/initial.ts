@@ -17,7 +17,7 @@ export default async function initial(config: Config, state: State) {
             textColor: config.textColor,
         }),
         {
-            ...dimensionsForRatio['1/1'],
+            ...dimensionsForRatio['1.91/1'],
             fonts: roboto,
         }
     )
@@ -29,12 +29,12 @@ export default async function initial(config: Config, state: State) {
     return buildFramePage({
         buttons: [
             {
-                label: 'START',
+                label: 'START →',
             },
         ],
         image: 'data:image/png;base64,' + imageData,
         config: config,
-        aspectRatio: '1:1',
+        aspectRatio: '1.91:1',
         function: 'page',
     })
 }
