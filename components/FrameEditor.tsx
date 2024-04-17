@@ -139,6 +139,7 @@ export default function FrameEditor({
                     <h1 className="mb-4 text-4xl font-bold">Configuration</h1>
                     <div className="pt-5 pb-10">
                         <Inspector
+                            frameId={frame.id}
                             config={frameConfig}
                             update={(value: Record<string, any>) => debouncedUpdateConfig(value)}
                         />
