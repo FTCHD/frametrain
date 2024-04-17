@@ -75,14 +75,25 @@ export default async function page(
         case 3: {
             const urbanist = await loadGoogleFontAllVariants('Urbanist')
 
-            const data = await getStreamData(config.streamId)
+            const streamData = await getStreamData(config.streamId)
 
             const history = await getStreamHistory(config.streamId)
+			
+			const tokenLogo = await getLogoForToken(streamData.chainId, streamData.asset.address)
 
-            const resp = new ImageResponse(HistoryView(data, history), {
-                ...dimensionsForRatio['1.91/1'],
-                fonts: urbanist,
-            })
+            const resp = new ImageResponse(
+                HistoryView(
+                    {
+                        ...streamData,
+                        asset: { ...streamData.asset, logo: tokenLogo },
+                    },
+                    history
+                ),
+                {
+                    ...dimensionsForRatio['1.91/1'],
+                    fonts: urbanist,
+                }
+            )
 
             // get image data from vercel/og ImageResponse
             const bufferData = Buffer.from(await resp.arrayBuffer())

@@ -33,17 +33,15 @@ function parseStreamId(id: string) {
 }
 
 export async function getStreamData(id: string) {
-    console.log('Getting stream data', id)
-
     if (!id) {
         return {}
     }
 
     const { contract, chainId, streamId } = parseStreamId(id)
 
-    console.log('chainId', chainId)
-    console.log('contract', contract)
-    console.log('streamId', streamId)
+    // console.log('chainId', chainId)
+    // console.log('contract', contract)
+    // console.log('streamId', streamId)
 
     const res: any = await fetch(chainToEndpoint[chainId as keyof typeof chainToEndpoint], {
         method: 'POST',
@@ -60,7 +58,7 @@ export async function getStreamData(id: string) {
         }),
     })
         .then((res) => res.json())
-        .catch(console.log)
+        .catch(console.error)
 
     if (!res?.data?.stream) {
         throw new Error('Stream not found')

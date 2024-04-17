@@ -1,4 +1,5 @@
-import { dimensionsForRatio } from '@/lib/constants'
+import { chainIdToMetadata } from '../utils/constants'
+
 
 export default function TokenView(streamData: any) {
     const {
@@ -16,47 +17,45 @@ export default function TokenView(streamData: any) {
         segments, // relevant if category is LockupDynamic
     } = streamData
 
+    const chainName = chainIdToMetadata[chainId].name
+
     return (
         <div
             style={{
                 display: 'flex',
                 flexFlow: 'column',
-                justifyContent: 'space-between',
-                height: dimensionsForRatio['1.91/1'].height + 'px',
-                width: dimensionsForRatio['1.91/1'].width + 'px',
+                height: '100%',
+                width: '100%',
                 backgroundImage: 'linear-gradient(to right, #e26200, #d88502, #e26200)',
                 color: '#ffffff',
-                padding: '20px',
-                gap: '10px',
+                padding: '30px',
+                gap: '30px',
             }}
         >
             <span
                 style={{
-                    fontSize: '24px',
-                    fontWeight: '900',
+                    fontSize: '48px',
+                    fontWeight: 'bold',
                 }}
             >
-                TOKEN
+                Token Details
             </span>
             <div
                 style={{
+                    width: '100%',
                     display: 'flex',
+                    flexGrow: '1',
                     flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'flex-start',
-                    padding: '10px',
-                    paddingTop: '12px',
-                    paddingBottom: '12px',
-                    borderRadius: '4px',
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    color: '#fff',
-                    fontSize: '12px',
-                    gap: '20px',
+                    justifyContent: 'space-between',
+                    padding: '14px',
+                    borderRadius: '10px',
+                    background: 'rgba(255, 255, 255, 0.25)',
+                    gap: '10px',
                 }}
             >
                 <div style={tokenRowStyle}>
                     <span>NAME</span>
-                    <span style={{ fontWeight: '800', fontSize: '14px' }}>{asset.name}</span>
+                    <span style={{ fontWeight: '800', fontSize: '42px' }}>{asset.name}</span>
                 </div>
                 <div style={tokenRowStyle}>
                     <span>SYMBOL</span>
@@ -74,59 +73,60 @@ export default function TokenView(streamData: any) {
                             src={asset.logo}
                             style={{ borderRadius: '50%' }}
                             alt=""
-                            width={20}
-                            height={20}
+                            width={40}
+                            height={40}
                         />
 
-                        <span style={{ fontWeight: '800', fontSize: '14px' }}>{asset.symbol}</span>
+                        <span style={{ fontWeight: '800', fontSize: '42px' }}>{asset.symbol}</span>
                     </div>
                 </div>
                 <div style={tokenRowStyle}>
                     <span>DECIMALS</span>
-                    <span style={{ fontWeight: '800', fontSize: '14px' }}>{asset.decimals}</span>
+                    <span style={{ fontWeight: '800', fontSize: '42px' }}>{asset.decimals}</span>
                 </div>
                 <div style={tokenRowStyle}>
                     <span>ADDRESS</span>
-                    <span style={{ fontWeight: '800', fontSize: '14px' }}>{asset.address}</span>
+                    <div
+                        style={{
+                            display: 'flex',
+                            fontWeight: '800',
+                            fontSize: '32px',
+                        }}
+                    >
+                        {asset.address}
+                    </div>
                 </div>
-            </div>
+                <div style={tokenRowStyle}>
+                    <span>NETWORK</span>
 
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                }}
-            >
-                <span
-                    style={{
-                        fontSize: '7px',
-                        fontStyle: 'italic',
-                        fontWeight: '500',
-                        color: 'white',
-                        backgroundColor: '#0052ff',
-                        padding: '5px',
-                        paddingLeft: '10px',
-                        paddingRight: '10px',
-                        borderRadius: '14px',
-                    }}
-                >
-                    Powered by
-                    <img
-                        src="https://docs.sablier.com/img/icon.svg"
-                        style={{ width: '8px', height: '8px', marginLeft: '4px' }}
-                        alt=""
-                    />
-                    <span style={{ fontWeight: 'bold', fontStyle: 'normal' }}>Sablier</span>
-                </span>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: '5px',
+                        }}
+                    >
+                        <img src={chainIdToMetadata[chainId].icon} alt="" width={40} height={40} />
+
+                        <span style={{ fontWeight: '800', fontSize: '42px' }}>
+                            {chainName.toUpperCase()}
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     )
+
+  
 }
 
 const tokenRowStyle = {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     width: '100%',
     fontWeight: '500',
+    fontSize: '46px',
 } as const
