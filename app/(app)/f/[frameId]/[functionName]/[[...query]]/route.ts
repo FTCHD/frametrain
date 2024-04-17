@@ -6,6 +6,7 @@ import templates from '@/templates'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
+import ms from 'ms'
 import { notFound } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 
@@ -41,7 +42,7 @@ export async function POST(
     }
 
     const template = templates[frame.template]
-	
+
     console.log('Got template', JSON.stringify(template).substring(0, 20))
 
     let body: FrameActionPayload | FrameActionPayloadUnion =
@@ -58,8 +59,8 @@ export async function POST(
     if (!handler) {
         notFound()
     }
-	
-	const configWithMetadata = Object.assign({}, frame.config, {
+
+    const configWithMetadata = Object.assign({}, frame.config, {
         frameId: frame.id,
         requiresValidation: template.requiresValidation,
     })
@@ -70,7 +71,7 @@ export async function POST(
         body = Object.assign({}, body, {
             validatedData: await validatePayload(body),
         })
-		
+
         if (!(body as FrameActionPayloadUnion).validatedData.valid) {
             throw new Error('NOT VALID')
         }
@@ -87,18 +88,15 @@ export async function POST(
 
     console.log('rState', rState)
 
-    // biome-ignore lint/style/noNegationElse: <>
     if (!isPreview) {
         await updateFrameState(frame.id, rState)
         await updateFrameCalls(frame.id, frame.currentMonthCalls + 1)
         console.log('Updated frame state and action count')
     } else {
-        await updateFramePreview(frame.id, rFrame)
+        if (frame.updatedAt.getTime() < Date.now() - ms('5m')) {
+            await updateFramePreview(frame.id, rFrame)
+        }
     }
-
-    // console.log('rFrame', rFrame)
-
-    console.log('RETURNING REPONSE')
 
     return new Response(rFrame, {
         headers: {

@@ -78,7 +78,7 @@ export async function updateFrameName(id: string, name: string) {
     console.log('GOT HERE')
     console.log(id, name)
 
-    await db.update(frameTable).set({ name }).where(eq(frameTable.id, id)).run()
+    await db.update(frameTable).set({ name, updatedAt: new Date() }).where(eq(frameTable.id, id)).run()
 
     // revalidatePath(`/frame/${id}`)
 }
@@ -87,7 +87,11 @@ export async function updateFrameName(id: string, name: string) {
 export async function updateFrameConfig(id: string, config: any) {
     const db = drizzle(getRequestContext().env.DB)
 
-    await db.update(frameTable).set({ config }).where(eq(frameTable.id, id)).run()
+    await db
+        .update(frameTable)
+        .set({ config, updatedAt: new Date() })
+        .where(eq(frameTable.id, id))
+        .run()
 
     // revalidatePath(`/frame/${id}`)
 }
@@ -95,8 +99,9 @@ export async function updateFrameConfig(id: string, config: any) {
 // called only internally
 export async function updateFrameState(id: string, state: any) {
     const db = drizzle(getRequestContext().env.DB)
+	
 
-    await db.update(frameTable).set({ state }).where(eq(frameTable.id, id)).run()
+    await db.update(frameTable).set({ state, updatedAt: new Date() }).where(eq(frameTable.id, id)).run()
 
     // revalidatePath(`/frame/${id}`)
 }
@@ -104,7 +109,11 @@ export async function updateFrameState(id: string, state: any) {
 export async function updateFrameCalls(id: string, calls: number) {
     const db = drizzle(getRequestContext().env.DB)
 
-    await db.update(frameTable).set({ currentMonthCalls: calls }).where(eq(frameTable.id, id)).run()
+    await db
+        .update(frameTable)
+        .set({ currentMonthCalls: calls, updatedAt: new Date() })
+        .where(eq(frameTable.id, id))
+        .run()
 
     // revalidatePath(`/frame/${id}`)
 }
