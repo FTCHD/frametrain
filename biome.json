@@ -31,7 +31,9 @@
                 "useBlockStatements": "off",
                 "noInferrableTypes": "off",
                 "noDefaultExport": "off",
-                "useNamingConvention": "off"
+                "useNamingConvention": "off",
+                "useCollapsedElseIf": "off",
+                "noNegationElse": "off"
             },
             "suspicious": {
                 "all": false,

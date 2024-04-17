@@ -22,12 +22,7 @@ export default function Home() {
             return
         }
 
-        async function loadFrames() {
-            const frames = await getFrameList()
-            setFrames(frames)
-        }
-
-        loadFrames()
+    	getFrameList().then((frames) => setFrames(frames))
     }, [sesh])
 
     return (
