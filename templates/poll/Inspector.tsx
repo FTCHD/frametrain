@@ -1,4 +1,5 @@
 'use client'
+import { ColorPicker } from '@/components/inspector/ColorPicker'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { useRef } from 'react'
@@ -20,7 +21,7 @@ export default function Inspector({
         <div className="w-full h-full space-y-8">
             {/* <pre>{JSON.stringify(vote, null, 2)}</pre> */}
 
-            <div className="flex flex-col space-y-4">
+            <div className="flex flex-col">
                 <h2 className="text-lg font-semibold">Question</h2>
                 <Input
                     placeholder="The poll question"
@@ -30,7 +31,7 @@ export default function Inspector({
                 />
             </div>
 
-            <div className="flex flex-col space-y-4">
+            <div className="flex flex-col">
                 {options?.map((option, index) => (
                     <div className="flex flex-row justify-between items-center ">
                         <h2 className="text-lg font-semibold p-2 bg-secondary rounded-md">
@@ -54,8 +55,8 @@ export default function Inspector({
                 ))}
             </div>
             {(!options || options.length < 4) && (
-                <div className="flex flex-col space-y-4">
-                    <div className="flex flex-col space-y-4">
+                <div className="flex flex-col">
+                    <div className="flex flex-col">
                         <h1 className="text-lg font-semibold">Voting Options</h1>
                         <Input
                             className="text-lg"
@@ -98,13 +99,36 @@ export default function Inspector({
                 </div>
             )}
 
-            <Button
-                className="w-full  text-primary"
-                onClick={() => update({ options: [] })}
-                variant="destructive"
-            >
-                Delete All
-            </Button>
+            <div className="flex flex-col">
+                <h2 className="text-lg font-semibold">Background Color</h2>
+                <ColorPicker
+                    className="w-full"
+                    background={
+                        config.background || 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
+                    }
+                    setBackground={(value) => update({ background: value })}
+                />
+            </div>
+
+            <div className="flex flex-col">
+                <h2 className="text-lg font-semibold">Text Color</h2>
+                <ColorPicker
+                    className="w-full"
+                    enabledPickers={['solid']}
+                    background={config.textColor || 'white'}
+                    setBackground={(value) => update({ textColor: value })}
+                />
+            </div>
+
+            <div className="flex flex-col">
+                <h2 className="text-lg font-semibold">Bar Line Color</h2>
+                <ColorPicker
+                    className="w-full"
+                    enabledPickers={['solid']}
+                    background={config.barColor || 'yellow'}
+                    setBackground={(value) => update({ barColor: value })}
+                />
+            </div>
         </div>
     )
 }

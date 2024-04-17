@@ -9,7 +9,7 @@ import VoteView from '../views/Vote'
 export default async function initial(config: Config, state: State) {
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
-    const r = new ImageResponse(VoteView(config?.question), {
+    const r = new ImageResponse(VoteView(config), {
         ...dimensionsForRatio['1.91/1'],
         fonts: roboto,
     })

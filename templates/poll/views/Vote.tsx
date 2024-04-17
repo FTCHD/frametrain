@@ -1,15 +1,27 @@
-import { dimensionsForRatio } from '@/lib/constants'
+export default function VoteView(config: Record<string, string>) {
+    const { question, background, textColor } = config
 
-export default function VoteView(question: string) {
+    const backgroundProp = {}
+
+    if (background) {
+        if (background.startsWith('#')) {
+            backgroundProp['backgroundColor'] = background
+        } else {
+            backgroundProp['backgroundImage'] = background
+        }
+    } else {
+        backgroundProp['backgroundImage'] = 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
+    }
+
     return (
         <div
             style={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                width: dimensionsForRatio['1.91/1'].width + 'px',
-                height: dimensionsForRatio['1.91/1'].height + 'px',
-                backgroundImage: 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)',
+                width: '100%',
+                height: '100%',
+                ...backgroundProp,
             }}
         >
             <div
@@ -17,12 +29,14 @@ export default function VoteView(question: string) {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    padding: '12px',
-                    borderRadius: '4px',
+                    padding: '30px',
+                    borderRadius: '10px',
                     background: 'rgba(255, 255, 255, 0.2)',
-                    color: '#ffffff',
-                    fontSize: '22px',
+                    color: textColor || 'white',
+                    fontSize: '64px',
                     fontWeight: '900',
+                    lineHeight: '1.5',
+                    textWrap: 'balance',
                 }}
             >
                 {question.toUpperCase()}

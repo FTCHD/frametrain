@@ -55,13 +55,20 @@ export default async function vote(
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
+    const colors = {
+        background: config?.background,
+        textColor: config?.textColor,
+        barColor: config?.barColor,
+    }
+
     const r = new ImageResponse(
         ResultsView(
             config?.question,
             sortedOptions,
             totalVotes,
             percentageForEachOption,
-            newState.votesForOption
+            newState.votesForOption,
+            colors
         ),
         {
             ...dimensionsForRatio['1.91/1'],
@@ -76,7 +83,7 @@ export default async function vote(
     return {
         frame: await buildFramePage({
             buttons: [
-                { label: 'Back' },
+                { label: '←' },
                 { label: 'Create Poll', action: 'link', target: 'https://frametra.in' },
             ],
             image: 'data:image/png;base64,' + imageData,
