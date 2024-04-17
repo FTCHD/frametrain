@@ -9,17 +9,17 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
+import { useFrameConfig, useFrameId } from '@/lib/hooks'
 import { uploadImage } from '@/lib/upload'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import type { Config } from '.'
 import getPdfDocument, { createPDFPage, renderPDFToCanvas } from './utils'
 
-export default function Inspector({
-    frameId,
-    config,
-    update,
-}: { frameId: string; config: Config; update: (props: any) => void }) {
+export default function Inspector() {
+    const frameId = useFrameId()
+    const [config, updateConfig] = useFrameConfig<Config>()
+
     const [responseData, setResponseData] = useState<string[]>([])
     const [file, setFile] = useState<File>()
 
@@ -69,7 +69,7 @@ export default function Inspector({
             slideUrls.push('/frames/' + frameId + '/' + fileName)
         }
 
-        update({ slideUrls: slideUrls })
+        updateConfig({ slideUrls: slideUrls })
 
         setLoading(false)
     }
@@ -98,7 +98,7 @@ export default function Inspector({
                     <Input
                         className="py-2 text-lg "
                         defaultValue={config.title}
-                        onChange={(e) => update({ title: e.target.value })}
+                        onChange={(e) => updateConfig({ title: e.target.value })}
                         placeholder="Title"
                     />
                 </div>
@@ -107,7 +107,7 @@ export default function Inspector({
                     <Input
                         className="py-2 text-lg "
                         defaultValue={config.subtitle}
-                        onChange={(e) => update({ subtitle: e.target.value })}
+                        onChange={(e) => updateConfig({ subtitle: e.target.value })}
                         placeholder="Subtitle"
                     />
                 </div>
@@ -116,7 +116,7 @@ export default function Inspector({
                     <ColorPicker
                         className="w-full"
                         background={config.backgroundColor || 'black'}
-                        setBackground={(value) => update({ backgroundColor: value })}
+                        setBackground={(value) => updateConfig({ backgroundColor: value })}
                     />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -125,7 +125,7 @@ export default function Inspector({
                         className="w-full"
                         enabledPickers={['solid']}
                         background={config.textColor || 'white'}
-                        setBackground={(value) => update({ textColor: value })}
+                        setBackground={(value) => updateConfig({ textColor: value })}
                     />
                 </div>
             </div>
@@ -175,7 +175,7 @@ export default function Inspector({
                             variant="destructive"
                             onClick={() => {
                                 setFile(undefined)
-                                update({ slideUrls: [] })
+                                updateConfig({ slideUrls: [] })
                             }}
                             className="w-full"
                         >
@@ -190,13 +190,13 @@ export default function Inspector({
                     {loading && <LoaderIcon className="animate-spin" />}
                 </div>
                 <div className="flex flex-row flex-wrap gap-4">
-                    {responseData.map((slideUrl, i) => (
+                    {responseData.map((slideUrl) => (
                         <img
-                            key={i}
+                            key={slideUrl}
                             src={'https://cdn.frametra.in' + slideUrl}
                             width={200}
                             height={200}
-                            alt=""
+                            alt="PDF Slide"
                         />
                     ))}
                 </div>
@@ -205,7 +205,7 @@ export default function Inspector({
                 <h2 className="text-lg font-semibold">Aspect Ratio</h2>
                 <Select
                     defaultValue={'1/1'}
-                    onValueChange={(value) => update({ aspectRatio: value })}
+                    onValueChange={(value) => updateConfig({ aspectRatio: value })}
                 >
                     <SelectTrigger>
                         <SelectValue placeholder="Aspect Ratio" />

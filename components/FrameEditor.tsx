@@ -10,8 +10,10 @@ import { useEffect, useState } from 'react'
 import { ArrowLeft, Copy } from 'react-feather'
 import { useDebouncedCallback } from 'use-debounce'
 import { FramePreview } from './FramePreview'
+import { InspectorContext } from './editor/Context'
 import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
+
 
 export default function FrameEditor({
     frame,
@@ -138,11 +140,20 @@ export default function FrameEditor({
                 <div className="overflow-y-scroll p-6 w-full h-full bg-black md:w-2/5">
                     <h1 className="mb-4 text-4xl font-bold">Configuration</h1>
                     <div className="pt-5 pb-10">
-                        <Inspector
-                            frameId={frame.id}
-                            config={frameConfig}
-                            update={(value: Record<string, any>) => debouncedUpdateConfig(value)}
-                        />
+                        <InspectorContext.Provider
+                            value={{
+                                frameId: frame.id,
+                                config: frameConfig,
+                                update: debouncedUpdateConfig,
+                            }}
+                        >
+                            <Inspector
+                                config={frameConfig}
+                                update={(value: Record<string, any>) =>
+                                    debouncedUpdateConfig(value)
+                                }
+                            />
+                        </InspectorContext.Provider>
                     </div>
                     {/* {template.requiresValidation && <MockOptionsToggle />} */}
                 </div>
