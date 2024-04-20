@@ -161,9 +161,9 @@ export default function FrameEditor({
                 <div className="flex flex-col justify-center items-center px-12 py-6 w-full md:w-3/5">
                     <FramePreview />
                 </div>
-                <div className="overflow-y-scroll p-6 w-full h-full bg-black md:w-2/5">
+                <div className="overflow-y-scroll p-6 w-full h-full bg-[#0c0c0c] md:w-2/5">
                     <h1 className="mb-4 text-4xl font-bold">Configuration</h1>
-                    <div className="pt-5 pb-10">
+                    <div className="pt-5 pb-20">
                         <InspectorContext.Provider
                             value={{
                                 frameId: frame.id,
