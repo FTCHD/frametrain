@@ -171,12 +171,7 @@ export default function FrameEditor({
                                 update: debouncedUpdateConfig,
                             }}
                         >
-                            <Inspector
-                                config={frameConfig}
-                                update={(value: Record<string, any>) =>
-                                    debouncedUpdateConfig(value)
-                                }
-                            />
+                            <Inspector />
                         </InspectorContext.Provider>
                     </div>
                     {/* {template.requiresValidation && <MockOptionsToggle />} */}

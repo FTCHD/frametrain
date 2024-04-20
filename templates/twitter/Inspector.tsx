@@ -8,15 +8,17 @@ import { Button } from '@/components/shadcn/Button'
 import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
 import { Input } from '@/components/shadcn/Input'
 import { Textarea } from '@/components/shadcn/Textarea'
+import { useFrameConfig, useFrameId } from '@/lib/hooks'
 import { scrapeTwitterPost } from '@/lib/scrape'
+import { uploadImage } from '@/lib/upload'
 import { useEffect, useRef, useState } from 'react'
 import { Trash } from 'react-feather'
 import type { Config } from '.'
 
-export default function Inspector({
-    config,
-    update,
-}: { config: Config; update: (props: any) => void }) {
+export default function Inspector() {
+    const frameId = useFrameId()
+    const [config, updateConfig] = useFrameConfig<Config>()
+
     const [tweets, setTweets] = useState<Record<string, any>[]>()
 
     const [open, setOpen] = useState<boolean>(false)
@@ -77,7 +79,7 @@ export default function Inspector({
                         <Input
                             ref={titleInputRef}
                             onChange={(e) =>
-                                update({
+                                updateConfig({
                                     title: {
                                         ...config.title,
                                         text: e.target.value,
@@ -91,7 +93,7 @@ export default function Inspector({
                         <h2 className="text-lg">Title Font</h2>
                         <FontFamilyPicker
                             onSelect={(font) => {
-                                update({
+                                updateConfig({
                                     title: {
                                         ...config.title,
                                         fontFamily: font,
@@ -108,7 +110,7 @@ export default function Inspector({
                             background={titleTextColor}
                             setBackground={(value: string) => {
                                 setTitleTextColor(value)
-                                update({
+                                updateConfig({
                                     title: {
                                         ...config.title,
                                         color: value,
@@ -121,7 +123,7 @@ export default function Inspector({
                         <h2 className="text-lg">Title Weight</h2>
                         <FontWeightPicker
                             onSelect={(weight) =>
-                                update({
+                                updateConfig({
                                     title: {
                                         ...config.title,
                                         fontWeight: weight,
@@ -136,7 +138,7 @@ export default function Inspector({
                         <FontStylePicker
                             defaultValue={config.title.fontStyle}
                             onSelect={(style) =>
-                                update({
+                                updateConfig({
                                     title: {
                                         ...config.title,
                                         fontStyle: style,
@@ -150,7 +152,7 @@ export default function Inspector({
                         <Input
                             placeholder="No @ or https:// prefix"
                             ref={profileInputRef}
-                            onChange={(e) => update({ profile: e.target.value })}
+                            onChange={(e) => updateConfig({ profile: e.target.value })}
                         />
                     </div>
                     <div className="flex flex-col gap-2 w-full">
@@ -158,7 +160,7 @@ export default function Inspector({
                         <Input
                             ref={bottomTextInputRef}
                             onChange={(e) =>
-                                update({
+                                updateConfig({
                                     bottom: {
                                         ...config.bottom,
                                         text: e.target.value,
@@ -175,7 +177,7 @@ export default function Inspector({
                             background={bottomTextColor}
                             setBackground={(value: string) => {
                                 setBottomTextColor(value)
-                                update({
+                                updateConfig({
                                     bottom: {
                                         ...config.bottom,
                                         color: value,
@@ -191,7 +193,7 @@ export default function Inspector({
                             background={coverBg}
                             setBackground={(e) => {
                                 setCoverBg(e)
-                                update({ background: e })
+                                updateConfig({ background: e })
                             }}
                         />
                     </div>
@@ -234,7 +236,7 @@ export default function Inspector({
                                         },
                                     ]
 
-                                    update({ tweets: newTweets })
+                                    updateConfig({ tweets: newTweets })
 
                                     setTweets(newTweets)
 
@@ -273,7 +275,7 @@ export default function Inspector({
                                                 : t
                                         )
 
-                                        update({ tweets: newTweets })
+                                        updateConfig({ tweets: newTweets })
                                     }}
                                 />
 
@@ -289,7 +291,7 @@ export default function Inspector({
                                                 : t
                                         )
 
-                                        update({ tweets: newTweets })
+                                        updateConfig({ tweets: newTweets })
                                     }}
                                 />
                             </div>
@@ -308,7 +310,7 @@ export default function Inspector({
                                                 : t
                                         )
 
-                                        update({ tweets: newTweets })
+                                        updateConfig({ tweets: newTweets })
                                     }}
                                 />
                                 <ColorPicker
@@ -325,7 +327,8 @@ export default function Inspector({
                                                 : t
                                         )
 
-                                        update({ tweets: newTweets })
+                                        updateConfig({ tweets: newTweets })
+                                    }}
                                     }}
                                 />
                                 <Button
@@ -339,7 +342,7 @@ export default function Inspector({
                                 <Button
                                     variant="destructive"
                                     onClick={() =>
-                                        update({
+                                        updateConfig({
                                             tweets: config.tweets.filter(
                                                 (t: any) => t.link !== tweet.link
                                             ),
@@ -372,7 +375,7 @@ export default function Inspector({
                                 tweet.link === currentTweet.link ? currentTweet : tweet
                             )
 
-                            update({ tweets: newTweets })
+                            updateConfig({ tweets: newTweets })
                             setOpen(false)
                         }}
                     >

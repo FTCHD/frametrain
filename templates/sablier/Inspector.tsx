@@ -1,13 +1,13 @@
 'use client'
 import { Input } from '@/components/shadcn/Input'
+import { useFrameConfig } from '@/lib/hooks'
 import { useEffect, useRef } from 'react'
 import type { Config } from '.'
 import { getStreamData, getStreamType } from './utils/actions'
 
-export default function Inspector({
-    config,
-    update,
-}: { config: Config; update: (props: any) => void }) {
+export default function Inspector() {
+    const [config, updateConfig] = useFrameConfig<Config>()
+
     const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export default function Inspector({
 
         const streamType = await getStreamType(data)
 
-        update({ streamId: streamId, shape: streamType })
+        updateConfig({ streamId: streamId, shape: streamType })
     }
 
     return (

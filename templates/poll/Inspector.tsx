@@ -2,14 +2,16 @@
 import { ColorPicker } from '@/components/inspector/ColorPicker'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
+import { useFrameConfig, useFrameId } from '@/lib/hooks'
+import { uploadImage } from '@/lib/upload'
 import { useRef } from 'react'
 import { X } from 'react-feather'
 import type { Config } from '.'
 
-export default function Inspector({
-    config,
-    update,
-}: { config: Config; update: (props: any) => void }) {
+export default function Inspector() {
+    const frameId = useFrameId()
+    const [config, updateConfig] = useFrameConfig<Config>()
+
     const { options } = config
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
@@ -26,7 +28,7 @@ export default function Inspector({
                 <Input
                     placeholder="The poll question"
                     defaultValue={config.question}
-                    onChange={(e) => update({ question: e.target.value })}
+                    onChange={(e) => updateConfig({ question: e.target.value })}
                     className=" py-2 text-lg"
                 />
             </div>
@@ -41,7 +43,7 @@ export default function Inspector({
                             variant="ghost"
                             size="sm"
                             onClick={() =>
-                                update({
+                                updateConfig({
                                     options: [
                                         ...options.slice(0, index),
                                         ...options.slice(index + 1),
@@ -87,7 +89,7 @@ export default function Inspector({
                                 },
                             ]
 
-                            update({ options: newOptions })
+                            updateConfig({ options: newOptions })
 
                             displayLabelInputRef.current.value = ''
                             buttonLabelInputRef.current.value = ''
@@ -116,7 +118,7 @@ export default function Inspector({
                     className="w-full"
                     enabledPickers={['solid']}
                     background={config.textColor || 'white'}
-                    setBackground={(value) => update({ textColor: value })}
+                    setBackground={(value) => updateConfig({ textColor: value })}
                 />
             </div>
 
@@ -126,7 +128,7 @@ export default function Inspector({
                     className="w-full"
                     enabledPickers={['solid']}
                     background={config.barColor || 'yellow'}
-                    setBackground={(value) => update({ barColor: value })}
+                    setBackground={(value) => updateConfig({ barColor: value })}
                 />
             </div>
         </div>
