@@ -1,8 +1,8 @@
 import { ThemeProvider } from '@/components/foundation/ThemeProvider'
-import { Toaster } from '@/components/shadcn/Toaster'
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import type React from 'react'
+import { Toaster } from 'react-hot-toast'
 import './global.css'
 
 export const metadata: Metadata = {
@@ -54,10 +54,10 @@ export default function Layout(props: { children: React.ReactNode }) {
                         {props.children}
 
                         <Toaster
-                        // position="bottom-center"
-                        // toastOptions={{
-                        //     duration: 3000,
-                        // }}
+                            position="bottom-center"
+                            toastOptions={{
+                                duration: 3000,
+                            }}
                         />
                     </ThemeProvider>
                 </body>

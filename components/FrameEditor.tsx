@@ -1,6 +1,5 @@
 'use client'
 import { useRefreshPreview } from '@/components/editor/useRefreshPreview'
-import { useToast } from '@/components/shadcn/use-toast'
 import type { frameTable } from '@/db/schema'
 import { updateFrameConfig, updateFrameName } from '@/lib/actions'
 import type templates from '@/templates'
@@ -8,6 +7,7 @@ import type { InferSelectModel } from 'drizzle-orm'
 import NextLink from 'next/link'
 import { useEffect, useState } from 'react'
 import { ArrowLeft, Copy } from 'react-feather'
+import { toast } from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { FramePreview } from './FramePreview'
 import { InspectorContext } from './editor/Context'
@@ -22,8 +22,6 @@ export default function FrameEditor({
     frame: InferSelectModel<typeof frameTable>
     template: (typeof templates)[keyof typeof templates]
 }) {
-    const { toast } = useToast()
-
     const [frameConfig, setFrameConfig] = useState(frame.config as typeof template.initialConfig)
 
     const [editingTitle, setEditingTitle] = useState(false)
