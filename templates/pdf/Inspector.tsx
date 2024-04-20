@@ -115,6 +115,15 @@ export default function Inspector() {
                         className="w-full"
                         background={config.backgroundColor || 'black'}
                         setBackground={(value) => updateConfig({ backgroundColor: value })}
+                        uploadBackground={async (base64String, contentType) => {
+                            const { filePath } = await uploadImage({
+                                frameId: frameId,
+                                base64String: base64String,
+                                contentType: contentType,
+                            })
+
+                            return filePath
+                        }}
                     />
                 </div>
                 <div className="flex flex-col gap-2">

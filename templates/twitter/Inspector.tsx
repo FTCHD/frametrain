@@ -195,6 +195,15 @@ export default function Inspector() {
                                 setCoverBg(e)
                                 updateConfig({ background: e })
                             }}
+                            uploadBackground={async (base64String, contentType) => {
+                                const { filePath } = await uploadImage({
+                                    frameId: frameId,
+                                    base64String: base64String,
+                                    contentType: contentType,
+                                })
+
+                                return filePath
+                            }}
                         />
                     </div>
                 </div>
@@ -329,6 +338,14 @@ export default function Inspector() {
 
                                         updateConfig({ tweets: newTweets })
                                     }}
+                                    uploadBackground={async (base64String, contentType) => {
+                                        const { filePath } = await uploadImage({
+                                            frameId: frameId,
+                                            base64String: base64String,
+                                            contentType: contentType,
+                                        })
+
+                                        return filePath
                                     }}
                                 />
                                 <Button

@@ -108,7 +108,16 @@ export default function Inspector() {
                     background={
                         config.background || 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
                     }
-                    setBackground={(value) => update({ background: value })}
+                    setBackground={(value) => updateConfig({ background: value })}
+                    uploadBackground={async (base64String, contentType) => {
+                        const { filePath } = await uploadImage({
+                            frameId: frameId,
+                            base64String: base64String,
+                            contentType: contentType,
+                        })
+
+                        return filePath
+                    }}
                 />
             </div>
 
