@@ -77,11 +77,11 @@ export async function uploadImage({
 
         console.log('[uploadImage] Uploaded ', path)
 
-        return { fileName: name }
+        return { fileName: name, filePath: path }
     } catch (error) {
         console.log('[uploadImage] Failed to upload ', path, error)
 
-        return { fileName: undefined }
+        return { fileName: undefined, filePath: undefined }
     }
 }
 
