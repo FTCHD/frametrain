@@ -25,8 +25,9 @@ export default function FrameEditor({
 }) {
     const [frameConfig, setFrameConfig] = useState(frame.config as typeof template.initialConfig)
 
-    const [editingTitle, setEditingTitle] = useState(false)
-    const [temporaryTitle, setTemporaryTitle] = useState(frame.name)
+    const [name, setName] = useState(frame.name)
+    const [editingName, setEditingName] = useState(false)
+    const [temporaryName, setTemporaryName] = useState(frame.name)
 
     const [updating, setUpdating] = useState(false)
 
@@ -57,19 +58,23 @@ export default function FrameEditor({
 
     async function updateName() {
         setUpdating(true)
-        await updateFrameName(frame.id, temporaryTitle)
+        await updateFrameName(frame.id, temporaryName)
+        setEditingName(false)
+        setName(temporaryName)
         setUpdating(false)
-        setEditingTitle(false)
+        if (document) {
+            document.title = `${temporaryName} | FrameTrain`
+        }
     }
 
     async function handleEnter(e: KeyboardEvent) {
-        if (!editingTitle) return
+        if (!editingName) return
 
         if (e.key === 'Enter') {
             e.preventDefault()
             await updateName()
         }
-    } 
+    }
 
     useEffect(() => {
         window.addEventListener('keydown', handleEnter)
@@ -94,10 +99,10 @@ export default function FrameEditor({
                             <ArrowLeft />
                         </div>
                     </NextLink>
-                    {editingTitle ? (
+                    {editingName ? (
                         <Input
-                            value={temporaryTitle}
-                            onChange={(e) => setTemporaryTitle(e.target.value)}
+                            value={temporaryName}
+                            onChange={(e) => setTemporaryName(e.target.value)}
                             onKeyDown={handleEnter}
                             className="text-4xl font-bold focus:bg-transparent hover:bg-transparent"
                         />
