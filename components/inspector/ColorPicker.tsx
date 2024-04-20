@@ -47,11 +47,16 @@ export function ColorPicker({
     setBackground,
     className,
     enabledPickers = ['solid', 'gradient', 'image'],
+    uploadBackground,
 }: {
     background: string
     setBackground: (background: string) => void
     className?: string
     enabledPickers?: string[]
+    uploadBackground?: (
+        base64String: string,
+        contentType: 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
+    ) => Promise<string | undefined>
 }) {
     const defaultTab = useMemo(() => {
         if (background.includes('url')) return 'image'
@@ -142,6 +147,47 @@ export function ColorPicker({
                             ))}
                         </div>
 
+                        {uploadBackground && (
+                            <Input
+                                accept="image/png, image/jpeg, image/gif, image/webp"
+                                type="file"
+                                placeholder="Pick an image"
+                                title="Pick an image"
+                                onChange={async (e) => {
+                                    if (e.target.files?.[0]) {
+                                        const reader = new FileReader()
+                                        reader.readAsDataURL(e.target.files[0])
+
+                                        const base64String = (await new Promise((resolve) => {
+                                            reader.onload = () => {
+                                                const base64String = (
+                                                    reader.result as string
+                                                ).split(',')[1]
+                                                resolve(base64String)
+                                            }
+                                        })) as string
+
+                                        const contentType = e.target.files[0].type as
+                                            | 'image/png'
+                                            | 'image/jpeg'
+                                            | 'image/gif'
+                                            | 'image/webp'
+
+                                        const filePath = await uploadBackground(
+                                            base64String,
+                                            contentType
+                                        )
+
+                                        if (filePath) {
+                                            setBackground(
+                                                `url(https://cdn.frametra.in/${filePath})`
+                                            )
+                                        }
+                                    }
+                                }}
+                            />
+                        )}
+                    </TabsContent>
                 </Tabs>
 
                 <Input
