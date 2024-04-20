@@ -8,8 +8,6 @@ export const fetchCache = 'force-no-store'
 export async function POST(req: Request) {
     const data = (await req.json()) as any
 
-    console.log('POSTED', JSON.stringify(data))
-
     const { frameData, options } = data
     const postUrl = frameData.url
     const debugPayload = getMockFrameRequest(
@@ -29,8 +27,6 @@ export async function POST(req: Request) {
     // }
 
     const html = await res.text()
-
-    console.log('HTML', JSON.stringify(html).substring(0, 20))
 
     return Response.json({ html })
 }

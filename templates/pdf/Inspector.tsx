@@ -58,8 +58,6 @@ export default function Inspector() {
         for (let i = 0; i < pages.length; i++) {
             const page = pages[i]
 
-            console.log(page.substring(0, 50))
-
             const { fileName } = await uploadImage({
                 frameId: frameId,
                 base64String: page.replace('data:image/jpeg;base64,', ''),
@@ -142,7 +140,6 @@ export default function Inspector() {
                             accept="application/pdf"
                             type="file"
                             onChange={(e) => {
-                                console.log(e.target.files)
                                 if (e.target.files?.[0]) {
                                     setFile(e.target.files?.[0])
                                 }
@@ -163,7 +160,6 @@ export default function Inspector() {
                                 accept="application/pdf"
                                 type="file"
                                 onChange={(e) => {
-                                    console.log(e.target.files)
                                     if (e.target.files?.[0]) {
                                         setFile(e.target.files?.[0])
                                     }

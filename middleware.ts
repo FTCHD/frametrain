@@ -22,11 +22,9 @@ export default auth((req) => {
         return NextResponse.next()
     }
 
-    console.log('PRIVATE', pathname)
-    console.log('REQ', req.auth)
-
+	
     if (!req.auth) {
-        console.log('NO AUTH')
+        // console.log('NO AUTH')
         return NextResponse.redirect(`${process.env.NEXT_PUBLIC_HOST}`)
     }
 })

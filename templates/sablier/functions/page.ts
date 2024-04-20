@@ -18,8 +18,6 @@ export default async function page(
 ) {
     const buttonIndex = body.untrustedData.buttonIndex
 
-    // console.log('body', body)
-
     let frame
 
     switch (buttonIndex) {
@@ -76,7 +74,6 @@ export default async function page(
             const urbanist = await loadGoogleFontAllVariants('Urbanist')
 
             const streamData = await getStreamData(config.streamId)
-
             const history = await getStreamHistory(config.streamId)
 			
 			const tokenLogo = await getLogoForToken(streamData.chainId, streamData.asset.address)

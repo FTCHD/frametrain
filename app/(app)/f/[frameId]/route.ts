@@ -21,10 +21,6 @@ export async function GET(request: Request, { params }: { params: { frameId: str
 
     const template = templates[frame.template]
 
-    console.log('Got template', JSON.stringify(template).substring(0, 20))
-
-    console.log('Handlers list', template.functions)
-
     const { initial } = template.functions
 
     const configWithMetadata = Object.assign({}, frame.config, {

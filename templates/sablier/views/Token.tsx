@@ -1,14 +1,12 @@
 import { chainIdToMetadata } from '../utils/constants'
 
-
 export default function TokenView(streamData: any) {
     const {
         chainId,
         funder,
         recipient,
         depositAmount,
-        intactAmount,
-        withdrawnAmount,
+        intactAmount,        withdrawnAmount,
         startTime,
         endTime,
         timestamp,

@@ -10,8 +10,6 @@ export async function fetchFrame(url: string) {
         body: JSON.stringify({ url }),
     })
 
-    console.log('[getFrame] response ', response)
-
     const json = (await response.json()) as { html: string }
     const html = json.html
     return parseHtml(html)

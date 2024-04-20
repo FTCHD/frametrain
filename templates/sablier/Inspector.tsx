@@ -11,19 +11,16 @@ export default function Inspector({
     const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-        console.log('Triggered useEffect', config.streamId)
-
         if (!inputRef.current) return
         if (!config.streamId) return
 
         inputRef.current.value = config.streamId
-
-        console.log('Got stream id', config.streamId)
     }, [config.streamId])
 
     async function handleInputChange(e: any) {
         const streamId = e.target.value
 
+        // handle throw
         const data = await getStreamData(streamId)
 
         const streamType = await getStreamType(data)

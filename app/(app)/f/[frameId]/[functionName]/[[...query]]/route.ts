@@ -32,23 +32,17 @@ export async function POST(
     const frame = await db.select().from(frameTable).where(eq(frameTable.id, params.frameId)).get()
 
     if (!frame) {
-        console.error('No frame')
         notFound()
     }
 
     if (!frame.config) {
-        console.error('No config')
         notFound()
     }
 
     const template = templates[frame.template]
 
-    console.log('Got template', JSON.stringify(template).substring(0, 20))
-
     let body: FrameActionPayload | FrameActionPayloadUnion =
         (await request.json()) as FrameActionPayload
-
-    console.log('Got body', JSON.stringify(body).substring(0, 20))
 
     const isPreview = Object.keys(body).includes('mockFrameData')
 
@@ -66,8 +60,6 @@ export async function POST(
     })
 
     if (!isPreview && configWithMetadata.requiresValidation) {
-        console.log('frame requires validation')
-
         body = Object.assign({}, body, {
             validatedData: await validatePayload(body),
         })
@@ -76,7 +68,7 @@ export async function POST(
             throw new Error('NOT VALID')
         }
     } else {
-        console.log('frame does not require validation')
+        // console.log('frame does not require validation')
     }
 
     const { frame: rFrame, state: rState } = await handler(
@@ -85,8 +77,6 @@ export async function POST(
         frame.state as typeof template.initialState,
         searchParams
     )
-
-    console.log('rState', rState)
 
     if (!isPreview) {
         await updateFrameState(frame.id, rState)

@@ -32,10 +32,10 @@ export default async function vote(
                 : 1,
         },
     }
-    console.log(voter)
-
-    console.log(state)
-    console.log(newState)
+	
+    // console.log(voter)
+    // console.log(state)
+    // console.log(newState)
 
     const totalVotes = Object.keys(newState.votesForOption).reduce(
         (total: number, option: string) => total + newState.votesForOption[option],

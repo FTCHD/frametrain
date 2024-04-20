@@ -75,9 +75,6 @@ export async function createFrame({
 export async function updateFrameName(id: string, name: string) {
     const db = drizzle(getRequestContext().env.DB)
 
-    console.log('GOT HERE')
-    console.log(id, name)
-
     await db.update(frameTable).set({ name, updatedAt: new Date() }).where(eq(frameTable.id, id)).run()
 
     // revalidatePath(`/frame/${id}`)

@@ -13,9 +13,6 @@ function parseStreamId(id: string) {
     if (Object.keys(contractTypes).includes(categoryOrContract)) {
         const typeKey = categoryOrContract as keyof typeof contractTypes
         const typeMap = chainToTypeMap[chainId as keyof typeof chainToTypeMap]
-        console.log('typeKey', typeKey)
-        console.log('chainId', chainId)
-        console.log('typeMap', typeMap)
         contract = typeMap[typeKey]
     } else {
         if (!categoryOrContract.startsWith('0x')) {
@@ -92,7 +89,7 @@ export async function getStreamHistory(id: string) {
         }),
     })
         .then((res) => res.json())
-        .catch(console.log)
+        .catch(console.error)
 
     if (!res?.data?.actions) {
         throw new Error('Stream not found')

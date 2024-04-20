@@ -368,7 +368,7 @@ export default function Inspector({
                     />
                     <Button
                         onClick={() => {
-                            const newTweets = config?.tweets?.map((tweet: any, i) =>
+                            const newTweets = config?.tweets?.map((tweet: any) =>
                                 tweet.link === currentTweet.link ? currentTweet : tweet
                             )
 

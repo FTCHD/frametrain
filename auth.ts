@@ -56,8 +56,6 @@ export const {
                     return null
                 }
 
-                console.log('fid', fid)
-
                 return {
                     id: fid.toString(),
                     name: credentials.name as string,
