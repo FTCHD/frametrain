@@ -13,6 +13,7 @@ import { FramePreview } from './FramePreview'
 import { InspectorContext } from './editor/Context'
 import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
 
 
 export default function FrameEditor({
@@ -101,17 +102,26 @@ export default function FrameEditor({
                             className="text-4xl font-bold focus:bg-transparent hover:bg-transparent"
                         />
                     ) : (
-                        <h1
-                            className="text-4xl font-bold cursor-pointer"
-                            onClick={() => setEditingTitle(true)}
-                            onKeyUp={(e) => {
-                                if (e.key === 'Enter') {
-                                    setEditingTitle(true)
-                                }
-                            }}
-                        >
-                            {frame.name}
-                        </h1>
+                        <TooltipProvider delayDuration={0}>
+                            <Tooltip>
+                                <TooltipTrigger>
+                                    <h1
+                                        className="text-4xl font-bold cursor-pointer"
+                                        onClick={() => setEditingName(true)}
+                                        onKeyUp={(e) => {
+                                            if (e.key === 'Enter') {
+                                                setEditingName(true)
+                                            }
+                                        }}
+                                    >
+                                        {name}
+                                    </h1>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-72 ml-8">
+                                    <p>Tap to edit the title, press enter to save.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                     )}
                 </div>
                 <div className="flex flex-row items-center space-x-4">
@@ -119,16 +129,27 @@ export default function FrameEditor({
                         <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
                     )}
 
-                    <Button
-                        size={'lg'}
-                        onClick={() => {
-                            navigator.clipboard.writeText(`https://frametra.in/f/${frame.id}`)
-                            toast('Copied to clipboard!')
-                        }}
-                        className="gap-4 px-6 py-3 bg-transparent rounded-md border border-border text-primary hover:bg-secondary-border"
-                    >
-                        <span className="text-base">URL</span> <Copy size={18} />
-                    </Button>
+                    <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Button
+                                    size={'lg'}
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(
+                                            `https://frametra.in/f/${frame.id}`
+                                        )
+                                        toast.success('Copied to clipboard!')
+                                    }}
+                                    className="gap-4 px-6 py-3 bg-transparent rounded-md border border-border text-primary hover:bg-secondary-border"
+                                >
+                                    <span className="text-base">URL</span> <Copy size={18} />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-72 mr-8">
+                                <p>Copies the shareable Frame URL to your clipboard.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </div>
             </div>
             <div className="flex flex-col md:flex-row  bg-secondary-background w-full h-full bg-[url('/dots.svg')]">
