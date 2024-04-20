@@ -72,6 +72,22 @@ export default function Home() {
                     )}
                 </div>
             </div>
+            {sesh.status === 'authenticated' && (
+                <div className="flex flex-row w-full justify-center items-center p-4 ">
+                    <button
+                        type="button"
+                        onClick={() =>
+                            // biome-ignore lint/suspicious/noAssignInExpressions: <>
+                            (window.location.href =
+                                'https://github.com/FTCHD/frametrain?tab=readme-ov-file#revenue-sharing')
+                        }
+                    >
+                        <h1 className="text-sm font-medium hover:text-blue-500 hover:font-bold  transition-all duration-140">
+                            🔍 Looking for a template? Build it yourself and get paid for it!
+                        </h1>
+                    </button>
+                </div>
+            )}
         </div>
     )
 }
