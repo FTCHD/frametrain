@@ -9,6 +9,7 @@ import CoverView from '../views/Cover'
 
 export default async function initial(config: Config, state: State) {
     const urbanist = await loadGoogleFontAllVariants('Urbanist')
+    const catamaran = await loadGoogleFontAllVariants('Catamaran')
 
     const streamData = await getStreamData(config.streamId)
 
@@ -23,7 +24,7 @@ export default async function initial(config: Config, state: State) {
 
     const r = new ImageResponse(CoverView(data), {
         ...dimensionsForRatio['1.91/1'],
-        fonts: urbanist,
+        fonts: [...urbanist, ...catamaran],
     })
 
     // get image data from vercel/og ImageResponse

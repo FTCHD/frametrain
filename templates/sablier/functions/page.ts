@@ -23,6 +23,7 @@ export default async function page(
     switch (buttonIndex) {
         case 2: {
             const urbanist = await loadGoogleFontAllVariants('Urbanist')
+    const catamaran = await loadGoogleFontAllVariants('Catamaran')
 
             const streamData = await getStreamData(config.streamId)
 
@@ -37,7 +38,7 @@ export default async function page(
 
             const resp = new ImageResponse(TokenView(data), {
                 ...dimensionsForRatio['1.91/1'],
-                fonts: urbanist,
+                fonts: [...urbanist, ...catamaran],
             })
 
             // get image data from vercel/og ImageResponse
@@ -72,6 +73,7 @@ export default async function page(
 
         case 3: {
             const urbanist = await loadGoogleFontAllVariants('Urbanist')
+    const catamaran = await loadGoogleFontAllVariants('Catamaran')
 
             const streamData = await getStreamData(config.streamId)
             const history = await getStreamHistory(config.streamId)
@@ -88,7 +90,7 @@ export default async function page(
                 ),
                 {
                     ...dimensionsForRatio['1.91/1'],
-                    fonts: urbanist,
+                    fonts: [...urbanist, ...catamaran],
                 }
             )
 
