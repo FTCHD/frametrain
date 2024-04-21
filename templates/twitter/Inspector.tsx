@@ -136,7 +136,7 @@ export default function Inspector() {
                         <h2 className="text-lg">Title Style</h2>
 
                         <FontStylePicker
-                            defaultValue={config.title.fontStyle}
+                            defaultValue={config?.title?.fontStyle || 'normal'}
                             onSelect={(style) =>
                                 updateConfig({
                                     title: {

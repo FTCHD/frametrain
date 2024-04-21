@@ -18,7 +18,7 @@ export default function PageView(config: {
         backgroundProp['backgroundColor'] = '#0f0c29'
     }
 
-    const paragraphs = content.split('\n').map((line) => line.trim())
+    const paragraphs = content.split('\n\n').map((line) => line.trim())
 
     return (
         <div
@@ -29,8 +29,7 @@ export default function PageView(config: {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-
-                padding: '40px',
+                padding: '30px',
                 paddingBottom: '0px',
                 ...backgroundProp,
             }}
@@ -42,7 +41,7 @@ export default function PageView(config: {
                     flexDirection: 'column',
                     backgroundColor: 'rgba(255, 255, 255, 0.2)',
                     borderRadius: '10px',
-                    padding: '2rem',
+                    padding: '1rem',
                 }}
             >
                 {paragraphs.map((paragraph, i) => (
@@ -52,8 +51,8 @@ export default function PageView(config: {
                             width: '100%',
                             fontFamily: fontFamily || 'Roboto',
                             color: color || 'white',
-                            fontSize: fontSize || '1.5rem',
-                            fontWeight: 300,
+                            fontSize: fontSize || '0.9rem',
+                            fontWeight: 500,
                             overflowWrap: 'break-word',
                             wordWrap: 'break-word',
                             // this is needed as it doesn't break on the "@" character
@@ -74,16 +73,17 @@ export default function PageView(config: {
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '2rem',
+                    fontSize: '0.7rem',
+                    fontWeight: 600,
                     gap: '10px',
                     color: 'white',
                 }}
             >
                 <img
-                    style={{ border: '8px solid rgba(255, 255, 255, 0.2)', borderRadius: '50%' }}
+                    style={{ border: '4px solid rgba(255, 255, 255, 0.2)', borderRadius: '50%' }}
                     src={'https://unavatar.io/twitter/' + profile}
-                    width="56px"
-                    height="56px"
+                    width="28px"
+                    height="28px"
                     alt="Twitter Profile"
                 />
                 {profile}

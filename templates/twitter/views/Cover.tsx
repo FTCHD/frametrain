@@ -27,7 +27,7 @@ export default function CoverView(config: {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 // alignItems: 'center',
-                padding: '40px',
+                padding: '30px',
                 ...backgroundProp,
             }}
         >
@@ -37,7 +37,7 @@ export default function CoverView(config: {
                     height: '80%',
                     fontFamily: title?.fontFamily || 'Roboto',
                     color: title?.color || 'white',
-                    fontSize: '7rem',
+                    fontSize: '3.5rem',
                     overflow: 'hidden',
                     fontWeight: title?.fontWeight || '300',
                     paddingRight: '20px',
@@ -51,7 +51,8 @@ export default function CoverView(config: {
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    fontSize: '2rem',
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
                     gap: '10px',
                     color: 'white',
                 }}
@@ -59,12 +60,12 @@ export default function CoverView(config: {
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     <img
                         style={{
-                            border: '8px solid rgba(255, 255, 255, 0.2)',
+                            border: '4px solid rgba(255, 255, 255, 0.2)',
                             borderRadius: '50%',
                         }}
                         src={'https://unavatar.io/twitter/' + profile}
-                        width="56px"
-                        height="56px"
+                        width="32px"
+                        height="32px"
                         alt="Twitter Profile"
                     />
                     {profile}
