@@ -64,6 +64,7 @@
         "framer-motion": "^11.0.22",
         "frames.js": "^0.11.0",
         "jotai": "^2.7.1",
+        "js-abbreviation-number": "^1.4.0",
         "jsdom": "^24.0.0",
         "lucide-react": "^0.364.0",
         "ms": "^2.1.3",
