@@ -1,4 +1,7 @@
 
+import BigNumber from 'bignumber.js'
+import hourglass from '../hourglass.png'
+import { getStreamDuration } from '../utils/actions'
 import { chainIdToMetadata } from '../utils/constants'
 
 export default function CoverView(streamData: any) {
@@ -8,35 +11,41 @@ export default function CoverView(streamData: any) {
         funder,
         recipient,
         depositAmount,
-        intactAmount,
         withdrawnAmount,
         startTime,
         endTime,
-        timestamp,
         asset,
-        category,
         shape,
+        canceled,
     } = streamData
 
-    const chainName = chainIdToMetadata[chainId].name
-
     const MAX_VALUE_OUTER = 565.48
-    const MAX_VALUE_INNER = 439.82
+    const MAX_VALUE_INNER = 500
 
     const percentageOuterCircle = (percentage: number) =>
         MAX_VALUE_OUTER - (MAX_VALUE_OUTER * percentage) / 100
 
     const percentageInnerCircle = (percentage: number) =>
         MAX_VALUE_INNER - (MAX_VALUE_INNER * percentage) / 100
-		
-	const percentageWithdrawn = withdrawnAmount == 0 ? 0 : (depositAmount * 100) / withdrawnAmount
-	
-	const formattedWithdrawAmount = withdrawnAmount / 10 ** asset.decimals
+
+    const percentageWithdrawn = new BigNumber(withdrawnAmount).isEqualTo(0)
+        ? 0
+        : (withdrawnAmount / depositAmount) * 100
+
+    const formattedWithdrawAmount = withdrawnAmount / 10 ** asset.decimals
     const formattedDepositAmount = depositAmount / 10 ** asset.decimals
 
-    console.log('depositAmount', depositAmount)
-    console.log('withdrawnAmount', withdrawnAmount)
-    console.log('percentageWithdrawn', percentageWithdrawn)
+    const streamStatus = canceled
+        ? 'CANCELED'
+        : percentageWithdrawn === 100
+          ? 'WITHDRAWN'
+          : new Date().getTime() < new Date(startTime).getTime()
+              ? 'PENDING'
+              : 'ACTIVE'
+
+    const streamDuration = getStreamDuration(streamData)
+
+    const chainColor = chainIdToMetadata[chainId].color
 
     return (
         <div
@@ -45,22 +54,64 @@ export default function CoverView(streamData: any) {
                 flexFlow: 'column',
                 height: '100%',
                 width: '100%',
-                backgroundImage: 'linear-gradient(to right, #e26200, #d88502, #e26200)',
+                backgroundImage: `linear-gradient(to top, #2a2432 55%, ${chainColor})`,
+                // backgroundImage: 'url(' + process.env.NEXT_PUBLIC_HOST + bg.src + ')',
+                // backgroundSize: '100% 100%',
+                // backgroundRepeat: 'no-repeat',
                 color: '#ffffff',
-                padding: '30px',
-                gap: '30px',
+                padding: '15px',
+                gap: '15px',
+                fontFamily: 'Urbanist',
             }}
         >
             <div
                 style={{
                     display: 'flex',
-                    flexBasis: '10%',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                     width: '100%',
-                    fontSize: '48px',
-                    fontWeight: 'bold',
+                    // background: 'red',
                 }}
             >
-                Stream #{alias.toUpperCase()}
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                        flexBasis: '50%',
+                        width: '100%',
+                        fontFamily: 'Catamaran',
+                        fontSize: '22px',
+                        fontWeight: 900,
+                        gap: '5px',
+                        color: 'orange',
+                    }}
+                >
+                    <img
+                        src={process.env.NEXT_PUBLIC_HOST + hourglass.src}
+                        width="36px"
+                        height="36px"
+                        alt="hourglass"
+                    />
+                    <span>#{alias.toUpperCase()}</span>
+                </div>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                        width: '100%',
+                        fontFamily: 'Urbanist',
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        fontStyle: 'italic',
+                        color: 'orange',
+                    }}
+                >
+                    {shape}
+                </div>
             </div>
             <div
                 style={{
@@ -70,7 +121,7 @@ export default function CoverView(streamData: any) {
                     flexDirection: 'row',
                     justifyContent: 'flex-start',
                     // alignItems: 'flex-start',
-                    gap: '10px',
+                    gap: '5px',
                 }}
             >
                 <div
@@ -79,12 +130,12 @@ export default function CoverView(streamData: any) {
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        padding: '14px',
+                        paddingRight: '7px',
                         // borderRadius: '10px',
                         // background: 'rgba(0, 0, 0, 0.25)',
                     }}
                 >
-                    <svg width="420" height="420" viewBox="0 0 200 200">
+                    <svg width="220" height="200" viewBox="0 0 200 200">
                         <defs>
                             <linearGradient id="outerGradient" gradientTransform="rotate(90)">
                                 <stop offset="0%" stop-color="#0099ff" />
@@ -96,9 +147,15 @@ export default function CoverView(streamData: any) {
                             </linearGradient>
                         </defs>
 
-                        <circle cx="100" cy="100" r="95" fill="gray" />
-
                         <circle
+                            cx="100"
+                            cy="100"
+                            r="95"
+                            fill="#2e2e3070"
+                            style={{ backdropFilter: 'blur(10px)' }}
+                        />
+
+                        {/* <circle
                             cx="100"
                             cy="100"
                             r="90"
@@ -117,242 +174,176 @@ export default function CoverView(streamData: any) {
                             stroke-dashoffset={percentageOuterCircle(60)}
                             stroke-linecap="round"
                             transform="rotate(-90 100 100)"
-                        />
+                        /> */}
 
                         <circle
                             cx="100"
                             cy="100"
-                            r="70"
+                            r="80"
                             fill="none"
                             stroke="#e6e6e670" // 70% opacity
-                            stroke-width="10"
+                            stroke-width="35"
                         />
                         <circle
                             cx="100"
                             cy="100"
-                            r="70"
+                            r="80"
                             fill="none"
                             stroke="url(#innerGradient)"
-                            stroke-width="10"
+                            stroke-width="35"
                             stroke-dasharray={MAX_VALUE_INNER} // max value (filled)
                             stroke-dashoffset={percentageInnerCircle(percentageWithdrawn)}
                             stroke-linecap="round"
                             transform="rotate(-90 100 100)"
                         />
                     </svg>
+
+                    <div
+                        style={{
+                            display: 'flex',
+                            position: 'absolute',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%',
+                            height: '100%',
+                            fontSize: '12px',
+                            color: '#ffffff',
+                            left: 0,
+                            top: 0,
+                            fontFamily: 'Catamaran',
+                            fontWeight: 900,
+                            fontStyle: 'italic',
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                borderRadius: '10px',
+                                background: 'rgba(256, 256, 256, 0.2)',
+                                backdropFilter: 'blur(15px)',
+                                padding: '10px',
+                            }}
+                        >
+                            {streamStatus}
+                        </div>
+                    </div>
                 </div>
 
                 <div
                     style={{
                         display: 'flex',
-                        flexGrow: '1',
                         flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        padding: '14px',
-                        borderRadius: '10px',
-                        background: 'rgba(256, 256, 256, 0.2)',
-                        backdropFilter: 'blur(15px)',
+                        width: '100%',
+                        height: '100%',
+                        gap: '12px',
                     }}
                 >
                     <div
                         style={{
                             display: 'flex',
+                            width: '60%',
+                            flexGrow: '1',
                             flexDirection: 'row',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            width: '100%',
+                            padding: '10px',
+                            borderRadius: '10px',
+                            background: 'rgba(255, 255, 255, 0.15)',
+                            gap: '5px',
+                            border: '1px solid #392a3b',
                         }}
                     >
                         <div
                             style={{
                                 display: 'flex',
-                                fontSize: '36px',
+                                fontSize: '20px',
+                                fontWeight: 900,
                             }}
                         >
-                            FUNDER
+                            {recipient.slice(0, 6) + '...' + recipient.slice(-4)}
                         </div>
                         <div
                             style={{
                                 display: 'flex',
-                                fontSize: '36px',
-                                fontWeight: 'bold',
+                                fontSize: '18px',
+                                fontWeight: 600,
                             }}
                         >
-                            {funder.slice(0, 8) + '...' + funder.slice(-3)}
+                            &rarr;
+                        </div>
+
+                        <div
+                            style={{
+                                display: 'flex',
+                                fontSize: '20px',
+                                fontWeight: 900,
+                            }}
+                        >
+                            {funder.slice(0, 6) + '...' + funder.slice(-4)}
                         </div>
                     </div>
                     <div
                         style={{
                             display: 'flex',
-                            flexDirection: 'row',
+                            width: '60%',
+                            flexGrow: '1',
+                            flexDirection: 'column',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            width: '100%',
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                fontSize: '36px',
-                            }}
-                        >
-                            RECIPIENT
-                        </div>
-                        <div
-                            style={{
-                                display: 'flex',
-                                fontSize: '36px',
-                                fontWeight: 'bold',
-                            }}
-                        >
-                            {recipient.slice(0, 8) + '...' + recipient.slice(-3)}
-                        </div>
-                    </div>
-
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: '100%',
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                fontSize: '36px',
-                            }}
-                        >
-                            TOTAL
-                        </div>
-
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                gap: '5px',
-                                fontSize: '24px',
-                                fontWeight: 'bold',
-                            }}
-                        >
-                            <img
-                                src={asset.logo}
-                                style={{ borderRadius: '50%' }}
-                                alt=""
-                                width={40}
-                                height={40}
-                            />
-                            {formattedDepositAmount.toLocaleString('en-US', {
-                                maximumFractionDigits:
-                                    formattedDepositAmount > 1_000
-                                        ? 0
-                                        : formattedDepositAmount > 1
-                                          ? 2
-                                          : 8,
-                            })}{' '}
-                            {asset.symbol}
-                        </div>
-                    </div>
-
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: '100%',
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                fontSize: '36px',
-                            }}
-                        >
-                            WITHDRAWN
-                        </div>
-
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                gap: '5px',
-                                fontSize: '24px',
-                                fontWeight: 'bold',
-                            }}
-                        >
-                            <img
-                                src={asset.logo}
-                                style={{ borderRadius: '50%' }}
-                                alt=""
-                                width={40}
-                                height={40}
-                            />
-                            {formattedWithdrawAmount
-                                ? formattedWithdrawAmount.toLocaleString('en-US', {
-                                      maximumFractionDigits:
-                                          formattedWithdrawAmount > 1_000
-                                              ? 0
-                                              : formattedWithdrawAmount > 1
-                                                  ? 2
-                                                  : 8,
-                                  })
-                                : '0'}{' '}
-                            {asset.symbol}
-                        </div>
-                    </div>
-
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: '100%',
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                fontSize: '36px',
-                            }}
-                        >
-                            STREAM SHAPE
-                        </div>
-
-                        <div style={{ display: 'flex', fontSize: '28px', fontWeight: 'bold' }}>
-                            {shape.toUpperCase()}
-                        </div>
-                    </div>
-
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: '100%',
+                            padding: '10px',
+                            borderRadius: '10px',
+                            background: 'rgba(255, 255, 255, 0.15)',
+                            gap: '7px',
+                            border: '1px solid #392a3b',
                         }}
                     >
                         <div
                             style={{
                                 display: 'flex',
                                 flexDirection: 'row',
+                                justifyContent: 'space-between',
                                 alignItems: 'center',
-                                gap: '5px',
+                                width: '100%',
                             }}
                         >
-                            {/* <Signal color="#ffffff" width={100} height={100} /> */}
                             <div
                                 style={{
                                     display: 'flex',
-                                    fontSize: '36px',
+                                    fontSize: '14px',
+                                    fontWeight: 600,
                                 }}
                             >
-                                NETWORK
+                                TOTAL
+                            </div>
+
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    fontSize: '18px',
+                                    fontWeight: 900,
+                                }}
+                            >
+                                <img
+                                    src={asset.logo}
+                                    style={{ borderRadius: '50%' }}
+                                    alt=""
+                                    width={18}
+                                    height={18}
+                                />
+                                {formattedDepositAmount.toLocaleString('en-US', {
+                                    maximumFractionDigits:
+                                        formattedDepositAmount > 1_000
+                                            ? 0
+                                            : formattedDepositAmount > 1
+                                              ? 2
+                                              : 8,
+                                })}{' '}
+                                {asset.symbol}
                             </div>
                         </div>
 
@@ -360,47 +351,73 @@ export default function CoverView(streamData: any) {
                             style={{
                                 display: 'flex',
                                 flexDirection: 'row',
+                                justifyContent: 'space-between',
                                 alignItems: 'center',
-                                gap: '5px',
+                                width: '100%',
                             }}
                         >
-                            <img
-                                src={chainIdToMetadata[chainId].icon}
-                                alt=""
-                                width={40}
-                                height={40}
-                            />
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                WITHDRAWN
+                            </div>
 
-                            <div style={{ display: 'flex', fontSize: '28px', fontWeight: 'bold' }}>
-                                {chainName.toUpperCase()}
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    fontSize: '18px',
+                                    fontWeight: 900,
+                                }}
+                            >
+                                <img
+                                    src={asset.logo}
+                                    style={{ borderRadius: '50%' }}
+                                    alt=""
+                                    width={18}
+                                    height={18}
+                                />
+                                {formattedWithdrawAmount
+                                    ? formattedWithdrawAmount.toLocaleString('en-US', {
+                                          maximumFractionDigits:
+                                              formattedWithdrawAmount > 1_000
+                                                  ? 0
+                                                  : formattedWithdrawAmount > 1
+                                                      ? 2
+                                                      : 8,
+                                      })
+                                    : '0'}{' '}
+                                {asset.symbol}
                             </div>
                         </div>
                     </div>
 
-                    {/* <div
+                    <div
                         style={{
                             display: 'flex',
+                            width: '60%',
+                            flexGrow: '1',
                             flexDirection: 'row',
                             justifyContent: 'center',
                             alignItems: 'center',
+                            padding: '5px',
+                            borderRadius: '10px',
+                            background: 'rgba(255, 255, 255, 0.15)',
+                            gap: '5px',
+                            border: '1px solid #392a3b',
+                            fontSize: '1.25rem', // '20px',
+                            fontWeight: 700,
+                            textTransform: 'capitalize',
                         }}
                     >
-                        <img
-                            src={asset.logo}
-                            style={{ borderRadius: '50%' }}
-                            alt=""
-                            width={20}
-                            height={20}
-                        />
-
-                        <div
-                            style={{
-                                display: 'flex',
-                            }}
-                        >
-                            {asset.symbol}
-                        </div>
-                    </div> */}
+                        {streamDuration}
+                    </div>
                 </div>
             </div>
         </div>

@@ -109,7 +109,7 @@ const metadataArbitrum = {
     name: 'Arbitrum One',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     icon: 'https://app.sablier.com/_next/static/media/arbitrum.40bb2edb.png',
-    color: '#082845',
+    color: '#06182e',
 }
 
 const metadataMainnet = {
@@ -117,7 +117,7 @@ const metadataMainnet = {
     name: 'Ethereum',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     icon: 'https://app.sablier.com/_next/static/media/ethereum-purple.45538fe4.png',
-    color: '#081d45',
+    color: '#04132e',
 }
 
 const metadataPolygon = {
@@ -125,7 +125,7 @@ const metadataPolygon = {
     name: 'Polygon',
     nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
     icon: 'https://app.sablier.com/_next/static/media/matic.9aee98ed.png',
-    color: '#390845',
+    color: '#240736',
 }
 
 const metadataAvalanche = {
@@ -133,7 +133,7 @@ const metadataAvalanche = {
     name: 'Avalanche',
     nativeCurrency: { name: 'AVAX', symbol: 'AVAX', decimals: 18 },
     icon: 'https://app.sablier.com/_next/static/media/avalanche.c109a4b1.png',
-    color: '#450f08',
+    color: '#361403',
 }
 
 const metadataBase = {
@@ -141,7 +141,7 @@ const metadataBase = {
     name: 'Base',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     icon: 'https://app.sablier.com/_next/static/media/base.716503f4.png',
-    color: '#081745',
+    color: '#030f36',
 }
 
 const metadataBnb = {
@@ -149,7 +149,7 @@ const metadataBnb = {
     name: 'BNB Chain',
     nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
     icon: 'https://app.sablier.com/_next/static/media/bsc.ff896246.png',
-    color: '#453a08',
+    color: '#362b03',
 }
 
 const metadataGnosis = {
@@ -161,7 +161,7 @@ const metadataGnosis = {
         symbol: 'xDAI',
     },
     icon: 'https://app.sablier.com/_next/static/media/gnosis.f70823ba.png',
-    color: '#204508',
+    color: '#033614',
 }
 
 const metadataOptimism = {
@@ -169,7 +169,7 @@ const metadataOptimism = {
     name: 'Optimism',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     icon: 'https://app.sablier.com/_next/static/media/optimism.2c9aa066.png',
-    color: '#450808',
+    color: '#360903',
 }
 
 const metadataScroll = {
@@ -177,7 +177,7 @@ const metadataScroll = {
     name: 'Scroll',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     icon: 'https://app.sablier.com/_next/static/media/scroll.b8ef442e.png',
-    color: '#452c08',
+    color: '#453808',
 }
 
 export const chainIdToMetadata: Record<

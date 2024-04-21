@@ -14,7 +14,7 @@ export const initialState: State = {}
 export default {
     name: 'Sablier Template',
     description: 'Get the latest details about a Sablier stream.',
-    creatorFid: '91716',
+    creatorFid: '10677',
     creatorName: 'Paul',
     enabled: true,
     Inspector,

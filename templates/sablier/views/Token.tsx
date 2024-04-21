@@ -1,21 +1,11 @@
+
 import { chainIdToMetadata } from '../utils/constants'
 
 export default function TokenView(streamData: any) {
-    const {
-        chainId,
-        funder,
-        recipient,
-        depositAmount,
-        intactAmount,        withdrawnAmount,
-        startTime,
-        endTime,
-        timestamp,
-        asset,
-        category,
-        segments, // relevant if category is LockupDynamic
-    } = streamData
+    const { chainId, asset } = streamData
 
     const chainName = chainIdToMetadata[chainId].name
+	const chainColor = chainIdToMetadata[chainId].color
 
     return (
         <div
@@ -24,16 +14,22 @@ export default function TokenView(streamData: any) {
                 flexFlow: 'column',
                 height: '100%',
                 width: '100%',
-                backgroundImage: 'linear-gradient(to right, #e26200, #d88502, #e26200)',
+                backgroundImage: `linear-gradient(to top, #2a2432 55%, ${chainColor})`,
+                // backgroundImage: 'url(' + process.env.NEXT_PUBLIC_HOST + bg.src + ')',
+                // backgroundSize: '100% 100%',
+                // backgroundRepeat: 'no-repeat',
                 color: '#ffffff',
-                padding: '30px',
-                gap: '30px',
+                padding: '15px',
+                gap: '15px',
+                fontFamily: 'Urbanist',
             }}
         >
             <span
                 style={{
-                    fontSize: '48px',
-                    fontWeight: 'bold',
+                    fontFamily: 'Catamaran',
+                    fontSize: '20px',
+                    fontWeight: 900,
+                    color: 'orange',
                 }}
             >
                 Token Details
@@ -45,15 +41,16 @@ export default function TokenView(streamData: any) {
                     flexGrow: '1',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    padding: '14px',
+                    padding: '15px',
                     borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.25)',
-                    gap: '10px',
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    gap: '5px',
+                    border: '1px solid #392a3b',
                 }}
             >
                 <div style={tokenRowStyle}>
                     <span>NAME</span>
-                    <span style={{ fontWeight: '800', fontSize: '42px' }}>{asset.name}</span>
+                    <span style={{ fontWeight: 900, fontSize: '16px' }}>{asset.name}</span>
                 </div>
                 <div style={tokenRowStyle}>
                     <span>SYMBOL</span>
@@ -71,24 +68,24 @@ export default function TokenView(streamData: any) {
                             src={asset.logo}
                             style={{ borderRadius: '50%' }}
                             alt=""
-                            width={40}
-                            height={40}
+                            width={20}
+                            height={20}
                         />
 
-                        <span style={{ fontWeight: '800', fontSize: '42px' }}>{asset.symbol}</span>
+                        <span style={{ fontWeight: 900, fontSize: '16px' }}>{asset.symbol}</span>
                     </div>
                 </div>
                 <div style={tokenRowStyle}>
                     <span>DECIMALS</span>
-                    <span style={{ fontWeight: '800', fontSize: '42px' }}>{asset.decimals}</span>
+                    <span style={{ fontWeight: 900, fontSize: '16px' }}>{asset.decimals}</span>
                 </div>
                 <div style={tokenRowStyle}>
                     <span>ADDRESS</span>
                     <div
                         style={{
                             display: 'flex',
-                            fontWeight: '800',
-                            fontSize: '32px',
+                            fontWeight: 900,
+                            fontSize: '16px',
                         }}
                     >
                         {asset.address}
@@ -105,9 +102,9 @@ export default function TokenView(streamData: any) {
                             gap: '5px',
                         }}
                     >
-                        <img src={chainIdToMetadata[chainId].icon} alt="" width={40} height={40} />
+                        <img src={chainIdToMetadata[chainId].icon} alt="" width={20} height={20} />
 
-                        <span style={{ fontWeight: '800', fontSize: '42px' }}>
+                        <span style={{ fontWeight: 900, fontSize: '16px' }}>
                             {chainName.toUpperCase()}
                         </span>
                     </div>
@@ -125,6 +122,6 @@ const tokenRowStyle = {
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    fontWeight: '500',
-    fontSize: '46px',
+    fontWeight: 'bold',
+    fontSize: '18px',
 } as const

@@ -48,6 +48,7 @@ export async function getStreamData(id: string) {
 
     const res: any = await fetch(chainToEndpoint[chainId as keyof typeof chainToEndpoint], {
         method: 'POST',
+        cache: 'force-cache',
         headers: {
             'content-type': 'application/json',
         },
