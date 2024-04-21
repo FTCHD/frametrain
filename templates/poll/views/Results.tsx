@@ -35,8 +35,8 @@ export default function ResultsView(
             <div
                 style={{
                     display: 'flex',
-                    fontSize: '48px',
-                    fontWeight: 'bold',
+                    fontSize: '1.2rem',
+                    fontWeight: 500,
                     color: colors?.textColor || 'white',
                 }}
             >
@@ -48,7 +48,7 @@ export default function ResultsView(
                     flexDirection: 'column',
                     padding: '20px',
                     borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.22)',
                     color: colors?.textColor || 'white',
                     gap: '20px',
                 }}
@@ -67,14 +67,16 @@ export default function ResultsView(
                         <span
                             style={{
                                 fontFamily: 'Roboto',
-                                fontSize: '64px',
+                                fontSize: '1.5rem',
+                                fontWeight: 600,
                             }}
                         >
                             {option.displayLabel}
                             <span
                                 style={{
                                     fontFamily: 'Roboto',
-                                    fontSize: '24px',
+                                    fontSize: '0.9rem',
+                                    fontWeight: 900,
                                     color: 'rgba(255, 255, 255, 0.6)',
                                     paddingLeft: '5px',
                                 }}
@@ -97,7 +99,7 @@ export default function ResultsView(
                                 id="progressBar"
                                 x="0"
                                 y="0"
-                                width={`${percentageForEachOption[option.index]}%`}
+                                width={(300 * percentageForEachOption?.[option.index]) / 100}
                                 height="30"
                                 rx="15"
                                 ry="15"

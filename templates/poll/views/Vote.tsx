@@ -21,6 +21,7 @@ export default function VoteView(config: Record<string, string>) {
                 alignItems: 'center',
                 width: '100%',
                 height: '100%',
+                padding: '30px',
                 ...backgroundProp,
             }}
         >
@@ -31,11 +32,12 @@ export default function VoteView(config: Record<string, string>) {
                     alignItems: 'center',
                     padding: '30px',
                     borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.22)',
                     color: textColor || 'white',
-                    fontSize: '64px',
+                    fontSize: '2.2rem',
+                    textAlign: 'center',
                     fontWeight: '900',
-                    lineHeight: '1.5',
+                    lineHeight: '1.4',
                     textWrap: 'balance',
                 }}
             >

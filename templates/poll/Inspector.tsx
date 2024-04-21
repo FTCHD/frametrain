@@ -20,10 +20,8 @@ export default function Inspector() {
     const questionInputRef = useRef<HTMLInputElement>(null)
 
     return (
-        <div className="w-full h-full space-y-8">
-            {/* <pre>{JSON.stringify(vote, null, 2)}</pre> */}
-
-            <div className="flex flex-col">
+        <div className="w-full h-full flex flex-col gap-5">
+            <div className="flex flex-col gap-2 ">
                 <h2 className="text-lg font-semibold">Question</h2>
                 <Input
                     placeholder="The poll question"
@@ -33,7 +31,7 @@ export default function Inspector() {
                 />
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-2 ">
                 {options?.map((option, index) => (
                     <div className="flex flex-row justify-between items-center ">
                         <h2 className="text-lg font-semibold p-2 bg-secondary rounded-md">
@@ -56,9 +54,10 @@ export default function Inspector() {
                     </div>
                 ))}
             </div>
+
             {(!options || options.length < 4) && (
-                <div className="flex flex-col">
-                    <div className="flex flex-col">
+                <div className="flex flex-col gap-2 ">
+                    <div className="flex flex-col gap-2 ">
                         <h1 className="text-lg font-semibold">Voting Options</h1>
                         <Input
                             className="text-lg"
@@ -101,7 +100,7 @@ export default function Inspector() {
                 </div>
             )}
 
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-2 ">
                 <h2 className="text-lg font-semibold">Background Color</h2>
                 <ColorPicker
                     className="w-full"
@@ -121,7 +120,7 @@ export default function Inspector() {
                 />
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-2 ">
                 <h2 className="text-lg font-semibold">Text Color</h2>
                 <ColorPicker
                     className="w-full"
@@ -131,7 +130,7 @@ export default function Inspector() {
                 />
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-2 ">
                 <h2 className="text-lg font-semibold">Bar Line Color</h2>
                 <ColorPicker
                     className="w-full"
