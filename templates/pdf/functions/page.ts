@@ -66,7 +66,7 @@ export default async function page(
         frame = await buildFramePage({
             buttons: buttons,
             image: 'data:image/png;base64,' + imageData,
-            aspectRatio: config.aspectRatio.replace('/', ':'),
+            aspectRatio: config?.aspectRatio?.replace('/', ':') ?? '1:1',
             config: config,
             function: 'page',
             params: {
