@@ -14,13 +14,13 @@ export const initialState: State = {}
 export default {
     name: 'PDF Template',
     description: 'Upload and convert your PDF into a Frame with multiple slides.',
-    creatorFid: '91716',
-    creatorName: 'Jake',
+    creatorFid: '2',
+    creatorName: 'Varun',
     enabled: true,
     Inspector,
     functions,
     initialState,
     initialConfig: {} as Config,
     cover,
-    requiresValidation: true,
+    requiresValidation: false,
 } satisfies BaseTemplate

@@ -1,7 +1,6 @@
 'use server'
 import { dimensionsForRatio } from '@/lib/constants'
-import type { FrameActionPayload } from '@/lib/farcaster'
-import { loadGoogleFontAllVariants } from '@/lib/fonts'
+import type { FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { buildFramePage } from '@/lib/sdk'
 import { ImageResponse } from '@vercel/og'
 import type { Config, State } from '..'
@@ -21,23 +20,25 @@ export default async function page(
                 : Number(params?.currentPage) + 1
             : 1
 
-    const slideCount = config.slides.length
+    const slideCount = config.slideUrls.length
 
-    const buttons = [
+    const buttons: FrameButtonMetadata[] = [
         {
-            label: '<',
+            label: '←',
         },
     ]
 
     if (nextPage < slideCount) {
         buttons.push({
-            label: '>',
+            label: '→',
         })
     }
 
     if (body.untrustedData.buttonIndex === 2 && nextPage === slideCount) {
         buttons.push({
             label: 'Create Your Own',
+            action: 'link',
+            target: 'https://frametra.in',
         })
     }
 
@@ -46,19 +47,15 @@ export default async function page(
     if (body.untrustedData.buttonIndex === 1 && nextPage === 0) {
         frame = await initial(config, state)
     } else {
-        const roboto = await loadGoogleFontAllVariants('Roboto')
-
-        const pageData = config.slides[nextPage - 1]
+        const slideUrl = config.slideUrls[nextPage - 1]
 
         const r = new ImageResponse(
             PageView({
-                // profile: config.profile,
-                content: pageData,
+                slideUrl: slideUrl,
                 sizes: dimensionsForRatio[config.aspectRatio as keyof typeof dimensionsForRatio],
             }),
             {
                 ...dimensionsForRatio[config.aspectRatio as keyof typeof dimensionsForRatio],
-                fonts: roboto,
             }
         )
 
@@ -69,7 +66,7 @@ export default async function page(
         frame = await buildFramePage({
             buttons: buttons,
             image: 'data:image/png;base64,' + imageData,
-            aspectRatio: config.aspectRatio,
+            aspectRatio: config?.aspectRatio?.replace('/', ':') ?? '1:1',
             config: config,
             function: 'page',
             params: {

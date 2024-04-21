@@ -1,47 +1,55 @@
-import { dimensionsForRatio } from '@/lib/constants'
-
 export default function ResultsView(
     question: string,
     options: { index: number; buttonLabel: string; displayLabel: string }[],
     totalVotes: number,
     percentageForEachOption: Record<string, number>,
-    votesForOption: Record<string, number>
+    votesForOption: Record<string, number>,
+    colors: Record<string, string>
 ) {
+    const backgroundProp = {}
+
+    if (colors?.background) {
+        if (colors.background.startsWith('#')) {
+            backgroundProp['backgroundColor'] = colors.background
+        } else {
+            backgroundProp['backgroundImage'] = colors.background
+        }
+    } else {
+        backgroundProp['backgroundImage'] = 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
+    }
+
     return (
         <div
             style={{
                 display: 'flex',
                 flexFlow: 'column',
                 justifyContent: 'space-around',
-                width: dimensionsForRatio['1.91/1'].width + 'px',
-                height: dimensionsForRatio['1.91/1'].height + 'px',
-                backgroundImage: 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)',
+                width: '100%',
+                height: '100%',
                 color: '#ffffff',
-                padding: '20px',
-                gap: '10px',
+                padding: '30px',
+                gap: '30px',
+                ...backgroundProp,
             }}
         >
-            <span
+            <div
                 style={{
-                    fontSize: '24px',
-                    fontWeight: 'bold',
+                    display: 'flex',
+                    fontSize: '1.2rem',
+                    fontWeight: 500,
+                    color: colors?.textColor || 'white',
                 }}
             >
                 {question}
-            </span>
+            </div>
             <div
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'flex-start',
-                    padding: '10px',
-                    paddingTop: '12px',
-                    paddingBottom: '12px',
-                    borderRadius: '4px',
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    color: '#fff',
-                    fontSize: '16px',
+                    padding: '20px',
+                    borderRadius: '10px',
+                    background: 'rgba(255, 255, 255, 0.22)',
+                    color: colors?.textColor || 'white',
                     gap: '20px',
                 }}
             >
@@ -59,14 +67,16 @@ export default function ResultsView(
                         <span
                             style={{
                                 fontFamily: 'Roboto',
-                                fontSize: '14px',
+                                fontSize: '1.5rem',
+                                fontWeight: 600,
                             }}
                         >
                             {option.displayLabel}
                             <span
                                 style={{
                                     fontFamily: 'Roboto',
-                                    fontSize: '12px',
+                                    fontSize: '0.9rem',
+                                    fontWeight: 900,
                                     color: 'rgba(255, 255, 255, 0.6)',
                                     paddingLeft: '5px',
                                 }}
@@ -89,11 +99,11 @@ export default function ResultsView(
                                 id="progressBar"
                                 x="0"
                                 y="0"
-                                width={`${percentageForEachOption[option.index]}%`}
+                                width={(300 * percentageForEachOption?.[option.index]) / 100}
                                 height="30"
                                 rx="15"
                                 ry="15"
-                                fill="yellow"
+                                fill={colors?.barColor || 'yellow'}
                             />
                         </svg>
                     </div>

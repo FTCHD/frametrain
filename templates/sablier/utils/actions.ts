@@ -1,6 +1,12 @@
 import BigNumber from 'bignumber.js'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { chainToEndpoint, chainToTypeMap, contractTypes } from './constants'
 import { getActions_ByStream, getStream_ById } from './queries'
+
+dayjs.extend(duration)
+dayjs.extend(relativeTime)
 
 function parseStreamId(id: string) {
     // id is in the format of XX-YY-ZZ
@@ -13,9 +19,6 @@ function parseStreamId(id: string) {
     if (Object.keys(contractTypes).includes(categoryOrContract)) {
         const typeKey = categoryOrContract as keyof typeof contractTypes
         const typeMap = chainToTypeMap[chainId as keyof typeof chainToTypeMap]
-        console.log('typeKey', typeKey)
-        console.log('chainId', chainId)
-        console.log('typeMap', typeMap)
         contract = typeMap[typeKey]
     } else {
         if (!categoryOrContract.startsWith('0x')) {
@@ -33,20 +36,19 @@ function parseStreamId(id: string) {
 }
 
 export async function getStreamData(id: string) {
-    console.log('Getting stream data', id)
-
     if (!id) {
         return {}
     }
 
     const { contract, chainId, streamId } = parseStreamId(id)
 
-    console.log('chainId', chainId)
-    console.log('contract', contract)
-    console.log('streamId', streamId)
+    // console.log('chainId', chainId)
+    // console.log('contract', contract)
+    // console.log('streamId', streamId)
 
     const res: any = await fetch(chainToEndpoint[chainId as keyof typeof chainToEndpoint], {
         method: 'POST',
+        cache: 'force-cache',
         headers: {
             'content-type': 'application/json',
         },
@@ -60,7 +62,7 @@ export async function getStreamData(id: string) {
         }),
     })
         .then((res) => res.json())
-        .catch(console.log)
+        .catch(console.error)
 
     if (!res?.data?.stream) {
         throw new Error('Stream not found')
@@ -69,9 +71,64 @@ export async function getStreamData(id: string) {
     return res.data.stream
 }
 
-export async function getStreamHistory(id: string) {
-    console.log('Getting stream history', id)
+// export function getStreamStatus(streamData: any) {
+//     const now = dayjs()
 
+//     const startTime = streamData.startTime
+//     const endTime = streamData.endTime
+//     const cliffTime = streamData.cliffTime
+
+//     const duration = new BigNumber(endTime).minus(new BigNumber(startTime))
+
+//     const isCanceled = streamData.canceled
+//     // const intactAmount = new BigNumber(streamData.intactAmount)
+
+//     const streamedDuration = BigNumber.max(
+//         new BigNumber(cliffTime || 0).minus(new BigNumber(startTime)),
+//         new BigNumber(0)
+//     )
+
+//     const streamedDurationPercentage = streamedDuration.dividedBy(duration).multipliedBy(100)
+
+//     console.log('streamedDuration', streamedDuration)
+//     console.log('streamedDurationPercentage', streamedDurationPercentage)
+
+//     // Check for a canceled stream
+//     if (isCanceled) {
+//         // if (intactAmount.isEqualTo(0)) {
+//         //     return 'DEPLETED_CANCELED'
+//         // }
+//         return 'CANCELED'
+//     }
+
+//     // Check for a settled stream
+//     if (streamedDurationPercentage.isEqualTo(new BigNumber(100))) {
+//         // if (intactAmount.isEqualTo(0)) {
+//         //     return 'DEPLETED_SETTLED'
+//         // }
+//         return 'SETTLED'
+//     }
+
+//     // Check for a pending stream that has not started yet
+//     if (now.isBefore(dayjs().format(startTime))) {
+//         return 'PENDING'
+//     }
+
+//     return 'STREAMING'
+// }
+
+export function getStreamDuration(streamData: any) {
+    const startTime = streamData.startTime
+    const endTime = streamData.endTime
+
+    const duration = endTime - startTime
+
+    const readableDuration = dayjs.duration(duration, 'seconds').humanize()
+
+    return readableDuration.replace('a ', '1 ')
+}
+
+export async function getStreamHistory(id: string) {
     if (!id) {
         return []
     }
@@ -94,7 +151,7 @@ export async function getStreamHistory(id: string) {
         }),
     })
         .then((res) => res.json())
-        .catch(console.log)
+        .catch(console.error)
 
     if (!res?.data?.actions) {
         throw new Error('Stream not found')

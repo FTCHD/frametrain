@@ -8,7 +8,8 @@
         "rules": {
             "a11y": {
                 "all": true,
-                "noSvgWithoutTitle": "off"
+                "noSvgWithoutTitle": "off",
+                "useKeyWithClickEvents": "off"
             },
             "complexity": {
                 "all": true,
@@ -30,10 +31,13 @@
                 "useBlockStatements": "off",
                 "noInferrableTypes": "off",
                 "noDefaultExport": "off",
-                "useNamingConvention": "off"
+                "useNamingConvention": "off",
+                "useCollapsedElseIf": "off",
+                "noNegationElse": "off"
             },
             "suspicious": {
-                "all": false
+                "all": false,
+                "noExplicitAny": "off"
             }
         },
         "ignore": ["node_modules/*", "dist/*", ".work/*"]

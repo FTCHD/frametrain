@@ -1,5 +1,5 @@
 
-import { Box, LinearProgress, Stack, Typography } from '@mui/joy'
+import { Progress } from '@/components/shadcn/Progress'
 
 const FUNNY_MESSAGES = [
     "It's not always #000000 and #FFFFFF",
@@ -20,34 +20,13 @@ const FUNNY_MESSAGES = [
 
 export default function Loading() {
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                px: { md: 10 },
-                height: '100%',
-                width: '100%',
-            }}
-        >
-            <Stack
-                textAlign={'center'}
-                spacing={4}
-                width={'100%'}
-                justifyContent={'center'}
-                alignItems={'center'}
-            >
-                <LinearProgress
-                    size="lg"
-                    thickness={30}
-                    color="primary"
-                    sx={{ width: '100%', maxWidth: '500px' }}
-                />
-                <Typography level="h4" color="primary">
+        <div className="flex flex-col items-center justify-center h-full w-full px-10 md:px-20">
+            <div className="flex flex-col items-center justify-center w-full space-y-4">
+                <Progress value={undefined} className="h-8 w-full max-w-lg " />
+                <h4 className="text-2xl font-bold text-primary">
                     {FUNNY_MESSAGES[Math.floor(Math.random() * FUNNY_MESSAGES.length)]}
-                </Typography>
-            </Stack>
-        </Box>
+                </h4>
+            </div>
+        </div>
     )
 }

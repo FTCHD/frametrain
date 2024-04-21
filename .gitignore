@@ -42,3 +42,5 @@ next-env.d.ts
 !.env.example
 .vscode
 .work
+.tw
+public/pdf.worker.mjs

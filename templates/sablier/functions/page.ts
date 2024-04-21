@@ -7,6 +7,7 @@ import { ImageResponse } from '@vercel/og'
 import type { Config, State } from '..'
 import { getLogoForToken, getStreamData, getStreamHistory } from '../utils/actions'
 import HistoryView from '../views/History'
+import TokenView from '../views/Token'
 import initial from './initial'
 
 export default async function page(
@@ -17,13 +18,12 @@ export default async function page(
 ) {
     const buttonIndex = body.untrustedData.buttonIndex
 
-    // console.log('body', body)
-
     let frame
 
     switch (buttonIndex) {
         case 2: {
             const urbanist = await loadGoogleFontAllVariants('Urbanist')
+    const catamaran = await loadGoogleFontAllVariants('Catamaran')
 
             const streamData = await getStreamData(config.streamId)
 
@@ -36,9 +36,9 @@ export default async function page(
                 { asset: { ...streamData.asset, logo: tokenLogo } }
             )
 
-            const resp = new ImageResponse(HistoryView(data, history), {
+            const resp = new ImageResponse(TokenView(data), {
                 ...dimensionsForRatio['1.91/1'],
-                fonts: urbanist,
+                fonts: [...urbanist, ...catamaran],
             })
 
             // get image data from vercel/og ImageResponse
@@ -73,15 +73,26 @@ export default async function page(
 
         case 3: {
             const urbanist = await loadGoogleFontAllVariants('Urbanist')
+    const catamaran = await loadGoogleFontAllVariants('Catamaran')
 
-            const data = await getStreamData(config.streamId)
-
+            const streamData = await getStreamData(config.streamId)
             const history = await getStreamHistory(config.streamId)
+			
+			const tokenLogo = await getLogoForToken(streamData.chainId, streamData.asset.address)
 
-            const resp = new ImageResponse(HistoryView(data, history), {
-                ...dimensionsForRatio['1.91/1'],
-                fonts: urbanist,
-            })
+            const resp = new ImageResponse(
+                HistoryView(
+                    {
+                        ...streamData,
+                        asset: { ...streamData.asset, logo: tokenLogo },
+                    },
+                    history
+                ),
+                {
+                    ...dimensionsForRatio['1.91/1'],
+                    fonts: [...urbanist, ...catamaran],
+                }
+            )
 
             // get image data from vercel/og ImageResponse
             const bufferData = Buffer.from(await resp.arrayBuffer())

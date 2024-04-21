@@ -1,4 +1,5 @@
 import type { StaticImageData } from 'next/image'
+import type { ElementType } from 'react'
 
 export interface BaseConfig {
     requiresValidation: boolean
@@ -23,8 +24,7 @@ export interface BaseTemplate {
     creatorFid: string // must be a farcaster fid
     creatorName: string
     enabled: boolean
-    // biome-ignore lint/correctness/noUndeclaredVariables: <>
-    Inspector: JSX.ElementType
+    Inspector: ElementType
     functions: BaseFunctions
     initialState?: any
     initialConfig?: any

@@ -7,6 +7,7 @@ import { type InferInsertModel, and, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
 import { revalidatePath } from 'next/cache'
 import { notFound } from 'next/navigation'
+import { uploadPreview } from './upload'
 
 export async function getFrameList() {
     const sesh = await auth()
@@ -74,10 +75,7 @@ export async function createFrame({
 export async function updateFrameName(id: string, name: string) {
     const db = drizzle(getRequestContext().env.DB)
 
-    console.log('GOT HERE')
-    console.log(id, name)
-
-    await db.update(frameTable).set({ name }).where(eq(frameTable.id, id)).run()
+    await db.update(frameTable).set({ name, updatedAt: new Date() }).where(eq(frameTable.id, id)).run()
 
     // revalidatePath(`/frame/${id}`)
 }
@@ -86,7 +84,11 @@ export async function updateFrameName(id: string, name: string) {
 export async function updateFrameConfig(id: string, config: any) {
     const db = drizzle(getRequestContext().env.DB)
 
-    await db.update(frameTable).set({ config }).where(eq(frameTable.id, id)).run()
+    await db
+        .update(frameTable)
+        .set({ config, updatedAt: new Date() })
+        .where(eq(frameTable.id, id))
+        .run()
 
     // revalidatePath(`/frame/${id}`)
 }
@@ -94,8 +96,9 @@ export async function updateFrameConfig(id: string, config: any) {
 // called only internally
 export async function updateFrameState(id: string, state: any) {
     const db = drizzle(getRequestContext().env.DB)
+	
 
-    await db.update(frameTable).set({ state }).where(eq(frameTable.id, id)).run()
+    await db.update(frameTable).set({ state, updatedAt: new Date() }).where(eq(frameTable.id, id)).run()
 
     // revalidatePath(`/frame/${id}`)
 }
@@ -103,21 +106,24 @@ export async function updateFrameState(id: string, state: any) {
 export async function updateFrameCalls(id: string, calls: number) {
     const db = drizzle(getRequestContext().env.DB)
 
-    await db.update(frameTable).set({ currentMonthCalls: calls }).where(eq(frameTable.id, id)).run()
+    await db
+        .update(frameTable)
+        .set({ currentMonthCalls: calls, updatedAt: new Date() })
+        .where(eq(frameTable.id, id))
+        .run()
 
     // revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFramePreview(id: string, preview: string) {
-    const db = drizzle(getRequestContext().env.DB)
-
     // extract whats after "property="og:image" content="data:image/png;base64," from preview
     let previewImage = preview.split('data:image/png;base64,')[1]
     previewImage = previewImage.split('"')[0]
 
-    await db.update(frameTable).set({ preview: previewImage }).where(eq(frameTable.id, id)).run()
-
-    // revalidatePath(`/frame/${id}`)
+    await uploadPreview({
+        frameId: id,
+        base64String: previewImage,
+    })
 }
 
 export async function deleteFrame(id: string) {

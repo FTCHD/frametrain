@@ -14,13 +14,13 @@ export const initialState: State = {}
 export default {
     name: 'Tweet Template',
     description: 'Transform a tweet or multiple tweets into a Frame.',
-    creatorFid: '91716',
-    creatorName: 'Mike',
+    creatorFid: '368382',
+    creatorName: 'Chris',
     enabled: true,
     Inspector,
     functions,
     initialState,
     initialConfig: {} as Config,
     cover,
-    requiresValidation: true,
+    requiresValidation: false,
 } satisfies BaseTemplate

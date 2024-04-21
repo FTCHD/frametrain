@@ -1,4 +1,7 @@
-import { dimensionsForRatio } from '@/lib/constants'
+
+import BigNumber from 'bignumber.js'
+import hourglass from '../hourglass.png'
+import { getStreamDuration } from '../utils/actions'
 import { chainIdToMetadata } from '../utils/constants'
 
 export default function CoverView(streamData: any) {
@@ -8,285 +11,412 @@ export default function CoverView(streamData: any) {
         funder,
         recipient,
         depositAmount,
-        intactAmount,
         withdrawnAmount,
         startTime,
         endTime,
-        timestamp,
         asset,
-        category,
         shape,
+        canceled,
     } = streamData
 
-    const chainName = chainIdToMetadata[chainId].name
-
-    console.log(asset.address)
-
     const MAX_VALUE_OUTER = 565.48
-    const MAX_VALUE_INNER = 439.82
+    const MAX_VALUE_INNER = 500
 
     const percentageOuterCircle = (percentage: number) =>
         MAX_VALUE_OUTER - (MAX_VALUE_OUTER * percentage) / 100
 
     const percentageInnerCircle = (percentage: number) =>
         MAX_VALUE_INNER - (MAX_VALUE_INNER * percentage) / 100
-		
-	const percentageWithdrawn = withdrawnAmount == 0 ? 0 : (depositAmount * 100) / withdrawnAmount
 
-    console.log('depositAmount', depositAmount)
-    console.log('withdrawnAmount', withdrawnAmount)
-    console.log('percentageWithdrawn', percentageWithdrawn)
+    const percentageWithdrawn = new BigNumber(withdrawnAmount).isEqualTo(0)
+        ? 0
+        : (withdrawnAmount / depositAmount) * 100
+
+    const formattedWithdrawAmount = withdrawnAmount / 10 ** asset.decimals
+    const formattedDepositAmount = depositAmount / 10 ** asset.decimals
+
+    const streamStatus = canceled
+        ? 'CANCELED'
+        : percentageWithdrawn === 100
+          ? 'WITHDRAWN'
+          : new Date().getTime() < new Date(startTime).getTime()
+              ? 'PENDING'
+              : 'ACTIVE'
+
+    const streamDuration = getStreamDuration(streamData)
+
+    const chainColor = chainIdToMetadata[chainId].color
 
     return (
         <div
             style={{
                 display: 'flex',
                 flexFlow: 'column',
-                justifyContent: 'space-between',
-                height: dimensionsForRatio['1.91/1'].height + 'px',
-                width: dimensionsForRatio['1.91/1'].width + 'px',
-                backgroundImage: 'linear-gradient(to right, #e26200, #d88502, #e26200)',
+                height: '100%',
+                width: '100%',
+                backgroundImage: `linear-gradient(to top, #2a2432 55%, ${chainColor})`,
+                // backgroundImage: 'url(' + process.env.NEXT_PUBLIC_HOST + bg.src + ')',
+                // backgroundSize: '100% 100%',
+                // backgroundRepeat: 'no-repeat',
                 color: '#ffffff',
-                padding: '20px',
-                gap: '10px',
+                padding: '15px',
+                gap: '15px',
+                fontFamily: 'Urbanist',
             }}
         >
-            <span
-                style={{
-                    fontSize: '48px',
-                    fontWeight: 'bold',
-                }}
-            >
-                Stream #{alias.toUpperCase()}
-            </span>
-            <div
-                style={{
-                    width: '80%',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    // alignItems: 'flex-start',
-                    alignSelf: 'center',
-                    padding: '10px',
-                    paddingTop: '12px',
-                    paddingBottom: '12px',
-                    borderRadius: '4px',
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    color: '#fff',
-                    fontSize: '28px',
-                    gap: '10px',
-                }}
-            >
-                <svg width="240" height="240" viewBox="0 0 200 200">
-                    <defs>
-                        <linearGradient id="outerGradient" gradientTransform="rotate(90)">
-                            <stop offset="0%" stop-color="#0099ff" />
-                            <stop offset="100%" stop-color="#66ccff" />
-                        </linearGradient>
-                        <linearGradient id="innerGradient" gradientTransform="rotate(90)">
-                            <stop offset="0%" stop-color="#00cc00" />
-                            <stop offset="100%" stop-color="#66ff66" />
-                        </linearGradient>
-                    </defs>
-
-                    <circle cx="100" cy="100" r="95" fill="gray" />
-
-                    <circle
-                        cx="100"
-                        cy="100"
-                        r="90"
-                        fill="none"
-                        stroke="#e6e6e670" // 70% opacity
-                        stroke-width="10"
-                    />
-                    <circle
-                        cx="100"
-                        cy="100"
-                        r="90"
-                        fill="none"
-                        stroke="url(#outerGradient)"
-                        stroke-width="10"
-                        stroke-dasharray={MAX_VALUE_OUTER} // max value (filled)
-                        stroke-dashoffset={percentageOuterCircle(60)}
-                        stroke-linecap="round"
-                        transform="rotate(-90 100 100)"
-                    />
-
-                    <circle
-                        cx="100"
-                        cy="100"
-                        r="70"
-                        fill="none"
-                        stroke="#e6e6e670" // 70% opacity
-                        stroke-width="10"
-                    />
-                    <circle
-                        cx="100"
-                        cy="100"
-                        r="70"
-                        fill="none"
-                        stroke="url(#innerGradient)"
-                        stroke-width="10"
-                        stroke-dasharray={MAX_VALUE_INNER} // max value (filled)
-                        stroke-dashoffset={percentageInnerCircle(percentageWithdrawn)}
-                        stroke-linecap="round"
-                        transform="rotate(-90 100 100)"
-                    />
-                </svg>
-
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        alignItems: 'stretch',
-                    }}
-                >
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: '100%',
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                fontSize: '36px',
-                            }}
-                        >
-                            {funder.slice(0, 5) + '...' + funder.slice(-3)}
-                        </div>
-                        <span style={{ fontSize: '48px', paddingLeft: '5px', paddingRight: '5px' }}>
-                            →
-                        </span>
-                        <div
-                            style={{
-                                display: 'flex',
-                                fontSize: '36px',
-                            }}
-                        >
-                            {recipient.slice(0, 5) + '...' + recipient.slice(-3)}
-                        </div>
-                    </div>
-                    <div
-                        style={{
-                            display: 'flex',
-                            gap: '5px',
-                            fontSize: '24px',
-                        }}
-                    >
-                        <img
-                            src={asset.logo}
-                            style={{ borderRadius: '50%' }}
-                            alt=""
-                            width={40}
-                            height={40}
-                        />
-                        {depositAmount / 10 ** asset.decimals} {asset.symbol} (total)
-                    </div>
-
-                    <div
-                        style={{
-                            display: 'flex',
-                            gap: '5px',
-                            fontSize: '24px',
-                        }}
-                    >
-                        <img
-                            src={asset.logo}
-                            style={{ borderRadius: '50%' }}
-                            alt=""
-                            width={40}
-                            height={40}
-                        />
-                        {withdrawnAmount
-                            ? (withdrawnAmount / 10 ** asset.decimals).toFixed(2)
-                            : '0'}{' '}
-                        {asset.symbol} (withdrawn)
-                    </div>
-
-                    {/* <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <img
-                            src={asset.logo}
-                            style={{ borderRadius: '50%' }}
-                            alt=""
-                            width={20}
-                            height={20}
-                        />
-
-                        <div
-                            style={{
-                                display: 'flex',
-                            }}
-                        >
-                            {asset.symbol}
-                        </div>
-                    </div> */}
-                </div>
-            </div>
             <div
                 style={{
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
+                    alignItems: 'center',
                     width: '100%',
+                    // background: 'red',
                 }}
             >
                 <div
                     style={{
                         display: 'flex',
                         flexDirection: 'row',
-                        justifyContent: 'center',
+                        justifyContent: 'flex-start',
                         alignItems: 'center',
+                        flexBasis: '50%',
+                        width: '100%',
+                        fontFamily: 'Catamaran',
+                        fontSize: '22px',
+                        fontWeight: 900,
                         gap: '5px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                        borderRadius: '14px',
-                        padding: '5px',
+                        color: 'orange',
                     }}
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                    >
-                        <path
+                    <img
+                        src={process.env.NEXT_PUBLIC_HOST + hourglass.src}
+                        width="36px"
+                        height="36px"
+                        alt="hourglass"
+                    />
+                    <span>#{alias.toUpperCase()}</span>
+                </div>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                        width: '100%',
+                        fontFamily: 'Urbanist',
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        fontStyle: 'italic',
+                        color: 'orange',
+                    }}
+                >
+                    {shape}
+                </div>
+            </div>
+            <div
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexGrow: '1',
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    // alignItems: 'flex-start',
+                    gap: '5px',
+                }}
+            >
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        paddingRight: '7px',
+                        // borderRadius: '10px',
+                        // background: 'rgba(0, 0, 0, 0.25)',
+                    }}
+                >
+                    <svg width="220" height="200" viewBox="0 0 200 200">
+                        <defs>
+                            <linearGradient id="outerGradient" gradientTransform="rotate(90)">
+                                <stop offset="0%" stop-color="#0099ff" />
+                                <stop offset="100%" stop-color="#66ccff" />
+                            </linearGradient>
+                            <linearGradient id="innerGradient" gradientTransform="rotate(90)">
+                                <stop offset="0%" stop-color="#00cc00" />
+                                <stop offset="100%" stop-color="#66ff66" />
+                            </linearGradient>
+                        </defs>
+
+                        <circle
+                            cx="100"
+                            cy="100"
+                            r="95"
+                            fill="#2e2e3070"
+                            style={{ backdropFilter: 'blur(10px)' }}
+                        />
+
+                        {/* <circle
+                            cx="100"
+                            cy="100"
+                            r="90"
+                            fill="none"
+                            stroke="#e6e6e670" // 70% opacity
+                            stroke-width="10"
+                        />
+                        <circle
+                            cx="100"
+                            cy="100"
+                            r="90"
+                            fill="none"
+                            stroke="url(#outerGradient)"
+                            stroke-width="10"
+                            stroke-dasharray={MAX_VALUE_OUTER} // max value (filled)
+                            stroke-dashoffset={percentageOuterCircle(60)}
                             stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"
+                            transform="rotate(-90 100 100)"
+                        /> */}
+
+                        <circle
+                            cx="100"
+                            cy="100"
+                            r="80"
+                            fill="none"
+                            stroke="#e6e6e670" // 70% opacity
+                            stroke-width="35"
+                        />
+                        <circle
+                            cx="100"
+                            cy="100"
+                            r="80"
+                            fill="none"
+                            stroke="url(#innerGradient)"
+                            stroke-width="35"
+                            stroke-dasharray={MAX_VALUE_INNER} // max value (filled)
+                            stroke-dashoffset={percentageInnerCircle(percentageWithdrawn)}
+                            stroke-linecap="round"
+                            transform="rotate(-90 100 100)"
                         />
                     </svg>
-                    <div style={{ display: 'flex', fontSize: '28px' }}>{shape.toUpperCase()}</div>
+
+                    <div
+                        style={{
+                            display: 'flex',
+                            position: 'absolute',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%',
+                            height: '100%',
+                            fontSize: '12px',
+                            color: '#ffffff',
+                            left: 0,
+                            top: 0,
+                            fontFamily: 'Catamaran',
+                            fontWeight: 900,
+                            fontStyle: 'italic',
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                borderRadius: '10px',
+                                background: 'rgba(256, 256, 256, 0.2)',
+                                backdropFilter: 'blur(15px)',
+                                padding: '10px',
+                            }}
+                        >
+                            {streamStatus}
+                        </div>
+                    </div>
                 </div>
 
                 <div
                     style={{
                         display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        gap: '5px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                        borderRadius: '14px',
-                        padding: '5px',
+                        flexDirection: 'column',
+                        width: '100%',
+                        height: '100%',
+                        gap: '12px',
                     }}
                 >
-                    <img src={chainIdToMetadata[chainId].icon} alt="" width={40} height={40} />
+                    <div
+                        style={{
+                            display: 'flex',
+                            width: '60%',
+                            flexGrow: '1',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '10px',
+                            borderRadius: '10px',
+                            background: 'rgba(255, 255, 255, 0.15)',
+                            gap: '5px',
+                            border: '1px solid #392a3b',
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                fontSize: '20px',
+                                fontWeight: 900,
+                            }}
+                        >
+                            {recipient.slice(0, 6) + '...' + recipient.slice(-4)}
+                        </div>
+                        <div
+                            style={{
+                                display: 'flex',
+                                fontSize: '18px',
+                                fontWeight: 600,
+                            }}
+                        >
+                            &rarr;
+                        </div>
 
-                    <div style={{ display: 'flex', fontSize: '28px' }}>
-                        {chainIdToMetadata[chainId].name.toUpperCase()}{' '}
+                        <div
+                            style={{
+                                display: 'flex',
+                                fontSize: '20px',
+                                fontWeight: 900,
+                            }}
+                        >
+                            {funder.slice(0, 6) + '...' + funder.slice(-4)}
+                        </div>
+                    </div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            width: '60%',
+                            flexGrow: '1',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '10px',
+                            borderRadius: '10px',
+                            background: 'rgba(255, 255, 255, 0.15)',
+                            gap: '7px',
+                            border: '1px solid #392a3b',
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                width: '100%',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                TOTAL
+                            </div>
+
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    fontSize: '18px',
+                                    fontWeight: 900,
+                                }}
+                            >
+                                <img
+                                    src={asset.logo}
+                                    style={{ borderRadius: '50%' }}
+                                    alt=""
+                                    width={18}
+                                    height={18}
+                                />
+                                {formattedDepositAmount.toLocaleString('en-US', {
+                                    maximumFractionDigits:
+                                        formattedDepositAmount > 1_000
+                                            ? 0
+                                            : formattedDepositAmount > 1
+                                              ? 2
+                                              : 8,
+                                })}{' '}
+                                {asset.symbol}
+                            </div>
+                        </div>
+
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                width: '100%',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                WITHDRAWN
+                            </div>
+
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    fontSize: '18px',
+                                    fontWeight: 900,
+                                }}
+                            >
+                                <img
+                                    src={asset.logo}
+                                    style={{ borderRadius: '50%' }}
+                                    alt=""
+                                    width={18}
+                                    height={18}
+                                />
+                                {formattedWithdrawAmount
+                                    ? formattedWithdrawAmount.toLocaleString('en-US', {
+                                          maximumFractionDigits:
+                                              formattedWithdrawAmount > 1_000
+                                                  ? 0
+                                                  : formattedWithdrawAmount > 1
+                                                      ? 2
+                                                      : 8,
+                                      })
+                                    : '0'}{' '}
+                                {asset.symbol}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style={{
+                            display: 'flex',
+                            width: '60%',
+                            flexGrow: '1',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '5px',
+                            borderRadius: '10px',
+                            background: 'rgba(255, 255, 255, 0.15)',
+                            gap: '5px',
+                            border: '1px solid #392a3b',
+                            fontSize: '1.25rem', // '20px',
+                            fontWeight: 700,
+                            textTransform: 'capitalize',
+                        }}
+                    >
+                        {streamDuration}
                     </div>
                 </div>
             </div>

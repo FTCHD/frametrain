@@ -6,10 +6,10 @@ import {
     useProfile,
 } from '@farcaster/auth-kit'
 import '@farcaster/auth-kit/styles.css'
-import { IconButton } from '@mui/joy'
 import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react'
 import { useCallback } from 'react'
 import { LogOut } from 'react-feather'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../shadcn/Tooltip'
 
 export default function AccountButton() {
     const sesh = useSession()
@@ -35,13 +35,20 @@ export default function AccountButton() {
     return (
         <AuthKitProvider>
             {isAuthenticated || sesh?.status === 'authenticated' ? (
-                <IconButton
-                    onClick={() => {
-                        signOut()
-                    }}
-                >
-                    <LogOut size={16} />
-                </IconButton>
+                <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <LogOut
+                                size={16}
+                                onClick={() => signOut()}
+                                className="cursor-pointer stroke-white/40"
+                            />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-72 mr-8" side="bottom">
+                            <p>Tap to sign out</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             ) : (
                 <SignInButton
                     nonce={getNonce}

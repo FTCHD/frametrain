@@ -1,28 +1,42 @@
-import { dimensionsForRatio } from '@/lib/constants'
-
 export default function CoverView({
     title,
     subtitle,
     backgroundColor,
     textColor,
 }: { title: string; subtitle: string; backgroundColor?: string; textColor?: string }) {
+    const backgroundProp = {}
+
+    if (backgroundColor) {
+        if (backgroundColor.startsWith('#')) {
+            backgroundProp['backgroundColor'] = backgroundColor
+        } else {
+            backgroundProp['backgroundImage'] = backgroundColor
+        }
+    } else {
+        backgroundProp['backgroundColor'] = 'black'
+    }
+
     return (
         <div
             style={{
-                width: dimensionsForRatio['1/1'].width + 'px',
-                height: dimensionsForRatio['1/1'].height + 'px',
+                width: '100%',
+                height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-around',
+                justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: backgroundColor || 'black',
+                gap: '50px',
+                padding: '40px',
                 color: textColor || 'white',
+                ...backgroundProp,
             }}
         >
             <span
                 style={{
                     fontFamily: 'Roboto',
                     fontSize: '48px',
+                    textAlign: 'center',
+                    textWrap: 'balance',
                 }}
             >
                 {title ?? 'Title'}

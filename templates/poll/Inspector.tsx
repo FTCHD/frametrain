@@ -1,13 +1,17 @@
 'use client'
-import { Button, IconButton, Input, Stack, Typography } from '@mui/joy'
+import { ColorPicker } from '@/components/inspector/ColorPicker'
+import { Button } from '@/components/shadcn/Button'
+import { Input } from '@/components/shadcn/Input'
+import { useFrameConfig, useFrameId } from '@/lib/hooks'
+import { uploadImage } from '@/lib/upload'
 import { useRef } from 'react'
 import { X } from 'react-feather'
 import type { Config } from '.'
 
-export default function Inspector({
-    config,
-    update,
-}: { config: Config; update: (props: any) => void }) {
+export default function Inspector() {
+    const frameId = useFrameId()
+    const [config, updateConfig] = useFrameConfig<Config>()
+
     const { options } = config
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
@@ -16,28 +20,28 @@ export default function Inspector({
     const questionInputRef = useRef<HTMLInputElement>(null)
 
     return (
-        <Stack width={'100%'} height={'100%'} gap={5}>
-            {/* <pre>{JSON.stringify(vote, null, 2)}</pre> */}
-
-            <Stack direction={'column'} gap={2}>
-                <Typography level="title-lg">Question</Typography>
+        <div className="w-full h-full flex flex-col gap-5">
+            <div className="flex flex-col gap-2 ">
+                <h2 className="text-lg font-semibold">Question</h2>
                 <Input
-                    size="lg"
                     placeholder="The poll question"
                     defaultValue={config.question}
-                    onChange={(e) => update({ question: e.target.value })}
+                    onChange={(e) => updateConfig({ question: e.target.value })}
+                    className=" py-2 text-lg"
                 />
-            </Stack>
+            </div>
 
-            <Stack direction={'column'} gap={2}>
+            <div className="flex flex-col gap-2 ">
                 {options?.map((option, index) => (
-                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                        <Typography key={index} level="body-md" variant="soft" padding={1}>
+                    <div className="flex flex-row justify-between items-center ">
+                        <h2 className="text-lg font-semibold p-2 bg-secondary rounded-md">
                             {option.displayLabel}
-                        </Typography>
-                        <IconButton
+                        </h2>
+                        <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() =>
-                                update({
+                                updateConfig({
                                     options: [
                                         ...options.slice(0, index),
                                         ...options.slice(index + 1),
@@ -46,25 +50,26 @@ export default function Inspector({
                             }
                         >
                             <X />
-                        </IconButton>
-                    </Stack>
+                        </Button>
+                    </div>
                 ))}
-            </Stack>
+            </div>
+
             {(!options || options.length < 4) && (
-                <Stack direction={'column'} gap={2}>
-                    <Stack direction={'column'} gap={2}>
-                        <Typography level="title-lg">Voting Options</Typography>
+                <div className="flex flex-col gap-2 ">
+                    <div className="flex flex-col gap-2 ">
+                        <h1 className="text-lg font-semibold">Voting Options</h1>
                         <Input
-                            size="lg"
+                            className="text-lg"
                             placeholder="Results Page Label"
-                            slotProps={{ input: { ref: displayLabelInputRef } }}
+                            ref={displayLabelInputRef}
                         />
                         <Input
-                            size="lg"
+                            className="text-lg"
                             placeholder="Button Label"
-                            slotProps={{ input: { ref: buttonLabelInputRef } }}
+                            ref={buttonLabelInputRef}
                         />
-                    </Stack>
+                    </div>
                     <Button
                         onClick={() => {
                             if (!displayLabelInputRef.current?.value) return
@@ -83,18 +88,57 @@ export default function Inspector({
                                 },
                             ]
 
-                            update({ options: newOptions })
+                            updateConfig({ options: newOptions })
 
                             displayLabelInputRef.current.value = ''
                             buttonLabelInputRef.current.value = ''
                         }}
+                        className="w-full bg-border hover:bg-secondary-border text-primary"
                     >
                         Add Option
                     </Button>
-                </Stack>
+                </div>
             )}
 
-            <Button onClick={() => update({ options: [] })}>Delete All</Button>
-        </Stack>
+            <div className="flex flex-col gap-2 ">
+                <h2 className="text-lg font-semibold">Background Color</h2>
+                <ColorPicker
+                    className="w-full"
+                    background={
+                        config.background || 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
+                    }
+                    setBackground={(value) => updateConfig({ background: value })}
+                    uploadBackground={async (base64String, contentType) => {
+                        const { filePath } = await uploadImage({
+                            frameId: frameId,
+                            base64String: base64String,
+                            contentType: contentType,
+                        })
+
+                        return filePath
+                    }}
+                />
+            </div>
+
+            <div className="flex flex-col gap-2 ">
+                <h2 className="text-lg font-semibold">Text Color</h2>
+                <ColorPicker
+                    className="w-full"
+                    enabledPickers={['solid']}
+                    background={config.textColor || 'white'}
+                    setBackground={(value) => updateConfig({ textColor: value })}
+                />
+            </div>
+
+            <div className="flex flex-col gap-2 ">
+                <h2 className="text-lg font-semibold">Bar Line Color</h2>
+                <ColorPicker
+                    className="w-full"
+                    enabledPickers={['solid']}
+                    background={config.barColor || 'yellow'}
+                    setBackground={(value) => updateConfig({ barColor: value })}
+                />
+            </div>
+        </div>
     )
 }

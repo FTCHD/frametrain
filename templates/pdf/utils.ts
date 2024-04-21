@@ -32,7 +32,7 @@ export function renderPDFToCanvas(pageDocument: PDFPageProxy, canvas: HTMLCanvas
         pageDocument
             .render({
                 canvasContext: canvas.getContext('2d') as CanvasRenderingContext2D,
-                viewport: pageDocument.getViewport({ scale: 1 }),
+                viewport: pageDocument.getViewport({ scale: 4 }),
             })
             .promise.then(() => {
                 resolve(canvas)

@@ -1,22 +1,25 @@
 
 export default function PageView({
-    content,
+    slideUrl,
     sizes,
-    profile,
-}: { content: string; sizes: { width: number; height: number }; profile?: string }) {
+}: { slideUrl: string; sizes: { width: number; height: number } }) {
     return (
         <div
             style={{
                 display: 'flex',
                 flexFlow: 'column nowrap',
                 alignItems: 'stretch',
-                width: sizes.width + 'px',
-                height: sizes.height + 'px',
+                width: '100%',
+                height: '100%',
                 backgroundImage: 'linear-gradient(to right, #0f0c29, #302b63, #24243e)',
                 color: '#000',
             }}
         >
-            <img src={content} style={{ width: '100%', height: '100%' }} alt="" />
+            <img
+                src={'https://cdn.frametra.in' + slideUrl}
+                style={{ width: '100%', height: '100%' }}
+                alt="Slide"
+            />
         </div>
     )
 }

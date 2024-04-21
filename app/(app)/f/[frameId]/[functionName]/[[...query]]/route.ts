@@ -6,6 +6,7 @@ import templates from '@/templates'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
+import ms from 'ms'
 import { notFound } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 
@@ -31,23 +32,17 @@ export async function POST(
     const frame = await db.select().from(frameTable).where(eq(frameTable.id, params.frameId)).get()
 
     if (!frame) {
-        console.error('No frame')
         notFound()
     }
 
     if (!frame.config) {
-        console.error('No config')
         notFound()
     }
 
     const template = templates[frame.template]
-	
-    console.log('Got template', JSON.stringify(template).substring(0, 20))
 
     let body: FrameActionPayload | FrameActionPayloadUnion =
         (await request.json()) as FrameActionPayload
-
-    console.log('Got body', JSON.stringify(body).substring(0, 20))
 
     const isPreview = Object.keys(body).includes('mockFrameData')
 
@@ -58,24 +53,22 @@ export async function POST(
     if (!handler) {
         notFound()
     }
-	
-	const configWithMetadata = Object.assign({}, frame.config, {
+
+    const configWithMetadata = Object.assign({}, frame.config, {
         frameId: frame.id,
         requiresValidation: template.requiresValidation,
     })
 
     if (!isPreview && configWithMetadata.requiresValidation) {
-        console.log('frame requires validation')
-
         body = Object.assign({}, body, {
             validatedData: await validatePayload(body),
         })
-		
+
         if (!(body as FrameActionPayloadUnion).validatedData.valid) {
             throw new Error('NOT VALID')
         }
     } else {
-        console.log('frame does not require validation')
+        // console.log('frame does not require validation')
     }
 
     const { frame: rFrame, state: rState } = await handler(
@@ -85,20 +78,15 @@ export async function POST(
         searchParams
     )
 
-    console.log('rState', rState)
-
-    // biome-ignore lint/style/noNegationElse: <>
     if (!isPreview) {
         await updateFrameState(frame.id, rState)
         await updateFrameCalls(frame.id, frame.currentMonthCalls + 1)
         console.log('Updated frame state and action count')
     } else {
-        await updateFramePreview(frame.id, rFrame)
+        if (frame.updatedAt.getTime() < Date.now() - ms('5m')) {
+            await updateFramePreview(frame.id, rFrame)
+        }
     }
-
-    // console.log('rFrame', rFrame)
-
-    console.log('RETURNING REPONSE')
 
     return new Response(rFrame, {
         headers: {

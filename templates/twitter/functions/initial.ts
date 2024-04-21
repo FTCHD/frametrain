@@ -2,16 +2,24 @@
 import { dimensionsForRatio } from '@/lib/constants'
 import { loadGoogleFontAllVariants } from '@/lib/fonts'
 import { buildFramePage } from '@/lib/sdk'
+import { ImageResponse } from '@vercel/og'
 import type { Config, State } from '..'
 import CoverView from '../views/Cover'
-import { ImageResponse } from '@vercel/og'
 
 export default async function initial(config: Config, state: State) {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts = []
 	
-    const r = new ImageResponse(CoverView({ title: config.title, profile: config.profile }), {
+	const roboto = await loadGoogleFontAllVariants('Roboto')
+	fonts.push(...roboto)
+
+    if (config?.title?.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(config.title.fontFamily)
+        fonts.push(...titleFont)
+    }
+	
+    const r = new ImageResponse(CoverView(config), {
         ...dimensionsForRatio['1.91/1'],
-        fonts: roboto,
+        fonts: fonts,
     })
 
     // get image data from vercel/og ImageResponse
@@ -21,7 +29,7 @@ export default async function initial(config: Config, state: State) {
     return buildFramePage({
         buttons: [
             {
-                label: 'Begin',
+                label: '→',
             },
         ],
         image: 'data:image/png;base64,' + imageData,

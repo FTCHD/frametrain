@@ -8,11 +8,8 @@ import { getLogoForToken, getStreamData } from '../utils/actions'
 import CoverView from '../views/Cover'
 
 export default async function initial(config: Config, state: State) {
-    console.log('initial', config, state)
-
     const urbanist = await loadGoogleFontAllVariants('Urbanist')
-
-    console.log('config', config)
+    const catamaran = await loadGoogleFontAllVariants('Catamaran')
 
     const streamData = await getStreamData(config.streamId)
 
@@ -25,11 +22,9 @@ export default async function initial(config: Config, state: State) {
         { asset: { ...streamData.asset, logo: tokenLogo } }
     )
 
-    console.log('data', data)
-
     const r = new ImageResponse(CoverView(data), {
         ...dimensionsForRatio['1.91/1'],
-        fonts: urbanist,
+        fonts: [...urbanist, ...catamaran],
     })
 
     // get image data from vercel/og ImageResponse

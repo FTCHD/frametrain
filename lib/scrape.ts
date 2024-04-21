@@ -1,78 +1,105 @@
 'use server'
-import { Readability } from '@mozilla/readability'
-import { unstable_noStore as noStore } from 'next/cache'
-import { NodeHtmlMarkdown } from 'node-html-markdown'
-import { Parser } from 'htmlparser2';
 
-function htmlToMarkdown(html: string, url: string) {
-    noStore()
+export async function scrapeTwitterUser(username: string): Promise<TWUser> {
+    const res = await fetch(`${process.env.SCRAPER_URL}/twitter/profile/${username}`, {
+        cache: 'no-store',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then((res) => res.json())
+        .catch(console.error)
 
-	const parser = new Parser({
-		onopentag(name, attributes) {
-		  // Handle opening tags if needed
-		},
-		ontext(text) {
-		  // Handle text content if needed
-		},
-		onclosetag(tagname) {
-		  // Handle closing tags if needed
-		},
-	  }, {
-		decodeEntities: true,
-	  });
-	  
-	  parser.write(html);
-	  parser.end();
-	  
-	  
-	const doc = parser.dom
-	
-    const article = new Readability(doc, url).parse()
-    // return article!
-	
-	console.log('PARSED', doc)
-
-    const content = NodeHtmlMarkdown.translate(article?.content || '', {})
-
-    return { ...article, content }
+    return res as TWUser
 }
 
-async function renderWebpage(url: string) {
-    noStore()
+export async function scrapeTwitterPost(id: string): Promise<TWTweet> {
+    const res = await fetch(`${process.env.SCRAPER_URL}/twitter/tweet/${id}`, {
+        cache: 'no-store',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then((res) => res.json())
+        .catch(console.error)
 
-    const input = {
-        gotoOptions: { waitUntil: 'networkidle2' },
-        url,
+    return res as TWTweet
+}
+
+export async function scrape({
+    url,
+    readability,
+    markdown,
+}: { url: string; readability: boolean; markdown: boolean }) {
+    const path = markdown ? 'markdown' : readability ? 'readability' : 'scrape'
+
+    const res = await fetch(`${process.env.SCRAPER_URL}/${path}/${encodeURI(url)}`, {
+        cache: 'no-store',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then((res) => res.json())
+        .catch(console.error)
+
+    return res
+}
+
+interface TWTweet {
+    id: string
+    createdAt: string
+    tweetBy: {
+        id: string
+        userName: string
+        fullName: string
+        createdAt: string
+        description: string
+        isVerified: boolean
+        favouritesCount: number
+        followersCount: number
+        followingsCount: number
+        statusesCount: number
+        location: string
+        pinnedTweet: string
+        profileBanner: string
+        profileImage: string
     }
-
-    const res = await fetch(
-        `${process.env.BROWSERLESS_URL}/chrome/content?token=${process.env.BROWSERLESS_TOKEN}`,
-        {
-            cache: 'no-store',
-            body: JSON.stringify(input),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            method: 'POST',
-        }
-    )
-    const html = await res.text()
-
-    return html
-}
-
-export async function parseWebpage(url: string) {
-    noStore()
-
-    try {
-        const html = await renderWebpage(url)
-
-        const article = htmlToMarkdown(html, url)
-
-        return { content: article.content, title: article?.title, url, website: article?.siteName }
-    } catch (error) {
-        console.error(error)
-        return { content: '抓取失败', errorMessage: (error as any).message, url }
+    entities: {
+        hashtags: Array<string>
+        urls: Array<any>
+        mentionedUsers: Array<any>
     }
+    quoted: string
+    fullText: string
+    lang: string
+    quoteCount: number
+    replyCount: number
+    retweetCount: number
+    likeCount: number
+    viewCount: number
+    bookmarkCount: number
 }
 
+interface TWUser {
+    id: string
+    userName: string
+    fullName: string
+    createdAt: string
+    description: string
+    isVerified: boolean
+    favouritesCount: number
+    followersCount: number
+    followingsCount: number
+    statusesCount: number
+    location: string
+    profileBanner: string
+    profileImage: string
+}
+
+// export default {
+//     twitter: {
+//         profile: twitterUser,
+//         tweet: twitterTweet,
+//     },
+//     scrape,
+// }

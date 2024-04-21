@@ -22,8 +22,8 @@ export const initialState: State = {
 export default {
     name: 'Poll Template',
     description: 'Create your own Poll as a Farcaster Frame.',
-    creatorFid: '91716',
-    creatorName: 'Logan',
+    creatorFid: '3',
+    creatorName: 'Dan',
     enabled: true,
     Inspector,
     functions,
