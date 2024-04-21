@@ -1,6 +1,6 @@
-# FrameTrain
+# 🚂 FrameTrain
 
-https://raw.githubusercontent.com/FTCHD/frametrain/main/.github/farcaster-no-code.mp4
+https://github.com/FTCHD/frametrain/assets/144691102/6c901347-1a28-4a25-93f5-c6bc54076d5a
 
 ### FrameTrain is Canva for Farcaster Frames.
 - Open Source
