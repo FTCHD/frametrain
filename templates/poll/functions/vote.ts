@@ -14,39 +14,49 @@ export default async function vote(
     params: any
 ) {
     // biome-ignore lint/style/useConst: <>
+    const voter = body.untrustedData.fid
+    const buttonIndex = body.untrustedData.buttonIndex
+    const pastIndex = state.votesForId?.[voter]
+
     let newState = state
 
-    const voter = body.untrustedData.fid
+    if (buttonIndex !== pastIndex) {
+        console.log('pastIndex', pastIndex)
+        const revertPastVote = pastIndex
+            ? {
+                  [pastIndex]:
+                      state.votesForOption?.[pastIndex] > 1
+                          ? state.votesForOption?.[pastIndex] - 1
+                          : 0,
+              }
+            : null
 
-    newState = {
-        votesForId: {
-            ...state.votesForId,
-            [voter]: state.votesForId[voter] ? state.votesForId[voter] + 1 : 1,
-        },
-        votesForOption: {
-            ...state.votesForOption,
-            [body.untrustedData.buttonIndex]: state?.votesForOption?.[
-                body.untrustedData.buttonIndex
-            ]
-                ? state.votesForOption[body.untrustedData.buttonIndex] + 1
-                : 1,
-        },
+        newState = Object.assign(state, {
+            votesForId: {
+                ...(state.votesForId ?? {}),
+                [voter]: buttonIndex,
+            },
+            votesForOption: {
+                ...(state.votesForOption ?? {}),
+                [buttonIndex]: (state?.votesForOption?.[buttonIndex] ?? 0) + 1,
+                ...(revertPastVote ?? {}),
+            },
+            totalVotes: (state?.totalVotes ?? 0) + (revertPastVote ? 0 : 1),
+        })
     }
-	
+
     // console.log(voter)
     // console.log(state)
     // console.log(newState)
 
-    const totalVotes = Object.keys(newState.votesForOption).reduce(
-        (total: number, option: string) => total + newState.votesForOption[option],
-        0
-    )
+    const totalVotes = newState.totalVotes
 
-    const percentageForEachOption: Record<string, number> = {}
-
-    for (const [key, value] of Object.entries(newState.votesForOption)) {
-        percentageForEachOption[key as string] = (value / totalVotes) * 100
-    }
+    const percentageForEachOption = Object.fromEntries(
+        Object.entries(newState.votesForOption).map(([key, value]) => [
+            key,
+            (value / totalVotes) * 100,
+        ]) as [string, number][]
+    ) as Record<string, number>
 
     // sort options by percentage
     const sortedOptions = config.options.sort(

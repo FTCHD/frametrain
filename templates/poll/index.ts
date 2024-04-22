@@ -13,10 +13,14 @@ export interface Config extends BaseConfig {
 
 export interface State extends BaseState {
     votesForId: Record<string, number>
+	votesForOption: Record<string, number>
+	totalVotes: number
 }
 
 export const initialState: State = {
     votesForId: {},
+	votesForOption: {},
+	totalVotes: 0,
 }
 
 export default {
