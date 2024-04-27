@@ -9,8 +9,6 @@ export interface Config extends BaseConfig {
 
 export interface State extends BaseState {}
 
-export const initialState: State = {}
-
 export default {
     name: 'Basic Template',
     description: 'Template for a Frame',
@@ -20,7 +18,6 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialState,
     initialConfig: {} as Config,
     requiresValidation: false,
 } satisfies BaseTemplate

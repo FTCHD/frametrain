@@ -9,8 +9,6 @@ export interface Config extends BaseConfig {
 
 export interface State extends BaseState {}
 
-export const initialState: State = {}
-
 export default {
     name: 'PDF Template',
     description: 'Upload and convert your PDF into a Frame with multiple slides.',
@@ -19,7 +17,6 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialState,
     initialConfig: {} as Config,
     cover,
     requiresValidation: false,

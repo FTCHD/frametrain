@@ -26,7 +26,6 @@ export interface BaseTemplate {
     enabled: boolean
     Inspector: ElementType
     functions: BaseFunctions
-    initialState?: any
     initialConfig?: any
     cover: StaticImageData
     requiresValidation: boolean

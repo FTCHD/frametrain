@@ -17,12 +17,6 @@ export interface State extends BaseState {
 	totalVotes: number
 }
 
-export const initialState: State = {
-    votesForId: {},
-	votesForOption: {},
-	totalVotes: 0,
-}
-
 export default {
     name: 'Poll Template',
     description: 'Create your own Poll as a Farcaster Frame.',
@@ -31,7 +25,6 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialState,
     initialConfig: {} as Config,
     cover,
     requiresValidation: true,

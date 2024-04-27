@@ -2,6 +2,7 @@ import { frameTable } from '@/db/schema'
 import { updateFrameCalls, updateFramePreview, updateFrameState } from '@/lib/actions'
 import type { FrameActionPayload, FrameActionPayloadUnion } from '@/lib/farcaster'
 import { validatePayload } from '@/lib/sdk'
+import type { BaseState } from '@/lib/types'
 import templates from '@/templates'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { eq } from 'drizzle-orm'
@@ -74,7 +75,7 @@ export async function POST(
     const { frame: rFrame, state: rState } = await handler(
         body,
         configWithMetadata as any,
-        frame.state as typeof template.initialState,
+        frame.state as BaseState,
         searchParams
     )
 

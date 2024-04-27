@@ -59,7 +59,7 @@ export async function createFrame({
         name,
         description,
         config: templates[template].initialConfig,
-        state: templates[template]?.initialState,
+        state: {},
         template: template,
     }
 
