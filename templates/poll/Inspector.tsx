@@ -1,7 +1,7 @@
 'use client'
-import { ColorPicker } from '@/components/inspector/ColorPicker'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
+import { ColorPicker } from '@/lib/components'
 import { useFrameConfig, useFrameId } from '@/lib/hooks'
 import { uploadImage } from '@/lib/upload'
 import { useRef } from 'react'

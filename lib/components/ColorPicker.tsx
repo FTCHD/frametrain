@@ -180,7 +180,7 @@ export function ColorPicker({
 
                                         if (filePath) {
                                             setBackground(
-                                                `url(https://cdn.frametra.in/${filePath})`
+                                                `url(${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath})`
                                             )
                                         }
                                     }
