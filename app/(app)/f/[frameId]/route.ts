@@ -23,13 +23,12 @@ export async function GET(request: Request, { params }: { params: { frameId: str
     const template = templates[frame.template]
 
     const { initial } = template.functions
+	
+	const buildParameters = await initial(frame.config, frame.state) 
+	
+	const { frame: renderedFrame } = await buildFramePage({ id: frame.id, ...buildParameters })
 
-    const configWithMetadata = Object.assign({}, frame.config, {
-        frameId: frame.id,
-        requiresValidation: template.requiresValidation,
-    })
-
-    return new Response(await initial(configWithMetadata as any), {
+    return new Response(renderedFrame, {
         headers: {
             'Content-Type': 'text/html',
         },

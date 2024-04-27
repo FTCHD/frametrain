@@ -45,8 +45,6 @@ export async function POST(
     let body: FrameActionPayload | FrameActionPayloadUnion =
         (await request.json()) as FrameActionPayload
 
-    const isPreview = Object.keys(body).includes('mockFrameData')
-
     type ValidSlide = Omit<typeof template.functions, 'initial'>
 
     const handler = template.functions[params.functionName as keyof ValidSlide]
@@ -55,41 +53,35 @@ export async function POST(
         notFound()
     }
 
-    const configWithMetadata = Object.assign({}, frame.config, {
-        frameId: frame.id,
-        requiresValidation: template.requiresValidation,
-    })
-
-    if (!isPreview && configWithMetadata.requiresValidation) {
+    if (template.requiresValidation) {
         body = Object.assign({}, body, {
             validatedData: await validatePayload(body),
         })
 
         if (!(body as FrameActionPayloadUnion).validatedData.valid) {
-            throw new Error('NOT VALID')
+            throw new Error('PAYLOAD NOT VALID')
         }
-    } else {
-        // console.log('frame does not require validation')
-    }
+	}
 
-    const { frame: rFrame, state: rState } = await handler(
+    const buildParameters = await handler(
         body,
-        configWithMetadata as any,
+		frame.config as BaseConfig,
         frame.state as BaseState,
         searchParams
     )
+	
+	// state can be taken directly from the handler
+	// no need to pass it back and forth in the future
+	const { frame: renderedFrame, state: newState } = await buildFramePage({ id: frame.id, ...buildParameters })
 
-    if (!isPreview) {
-        await updateFrameState(frame.id, rState)
-        await updateFrameCalls(frame.id, frame.currentMonthCalls + 1)
-        console.log('Updated frame state and action count')
-    } else {
-        if (frame.updatedAt.getTime() < Date.now() - ms('5m')) {
-            await updateFramePreview(frame.id, rFrame)
-        }
-    }
+	if (newState) {
+		await updateFrameState(frame.id, newState)
+		console.log('Updated frame state')
+	}
+	await updateFrameCalls(frame.id, frame.currentMonthCalls + 1)
+	console.log('Updated frame action count')
 
-    return new Response(rFrame, {
+    return new Response(renderedFrame, {
         headers: {
             'Content-Type': 'text/html',
         },
