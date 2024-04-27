@@ -1,50 +1,147 @@
 'use server'
+import { ReactElement } from 'react'
 import type {
     FarcasterUserInfo,
     FrameActionPayload,
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from './farcaster'
-import type { BaseConfig } from './types'
+import type { BaseConfig, BaseState } from './types'
+import { ImageResponse } from '@vercel/og'
+import { dimensionsForRatio } from '@/sdk/constants'
 
 export async function buildFramePage({
-    ...args
+	id,
+    buttons,
+    aspectRatio,
+    inputText,
+    refreshPeriod,
+    params,
+    state,
+    fonts,
+	component,
+    functionName,
 }: {
-    buttons?: FrameButtonMetadata[]
-    image: string
+	id: string
+    buttons: FrameButtonMetadata[]
     aspectRatio: '1.91:1' | '1:1'
     inputText?: string
     refreshPeriod?: number
-    function?: string
     params?: any
-    config: BaseConfig
+    state?: BaseState
+    fonts?: any[]
+	component: ReactElement
+    functionName?: string
 }) {
-    const searchParams =
-        args?.params !== undefined
-            ? Object.entries(args.params)
+	const image = new ImageResponse(component, {
+        ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+        fonts
+    })
+
+    // get image data from vercel/og ImageResponse
+    const bufferData = Buffer.from(await image.arrayBuffer())
+    const imageData = bufferData.toString('base64')
+	
+	const searchParams =
+        params !== undefined
+            ? Object.entries(params)
                   .map(([key, value]) => `${key}=${value}`)
                   .join('&')
             : ''
 
     const metadata = buildFrame({
-        ...args,
-        postUrl: (await getPostRoute(args.config.frameId, args.function)) + '?' + searchParams,
+        buttons,
+		image: 'data:image/png;base64,' + imageData,
+		aspectRatio,
+		inputText,
+		refreshPeriod,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${functionName}` + '?' + searchParams,
     })
-
-    // console.log('[buildFramePage]', metadata)
-
-    return `<html lang="en">
+	
+	const frame = `<html lang="en">
 	<head>
-	 ${Object.keys(metadata)
-         .map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
-         .join('\n')}
-	  <title>🚂 FrameTrain</title>
+		${Object.keys(metadata)
+			.map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
+			.join('\n')}
+		<title>🚂 FrameTrain</title>
 	</head>
 	<body>
-	  <h1>🚂 FrameTrain</h1>
+		<h1>Hello, 🚂 FrameTrain</h1>
 	</body>
-  </html>
+	</html>
 	`
+	
+	return {
+		frame,
+		state
+	}
+}
+
+export async function buildPreviewFramePage({
+	id,
+    buttons,
+    aspectRatio,
+    inputText,
+    refreshPeriod,
+    params,
+    state,
+    fonts,
+	component,
+    functionName,
+}: {
+	id: string
+    buttons: FrameButtonMetadata[]
+    aspectRatio: '1.91:1' | '1:1'
+    inputText?: string
+    refreshPeriod?: number
+    params?: any
+    state?: BaseState
+    fonts?: any[]
+	component: ReactElement
+    functionName?: string
+}) {
+	const image = new ImageResponse(component, {
+        ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+        fonts
+    })
+
+    // get image data from vercel/og ImageResponse
+    const bufferData = Buffer.from(await image.arrayBuffer())
+    const imageData = bufferData.toString('base64')
+	
+	const searchParams =
+        params !== undefined
+            ? Object.entries(params)
+                  .map(([key, value]) => `${key}=${value}`)
+                  .join('&')
+            : ''
+
+    const metadata = buildFrame({
+        buttons,
+		image: 'data:image/png;base64,' + imageData,
+		aspectRatio,
+		inputText,
+		refreshPeriod,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/p/${id}/${functionName}` + '?' + searchParams,
+    })
+	
+	const frame = `<html lang="en">
+	<head>
+		${Object.keys(metadata)
+			.map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
+			.join('\n')}
+		<title>🚂 FrameTrain</title>
+	</head>
+	<body>
+		<h1>Hello, 🚂 FrameTrain</h1>
+	</body>
+	</html>
+	`
+	
+	return {
+		frame,
+		state
+	}
 }
 
 function buildFrame({
@@ -56,7 +153,7 @@ function buildFrame({
     refreshPeriod,
     version = 'vNext',
 }: {
-    buttons?: FrameButtonMetadata[]
+    buttons: FrameButtonMetadata[]
     image: string
     aspectRatio: '1.91:1' | '1:1'
     inputText?: string
@@ -117,11 +214,6 @@ function buildFrame({
     return metadata
 }
 
-export async function getPostRoute(id: string, slideName?: string) {
-    return `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${slideName}`
-}
-
-// NEYNAR
 export async function validatePayload(
     body: FrameActionPayload
 ): Promise<FrameValidatedActionPayload> {
@@ -153,30 +245,3 @@ export async function validatePayload(
     return r
 }
 
-export async function getInfoForFids(fids: string[]): Promise<FarcasterUserInfo[]> {
-    const options = {
-        method: 'GET',
-        headers: {
-            accept: 'application/json',
-            api_key: process.env.NEYNAR_API_KEY!,
-            'content-type': 'application/json',
-        },
-    }
-
-    const r = (await fetch(
-        `https://api.neynar.com/v2/farcaster/user/bulk?fids=${fids.join(',')}`,
-        options
-    )
-        .then((response) => response.json())
-        .catch((err) => {
-            console.error(err)
-            return {
-                isValid: false,
-                message: undefined,
-            }
-        })) as { users: FarcasterUserInfo[] }
-
-    const { users } = r
-
-    return users
-}

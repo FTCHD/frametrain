@@ -7,7 +7,7 @@ import { type InferInsertModel, and, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
 import { revalidatePath } from 'next/cache'
 import { notFound } from 'next/navigation'
-import { uploadPreview } from './upload'
+import { uploadPreview } from './storage'
 
 export async function getFrameList() {
     const sesh = await auth()

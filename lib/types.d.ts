@@ -12,9 +12,7 @@ export interface BaseState {
     [key: string]: boolean | number | string | null | undefined | any
 }
 
-// a type with a function named preview, initial, and other defined functions for each key in BaseSlide
 export interface BaseFunctions {
-    initial: (config: any, state: any) => any
     [key: string]: (body: any, config: any, state: any, params: any) => any
 }
 

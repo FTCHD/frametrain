@@ -4,7 +4,7 @@ import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/Popover'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
-import { cn } from '@/lib/ui'
+import { cn } from '@/lib/shadcn'
 import { Paintbrush } from 'lucide-react'
 import { useMemo } from 'react'
 

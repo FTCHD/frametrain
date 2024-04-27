@@ -11,7 +11,7 @@ This repository is mostly geared towards template artists. If you're looking to 
 
 # Templates
 ![Farcaster Frames Templates](https://raw.githubusercontent.com/FTCHD/frametrain/main/.github/templates.png)
-Templates live in the **`@/templates`** folder. Each template follows a clear starting folder structure:
+Templates live in the **`@/templates`** folder. Each template follows a clear folder structure:
 
 - `functions` — a collection of 1 or more handlers, used as controllers for displaying the `views`. Must contain at least an `initial` handler.
 - `views` — a collection of 1 or more React components, rendered as the Frames’ image using `satori`. Must contain at least a `Cover` view.
