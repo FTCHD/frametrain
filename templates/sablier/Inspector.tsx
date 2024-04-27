@@ -1,6 +1,6 @@
 'use client'
 import { Input } from '@/components/shadcn/Input'
-import { useFrameConfig } from '@/lib/hooks'
+import { useFrameConfig } from '@/sdk/hooks'
 import { useEffect, useRef } from 'react'
 import type { Config } from '.'
 import { getStreamData, getStreamType } from './utils/actions'

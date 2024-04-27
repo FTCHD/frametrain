@@ -8,9 +8,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
-import { ColorPicker } from '@/lib/components'
-import { useFrameConfig, useFrameId } from '@/lib/hooks'
-import { uploadImage } from '@/lib/upload'
+import { ColorPicker } from '@/sdk/components'
+import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { uploadImage } from '@/sdk/upload'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import type { Config } from '.'

@@ -9,8 +9,5 @@ export default async function results(
     state: State,
     params: any
 ) {
-    return {
-        frame: await initial(config, state),
-        state: state,
-    }
+    return initial(config, state)
 }
