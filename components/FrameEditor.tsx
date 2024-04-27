@@ -1,7 +1,7 @@
 'use client'
 import { useRefreshPreview } from '@/components/editor/useRefreshPreview'
 import type { frameTable } from '@/db/schema'
-import { updateFrameConfig, updateFrameName } from '@/lib/actions'
+import { updateFrameConfig, updateFrameName } from '@/lib/frame'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
 import NextLink from 'next/link'

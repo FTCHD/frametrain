@@ -1,9 +1,6 @@
 'use server'
-import { dimensionsForRatio } from '@/lib/constants'
 import type { FrameActionPayload, FrameValidatedActionPayload } from '@/lib/farcaster'
-import { loadGoogleFontAllVariants } from '@/lib/fonts'
-import { buildFramePage } from '@/lib/sdk'
-import { ImageResponse } from '@vercel/og'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import ResultsView from '../views/Results'
 
@@ -13,40 +10,49 @@ export default async function vote(
     state: State,
     params: any
 ) {
-    // biome-ignore lint/style/useConst: <>
+    const voter = body.untrustedData.fid
+    const buttonIndex = body.untrustedData.buttonIndex
+    const pastIndex = state.votesForId?.[voter]
+
     let newState = state
 
-    const voter = body.untrustedData.fid
+    if (buttonIndex !== pastIndex) {
+        console.log('pastIndex', pastIndex)
+        const revertPastVote = pastIndex
+            ? {
+                  [pastIndex]:
+                      state.votesForOption?.[pastIndex] > 1
+                          ? state.votesForOption?.[pastIndex] - 1
+                          : 0,
+              }
+            : null
 
-    newState = {
-        votesForId: {
-            ...state.votesForId,
-            [voter]: state.votesForId[voter] ? state.votesForId[voter] + 1 : 1,
-        },
-        votesForOption: {
-            ...state.votesForOption,
-            [body.untrustedData.buttonIndex]: state?.votesForOption?.[
-                body.untrustedData.buttonIndex
-            ]
-                ? state.votesForOption[body.untrustedData.buttonIndex] + 1
-                : 1,
-        },
+        newState = Object.assign(state, {
+            votesForId: {
+                ...(state.votesForId ?? {}),
+                [voter]: buttonIndex,
+            },
+            votesForOption: {
+                ...(state.votesForOption ?? {}),
+                [buttonIndex]: (state?.votesForOption?.[buttonIndex] ?? 0) + 1,
+                ...(revertPastVote ?? {}),
+            },
+            totalVotes: (state?.totalVotes ?? 0) + (revertPastVote ? 0 : 1),
+        })
     }
-	
+
     // console.log(voter)
     // console.log(state)
     // console.log(newState)
 
-    const totalVotes = Object.keys(newState.votesForOption).reduce(
-        (total: number, option: string) => total + newState.votesForOption[option],
-        0
-    )
+    const totalVotes = newState.totalVotes
 
-    const percentageForEachOption: Record<string, number> = {}
-
-    for (const [key, value] of Object.entries(newState.votesForOption)) {
-        percentageForEachOption[key as string] = (value / totalVotes) * 100
-    }
+    const percentageForEachOption = Object.fromEntries(
+        Object.entries(newState.votesForOption).map(([key, value]) => [
+            key,
+            (value / totalVotes) * 100,
+        ]) as [string, number][]
+    ) as Record<string, number>
 
     // sort options by percentage
     const sortedOptions = config.options.sort(
@@ -60,9 +66,17 @@ export default async function vote(
         textColor: config?.textColor,
         barColor: config?.barColor,
     }
-
-    const r = new ImageResponse(
-        ResultsView(
+	
+	return {
+		buttons: [
+			{ label: '←' },
+			{ label: 'Create Poll', action: 'link', target: 'https://frametra.in' },
+		],
+        aspectRatio: '1.91:1',
+        config: config,
+        state: newState,
+        fonts: roboto,
+        component:  ResultsView(
             config?.question,
             sortedOptions,
             totalVotes,
@@ -70,27 +84,6 @@ export default async function vote(
             newState.votesForOption,
             colors
         ),
-        {
-            ...dimensionsForRatio['1.91/1'],
-            fonts: roboto,
-        }
-    )
-
-    // get image data from vercel/og ImageResponse
-    const bufferData = Buffer.from(await r.arrayBuffer())
-    const imageData = bufferData.toString('base64')
-
-    return {
-        frame: await buildFramePage({
-            buttons: [
-                { label: '←' },
-                { label: 'Create Poll', action: 'link', target: 'https://frametra.in' },
-            ],
-            image: 'data:image/png;base64,' + imageData,
-            config: config,
-            aspectRatio: '1.91:1',
-            function: 'results',
-        }),
-        state: newState,
+        functionName: 'results',
     }
 }

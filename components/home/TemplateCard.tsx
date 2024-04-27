@@ -1,5 +1,5 @@
 'use client'
-import { createFrame } from '@/lib/actions'
+import { createFrame } from '@/lib/frame'
 import type templates from '@/templates'
 import type { StaticImageData } from 'next/image'
 import NextImage from 'next/image'

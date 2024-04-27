@@ -22,7 +22,7 @@ export default function Loading() {
     return (
         <div className="flex flex-col items-center justify-center h-full w-full px-10 md:px-20">
             <div className="flex flex-col items-center justify-center w-full space-y-4">
-                <Progress value={undefined} className="h-8 w-full max-w-lg " />
+                <Progress  className="animate-progress h-4 w-full max-w-lg bg-blue-500 origin-left-right " />
                 <h4 className="text-2xl font-bold text-primary">
                     {FUNNY_MESSAGES[Math.floor(Math.random() * FUNNY_MESSAGES.length)]}
                 </h4>

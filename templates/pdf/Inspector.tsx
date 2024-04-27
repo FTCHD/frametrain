@@ -1,5 +1,4 @@
 'use client'
-import { ColorPicker } from '@/components/inspector/ColorPicker'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import {
@@ -9,8 +8,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
-import { useFrameConfig, useFrameId } from '@/lib/hooks'
-import { uploadImage } from '@/lib/upload'
+import { ColorPicker } from '@/sdk/components'
+import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { uploadImage } from '@/sdk/upload'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import type { Config } from '.'
@@ -198,7 +198,7 @@ export default function Inspector() {
                     {responseData.map((slideUrl) => (
                         <img
                             key={slideUrl}
-                            src={'https://cdn.frametra.in' + slideUrl}
+                            src={process.env.NEXT_PUBLIC_CDN_HOST + slideUrl}
                             width={200}
                             height={200}
                             alt="PDF Slide"

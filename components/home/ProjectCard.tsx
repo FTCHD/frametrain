@@ -15,7 +15,7 @@ export default function ProjectCard({
         >
             <div className="flex flex-row gap-5 justify-center w-full h-full">
                 <NextImage
-                    src={`https://cdn.frametra.in/frames/${id}/preview.png`}
+                    src={`${process.env.NEXT_PUBLIC_CDN_HOST}/frames/${id}/preview.png`}
                     alt={name}
                     width={90}
                     height={90}

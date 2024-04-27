@@ -1,7 +1,6 @@
 import { frameTable } from '@/db/schema'
 import { updateFrameCalls, updateFramePreview, updateFrameState } from '@/lib/frame'
 import type { FrameActionPayload, FrameActionPayloadUnion } from '@/lib/farcaster'
-import { buildFramePage, validatePayload } from '@/lib/serve'
 import type { BaseConfig, BaseState } from '@/lib/types'
 import templates from '@/templates'
 import { getRequestContext } from '@cloudflare/next-on-pages'
@@ -10,6 +9,7 @@ import { drizzle } from 'drizzle-orm/d1'
 import ms from 'ms'
 import { notFound } from 'next/navigation'
 import type { NextRequest } from 'next/server'
+import { buildPreviewFramePage } from '@/lib/serve'
 
 export const dynamic = 'force-dynamic'
 export const dynamicParams = true
@@ -53,33 +53,18 @@ export async function POST(
         notFound()
     }
 
-    if (template.requiresValidation) {
-        body = Object.assign({}, body, {
-            validatedData: await validatePayload(body),
-        })
-
-        if (!(body as FrameActionPayloadUnion).validatedData.valid) {
-            throw new Error('PAYLOAD NOT VALID')
-        }
-	}
-
     const buildParameters = await handler(
         body,
-		frame.config as BaseConfig,
+        frame.draftConfig as BaseConfig,
         frame.state as BaseState,
         searchParams
     )
 	
-	// state can be taken directly from the handler
-	// no need to pass it back and forth in the future
-	const { frame: renderedFrame, state: newState } = await buildFramePage({ id: frame.id, ...buildParameters })
+	const { frame: renderedFrame } = await buildPreviewFramePage({ id: frame.id, ...buildParameters })
 
-	if (newState) {
-		await updateFrameState(frame.id, newState)
-		console.log('Updated frame state')
+	if (frame.updatedAt.getTime() < Date.now() - ms('5m')) {
+		await updateFramePreview(frame.id, renderedFrame)
 	}
-	await updateFrameCalls(frame.id, frame.currentMonthCalls + 1)
-	console.log('Updated frame action count')
 
     return new Response(renderedFrame, {
         headers: {

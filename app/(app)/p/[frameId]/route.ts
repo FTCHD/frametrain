@@ -1,5 +1,5 @@
 import { frameTable } from '@/db/schema'
-import { buildFramePage } from '@/lib/serve'
+import { buildPreviewFramePage } from '@/lib/serve'
 import templates from '@/templates'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { eq } from 'drizzle-orm'
@@ -23,10 +23,10 @@ export async function GET(request: Request, { params }: { params: { frameId: str
     const template = templates[frame.template]
 
     const { initial } = template.functions
+
+	const buildParameters = await initial(frame.draftConfig, frame.state) 
 	
-	const buildParameters = await initial(frame.config, frame.state) 
-	
-	const { frame: renderedFrame } = await buildFramePage({ id: frame.id, ...buildParameters })
+	const { frame: renderedFrame } = await buildPreviewFramePage({ id: frame.id, ...buildParameters })
 
     return new Response(renderedFrame, {
         headers: {

@@ -4,7 +4,7 @@ import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/Popover'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
-import { cn } from '@/lib/ui'
+import { cn } from '@/lib/shadcn'
 import { Paintbrush } from 'lucide-react'
 import { useMemo } from 'react'
 
@@ -180,7 +180,7 @@ export function ColorPicker({
 
                                         if (filePath) {
                                             setBackground(
-                                                `url(https://cdn.frametra.in/${filePath})`
+                                                `url(${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath})`
                                             )
                                         }
                                     }

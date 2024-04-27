@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
         rules: {
             userAgent: '*',
             allow: '/',
-            disallow: ['/f/', '/api/'],
+            disallow: ['/f/', '/p', '/api/'],
         },
         sitemap: 'https://frametra.in/sitemap.xml',
     }

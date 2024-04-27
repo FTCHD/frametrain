@@ -9,8 +9,6 @@ export interface Config extends BaseConfig {
 
 export interface State extends BaseState {}
 
-export const initialState: State = {}
-
 export default {
     name: 'Tweet Template',
     description: 'Transform a tweet or multiple tweets into a Frame.',
@@ -19,7 +17,6 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialState,
     initialConfig: {} as Config,
     cover,
     requiresValidation: false,

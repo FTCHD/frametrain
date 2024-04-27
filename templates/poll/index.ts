@@ -13,10 +13,8 @@ export interface Config extends BaseConfig {
 
 export interface State extends BaseState {
     votesForId: Record<string, number>
-}
-
-export const initialState: State = {
-    votesForId: {},
+	votesForOption: Record<string, number>
+	totalVotes: number
 }
 
 export default {
@@ -27,7 +25,6 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialState,
     initialConfig: {} as Config,
     cover,
     requiresValidation: true,

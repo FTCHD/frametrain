@@ -9,8 +9,6 @@ export interface Config extends BaseConfig {
 
 export interface State extends BaseState {}
 
-export const initialState: State = {}
-
 export default {
     name: 'Sablier Template',
     description: 'Get the latest details about a Sablier stream.',
@@ -19,7 +17,6 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialState: {} as State,
     initialConfig: {} as Config,
     cover,
     requiresValidation: false,

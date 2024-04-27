@@ -24,7 +24,7 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'cdn.frametra.in',
+                hostname: process.env.NEXT_PUBLIC_CDN_HOST.split('//')[1],
             },
         ],
     },

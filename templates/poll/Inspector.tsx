@@ -1,9 +1,9 @@
 'use client'
-import { ColorPicker } from '@/components/inspector/ColorPicker'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { useFrameConfig, useFrameId } from '@/lib/hooks'
-import { uploadImage } from '@/lib/upload'
+import { ColorPicker } from '@/sdk/components'
+import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { uploadImage } from '@/sdk/upload'
 import { useRef } from 'react'
 import { X } from 'react-feather'
 import type { Config } from '.'
@@ -33,7 +33,7 @@ export default function Inspector() {
 
             <div className="flex flex-col gap-2 ">
                 {options?.map((option, index) => (
-                    <div className="flex flex-row justify-between items-center ">
+                    <div className="flex flex-row justify-between items-center" key={index}>
                         <h2 className="text-lg font-semibold p-2 bg-secondary rounded-md">
                             {option.displayLabel}
                         </h2>
