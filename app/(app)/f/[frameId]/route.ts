@@ -1,4 +1,5 @@
 import { frameTable } from '@/db/schema'
+import { buildFramePage } from '@/lib/serve'
 import templates from '@/templates'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { eq } from 'drizzle-orm'

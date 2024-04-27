@@ -1,7 +1,7 @@
 
 import { auth } from '@/auth'
 import FrameEditor from '@/components/FrameEditor'
-import { getFrame } from '@/lib/actions'
+import { getFrame } from '@/lib/frame'
 import templates from '@/templates'
 import { redirect } from 'next/navigation'
 
