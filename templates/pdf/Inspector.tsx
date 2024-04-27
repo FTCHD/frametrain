@@ -198,7 +198,7 @@ export default function Inspector() {
                     {responseData.map((slideUrl) => (
                         <img
                             key={slideUrl}
-                            src={'https://cdn.frametra.in' + slideUrl}
+                            src={process.env.NEXT_PUBLIC_CDN_HOST + slideUrl}
                             width={200}
                             height={200}
                             alt="PDF Slide"

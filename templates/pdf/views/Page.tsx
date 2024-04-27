@@ -16,7 +16,7 @@ export default function PageView({
             }}
         >
             <img
-                src={'https://cdn.frametra.in' + slideUrl}
+                src={process.env.NEXT_PUBLIC_CDN_HOST + slideUrl}
                 style={{ width: '100%', height: '100%' }}
                 alt="Slide"
             />
