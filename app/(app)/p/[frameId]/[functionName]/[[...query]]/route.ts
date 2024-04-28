@@ -1,6 +1,7 @@
 import { frameTable } from '@/db/schema'
-import { updateFrameCalls, updateFramePreview, updateFrameState } from '@/lib/frame'
-import type { FrameActionPayload, FrameActionPayloadUnion } from '@/lib/farcaster'
+import type { FrameActionPayload, FrameActionPayloadValidated } from '@/lib/farcaster'
+import { updateFramePreview } from '@/lib/frame'
+import { buildPreviewFramePage } from '@/lib/serve'
 import type { BaseConfig, BaseState } from '@/lib/types'
 import templates from '@/templates'
 import { getRequestContext } from '@cloudflare/next-on-pages'
@@ -9,7 +10,6 @@ import { drizzle } from 'drizzle-orm/d1'
 import ms from 'ms'
 import { notFound } from 'next/navigation'
 import type { NextRequest } from 'next/server'
-import { buildPreviewFramePage } from '@/lib/serve'
 
 export const dynamic = 'force-dynamic'
 export const dynamicParams = true
@@ -42,7 +42,7 @@ export async function POST(
 
     const template = templates[frame.template]
 
-    let body: FrameActionPayload | FrameActionPayloadUnion =
+    const body: FrameActionPayload | FrameActionPayloadValidated =
         (await request.json()) as FrameActionPayload
 
     type ValidSlide = Omit<typeof template.functions, 'initial'>
@@ -52,10 +52,10 @@ export async function POST(
     if (!handler) {
         notFound()
     }
-
+	
     const buildParameters = await handler(
         body,
-        frame.draftConfig as BaseConfig,
+        frame.config as BaseConfig,
         frame.state as BaseState,
         searchParams
     )

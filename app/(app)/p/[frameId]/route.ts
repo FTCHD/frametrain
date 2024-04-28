@@ -24,7 +24,7 @@ export async function GET(request: Request, { params }: { params: { frameId: str
 
     const { initial } = template.functions
 
-	const buildParameters = await initial(frame.draftConfig, frame.state) 
+	const buildParameters = await initial(frame.config, frame.state) 
 	
 	const { frame: renderedFrame } = await buildPreviewFramePage({ id: frame.id, ...buildParameters })
 
