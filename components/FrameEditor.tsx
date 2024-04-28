@@ -11,6 +11,7 @@ import { toast } from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { FramePreview } from './FramePreview'
 import { InspectorContext } from './editor/Context'
+import MockOptions from './editor/MockOptions'
 import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
@@ -47,7 +48,7 @@ export default function FrameEditor({
 
         await updateFrameConfig(frame.id, newConfig)
 
-        refreshPreview(`${process.env.NEXT_PUBLIC_HOST}/f/${frame.id}`)
+        refreshPreview(`${process.env.NEXT_PUBLIC_HOST}/p/${frame.id}`)
 
         setUpdating(false)
     }
@@ -85,13 +86,13 @@ export default function FrameEditor({
     })
 
     useEffect(() => {
-        refreshPreview(`${process.env.NEXT_PUBLIC_HOST}/f/${frame.id}`)
+        refreshPreview(`${process.env.NEXT_PUBLIC_HOST}/p/${frame.id}`)
     }, [frame, refreshPreview])
 
     const { Inspector } = template as any
 
     return (
-        <div className="flex flex-col w-full h-full">
+        <div className="flex flex-col-reverse md:flex-col w-full h-full">
             <div className="flex justify-between items-center p-4 bg-secondary-background">
                 <div className="flex gap-4 items-center">
                     <NextLink style={{ textDecoration: 'none' }} href={'/'}>
@@ -137,17 +138,35 @@ export default function FrameEditor({
                     <TooltipProvider delayDuration={0}>
                         <Tooltip>
                             <TooltipTrigger>
+                                <MockOptions />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-72 flex flex-col gap-2">
+                                <p>
+                                    You can use these toggles to enable or disable the simulation of
+                                    an interaction.
+                                </p>
+                                <p>
+                                    For example, you can simulate the user being a follower of the
+                                    caster, or recasting the original cast.
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                            <TooltipTrigger>
                                 <Button
                                     size={'lg'}
                                     onClick={() => {
                                         navigator.clipboard.writeText(
-                                            `https://frametra.in/f/${frame.id}`
+                                            `${process.env.NEXT_PUBLIC_HOST}/f/${frame.id}`
                                         )
                                         toast.success('Copied to clipboard!')
                                     }}
                                     className="gap-4 px-6 py-3 bg-transparent rounded-md border border-border text-primary hover:bg-secondary-border"
                                 >
-                                    <span className="text-base">URL</span> <Copy size={18} />
+                                    <span className="text-lg">URL</span> <Copy size={18} />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent className="max-w-72 mr-8">
@@ -161,9 +180,10 @@ export default function FrameEditor({
                 <div className="flex flex-col justify-center items-center px-12 py-6 w-full md:w-3/5">
                     <FramePreview />
                 </div>
-                <div className="overflow-y-scroll p-6 w-full h-full bg-[#0c0c0c] md:w-2/5">
+                <div className="w-full h-full bg-[#0c0c0c] md:w-2/5 flex flex-col p-6 gap-3">
                     <h1 className="mb-4 text-4xl font-bold">Configuration</h1>
-                    <div className="pt-5 pb-20">
+
+                    <div className="overflow-y-scroll max-h-[calc(100dvh-200px)]">
                         <InspectorContext.Provider
                             value={{
                                 frameId: frame.id,
@@ -174,7 +194,6 @@ export default function FrameEditor({
                             <Inspector />
                         </InspectorContext.Provider>
                     </div>
-                    {/* {template.requiresValidation && <MockOptionsToggle />} */}
                 </div>
             </div>
         </div>

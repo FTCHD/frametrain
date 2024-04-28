@@ -1,11 +1,10 @@
 'use client'
 
-import type { FrameMetadataWithImageObject } from '@/debugger/frameResultToFrameMetadata'
-import { postFrame } from '@/debugger/postFrame'
-import { frameResultsAtom, mockFrameOptionsAtom } from '@/debugger/store'
+import { type FrameMetadataWithImageObject, simulateCall } from '@/lib/debugger'
 import type { FrameButtonMetadata } from '@/lib/farcaster'
-import { useAtom } from 'jotai'
-import { type ChangeEvent, type PropsWithChildren, useCallback, useState } from 'react'
+import { mockOptionsAtom, previewHistoryAtom } from '@/lib/store'
+import { useAtom, useAtomValue } from 'jotai'
+import { type ChangeEvent, type PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { Delete, ExternalLink, PlusCircle } from 'react-feather'
 import { Button } from './shadcn/Button'
 import {
@@ -17,18 +16,30 @@ import {
     DialogTitle,
 } from './shadcn/Dialog'
 
+// warpcast.com colors
 const borderDefault = '#4c3a4ec0'
 const borderFaint = '#4c3a4e80'
 const textFaint = '#9fa3af'
 
 export function FramePreview() {
-    const [results] = useAtom(frameResultsAtom)
+    const [history, setHistory] = useAtom(previewHistoryAtom)
+	
+	useEffect(() => {
+        // reset preview when un-mounting (= navigating to another page)
+        return () => {
+            setHistory([])
+        }
+    }, [setHistory])
 
-    if (results.length === 0) {
+    if (history.length === 0) {
         return <PlaceholderFrame />
     }
 
-    const latestFrame = results[results.length - 1]
+    const latestFrame = history.at(-1)
+
+    if (!latestFrame) {
+        return <PlaceholderFrame />
+    }
 
     return <ValidFrame metadata={latestFrame.metadata} />
 }
@@ -42,15 +53,13 @@ function PlaceholderFrame() {
 }
 
 function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
-	const aspectRatioStyle =
-    metadata.image.aspectRatio === '1:1' ? { aspectRatio: '1/1' } : { aspectRatio: '1.91/1' }
-	
+    const aspectRatioStyle =
+        metadata.image.aspectRatio === '1:1' ? { aspectRatio: '1/1' } : { aspectRatio: '1.91/1' }
+
     const [inputText, setInputText] = useState('')
     const { image, input, buttons } = metadata
 
     const [loadingContainer, setLoadingContainer] = useState(false)
-
-   
 
     const [modalOpen, setModalOpen] = useState(false)
     const [modalFn, setModalFn] = useState<any>()
@@ -175,37 +184,38 @@ function FrameButton({
     toggleContainer: () => void
 }>) {
     const [isLoading, setIsLoading] = useState(false)
-    const [_, setFrameResults] = useAtom(frameResultsAtom)
-    const [mockFrameOptions] = useAtom(mockFrameOptionsAtom)
+    const [, setPreviewHistory] = useAtom(previewHistoryAtom)
+    const mockOptions = useAtomValue(mockOptionsAtom)
     const { action, target } = button
 
     const confirmAction = useCallback(async () => {
-        const result = await postFrame(
+        const result = await simulateCall(
             {
-                buttonIndex: index,
-                url: target!,
-                state: JSON.stringify(state),
-                // TODO: make these user-input-driven
-                castId: {
-                    fid: 0,
-                    hash: '0xthisisnotreal',
+                untrustedData: {
+                    fid: 368382,
+                    url: target!,
+                    messageHash: '0xDebug',
+                    timestamp: 0,
+                    network: 1,
+                    buttonIndex: index,
+                    inputText: inputText,
+                    state: 'Debug',
+                    castId: {
+                        fid: 368382,
+                        hash: '0xDebug',
+                    },
                 },
-                inputText,
-                fid: 123123,
-                messageHash: '0xthisisnotreal',
-                network: 0,
-                timestamp: 0,
-            } as any, //! to clear `state` error
-            mockFrameOptions
+                trustedData: {
+                    messageBytes: 'Debug',
+                },
+            },
+            mockOptions
         )
-        // TODO: handle when result is not defined
-        // build placeholder frame with error message
-        setFrameResults((prev: any) => [...prev, result])
-    }, [target, index, inputText, mockFrameOptions, setFrameResults, state])
+        setPreviewHistory((prev: any) => [...prev, result])
+    }, [target, index, inputText, mockOptions, setPreviewHistory])
 
     const handleClick = useCallback(async () => {
         if (action === 'post' || action === 'post_redirect') {
-            // TODO: collect user options (follow, like, etc.) and include
             toggleContainer()
             setIsLoading(true)
             if (action === 'post_redirect') {
@@ -222,8 +232,6 @@ function FrameButton({
             const onConfirm = () => window.open(target, '_blank')
             handleOpenModal(() => onConfirm)
         }
-
-        // TODO: implement other actions (mint, etc.)
     }, [action, target, confirmAction, handleOpenModal, toggleContainer])
 
     return (
