@@ -15,8 +15,8 @@ export type FrameValidatedActionPayload = NeynarValidatedFrameActionResponse
 
 export type FarcasterUserInfo = NeynarUser
 
-export type FrameActionPayloadUnion = FrameActionPayload & {
-    validatedData: FrameValidatedActionPayload
+export type FrameActionPayloadValidated = FrameActionPayload & {
+    validatedData: FrameValidatedActionPayload['validatedData']
 }
 
 

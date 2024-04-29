@@ -1,13 +1,13 @@
-import { fetchFrame } from '@/debugger/getFrame'
-import { frameResultsAtom } from '@/debugger/store'
+import { getPreview } from '@/lib/debugger'
+import { previewHistoryAtom } from '@/lib/store'
 import { useAtom } from 'jotai'
 import { useCallback } from 'react'
 
 export function useRefreshPreview() {
-    const [, setResults] = useAtom(frameResultsAtom)
+    const [, setResults] = useAtom(previewHistoryAtom)
 
     async function refreshPreview(url: string) {
-        const result = await fetchFrame(url)
+        const result = await getPreview(url)
         setResults((prev) => [...prev, result])
     }
 

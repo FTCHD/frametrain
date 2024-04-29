@@ -1,17 +1,16 @@
 'use server'
-import { ReactElement } from 'react'
+import { dimensionsForRatio } from '@/sdk/constants'
+import { ImageResponse } from '@vercel/og'
+import type { ReactElement } from 'react'
 import type {
-    FarcasterUserInfo,
     FrameActionPayload,
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from './farcaster'
-import type { BaseConfig, BaseState } from './types'
-import { ImageResponse } from '@vercel/og'
-import { dimensionsForRatio } from '@/sdk/constants'
+import type { BaseState } from './types'
 
 export async function buildFramePage({
-	id,
+    id,
     buttons,
     aspectRatio,
     inputText,
@@ -19,10 +18,10 @@ export async function buildFramePage({
     params,
     state,
     fonts,
-	component,
+    component,
     functionName,
 }: {
-	id: string
+    id: string
     buttons: FrameButtonMetadata[]
     aspectRatio: '1.91:1' | '1:1'
     inputText?: string
@@ -30,19 +29,19 @@ export async function buildFramePage({
     params?: any
     state?: BaseState
     fonts?: any[]
-	component: ReactElement
+    component: ReactElement
     functionName?: string
 }) {
-	const image = new ImageResponse(component, {
+    const image = new ImageResponse(component, {
         ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
-        fonts
+        fonts,
     })
 
     // get image data from vercel/og ImageResponse
     const bufferData = Buffer.from(await image.arrayBuffer())
     const imageData = bufferData.toString('base64')
-	
-	const searchParams =
+
+    const searchParams =
         params !== undefined
             ? Object.entries(params)
                   .map(([key, value]) => `${key}=${value}`)
@@ -51,18 +50,18 @@ export async function buildFramePage({
 
     const metadata = buildFrame({
         buttons,
-		image: 'data:image/png;base64,' + imageData,
-		aspectRatio,
-		inputText,
-		refreshPeriod,
+        image: 'data:image/png;base64,' + imageData,
+        aspectRatio,
+        inputText,
+        refreshPeriod,
         postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${functionName}` + '?' + searchParams,
     })
-	
-	const frame = `<html lang="en">
+
+    const frame = `<html lang="en">
 	<head>
 		${Object.keys(metadata)
-			.map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
-			.join('\n')}
+            .map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
+            .join('\n')}
 		<title>🚂 FrameTrain</title>
 	</head>
 	<body>
@@ -70,15 +69,15 @@ export async function buildFramePage({
 	</body>
 	</html>
 	`
-	
-	return {
-		frame,
-		state
-	}
+
+    return {
+        frame,
+        state,
+    }
 }
 
 export async function buildPreviewFramePage({
-	id,
+    id,
     buttons,
     aspectRatio,
     inputText,
@@ -86,10 +85,10 @@ export async function buildPreviewFramePage({
     params,
     state,
     fonts,
-	component,
+    component,
     functionName,
 }: {
-	id: string
+    id: string
     buttons: FrameButtonMetadata[]
     aspectRatio: '1.91:1' | '1:1'
     inputText?: string
@@ -97,19 +96,19 @@ export async function buildPreviewFramePage({
     params?: any
     state?: BaseState
     fonts?: any[]
-	component: ReactElement
+    component: ReactElement
     functionName?: string
 }) {
-	const image = new ImageResponse(component, {
+    const image = new ImageResponse(component, {
         ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
-        fonts
+        fonts,
     })
 
     // get image data from vercel/og ImageResponse
     const bufferData = Buffer.from(await image.arrayBuffer())
     const imageData = bufferData.toString('base64')
-	
-	const searchParams =
+
+    const searchParams =
         params !== undefined
             ? Object.entries(params)
                   .map(([key, value]) => `${key}=${value}`)
@@ -118,18 +117,18 @@ export async function buildPreviewFramePage({
 
     const metadata = buildFrame({
         buttons,
-		image: 'data:image/png;base64,' + imageData,
-		aspectRatio,
-		inputText,
-		refreshPeriod,
+        image: 'data:image/png;base64,' + imageData,
+        aspectRatio,
+        inputText,
+        refreshPeriod,
         postUrl: `${process.env.NEXT_PUBLIC_HOST}/p/${id}/${functionName}` + '?' + searchParams,
     })
-	
-	const frame = `<html lang="en">
+
+    const frame = `<html lang="en">
 	<head>
 		${Object.keys(metadata)
-			.map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
-			.join('\n')}
+            .map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
+            .join('\n')}
 		<title>🚂 FrameTrain</title>
 	</head>
 	<body>
@@ -137,11 +136,11 @@ export async function buildPreviewFramePage({
 	</body>
 	</html>
 	`
-	
-	return {
-		frame,
-		state
-	}
+
+    return {
+        frame,
+        state,
+    }
 }
 
 function buildFrame({
