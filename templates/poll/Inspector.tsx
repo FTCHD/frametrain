@@ -2,8 +2,7 @@
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { ColorPicker } from '@/sdk/components'
-import { useFrameConfig, useFrameId } from '@/sdk/hooks'
-import { uploadImage } from '@/sdk/upload'
+import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { useRef } from 'react'
 import { X } from 'react-feather'
 import type { Config } from '.'
@@ -11,6 +10,7 @@ import type { Config } from '.'
 export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
+	const uploadImage = useUploadImage()
 
     const { options } = config
 
@@ -110,7 +110,6 @@ export default function Inspector() {
                     setBackground={(value) => updateConfig({ background: value })}
                     uploadBackground={async (base64String, contentType) => {
                         const { filePath } = await uploadImage({
-                            frameId: frameId,
                             base64String: base64String,
                             contentType: contentType,
                         })
