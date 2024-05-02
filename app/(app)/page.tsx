@@ -26,7 +26,7 @@ export default function Home() {
     }, [sesh])
 
     return (
-        <div className="flex flex-col p-5 w-full h-full">
+        <div className="flex flex-col p-5 w-full h-full gap-5">
             <Header />
             <div className="flex flex-grow justify-center items-center">
                 <div className="flex flex-col w-full">

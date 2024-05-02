@@ -5,9 +5,8 @@ import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
 import { Input } from '@/components/shadcn/Input'
 import { Textarea } from '@/components/shadcn/Textarea'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { scrapeTwitterPost } from '@/sdk/scrape'
-import { uploadImage } from '@/sdk/upload'
 import { useEffect, useRef, useState } from 'react'
 import { Trash } from 'react-feather'
 import type { Config } from '.'
@@ -15,6 +14,7 @@ import type { Config } from '.'
 export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
+	const uploadImage = useUploadImage()
 
     const [tweets, setTweets] = useState<Record<string, any>[]>()
 
@@ -119,6 +119,8 @@ export default function Inspector() {
                     <div className="flex flex-col gap-2 w-full">
                         <h2 className="text-lg">Title Weight</h2>
                         <FontWeightPicker
+                            currentFont={config?.title?.fontFamily}
+                            defaultValue={config?.title?.fontFamily}
                             onSelect={(weight) =>
                                 updateConfig({
                                     title: {
@@ -133,7 +135,8 @@ export default function Inspector() {
                         <h2 className="text-lg">Title Style</h2>
 
                         <FontStylePicker
-                            defaultValue={config?.title?.fontStyle || 'normal'}
+                            currentFont={config?.title?.fontFamily}
+                            defaultValue={config?.title?.fontStyle}
                             onSelect={(style) =>
                                 updateConfig({
                                     title: {
@@ -194,7 +197,6 @@ export default function Inspector() {
                             }}
                             uploadBackground={async (base64String, contentType) => {
                                 const { filePath } = await uploadImage({
-                                    frameId: frameId,
                                     base64String: base64String,
                                     contentType: contentType,
                                 })
@@ -337,7 +339,6 @@ export default function Inspector() {
                                     }}
                                     uploadBackground={async (base64String, contentType) => {
                                         const { filePath } = await uploadImage({
-                                            frameId: frameId,
                                             base64String: base64String,
                                             contentType: contentType,
                                         })

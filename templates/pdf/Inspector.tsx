@@ -9,8 +9,7 @@ import {
     SelectValue,
 } from '@/components/shadcn/Select'
 import { ColorPicker } from '@/sdk/components'
-import { useFrameConfig, useFrameId } from '@/sdk/hooks'
-import { uploadImage } from '@/sdk/upload'
+import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import type { Config } from '.'
@@ -19,6 +18,7 @@ import getPdfDocument, { createPDFPage, renderPDFToCanvas } from './utils'
 export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
+	const uploadImage = useUploadImage()
 
     const [responseData, setResponseData] = useState<string[]>([])
     const [file, setFile] = useState<File>()
@@ -59,7 +59,6 @@ export default function Inspector() {
             const page = pages[i]
 
             const { fileName } = await uploadImage({
-                frameId: frameId,
                 base64String: page.replace('data:image/jpeg;base64,', ''),
                 contentType: 'image/jpeg',
             })
@@ -117,7 +116,6 @@ export default function Inspector() {
                         setBackground={(value) => updateConfig({ backgroundColor: value })}
                         uploadBackground={async (base64String, contentType) => {
                             const { filePath } = await uploadImage({
-                                frameId: frameId,
                                 base64String: base64String,
                                 contentType: contentType,
                             })

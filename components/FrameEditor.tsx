@@ -1,9 +1,15 @@
 'use client'
 import { useRefreshPreview } from '@/components/editor/useRefreshPreview'
 import type { frameTable } from '@/db/schema'
-import { updateFrameConfig, updateFrameName } from '@/lib/frame'
+import {
+    publishFrameConfig,
+    revertFrameConfig,
+    updateFrameConfig,
+    updateFrameName,
+} from '@/lib/frame'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
+import { ImageUp, Undo2 } from 'lucide-react'
 import NextLink from 'next/link'
 import { useEffect, useState } from 'react'
 import { ArrowLeft, Copy } from 'react-feather'
@@ -16,7 +22,6 @@ import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
 
-
 export default function FrameEditor({
     frame,
     template,
@@ -24,7 +29,7 @@ export default function FrameEditor({
     frame: InferSelectModel<typeof frameTable>
     template: (typeof templates)[keyof typeof templates]
 }) {
-    const [frameConfig, setFrameConfig] = useState(frame.config as typeof template.initialConfig)
+    const [frameConfig, setFrameConfig] = useState(frame.draftConfig as typeof template.initialConfig)
 
     const [name, setName] = useState(frame.name)
     const [editingName, setEditingName] = useState(false)
@@ -51,6 +56,25 @@ export default function FrameEditor({
         refreshPreview(`${process.env.NEXT_PUBLIC_HOST}/p/${frame.id}`)
 
         setUpdating(false)
+    }
+
+    async function publishConfig() {
+        setUpdating(true)
+
+        await publishFrameConfig(frame.id)
+
+        setUpdating(false)
+    }
+
+    async function revertConfig() {
+        setUpdating(true)
+
+        await revertFrameConfig(frame.id)
+
+        setUpdating(false)
+
+        // router.refresh is bugged
+        window?.location.reload()
     }
 
     const debouncedUpdateConfig = useDebouncedCallback((value: Record<string, any>) => {
@@ -110,7 +134,7 @@ export default function FrameEditor({
                     ) : (
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
-                                <TooltipTrigger>
+                                <TooltipTrigger className="hidden md:block">
                                     <h1
                                         className="text-4xl font-bold cursor-pointer"
                                         onClick={() => setEditingName(true)}
@@ -135,20 +159,64 @@ export default function FrameEditor({
                         <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
                     )}
 
+                    {template.requiresValidation && (
+                        <TooltipProvider delayDuration={0}>
+                            <Tooltip>
+                                <TooltipTrigger>
+                                    <MockOptions />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-72 flex flex-col gap-2">
+                                    <p>
+                                        You can use these toggles to enable or disable the
+                                        simulation of an interaction.
+                                    </p>
+                                    <p>
+                                        For example, you can simulate the user being a follower of
+                                        the caster, or recasting the original cast.
+                                    </p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    )}
+
                     <TooltipProvider delayDuration={0}>
                         <Tooltip>
                             <TooltipTrigger>
-                                <MockOptions />
+                                <Button
+                                    variant="outline"
+                                    className="text-lg gap-2"
+                                    size={'lg'}
+                                    onClick={async () => {
+                                        await revertConfig()
+                                        toast.success('Reverted!')
+                                    }}
+                                >
+                                    Revert <Undo2 size={18} />
+                                </Button>
                             </TooltipTrigger>
-                            <TooltipContent className="max-w-72 flex flex-col gap-2">
-                                <p>
-                                    You can use these toggles to enable or disable the simulation of
-                                    an interaction.
-                                </p>
-                                <p>
-                                    For example, you can simulate the user being a follower of the
-                                    caster, or recasting the original cast.
-                                </p>
+                            <TooltipContent className="max-w-72 mr-8">
+                                <p>Goes back to the published version.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Button
+                                    variant="outline"
+                                    className="text-lg gap-2"
+                                    size={'lg'}
+                                    onClick={async () => {
+                                        await publishConfig()
+                                        toast.success('Published!')
+                                    }}
+                                >
+                                    Publish <ImageUp size={18} />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-72 mr-8">
+                                <p>Publishes the current changes.</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>

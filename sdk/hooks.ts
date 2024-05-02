@@ -1,5 +1,6 @@
 import { InspectorContext } from '@/components/editor/Context'
 import { useContext } from 'react'
+import { uploadImage } from './upload'
 
 export function useFrameConfig<T>() {
     const context = useContext(InspectorContext)
@@ -19,4 +20,20 @@ export function useFrameId() {
     }
 
     return context.frameId
+}
+
+export function useUploadImage() {
+    const frameId = useFrameId()
+
+    return ({
+        base64String,
+        buffer,
+        contentType,
+    }: {
+        base64String?: string | undefined
+        buffer?: Buffer | undefined
+        contentType: 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
+    }) => {
+        return uploadImage({ frameId, base64String, buffer, contentType })
+    }
 }
