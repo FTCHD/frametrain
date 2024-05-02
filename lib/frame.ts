@@ -59,6 +59,7 @@ export async function createFrame({
         name,
         description,
         config: templates[template].initialConfig,
+        draftConfig: templates[template].initialConfig,
         state: {},
         template: template,
     }
@@ -80,20 +81,54 @@ export async function updateFrameName(id: string, name: string) {
     // revalidatePath(`/frame/${id}`)
 }
 
-// called only internally
 export async function updateFrameConfig(id: string, config: any) {
     const db = drizzle(getRequestContext().env.DB)
 
     await db
         .update(frameTable)
-        .set({ config, updatedAt: new Date() })
+        .set({ draftConfig: config, updatedAt: new Date() })
         .where(eq(frameTable.id, id))
         .run()
 
     // revalidatePath(`/frame/${id}`)
 }
 
-// called only internally
+export async function publishFrameConfig(id: string) {
+    const db = drizzle(getRequestContext().env.DB)
+
+    const frame = await db.select().from(frameTable).where(eq(frameTable.id, id)).get()
+
+    if (!frame) {
+        notFound()
+    }
+
+    await db
+        .update(frameTable)
+        .set({ config: frame.draftConfig, updatedAt: new Date() })
+        .where(eq(frameTable.id, id))
+        .run()
+
+    // revalidatePath(`/frame/${id}`)
+}
+
+export async function revertFrameConfig(id: string) {
+    const db = drizzle(getRequestContext().env.DB)
+
+    const frame = await db.select().from(frameTable).where(eq(frameTable.id, id)).get()
+
+    if (!frame) {
+        notFound()
+    }
+
+    await db
+        .update(frameTable)
+        .set({ draftConfig: frame.config, updatedAt: new Date() })
+        .where(eq(frameTable.id, id))
+        .run()
+
+    // revalidatePath(`/frame/${id}`)
+}
+
 export async function updateFrameState(id: string, state: any) {
     const db = drizzle(getRequestContext().env.DB)
 	

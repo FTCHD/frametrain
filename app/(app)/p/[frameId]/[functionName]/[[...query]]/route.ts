@@ -36,7 +36,7 @@ export async function POST(
         notFound()
     }
 
-    if (!frame.config) {
+    if (!frame.draftConfig) {
         notFound()
     }
 
@@ -55,7 +55,7 @@ export async function POST(
 	
     const buildParameters = await handler(
         body,
-        frame.config as BaseConfig,
+        frame.draftConfig as BaseConfig,
         frame.state as BaseState,
         searchParams
     )
