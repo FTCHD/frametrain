@@ -12,6 +12,7 @@ const publicRoutesRegex = [
     '/sitemap.xml',
     '/robots.txt',
     '/dots.svg',
+    '/og.png',
     '/pdf.worker.mjs',
 ]
 
