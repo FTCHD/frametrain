@@ -112,6 +112,7 @@ export default function Inspector() {
                     <h2 className="text-lg font-semibold">Background Color</h2>
                     <ColorPicker
                         className="w-full"
+                        enabledPickers={['solid', 'gradient', 'image']}
                         background={config.backgroundColor || 'black'}
                         setBackground={(value) => updateConfig({ backgroundColor: value })}
                         uploadBackground={async (base64String, contentType) => {
@@ -128,7 +129,6 @@ export default function Inspector() {
                     <h2 className="text-lg font-semibold">Text Color</h2>
                     <ColorPicker
                         className="w-full"
-                        enabledPickers={['solid']}
                         background={config.textColor || 'white'}
                         setBackground={(value) => updateConfig({ textColor: value })}
                     />
