@@ -1,1 +1,0 @@
-ALTER TABLE `frame` DROP COLUMN `preview`;

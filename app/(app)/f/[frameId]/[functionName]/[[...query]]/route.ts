@@ -1,18 +1,16 @@
+import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
 import type { FrameActionPayload, FrameActionPayloadValidated } from '@/lib/farcaster'
 import { updateFrameCalls, updateFrameState } from '@/lib/frame'
 import { buildFramePage, validatePayload } from '@/lib/serve'
 import type { BaseConfig, BaseState } from '@/lib/types'
 import templates from '@/templates'
-import { getRequestContext } from '@cloudflare/next-on-pages'
 import { eq } from 'drizzle-orm'
-import { drizzle } from 'drizzle-orm/d1'
 import { notFound } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 export const dynamicParams = true
-export const runtime = 'edge'
 export const fetchCache = 'force-no-store'
 
 export async function POST(
@@ -27,9 +25,7 @@ export async function POST(
         }
     })
 
-    const db = drizzle(getRequestContext().env.DB)
-
-    const frame = await db.select().from(frameTable).where(eq(frameTable.id, params.frameId)).get()
+    const frame = await client.select().from(frameTable).where(eq(frameTable.id, params.frameId)).get()
 
     if (!frame) {
         notFound()

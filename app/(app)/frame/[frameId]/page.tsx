@@ -5,8 +5,6 @@ import { getFrame } from '@/lib/frame'
 import templates from '@/templates'
 import { redirect } from 'next/navigation'
 
-export const runtime = 'edge'
-
 export async function generateMetadata({ params }: { params: { frameId: string } }) {
     const frame = await getFrame(params.frameId)
     return {

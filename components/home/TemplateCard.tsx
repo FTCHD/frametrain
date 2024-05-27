@@ -7,8 +7,6 @@ import { useRouter } from 'next/navigation'
 import { Plus } from 'react-feather'
 import { Separator } from '../shadcn/Separator'
 
-export const runtime = 'edge'
-
 export default function TemplateCard({
     id,
     template,

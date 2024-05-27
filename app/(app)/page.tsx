@@ -10,8 +10,6 @@ import type { InferSelectModel } from 'drizzle-orm'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 
-export const runtime = 'edge'
-
 export default function Home() {
     const sesh = useSession()
 
