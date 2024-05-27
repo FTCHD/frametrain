@@ -6,7 +6,7 @@ export default function PageView(config: {
 }) {
     const { profile, content, background, color, fontFamily, fontSize } = config
 
-    const backgroundProp = {}
+    const backgroundProp: Record<string, string> = {}
 
     if (background) {
         if (background?.startsWith('#')) {
@@ -29,7 +29,7 @@ export default function PageView(config: {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '30px',
+                padding: '50px',
                 paddingBottom: '0px',
                 ...backgroundProp,
             }}
@@ -41,26 +41,26 @@ export default function PageView(config: {
                     flexDirection: 'column',
                     backgroundColor: 'rgba(255, 255, 255, 0.2)',
                     borderRadius: '10px',
-                    padding: '1rem',
+                    padding: '20px',
                 }}
             >
-                {paragraphs.map((paragraph, i) => (
+                {paragraphs.map((p) => (
                     <p
-                        key={i}
+                        key={p}
                         style={{
                             width: '100%',
                             fontFamily: fontFamily || 'Roboto',
                             color: color || 'white',
-                            fontSize: fontSize || '0.9rem',
+                            fontSize: fontSize || '25px',
                             fontWeight: 500,
                             overflowWrap: 'break-word',
                             wordWrap: 'break-word',
                             // this is needed as it doesn't break on the "@" character
                             // https://css-tricks.com/when-a-line-doesnt-break
-                            wordBreak: 'break-all',
+                            // wordBreak: 'break-all',
                         }}
                     >
-                        {paragraph}
+                        {p}
                     </p>
                 ))}
             </div>
@@ -73,17 +73,17 @@ export default function PageView(config: {
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '0.7rem',
+                    fontSize: '20px',
                     fontWeight: 600,
-                    gap: '10px',
+                    gap: '20px',
                     color: 'white',
                 }}
             >
                 <img
-                    style={{ border: '4px solid rgba(255, 255, 255, 0.2)', borderRadius: '50%' }}
+                    style={{ border: '7px solid rgba(255, 255, 255, 0.2)', borderRadius: '50%' }}
                     src={'https://unavatar.io/twitter/' + profile}
-                    width="28px"
-                    height="28px"
+                    width="56px"
+                    height="56px"
                     alt="Twitter Profile"
                 />
                 {profile}

@@ -18,10 +18,9 @@ export const frameTable = sqliteTable('frame', {
     config: text('config', { mode: 'json' }).default('{}').$type<BaseConfig>(),
     draftConfig: text('draftConfig', { mode: 'json' }).default('{}').$type<BaseConfig>(),
     currentMonthCalls: integer('currentMonthCalls').notNull().default(0),
-    createdAt: integer('createdAt', { mode: 'timestamp_ms' })
+    createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+    updatedAt: integer('updatedAt', { mode: 'timestamp' })
         .notNull()
-        .default(sql`CURRENT_TIMESTAMP`),
-    updatedAt: integer('updatedAt', { mode: 'timestamp_ms' })
-        .notNull()
-        .default(sql`CURRENT_TIMESTAMP`),
+        .default(sql`(unixepoch())`)
+        .$onUpdate(() => new Date()),
 })

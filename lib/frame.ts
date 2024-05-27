@@ -1,10 +1,9 @@
 'use server'
 import { auth } from '@/auth'
+import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
 import templates from '@/templates'
-import { getRequestContext } from '@cloudflare/next-on-pages'
 import { type InferInsertModel, and, eq } from 'drizzle-orm'
-import { drizzle } from 'drizzle-orm/d1'
 import { revalidatePath } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { uploadPreview } from './storage'
@@ -16,9 +15,7 @@ export async function getFrameList() {
         notFound()
     }
 
-    const db = drizzle(getRequestContext().env.DB)
-
-    const frames = await db
+    const frames = await client
         .select()
         .from(frameTable)
         .where(eq(frameTable.owner, sesh.user.id!))
@@ -28,9 +25,17 @@ export async function getFrameList() {
 }
 
 export async function getFrame(id: string) {
-    const db = drizzle(getRequestContext().env.DB)
+    const sesh = await auth()
 
-    const frame = await db.select().from(frameTable).where(eq(frameTable.id, id)).get()
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .get()
 
     if (!frame) {
         notFound()
@@ -64,9 +69,7 @@ export async function createFrame({
         template: template,
     }
 
-    const db = drizzle(getRequestContext().env.DB)
-
-    const frame = await db.insert(frameTable).values(args).returning().get()
+    const frame = await client.insert(frameTable).values(args).returning().get()
 
     // revalidatePath(`/frame/${frame.id}`)
 
@@ -74,78 +77,97 @@ export async function createFrame({
 }
 
 export async function updateFrameName(id: string, name: string) {
-    const db = drizzle(getRequestContext().env.DB)
+    const sesh = await auth()
 
-    await db.update(frameTable).set({ name, updatedAt: new Date() }).where(eq(frameTable.id, id)).run()
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    await client
+        .update(frameTable)
+        .set({ name })
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .run()
 
     // revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFrameConfig(id: string, config: any) {
-    const db = drizzle(getRequestContext().env.DB)
+    const sesh = await auth()
 
-    await db
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    await client
         .update(frameTable)
-        .set({ draftConfig: config, updatedAt: new Date() })
-        .where(eq(frameTable.id, id))
+        .set({ draftConfig: config })
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
     // revalidatePath(`/frame/${id}`)
 }
 
 export async function publishFrameConfig(id: string) {
-    const db = drizzle(getRequestContext().env.DB)
+    const sesh = await auth()
 
-    const frame = await db.select().from(frameTable).where(eq(frameTable.id, id)).get()
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .get()
 
     if (!frame) {
         notFound()
     }
 
-    await db
+    await client
         .update(frameTable)
-        .set({ config: frame.draftConfig, updatedAt: new Date() })
-        .where(eq(frameTable.id, id))
+        .set({ config: frame.draftConfig })
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
     // revalidatePath(`/frame/${id}`)
 }
 
 export async function revertFrameConfig(id: string) {
-    const db = drizzle(getRequestContext().env.DB)
+    const sesh = await auth()
 
-    const frame = await db.select().from(frameTable).where(eq(frameTable.id, id)).get()
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .get()
 
     if (!frame) {
         notFound()
     }
 
-    await db
+    await client
         .update(frameTable)
-        .set({ draftConfig: frame.config, updatedAt: new Date() })
-        .where(eq(frameTable.id, id))
+        .set({ draftConfig: frame.config })
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
     // revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFrameState(id: string, state: any) {
-    const db = drizzle(getRequestContext().env.DB)
-	
-
-    await db.update(frameTable).set({ state, updatedAt: new Date() }).where(eq(frameTable.id, id)).run()
+    await client.update(frameTable).set({ state }).where(eq(frameTable.id, id)).run()
 
     // revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFrameCalls(id: string, calls: number) {
-    const db = drizzle(getRequestContext().env.DB)
-
-    await db
-        .update(frameTable)
-        .set({ currentMonthCalls: calls, updatedAt: new Date() })
-        .where(eq(frameTable.id, id))
-        .run()
+    await client.update(frameTable).set({ currentMonthCalls: calls }).where(eq(frameTable.id, id)).run()
 
     // revalidatePath(`/frame/${id}`)
 }
@@ -168,9 +190,7 @@ export async function deleteFrame(id: string) {
         notFound()
     }
 
-    const db = drizzle(getRequestContext().env.DB)
-
-    await db
+    await client
         .delete(frameTable)
         .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()

@@ -1,4 +1,6 @@
 import { ThemeProvider } from '@/components/foundation/ThemeProvider'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import type React from 'react'
@@ -52,6 +54,9 @@ export default function Layout(props: { children: React.ReactNode }) {
                 >
                     <ThemeProvider attribute="class" defaultTheme="dark">
                         {props.children}
+
+                        <Analytics />
+                        <SpeedInsights />
 
                         <Toaster
                             position="bottom-center"

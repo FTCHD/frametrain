@@ -1,20 +1,16 @@
+import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
 import { buildFramePage } from '@/lib/serve'
 import templates from '@/templates'
-import { getRequestContext } from '@cloudflare/next-on-pages'
 import { eq } from 'drizzle-orm'
-import { drizzle } from 'drizzle-orm/d1'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 export const dynamicParams = true
-export const runtime = 'edge'
 export const fetchCache = 'force-no-store'
 
 export async function GET(request: Request, { params }: { params: { frameId: string } }) {
-    const db = drizzle(getRequestContext().env.DB)
-
-    const frame = await db.select().from(frameTable).where(eq(frameTable.id, params.frameId)).get()
+    const frame = await client.select().from(frameTable).where(eq(frameTable.id, params.frameId)).get()
 
     if (!frame) {
         notFound()

@@ -39,7 +39,7 @@ export default function Inspector() {
         const pdfDocument = await getPdfDocument(url)
         while (pageNumber <= pdfDocument.numPages) {
             const pdfPage = await createPDFPage(pdfDocument, pageNumber)
-            const viewport = pdfPage.getViewport({ scale: 4 })
+            const viewport = pdfPage.getViewport({ scale: 2 })
             const { height, width } = viewport
             const canvas = document.createElement('canvas')
             canvas.width = width
@@ -112,6 +112,7 @@ export default function Inspector() {
                     <h2 className="text-lg font-semibold">Background Color</h2>
                     <ColorPicker
                         className="w-full"
+                        enabledPickers={['solid', 'gradient', 'image']}
                         background={config.backgroundColor || 'black'}
                         setBackground={(value) => updateConfig({ backgroundColor: value })}
                         uploadBackground={async (base64String, contentType) => {
@@ -128,7 +129,6 @@ export default function Inspector() {
                     <h2 className="text-lg font-semibold">Text Color</h2>
                     <ColorPicker
                         className="w-full"
-                        enabledPickers={['solid']}
                         background={config.textColor || 'white'}
                         setBackground={(value) => updateConfig({ textColor: value })}
                     />
@@ -136,7 +136,7 @@ export default function Inspector() {
             </div>
             <div className="flex flex-col gap-5">
                 <h2 className="text-2xl font-bold">File & Content</h2>
-                {!file && !responseData.length && (
+                {!file && !responseData.length ? (
                     <label
                         htmlFor="uploadFile"
                         className="flex cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
@@ -154,8 +154,8 @@ export default function Inspector() {
                             className="sr-only"
                         />
                     </label>
-                )}
-                {(file || responseData.length) && (
+                ) : null}
+                {file || responseData.length ? (
                     <div className="flex flex-row space-x-4 w-full">
                         <label
                             htmlFor="uploadFile"
@@ -185,7 +185,7 @@ export default function Inspector() {
                             Remove
                         </Button>
                     </div>
-                )}
+                ) : null}
             </div>
             <div className="flex flex-col">
                 <div className="flex flex-row justify-between items-center">

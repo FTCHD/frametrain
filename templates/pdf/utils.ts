@@ -15,7 +15,8 @@ export function createPDFPage(document: PDFDocumentProxy, page: number) {
 export async function getPDFDocument(path: string): Promise<PDFDocumentProxy> {
     const pdfJs = await import('pdfjs-dist')
 
-    pdfJs.GlobalWorkerOptions.workerSrc = window.location.origin + '/pdf.worker.mjs'
+    pdfJs.GlobalWorkerOptions.workerSrc =
+        'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.worker.min.mjs'
 
     return new Promise((resolve, reject) => {
         pdfJs
@@ -32,7 +33,7 @@ export function renderPDFToCanvas(pageDocument: PDFPageProxy, canvas: HTMLCanvas
         pageDocument
             .render({
                 canvasContext: canvas.getContext('2d') as CanvasRenderingContext2D,
-                viewport: pageDocument.getViewport({ scale: 4 }),
+                viewport: pageDocument.getViewport({ scale: 2 }),
             })
             .promise.then(() => {
                 resolve(canvas)

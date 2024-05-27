@@ -4,7 +4,7 @@ export default function CoverView({
     backgroundColor,
     textColor,
 }: { title: string; subtitle: string; backgroundColor?: string; textColor?: string }) {
-    const backgroundProp = {}
+    const backgroundProp: Record<string, string> = {}
 
     if (backgroundColor) {
         if (backgroundColor.startsWith('#')) {
@@ -25,8 +25,8 @@ export default function CoverView({
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                gap: '50px',
-                padding: '40px',
+                gap: '100px',
+                padding: '70px',
                 color: textColor || 'white',
                 ...backgroundProp,
             }}
@@ -34,7 +34,7 @@ export default function CoverView({
             <span
                 style={{
                     fontFamily: 'Roboto',
-                    fontSize: '48px',
+                    fontSize: '100px',
                     textAlign: 'center',
                     textWrap: 'balance',
                 }}
@@ -44,7 +44,7 @@ export default function CoverView({
             <span
                 style={{
                     fontFamily: 'Roboto',
-                    fontSize: '24px',
+                    fontSize: '50px',
                     opacity: '0.8',
                 }}
             >

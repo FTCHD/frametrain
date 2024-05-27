@@ -59,8 +59,8 @@ export default function CoverView(streamData: any) {
                 // backgroundSize: '100% 100%',
                 // backgroundRepeat: 'no-repeat',
                 color: '#ffffff',
-                padding: '15px',
-                gap: '15px',
+                padding: '30px',
+                gap: '30px',
                 fontFamily: 'Urbanist',
             }}
         >
@@ -83,16 +83,16 @@ export default function CoverView(streamData: any) {
                         flexBasis: '50%',
                         width: '100%',
                         fontFamily: 'Catamaran',
-                        fontSize: '22px',
+                        fontSize: '50px',
                         fontWeight: 900,
-                        gap: '5px',
+                        gap: '10px',
                         color: 'orange',
                     }}
                 >
                     <img
                         src={process.env.NEXT_PUBLIC_HOST + hourglass.src}
-                        width="36px"
-                        height="36px"
+                        width="72px"
+                        height="72px"
                         alt="hourglass"
                     />
                     <span>#{alias.toUpperCase()}</span>
@@ -104,7 +104,7 @@ export default function CoverView(streamData: any) {
                         justifyContent: 'flex-end',
                         width: '100%',
                         fontFamily: 'Urbanist',
-                        fontSize: '18px',
+                        fontSize: '42px',
                         fontWeight: 700,
                         fontStyle: 'italic',
                         color: 'orange',
@@ -121,7 +121,7 @@ export default function CoverView(streamData: any) {
                     flexDirection: 'row',
                     justifyContent: 'flex-start',
                     // alignItems: 'flex-start',
-                    gap: '5px',
+                    gap: '10px',
                 }}
             >
                 <div
@@ -130,12 +130,12 @@ export default function CoverView(streamData: any) {
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        paddingRight: '7px',
+                        paddingRight: '15px',
                         // borderRadius: '10px',
                         // background: 'rgba(0, 0, 0, 0.25)',
                     }}
                 >
-                    <svg width="220" height="200" viewBox="0 0 200 200">
+                    <svg width="440" height="400" viewBox="0 0 400 400">
                         <defs>
                             <linearGradient id="outerGradient" gradientTransform="rotate(90)">
                                 <stop offset="0%" stop-color="#0099ff" />
@@ -148,9 +148,9 @@ export default function CoverView(streamData: any) {
                         </defs>
 
                         <circle
-                            cx="100"
-                            cy="100"
-                            r="95"
+                            cx="200"
+                            cy="200"
+                            r="200"
                             fill="#2e2e3070"
                             style={{ backdropFilter: 'blur(10px)' }}
                         />
@@ -177,24 +177,24 @@ export default function CoverView(streamData: any) {
                         /> */}
 
                         <circle
-                            cx="100"
-                            cy="100"
-                            r="80"
+                            cx="200"
+                            cy="200"
+                            r="160"
                             fill="none"
                             stroke="#e6e6e670" // 70% opacity
-                            stroke-width="35"
+                            stroke-width="80"
                         />
                         <circle
-                            cx="100"
-                            cy="100"
-                            r="80"
+                            cx="200"
+                            cy="200"
+                            r="160"
                             fill="none"
                             stroke="url(#innerGradient)"
-                            stroke-width="35"
+                            stroke-width="80"
                             stroke-dasharray={MAX_VALUE_INNER} // max value (filled)
                             stroke-dashoffset={percentageInnerCircle(percentageWithdrawn)}
                             stroke-linecap="round"
-                            transform="rotate(-90 100 100)"
+                            transform="rotate(-90 200 200)"
                         />
                     </svg>
 
@@ -206,7 +206,7 @@ export default function CoverView(streamData: any) {
                             alignItems: 'center',
                             width: '100%',
                             height: '100%',
-                            fontSize: '12px',
+                            fontSize: '25px',
                             color: '#ffffff',
                             left: 0,
                             top: 0,
@@ -223,7 +223,7 @@ export default function CoverView(streamData: any) {
                                 borderRadius: '10px',
                                 background: 'rgba(256, 256, 256, 0.2)',
                                 backdropFilter: 'blur(15px)',
-                                padding: '10px',
+                                padding: '20px',
                             }}
                         >
                             {streamStatus}
@@ -237,7 +237,7 @@ export default function CoverView(streamData: any) {
                         flexDirection: 'column',
                         width: '100%',
                         height: '100%',
-                        gap: '12px',
+                        gap: '25px',
                     }}
                 >
                     <div
@@ -248,17 +248,17 @@ export default function CoverView(streamData: any) {
                             flexDirection: 'row',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            padding: '10px',
+                            padding: '20px',
                             borderRadius: '10px',
                             background: 'rgba(255, 255, 255, 0.15)',
-                            gap: '5px',
-                            border: '1px solid #392a3b',
+                            gap: '10px',
+                            border: '2px solid #392a3b',
                         }}
                     >
                         <div
                             style={{
                                 display: 'flex',
-                                fontSize: '20px',
+                                fontSize: '40px',
                                 fontWeight: 900,
                             }}
                         >
@@ -267,7 +267,7 @@ export default function CoverView(streamData: any) {
                         <div
                             style={{
                                 display: 'flex',
-                                fontSize: '18px',
+                                fontSize: '35px',
                                 fontWeight: 600,
                             }}
                         >
@@ -277,7 +277,7 @@ export default function CoverView(streamData: any) {
                         <div
                             style={{
                                 display: 'flex',
-                                fontSize: '20px',
+                                fontSize: '40px',
                                 fontWeight: 900,
                             }}
                         >
@@ -292,10 +292,10 @@ export default function CoverView(streamData: any) {
                             flexDirection: 'column',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            padding: '10px',
+                            padding: '20px',
                             borderRadius: '10px',
                             background: 'rgba(255, 255, 255, 0.15)',
-                            gap: '7px',
+                            gap: '15px',
                             border: '1px solid #392a3b',
                         }}
                     >
@@ -311,7 +311,7 @@ export default function CoverView(streamData: any) {
                             <div
                                 style={{
                                     display: 'flex',
-                                    fontSize: '14px',
+                                    fontSize: '30px',
                                     fontWeight: 600,
                                 }}
                             >
@@ -323,8 +323,8 @@ export default function CoverView(streamData: any) {
                                     display: 'flex',
                                     flexDirection: 'row',
                                     alignItems: 'center',
-                                    gap: '5px',
-                                    fontSize: '18px',
+                                    gap: '10px',
+                                    fontSize: '35px',
                                     fontWeight: 900,
                                 }}
                             >
@@ -332,8 +332,8 @@ export default function CoverView(streamData: any) {
                                     src={asset.logo}
                                     style={{ borderRadius: '50%' }}
                                     alt=""
-                                    width={18}
-                                    height={18}
+                                    width={36}
+                                    height={36}
                                 />
                                 {formattedDepositAmount.toLocaleString('en-US', {
                                     maximumFractionDigits:
@@ -359,7 +359,7 @@ export default function CoverView(streamData: any) {
                             <div
                                 style={{
                                     display: 'flex',
-                                    fontSize: '14px',
+                                    fontSize: '30px',
                                     fontWeight: 600,
                                 }}
                             >
@@ -371,8 +371,8 @@ export default function CoverView(streamData: any) {
                                     display: 'flex',
                                     flexDirection: 'row',
                                     alignItems: 'center',
-                                    gap: '5px',
-                                    fontSize: '18px',
+                                    gap: '10px',
+                                    fontSize: '35px',
                                     fontWeight: 900,
                                 }}
                             >
@@ -380,8 +380,8 @@ export default function CoverView(streamData: any) {
                                     src={asset.logo}
                                     style={{ borderRadius: '50%' }}
                                     alt=""
-                                    width={18}
-                                    height={18}
+                                    width={36}
+                                    height={36}
                                 />
                                 {formattedWithdrawAmount
                                     ? formattedWithdrawAmount.toLocaleString('en-US', {
@@ -406,12 +406,12 @@ export default function CoverView(streamData: any) {
                             flexDirection: 'row',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            padding: '5px',
+                            padding: '10px',
                             borderRadius: '10px',
                             background: 'rgba(255, 255, 255, 0.15)',
-                            gap: '5px',
-                            border: '1px solid #392a3b',
-                            fontSize: '1.25rem', // '20px',
+                            gap: '10px',
+                            border: '2px solid #392a3b',
+                            fontSize: '40px',
                             fontWeight: 700,
                             textTransform: 'capitalize',
                         }}

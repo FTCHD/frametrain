@@ -6,7 +6,7 @@ export default function CoverView(config: {
 }) {
     const { title, profile, bottom, background } = config
 
-    const backgroundProp = {}
+    const backgroundProp: Record<string, string> = {}
 
     if (background) {
         if (background?.startsWith('#')) {
@@ -27,7 +27,7 @@ export default function CoverView(config: {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 // alignItems: 'center',
-                padding: '30px',
+                padding: '50px',
                 ...backgroundProp,
             }}
         >
@@ -37,10 +37,10 @@ export default function CoverView(config: {
                     height: '80%',
                     fontFamily: title?.fontFamily || 'Roboto',
                     color: title?.color || 'white',
-                    fontSize: '3.5rem',
+                    fontSize: '100px',
                     overflow: 'hidden',
                     fontWeight: title?.fontWeight || '300',
-                    paddingRight: '20px',
+                    paddingRight: '15px',
                 }}
             >
                 {title?.text}
@@ -51,21 +51,21 @@ export default function CoverView(config: {
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    fontSize: '0.9rem',
+                    fontSize: '20px',
                     fontWeight: 600,
                     gap: '10px',
                     color: 'white',
                 }}
             >
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
                     <img
                         style={{
-                            border: '4px solid rgba(255, 255, 255, 0.2)',
+                            border: '7px solid rgba(255, 255, 255, 0.2)',
                             borderRadius: '50%',
                         }}
                         src={'https://unavatar.io/twitter/' + profile}
-                        width="32px"
-                        height="32px"
+                        width="64px"
+                        height="64px"
                         alt="Twitter Profile"
                     />
                     {profile}

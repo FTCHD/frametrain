@@ -102,7 +102,6 @@ export default function Inspector() {
                     <div className="flex flex-col gap-2 w-full">
                         <h2 className="text-lg">Title Color</h2>
                         <ColorPicker
-                            enabledPickers={['solid']}
                             className="w-full"
                             background={titleTextColor}
                             setBackground={(value: string) => {
@@ -172,7 +171,6 @@ export default function Inspector() {
                     <div className="flex flex-col gap-2 w-full">
                         <h2 className="text-lg">Bottom Text Color</h2>
                         <ColorPicker
-                            enabledPickers={['solid']}
                             className="w-full"
                             background={bottomTextColor}
                             setBackground={(value: string) => {
@@ -190,6 +188,7 @@ export default function Inspector() {
                         <h2 className="text-lg">Background</h2>
                         <ColorPicker
                             className="w-full"
+                            enabledPickers={['solid', 'gradient', 'image']}
                             background={coverBg}
                             setBackground={(e) => {
                                 setCoverBg(e)
@@ -305,7 +304,6 @@ export default function Inspector() {
                             </div>
                             <div className="flex flex-row gap-2">
                                 <ColorPicker
-                                    enabledPickers={['solid']}
                                     className="w-20"
                                     background={tweet.color || 'white'}
                                     setBackground={(value: string) => {
@@ -322,8 +320,8 @@ export default function Inspector() {
                                     }}
                                 />
                                 <ColorPicker
-                                    enabledPickers={['solid', 'gradient', 'image']}
                                     className="w-20"
+                                    enabledPickers={['solid', 'gradient', 'image']}
                                     background={tweet.background || '#0f0c29'}
                                     setBackground={(value: string) => {
                                         const newTweets = config?.tweets?.map((t: any) =>

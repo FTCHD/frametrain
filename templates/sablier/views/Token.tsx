@@ -19,15 +19,15 @@ export default function TokenView(streamData: any) {
                 // backgroundSize: '100% 100%',
                 // backgroundRepeat: 'no-repeat',
                 color: '#ffffff',
-                padding: '15px',
-                gap: '15px',
+                padding: '30px',
+                gap: '30px',
                 fontFamily: 'Urbanist',
             }}
         >
             <span
                 style={{
                     fontFamily: 'Catamaran',
-                    fontSize: '20px',
+                    fontSize: '40px',
                     fontWeight: 900,
                     color: 'orange',
                 }}
@@ -41,16 +41,16 @@ export default function TokenView(streamData: any) {
                     flexGrow: '1',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    padding: '15px',
+                    padding: '30px',
                     borderRadius: '10px',
                     background: 'rgba(255, 255, 255, 0.15)',
-                    gap: '5px',
-                    border: '1px solid #392a3b',
+                    gap: '10px',
+                    border: '2px solid #392a3b',
                 }}
             >
                 <div style={tokenRowStyle}>
                     <span>NAME</span>
-                    <span style={{ fontWeight: 900, fontSize: '16px' }}>{asset.name}</span>
+                    <span style={{ fontWeight: 900, fontSize: '35px' }}>{asset.name}</span>
                 </div>
                 <div style={tokenRowStyle}>
                     <span>SYMBOL</span>
@@ -61,23 +61,23 @@ export default function TokenView(streamData: any) {
                             flexDirection: 'row',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            gap: '5px',
+                            gap: '10px',
                         }}
                     >
                         <img
                             src={asset.logo}
                             style={{ borderRadius: '50%' }}
                             alt=""
-                            width={20}
-                            height={20}
+                            width={40}
+                            height={40}
                         />
 
-                        <span style={{ fontWeight: 900, fontSize: '16px' }}>{asset.symbol}</span>
+                        <span style={{ fontWeight: 900, fontSize: '35px' }}>{asset.symbol}</span>
                     </div>
                 </div>
                 <div style={tokenRowStyle}>
                     <span>DECIMALS</span>
-                    <span style={{ fontWeight: 900, fontSize: '16px' }}>{asset.decimals}</span>
+                    <span style={{ fontWeight: 900, fontSize: '35px' }}>{asset.decimals}</span>
                 </div>
                 <div style={tokenRowStyle}>
                     <span>ADDRESS</span>
@@ -85,7 +85,7 @@ export default function TokenView(streamData: any) {
                         style={{
                             display: 'flex',
                             fontWeight: 900,
-                            fontSize: '16px',
+                            fontSize: '35px',
                         }}
                     >
                         {asset.address}
@@ -99,12 +99,12 @@ export default function TokenView(streamData: any) {
                             display: 'flex',
                             flexDirection: 'row',
                             alignItems: 'center',
-                            gap: '5px',
+                            gap: '10px',
                         }}
                     >
-                        <img src={chainIdToMetadata[chainId].icon} alt="" width={20} height={20} />
+                        <img src={chainIdToMetadata[chainId].icon} alt="" width={40} height={40} />
 
-                        <span style={{ fontWeight: 900, fontSize: '16px' }}>
+                        <span style={{ fontWeight: 900, fontSize: '35px' }}>
                             {chainName.toUpperCase()}
                         </span>
                     </div>
@@ -123,5 +123,5 @@ const tokenRowStyle = {
     alignItems: 'center',
     width: '100%',
     fontWeight: 'bold',
-    fontSize: '18px',
+    fontSize: '40px',
 } as const

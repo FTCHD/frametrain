@@ -46,13 +46,23 @@ export function ColorPicker({
     background,
     setBackground,
     className,
-    enabledPickers = ['solid', 'gradient', 'image'],
+    enabledPickers = ['solid'],
+    defaults = {
+        solids,
+        gradients,
+        images,
+    },
     uploadBackground,
 }: {
     background: string
     setBackground: (background: string) => void
     className?: string
     enabledPickers?: string[]
+    defaults?: {
+        solids: string[]
+        gradients: string[]
+        images: string[]
+    }
     uploadBackground?: (
         base64String: string,
         contentType: 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
@@ -112,7 +122,7 @@ export function ColorPicker({
                     </TabsList>
 
                     <TabsContent value="solid" className="flex flex-wrap gap-1 mt-0">
-                        {solids.map((s) => (
+                        {defaults.solids.map((s) => (
                             <div
                                 key={s}
                                 style={{ background: s }}
@@ -124,7 +134,7 @@ export function ColorPicker({
 
                     <TabsContent value="gradient" className="mt-0">
                         <div className="flex flex-wrap gap-1 mb-2">
-                            {gradients.map((s) => (
+                            {defaults.gradients.map((s) => (
                                 <div
                                     key={s}
                                     style={{ background: s }}
@@ -137,7 +147,7 @@ export function ColorPicker({
 
                     <TabsContent value="image" className="mt-0">
                         <div className="grid grid-cols-2 gap-1 mb-2">
-                            {images.map((s) => (
+                            {defaults.images.map((s) => (
                                 <div
                                     key={s}
                                     style={{ backgroundImage: s }}

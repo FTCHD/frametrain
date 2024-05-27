@@ -104,6 +104,7 @@ export default function Inspector() {
                 <h2 className="text-lg font-semibold">Background Color</h2>
                 <ColorPicker
                     className="w-full"
+                    enabledPickers={['solid', 'gradient', 'image']}
                     background={
                         config.background || 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
                     }
@@ -123,7 +124,6 @@ export default function Inspector() {
                 <h2 className="text-lg font-semibold">Text Color</h2>
                 <ColorPicker
                     className="w-full"
-                    enabledPickers={['solid']}
                     background={config.textColor || 'white'}
                     setBackground={(value) => updateConfig({ textColor: value })}
                 />
@@ -133,7 +133,6 @@ export default function Inspector() {
                 <h2 className="text-lg font-semibold">Bar Line Color</h2>
                 <ColorPicker
                     className="w-full"
-                    enabledPickers={['solid']}
                     background={config.barColor || 'yellow'}
                     setBackground={(value) => updateConfig({ barColor: value })}
                 />
