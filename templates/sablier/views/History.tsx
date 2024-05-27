@@ -3,21 +3,6 @@ import { abbreviateNumber } from 'js-abbreviation-number'
 import { chainIdToMetadata } from '../utils/constants'
 
 export default function HistoryView(streamData: any, streamHistory: any) {
-    //const {
-    //     chainId,
-    //     funder,
-    //     recipient,
-    //     depositAmount,
-    //     intactAmount,
-    //     withdrawnAmount,
-    //     startTime,
-    //     endTime,
-    //     timestamp,
-    //     asset,
-    //     category,
-    //     segments, // relevant if category is LockupDynamic
-    // } = streamData
-
     const { asset, chainId } = streamData
 
     const chainColor = chainIdToMetadata[chainId].color
@@ -57,15 +42,15 @@ export default function HistoryView(streamData: any, streamHistory: any) {
                 // backgroundSize: '100% 100%',
                 // backgroundRepeat: 'no-repeat',
                 color: '#ffffff',
-                padding: '15px',
-                gap: '15px',
+                padding: '30px',
+                gap: '30px',
                 fontFamily: 'Urbanist',
             }}
         >
             <span
                 style={{
                     fontFamily: 'Catamaran',
-                    fontSize: '20px',
+                    fontSize: '40px',
                     fontWeight: 900,
                     color: 'orange',
                 }}
@@ -78,11 +63,11 @@ export default function HistoryView(streamData: any, streamHistory: any) {
                     display: 'flex',
                     flexGrow: '1',
                     flexDirection: 'column',
-                    padding: '15px',
+                    padding: '30px',
                     borderRadius: '10px',
                     background: 'rgba(255, 255, 255, 0.15)',
-                    gap: '7px',
-                    border: '1px solid #392a3b',
+                    gap: '15px',
+                    border: '2px solid #392a3b',
                 }}
             >
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -102,7 +87,6 @@ export default function HistoryView(streamData: any, streamHistory: any) {
                         // show category, timestamp, addressA, addressB, amountA, amountB
                         <div key={historyItem.id} style={{ display: 'flex', flexDirection: 'row' }}>
                             <span style={{ ...rowStyle, width: '17%' }}>
-                                {' '}
                                 {historyItem.category.toUpperCase()}
                             </span>
                             <span style={{ ...rowStyle, width: '25%' }}>
@@ -123,15 +107,15 @@ export default function HistoryView(streamData: any, streamHistory: any) {
                                         flexDirection: 'row',
                                         justifyContent: 'center',
                                         alignItems: 'center',
-                                        gap: '5px',
+                                        gap: '10px',
                                     }}
                                 >
                                     <img
                                         src={asset.logo}
                                         style={{ borderRadius: '50%' }}
                                         alt=""
-                                        width={20}
-                                        height={20}
+                                        width={40}
+                                        height={40}
                                     />
                                     <span>{abbreviateNumber(finalAmount, 1)}</span>
                                 </div>
@@ -141,7 +125,7 @@ export default function HistoryView(streamData: any, streamHistory: any) {
                 })}
 
                 {tooBig && (
-                    <span style={{ fontSize: '12px', color: 'lightgray', fontWeight: 600 }}>
+                    <span style={{ fontSize: '25px', color: 'lightgray', fontWeight: 600 }}>
                         ...and {streamHistory.length - MAX_EVENTS} more
                     </span>
                 )}
@@ -150,6 +134,6 @@ export default function HistoryView(streamData: any, streamHistory: any) {
     )
 }
 
-const rowStyle = { fontSize: '16px', fontWeight: 600 }
+const rowStyle = { fontSize: '30px', fontWeight: 600 }
 
-const rowStyleHeader = { fontSize: '18px', fontWeight: 800 }
+const rowStyleHeader = { fontSize: '35px', fontWeight: 800 }

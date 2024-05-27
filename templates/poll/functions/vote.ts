@@ -10,7 +10,7 @@ export default async function vote(
     state: State,
     params: any
 ) {
-    const voter = body.untrustedData.fid
+    const voter = body.untrustedData.fid.toString()
     const buttonIndex = body.untrustedData.buttonIndex
     const pastIndex = state.votesForId?.[voter]
 

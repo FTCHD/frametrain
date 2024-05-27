@@ -1,7 +1,7 @@
 export default function VoteView(config: Record<string, string>) {
     const { question, background, textColor } = config
 
-    const backgroundProp = {}
+	const backgroundProp: Record<string, string> = {}
 
     if (background) {
         if (background.startsWith('#')) {
@@ -34,7 +34,7 @@ export default function VoteView(config: Record<string, string>) {
                     borderRadius: '10px',
                     background: 'rgba(255, 255, 255, 0.22)',
                     color: textColor || 'white',
-                    fontSize: '2.2rem',
+                    fontSize: '100px',
                     textAlign: 'center',
                     fontWeight: '900',
                     lineHeight: '1.4',

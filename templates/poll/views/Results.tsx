@@ -6,7 +6,7 @@ export default function ResultsView(
     votesForOption: Record<string, number>,
     colors: Record<string, string>
 ) {
-    const backgroundProp = {}
+    const backgroundProp: Record<string, string> = {}
 
     if (colors?.background) {
         if (colors.background.startsWith('#')) {
@@ -27,7 +27,7 @@ export default function ResultsView(
                 width: '100%',
                 height: '100%',
                 color: '#ffffff',
-                padding: '30px',
+                padding: '40px',
                 gap: '30px',
                 ...backgroundProp,
             }}
@@ -35,7 +35,7 @@ export default function ResultsView(
             <div
                 style={{
                     display: 'flex',
-                    fontSize: '1.2rem',
+                    fontSize: '70px',
                     fontWeight: 500,
                     color: colors?.textColor || 'white',
                 }}
@@ -46,7 +46,7 @@ export default function ResultsView(
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: '20px',
+                    padding: '30px',
                     borderRadius: '10px',
                     background: 'rgba(255, 255, 255, 0.22)',
                     color: colors?.textColor || 'white',
@@ -67,7 +67,7 @@ export default function ResultsView(
                         <span
                             style={{
                                 fontFamily: 'Roboto',
-                                fontSize: '1.5rem',
+                                fontSize: '80px',
                                 fontWeight: 600,
                             }}
                         >
@@ -75,7 +75,7 @@ export default function ResultsView(
                             <span
                                 style={{
                                     fontFamily: 'Roboto',
-                                    fontSize: '0.9rem',
+                                    fontSize: '20px',
                                     fontWeight: 900,
                                     color: 'rgba(255, 255, 255, 0.6)',
                                     paddingLeft: '5px',
