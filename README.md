@@ -53,6 +53,7 @@ This part is still a WIP, and the train has to run for a bit in order to make fu
 ### Hooks
 - `useFrameId`
 - `useFrameConfig`
+- `useImageUpload`
 
 # Contributing
 Thank you for considering making FrameTrain better.
@@ -63,6 +64,3 @@ The project currently needs help with:
 - Bug Fixes & More. If you see something that sucks, and you know how to do it better, open a PR and let’s see that confidence. It would be really appreciated actually.
 
 For a good experience, please install the Biome extension. This repository uses Biome, not ESLint.
-
-# Gotchas
-The FT app is deployed on Cloudflare Pages, which means everything is running on the **`edge`** runtime. Node specific APIs do not run, but this will rarely, if ever, be an issue.
