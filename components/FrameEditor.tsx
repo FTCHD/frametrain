@@ -162,7 +162,7 @@ export default function FrameEditor({
                     {template.requiresValidation && (
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
-                                <TooltipTrigger>
+                                <TooltipTrigger asChild={true}>
                                     <MockOptions />
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-72 flex flex-col gap-2">
@@ -181,7 +181,7 @@ export default function FrameEditor({
 
                     <TooltipProvider delayDuration={0}>
                         <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild={true}>
                                 <Button
                                     variant="outline"
                                     className="text-lg gap-2"
@@ -202,7 +202,7 @@ export default function FrameEditor({
 
                     <TooltipProvider delayDuration={0}>
                         <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild={true}>
                                 <Button
                                     variant="outline"
                                     className="text-lg gap-2"
@@ -223,7 +223,7 @@ export default function FrameEditor({
 
                     <TooltipProvider delayDuration={0}>
                         <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild={true}>
                                 <Button
                                     size={'lg'}
                                     onClick={() => {
