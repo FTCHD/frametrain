@@ -25,7 +25,17 @@ export async function getFrameList() {
 }
 
 export async function getFrame(id: string) {
-    const frame = await client.select().from(frameTable).where(eq(frameTable.id, id)).get()
+    const sesh = await auth()
+
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .get()
 
     if (!frame) {
         notFound()
@@ -67,19 +77,49 @@ export async function createFrame({
 }
 
 export async function updateFrameName(id: string, name: string) {
-    await client.update(frameTable).set({ name }).where(eq(frameTable.id, id)).run()
+    const sesh = await auth()
+
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    await client
+        .update(frameTable)
+        .set({ name })
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .run()
 
     // revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFrameConfig(id: string, config: any) {
-    await client.update(frameTable).set({ draftConfig: config }).where(eq(frameTable.id, id)).run()
+    const sesh = await auth()
+
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    await client
+        .update(frameTable)
+        .set({ draftConfig: config })
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .run()
 
     // revalidatePath(`/frame/${id}`)
 }
 
 export async function publishFrameConfig(id: string) {
-    const frame = await client.select().from(frameTable).where(eq(frameTable.id, id)).get()
+    const sesh = await auth()
+
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .get()
 
     if (!frame) {
         notFound()
@@ -88,14 +128,24 @@ export async function publishFrameConfig(id: string) {
     await client
         .update(frameTable)
         .set({ config: frame.draftConfig })
-        .where(eq(frameTable.id, id))
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
     // revalidatePath(`/frame/${id}`)
 }
 
 export async function revertFrameConfig(id: string) {
-    const frame = await client.select().from(frameTable).where(eq(frameTable.id, id)).get()
+    const sesh = await auth()
+
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .get()
 
     if (!frame) {
         notFound()
@@ -104,7 +154,7 @@ export async function revertFrameConfig(id: string) {
     await client
         .update(frameTable)
         .set({ draftConfig: frame.config })
-        .where(eq(frameTable.id, id))
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
     // revalidatePath(`/frame/${id}`)

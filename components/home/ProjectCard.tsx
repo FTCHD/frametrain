@@ -1,3 +1,4 @@
+'use client'
 export default function ProjectCard({
     frame,
 }: { frame: { id: string; name: string; currentMonthCalls: number } }) {
