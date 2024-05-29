@@ -1,6 +1,4 @@
-import {  
-	FarcasterUserInfo,
-} from "@/lib/farcaster"
+import type { FarcasterUserInfo } from '@/lib/farcaster'
 
 export async function getInfoForFids(fids: string[]): Promise<FarcasterUserInfo[]> {
     const options = {

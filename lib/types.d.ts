@@ -2,9 +2,6 @@ import type { StaticImageData } from 'next/image'
 import type { ElementType } from 'react'
 
 export interface BaseConfig {
-    requiresValidation: boolean
-
-    frameId: string
     [key: string]: boolean | number | string | null | undefined | any
 }
 
