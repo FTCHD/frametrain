@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/Pop
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
 import { cn } from '@/lib/shadcn'
 import { Paintbrush } from 'lucide-react'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 const solids = [
     '#E2E2E2',
@@ -72,6 +72,13 @@ export function ColorPicker({
         if (background.includes('url')) return 'image'
         if (background.includes('gradient')) return 'gradient'
         return 'solid'
+    }, [background])
+	
+	const backgroundRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        if (!backgroundRef.current) return
+        backgroundRef.current.value = background
     }, [background])
 
     return (
@@ -201,8 +208,8 @@ export function ColorPicker({
                 </Tabs>
 
                 <Input
-                    id="custom"
-                    value={background}
+                    ref={backgroundRef}
+                    defaultValue={background}
                     className="col-span-2 mt-4 h-8"
                     onChange={(e) => setBackground(e.currentTarget.value)}
                 />
