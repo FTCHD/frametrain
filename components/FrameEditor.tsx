@@ -29,9 +29,6 @@ export default function FrameEditor({
     frame: InferSelectModel<typeof frameTable>
     template: (typeof templates)[keyof typeof templates]
 }) {
-    const [frameConfig, setFrameConfig] = useState(frame.draftConfig as typeof template.initialConfig)
-
-    const [name, setName] = useState(frame.name)
     const [editingName, setEditingName] = useState(false)
     const [temporaryName, setTemporaryName] = useState(frame.name)
 
@@ -40,41 +37,29 @@ export default function FrameEditor({
     const refreshPreview = useRefreshPreview()
 
     async function updateConfig(props: Record<string, any>) {
-        if (!frameConfig) {
-            alert('No config')
+        if (!props || Object.keys(props).length === 0) {
             return
         }
 
         setUpdating(true)
 
-        const newConfig = Object.assign({}, frameConfig, props)
-
-        setFrameConfig(newConfig)
+        const newConfig = Object.assign({}, frame.draftConfig, props)
 
         await updateFrameConfig(frame.id, newConfig)
-
-        refreshPreview(`${process.env.NEXT_PUBLIC_HOST}/p/${frame.id}`)
 
         setUpdating(false)
     }
 
     async function publishConfig() {
         setUpdating(true)
-
         await publishFrameConfig(frame.id)
-
         setUpdating(false)
     }
 
     async function revertConfig() {
         setUpdating(true)
-
         await revertFrameConfig(frame.id)
-
         setUpdating(false)
-
-        // router.refresh is bugged
-        window?.location.reload()
     }
 
     const debouncedUpdateConfig = useDebouncedCallback((value: Record<string, any>) => {
@@ -82,23 +67,18 @@ export default function FrameEditor({
     }, 1000)
 
     async function updateName() {
+        setEditingName(false)
+        if (temporaryName === frame.name) return
         setUpdating(true)
         await updateFrameName(frame.id, temporaryName)
-        setEditingName(false)
-        setName(temporaryName)
         setUpdating(false)
-        if (document) {
-            document.title = `${temporaryName} | FrameTrain`
-        }
     }
 
     async function handleEnter(e: KeyboardEvent) {
         if (!editingName) return
+        if (!['Enter', 'Escape'].includes(e.key)) return
 
-        if (e.key === 'Enter') {
-            e.preventDefault()
-            await updateName()
-        }
+        await updateName()
     }
 
     useEffect(() => {
@@ -111,7 +91,7 @@ export default function FrameEditor({
 
     useEffect(() => {
         refreshPreview(`${process.env.NEXT_PUBLIC_HOST}/p/${frame.id}`)
-    }, [frame, refreshPreview])
+    }, [frame.draftConfig, refreshPreview, frame.id])
 
     const { Inspector } = template as any
 
@@ -128,7 +108,7 @@ export default function FrameEditor({
                         <Input
                             value={temporaryName}
                             onChange={(e) => setTemporaryName(e.target.value)}
-                            onKeyDown={handleEnter}
+                            onBlur={handleEnter}
                             className="text-4xl font-bold focus:bg-transparent hover:bg-transparent"
                         />
                     ) : (
@@ -144,7 +124,7 @@ export default function FrameEditor({
                                             }
                                         }}
                                     >
-                                        {name}
+                                        {frame.name}
                                     </h1>
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-72 ml-8">
@@ -255,8 +235,9 @@ export default function FrameEditor({
                         <InspectorContext.Provider
                             value={{
                                 frameId: frame.id,
-                                config: frameConfig,
+                                config: frame.draftConfig as typeof template.initialConfig,
                                 update: debouncedUpdateConfig,
+                                // setLoading
                             }}
                         >
                             <Inspector />
