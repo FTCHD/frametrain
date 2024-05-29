@@ -1,7 +1,7 @@
 export default function CoverView(config: {
-    title: Record<string, string>
-    profile: string
-    bottom: Record<string, string>
+    title?: Record<string, string>
+    profile?: string
+    bottom: Record<string, string | undefined>
     background?: string
 }) {
     const { title, profile, bottom, background } = config

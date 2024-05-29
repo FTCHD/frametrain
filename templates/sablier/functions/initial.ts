@@ -1,6 +1,7 @@
 'use server'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
+import template from '..'
 import { getLogoForToken, getStreamData } from '../utils/actions'
 import CoverView from '../views/Cover'
 
@@ -8,7 +9,7 @@ export default async function initial(config: Config, state: State) {
     const urbanist = await loadGoogleFontAllVariants('Urbanist')
     const catamaran = await loadGoogleFontAllVariants('Catamaran')
 
-    const streamData = await getStreamData(config.streamId)
+    const streamData = await getStreamData(config.streamId || template.initialConfig.streamId)
 
     const tokenLogo = await getLogoForToken(streamData.chainId, streamData.asset.address)
 
@@ -18,9 +19,9 @@ export default async function initial(config: Config, state: State) {
         { shape: config.shape },
         { asset: { ...streamData.asset, logo: tokenLogo } }
     )
-	
-	return {
-		buttons: [
+
+    return {
+        buttons: [
             {
                 label: 'Summary',
             },
@@ -37,7 +38,7 @@ export default async function initial(config: Config, state: State) {
             },
         ],
         aspectRatio: '1.91:1',
-		fonts: [...urbanist, ...catamaran],
+        fonts: [...urbanist, ...catamaran],
         component: CoverView(data),
         functionName: 'page',
     }

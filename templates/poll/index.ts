@@ -9,6 +9,10 @@ export interface Config extends BaseConfig {
         displayLabel: string
         index: number
     }[]
+    question: string
+    background?: string
+    textColor?: string
+    barColor?: string
 }
 
 export interface State extends BaseState {

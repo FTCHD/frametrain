@@ -4,7 +4,7 @@ export default function ResultsView(
     totalVotes: number,
     percentageForEachOption: Record<string, number>,
     votesForOption: Record<string, number>,
-    colors: Record<string, string>
+    colors: Record<string, string | undefined>
 ) {
     const backgroundProp: Record<string, string> = {}
 

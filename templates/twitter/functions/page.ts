@@ -40,34 +40,33 @@ export default async function page(
         })
     }
 
-
     if (body.untrustedData.buttonIndex === 1 && nextPage === 0) {
         return initial(config, state)
-    } 
-	
-	const tweet = config.tweets[nextPage - 1]
+    }
 
-	const fonts = []
+    const tweet = config.tweets[nextPage - 1]
 
-	const roboto = await loadGoogleFontAllVariants('Roboto')
-	fonts.push(...roboto)
+    const fonts = []
 
-	if (tweet?.fontFamily) {
-		const font = await loadGoogleFontAllVariants(tweet.fontFamily)
-		fonts.push(...font)
-	}
-	
-	return {
-		buttons: buttons,
-		aspectRatio: '1.91:1',
-		fonts: fonts,
-		component:  PageView({
-			profile: config.profile,
-			...tweet,
-		}),
-		functionName: 'page',
-		params: {
-			currentPage: nextPage,
-		},
-	}
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+    fonts.push(...roboto)
+
+    if (tweet?.fontFamily) {
+        const font = await loadGoogleFontAllVariants(tweet.fontFamily)
+        fonts.push(...font)
+    }
+
+    return {
+        buttons: buttons,
+        aspectRatio: '1.91:1',
+        fonts: fonts,
+        component: PageView({
+            profile: config.profile,
+            ...tweet,
+        } as any),
+        functionName: 'page',
+        params: {
+            currentPage: nextPage,
+        },
+    }
 }

@@ -17,7 +17,7 @@ export default async function vote(
     let newState = state
 
     if (buttonIndex !== pastIndex) {
-        console.log('pastIndex', pastIndex)
+        // console.log('pastIndex', pastIndex)
         const revertPastVote = pastIndex
             ? {
                   [pastIndex]:

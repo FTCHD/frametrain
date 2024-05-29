@@ -4,7 +4,19 @@ import cover from './cover.webp'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
-    images: []
+    tweets: Record<string, any>[]
+    profile?: string
+    title: {
+        text?: string
+        color?: string
+        fontFamily?: string
+        fontWeight?: string
+        fontStyle?: string
+    }
+    bottom: {
+        text?: string
+        color?: string
+    }
 }
 
 export interface State extends BaseState {}

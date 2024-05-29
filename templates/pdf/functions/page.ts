@@ -1,6 +1,6 @@
 'use server'
-import { dimensionsForRatio } from '@/sdk/constants'
 import type { FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import { dimensionsForRatio } from '@/sdk/constants'
 import type { Config, State } from '..'
 import PageView from '../views/Page'
 import initial from './initial'
@@ -39,8 +39,6 @@ export default async function page(
             target: 'https://frametra.in',
         })
     }
-
-    let frame
 
     if (body.untrustedData.buttonIndex === 1 && nextPage === 0) {
         return initial(config, state)
