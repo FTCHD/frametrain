@@ -29,7 +29,6 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialConfig: {} as Config,
     cover,
     requiresValidation: false,
 } satisfies BaseTemplate

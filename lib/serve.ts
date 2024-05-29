@@ -3,6 +3,7 @@ import { dimensionsForRatio } from '@/sdk/constants'
 import { ImageResponse } from '@vercel/og'
 import type { ReactElement } from 'react'
 import type {
+    BuildFrameData,
     FrameActionPayload,
     FrameButtonMetadata,
     FrameValidatedActionPayload,
@@ -23,17 +24,7 @@ export async function buildFramePage({
     functionName,
 }: {
     id: string
-    buttons: FrameButtonMetadata[]
-    aspectRatio: '1.91:1' | '1:1'
-    inputText?: string
-    refreshPeriod?: number
-    params?: any
-    state?: BaseState
-    fonts?: any[]
-    component?: ReactElement
-    image?: string
-    functionName?: string
-}) {
+} & BuildFrameData) {
     if (!component && !image) {
         throw new Error('Either component or image must be provided')
     }
@@ -166,7 +157,7 @@ function buildFrame({
 }: {
     buttons: FrameButtonMetadata[]
     image: string
-    aspectRatio: '1.91:1' | '1:1'
+    aspectRatio?: '1.91:1' | '1:1'
     inputText?: string
     postUrl: string
     refreshPeriod?: number

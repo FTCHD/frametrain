@@ -1,5 +1,5 @@
 'use server'
-import type { FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import PageView from '../views/Page'
@@ -10,7 +10,7 @@ export default async function page(
     config: Config,
     state: State,
     params: any
-) {
+): Promise<BuildFrameData> {
     const nextPage =
         params?.currentPage !== undefined
             ? body.untrustedData.buttonIndex === 1

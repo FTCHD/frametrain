@@ -1,5 +1,5 @@
 'use server'
-import type { FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { dimensionsForRatio } from '@/sdk/constants'
 import type { Config, State } from '..'
 import PageView from '../views/Page'
@@ -10,7 +10,7 @@ export default async function page(
     config: Config,
     state: State,
     params: any
-) {
+): Promise<BuildFrameData> {
     const nextPage =
         params?.currentPage !== undefined
             ? body.untrustedData.buttonIndex === 1
@@ -43,20 +43,19 @@ export default async function page(
     if (body.untrustedData.buttonIndex === 1 && nextPage === 0) {
         return initial(config, state)
     }
-	
-	const slideUrl = config.slideUrls[nextPage - 1]
-	
-	return {
-		buttons: buttons,
-		aspectRatio: config?.aspectRatio?.replace('/', ':') ?? '1:1',
-		component: PageView({
-			slideUrl: slideUrl,
-			sizes: dimensionsForRatio[config.aspectRatio as keyof typeof dimensionsForRatio],
-		}),
-		functionName: 'page',
-		params: {
-			currentPage: nextPage,
-		},
-	}
-  
+
+    const slideUrl = config.slideUrls[nextPage - 1]
+
+    return {
+        buttons: buttons,
+        aspectRatio: '1:1',
+        component: PageView({
+            slideUrl: slideUrl,
+            sizes: dimensionsForRatio[config.aspectRatio as keyof typeof dimensionsForRatio],
+        }),
+        functionName: 'page',
+        params: {
+            currentPage: nextPage,
+        },
+    }
 }
