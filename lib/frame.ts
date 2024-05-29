@@ -71,8 +71,6 @@ export async function createFrame({
 
     const frame = await client.insert(frameTable).values(args).returning().get()
 
-    // revalidatePath(`/frame/${frame.id}`)
-
     return frame
 }
 
@@ -89,7 +87,7 @@ export async function updateFrameName(id: string, name: string) {
         .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
-    // revalidatePath(`/frame/${id}`)
+    revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFrameConfig(id: string, config: any) {
@@ -105,7 +103,7 @@ export async function updateFrameConfig(id: string, config: any) {
         .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
-    // revalidatePath(`/frame/${id}`)
+    revalidatePath(`/frame/${id}`)
 }
 
 export async function publishFrameConfig(id: string) {
@@ -131,7 +129,7 @@ export async function publishFrameConfig(id: string) {
         .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
-    // revalidatePath(`/frame/${id}`)
+    revalidatePath(`/frame/${id}`)
 }
 
 export async function revertFrameConfig(id: string) {
@@ -157,19 +155,15 @@ export async function revertFrameConfig(id: string) {
         .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
-    // revalidatePath(`/frame/${id}`)
+    revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFrameState(id: string, state: any) {
     await client.update(frameTable).set({ state }).where(eq(frameTable.id, id)).run()
-
-    // revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFrameCalls(id: string, calls: number) {
     await client.update(frameTable).set({ currentMonthCalls: calls }).where(eq(frameTable.id, id)).run()
-
-    // revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFramePreview(id: string, preview: string) {
