@@ -1,10 +1,9 @@
 import type { StaticImageData } from 'next/image'
 import type { ElementType } from 'react'
+import type { BuildFrameData } from './farcaster'
+
 
 export interface BaseConfig {
-    requiresValidation: boolean
-
-    frameId: string
     [key: string]: boolean | number | string | null | undefined | any
 }
 
@@ -13,7 +12,7 @@ export interface BaseState {
 }
 
 export interface BaseFunctions {
-    [key: string]: (body: any, config: any, state: any, params: any) => any
+    [key: string]: (body: any, config: any, state: any, params: any) => Promise<BuildFrameData>
 }
 
 export interface BaseTemplate {

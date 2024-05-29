@@ -47,8 +47,8 @@ export async function uploadPreview({
             content: Buffer.from(base64String, 'base64'),
         })
 
-        console.log('[uploadPreview] Uploaded ', `frames/${frameId}/preview.png`)
+        // console.log('[uploadPreview] Uploaded ', `frames/${frameId}/preview.png`)
     } catch (error) {
-        console.log('[uploadPreview] Failed to upload ', `frames/${frameId}/preview.png`, error)
+        // console.log('[uploadPreview] Failed to upload ', `frames/${frameId}/preview.png`, error)
     }
 }

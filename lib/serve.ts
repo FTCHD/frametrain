@@ -3,6 +3,7 @@ import { dimensionsForRatio } from '@/sdk/constants'
 import { ImageResponse } from '@vercel/og'
 import type { ReactElement } from 'react'
 import type {
+    BuildFrameData,
     FrameActionPayload,
     FrameButtonMetadata,
     FrameValidatedActionPayload,
@@ -19,27 +20,29 @@ export async function buildFramePage({
     state,
     fonts,
     component,
+    image,
     functionName,
 }: {
     id: string
-    buttons: FrameButtonMetadata[]
-    aspectRatio: '1.91:1' | '1:1'
-    inputText?: string
-    refreshPeriod?: number
-    params?: any
-    state?: BaseState
-    fonts?: any[]
-    component: ReactElement
-    functionName?: string
-}) {
-    const image = new ImageResponse(component, {
-        ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
-        fonts,
-    })
+} & BuildFrameData) {
+    if (!component && !image) {
+        throw new Error('Either component or image must be provided')
+    }
 
-    // get image data from vercel/og ImageResponse
-    const bufferData = Buffer.from(await image.arrayBuffer())
-    const imageData = bufferData.toString('base64')
+    let imageData
+
+    if (component) {
+        const renderedImage = new ImageResponse(component, {
+            ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+            fonts,
+        })
+
+        // get image data from vercel/og ImageResponse
+        const bufferData = Buffer.from(await renderedImage.arrayBuffer())
+        imageData = bufferData.toString('base64')
+    } else {
+        imageData = image!
+    }
 
     const searchParams =
         params !== undefined
@@ -65,7 +68,7 @@ export async function buildFramePage({
 		<title>🚂 FrameTrain</title>
 	</head>
 	<body>
-		<h1>Hello, 🚂 FrameTrain</h1>
+		<h1>Hello from FrameTrain</h1>
 	</body>
 	</html>
 	`
@@ -154,7 +157,7 @@ function buildFrame({
 }: {
     buttons: FrameButtonMetadata[]
     image: string
-    aspectRatio: '1.91:1' | '1:1'
+    aspectRatio?: '1.91:1' | '1:1'
     inputText?: string
     postUrl: string
     refreshPeriod?: number
@@ -243,4 +246,3 @@ export async function validatePayload(
 
     return r
 }
-

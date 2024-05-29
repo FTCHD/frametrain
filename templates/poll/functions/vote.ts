@@ -1,5 +1,9 @@
 'use server'
-import type { FrameActionPayload, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type {
+    BuildFrameData,
+    FrameActionPayload,
+    FrameValidatedActionPayload,
+} from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import ResultsView from '../views/Results'
@@ -9,7 +13,7 @@ export default async function vote(
     config: Config,
     state: State,
     params: any
-) {
+): Promise<BuildFrameData> {
     const voter = body.untrustedData.fid.toString()
     const buttonIndex = body.untrustedData.buttonIndex
     const pastIndex = state.votesForId?.[voter]
@@ -17,7 +21,7 @@ export default async function vote(
     let newState = state
 
     if (buttonIndex !== pastIndex) {
-        console.log('pastIndex', pastIndex)
+        // console.log('pastIndex', pastIndex)
         const revertPastVote = pastIndex
             ? {
                   [pastIndex]:
@@ -66,17 +70,16 @@ export default async function vote(
         textColor: config?.textColor,
         barColor: config?.barColor,
     }
-	
-	return {
-		buttons: [
-			{ label: '←' },
-			{ label: 'Create Poll', action: 'link', target: 'https://frametra.in' },
-		],
+
+    return {
+        buttons: [
+            { label: '←' },
+            { label: 'Create Poll', action: 'link', target: 'https://frametra.in' },
+        ],
         aspectRatio: '1.91:1',
-        config: config,
         state: newState,
         fonts: roboto,
-        component:  ResultsView(
+        component: ResultsView(
             config?.question,
             sortedOptions,
             totalVotes,

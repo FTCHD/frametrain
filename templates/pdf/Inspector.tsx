@@ -11,6 +11,7 @@ import {
 import { ColorPicker } from '@/sdk/components'
 import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
+import type { PDFPageProxy } from 'pdfjs-dist/types/web/interfaces'
 import { useEffect, useState } from 'react'
 import type { Config } from '.'
 import getPdfDocument, { createPDFPage, renderPDFToCanvas } from './utils'
@@ -38,7 +39,7 @@ export default function Inspector() {
         let pageNumber = 1
         const pdfDocument = await getPdfDocument(url)
         while (pageNumber <= pdfDocument.numPages) {
-            const pdfPage = await createPDFPage(pdfDocument, pageNumber)
+            const pdfPage = (await createPDFPage(pdfDocument, pageNumber)) as PDFPageProxy
             const viewport = pdfPage.getViewport({ scale: 2 })
             const { height, width } = viewport
             const canvas = document.createElement('canvas')
@@ -84,7 +85,7 @@ export default function Inspector() {
         )
 
         reader.readAsDataURL(file)
-    }, [file])
+    }, [file, renderPdf])
 
     return (
         <div className=" h-full flex flex-col gap-10">
@@ -136,7 +137,7 @@ export default function Inspector() {
             </div>
             <div className="flex flex-col gap-5">
                 <h2 className="text-2xl font-bold">File & Content</h2>
-                {!file && !responseData.length ? (
+                {!(file || responseData.length) ? (
                     <label
                         htmlFor="uploadFile"
                         className="flex cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"

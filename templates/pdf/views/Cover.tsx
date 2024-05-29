@@ -3,7 +3,7 @@ export default function CoverView({
     subtitle,
     backgroundColor,
     textColor,
-}: { title: string; subtitle: string; backgroundColor?: string; textColor?: string }) {
+}: { title?: string; subtitle?: string; backgroundColor?: string; textColor?: string }) {
     const backgroundProp: Record<string, string> = {}
 
     if (backgroundColor) {

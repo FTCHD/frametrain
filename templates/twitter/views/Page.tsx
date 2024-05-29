@@ -1,8 +1,10 @@
 export default function PageView(config: {
     content: string
-    profile: string
+    profile?: string
     background: string
     color: string
+    fontFamily?: string
+    fontSize?: string
 }) {
     const { profile, content, background, color, fontFamily, fontSize } = config
 

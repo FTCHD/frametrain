@@ -1,5 +1,5 @@
 'use server'
-import type { FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import { getLogoForToken, getStreamData, getStreamHistory } from '../utils/actions'
@@ -12,13 +12,13 @@ export default async function page(
     config: Config,
     state: State,
     params: any
-) {
+): Promise<BuildFrameData> {
     const buttonIndex = body.untrustedData.buttonIndex
 
     switch (buttonIndex) {
         case 2: {
             const urbanist = await loadGoogleFontAllVariants('Urbanist')
-			const catamaran = await loadGoogleFontAllVariants('Catamaran')
+            const catamaran = await loadGoogleFontAllVariants('Catamaran')
 
             const streamData = await getStreamData(config.streamId)
 
@@ -30,9 +30,9 @@ export default async function page(
                 { shape: config.shape },
                 { asset: { ...streamData.asset, logo: tokenLogo } }
             )
-			
-			return {
-				buttons: [
+
+            return {
+                buttons: [
                     {
                         label: 'Summary',
                     },
@@ -48,24 +48,24 @@ export default async function page(
                         target: 'https://app.sablier.com/gallery/group',
                     },
                 ],
-				aspectRatio: '1.91:1',
-				fonts: [...urbanist, ...catamaran],
-				component: TokenView(data),
-				functionName: 'page',
-			}
+                aspectRatio: '1.91:1',
+                fonts: [...urbanist, ...catamaran],
+                component: TokenView(data),
+                functionName: 'page',
+            }
         }
 
         case 3: {
             const urbanist = await loadGoogleFontAllVariants('Urbanist')
-			const catamaran = await loadGoogleFontAllVariants('Catamaran')
+            const catamaran = await loadGoogleFontAllVariants('Catamaran')
 
             const streamData = await getStreamData(config.streamId)
             const history = await getStreamHistory(config.streamId)
-			
-			const tokenLogo = await getLogoForToken(streamData.chainId, streamData.asset.address)
-			
-			return {
-				buttons: [
+
+            const tokenLogo = await getLogoForToken(streamData.chainId, streamData.asset.address)
+
+            return {
+                buttons: [
                     {
                         label: 'Summary',
                     },
@@ -81,17 +81,17 @@ export default async function page(
                         target: 'https://app.sablier.com/gallery/group',
                     },
                 ],
-				aspectRatio: '1.91:1',
-				fonts: [...urbanist, ...catamaran],
-				component:  HistoryView(
+                aspectRatio: '1.91:1',
+                fonts: [...urbanist, ...catamaran],
+                component: HistoryView(
                     {
                         ...streamData,
                         asset: { ...streamData.asset, logo: tokenLogo },
                     },
                     history
                 ),
-				functionName: 'page',
-			}
+                functionName: 'page',
+            }
         }
 
         default: {

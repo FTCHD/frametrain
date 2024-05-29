@@ -4,7 +4,8 @@ import cover from './cover.jpeg'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
-    images: []
+    streamId: string
+    shape: string
 }
 
 export interface State extends BaseState {}
@@ -17,7 +18,10 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialConfig: {} as Config,
+    initialConfig: {
+        streamId: 'LL-1-70',
+        shape: 'Linear',
+    } as Config,
     cover,
     requiresValidation: false,
 } satisfies BaseTemplate

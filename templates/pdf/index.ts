@@ -4,7 +4,12 @@ import cover from './cover.webp'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
-    images: []
+    slideUrls: string[]
+    title?: string
+    subtitle?: string
+    backgroundColor?: string
+    textColor?: string
+    aspectRatio?: string
 }
 
 export interface State extends BaseState {}
@@ -17,7 +22,6 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialConfig: {} as Config,
     cover,
     requiresValidation: false,
 } satisfies BaseTemplate

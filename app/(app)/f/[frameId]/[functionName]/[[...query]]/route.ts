@@ -40,9 +40,7 @@ export async function POST(
     let body: FrameActionPayload | FrameActionPayloadValidated =
         (await request.json()) as FrameActionPayload
 
-    type ValidSlide = Omit<typeof template.functions, 'initial'>
-
-    const handler = template.functions[params.functionName as keyof ValidSlide]
+    const handler = template.functions[params.functionName as keyof typeof template.functions]
 
     if (!handler) {
         notFound()
@@ -77,7 +75,6 @@ export async function POST(
         console.log('Updated frame state')
     }
     await updateFrameCalls(frame.id, frame.currentMonthCalls + 1)
-    console.log('Updated frame action count')
 
     return new Response(renderedFrame, {
         headers: {

@@ -4,20 +4,22 @@ import cover from './cover.jpeg'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
-    images: []
+    text: string
 }
 
 export interface State extends BaseState {}
 
 export default {
-    name: 'Basic Template',
-    description: 'Template for a Frame',
-    creatorFid: '91716',
-    creatorName: 'Korinna',
+    name: 'Starter Template',
+    description: 'Copy this template to create your own',
+    creatorFid: '0',
+    creatorName: 'FrameTrain',
     cover,
     enabled: true,
     Inspector,
     functions,
-    initialConfig: {} as Config,
+    initialConfig: {
+        text: 'Default Text',
+    },
     requiresValidation: false,
 } satisfies BaseTemplate

@@ -5,18 +5,16 @@ import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
 import { Input } from '@/components/shadcn/Input'
 import { Textarea } from '@/components/shadcn/Textarea'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { scrapeTwitterPost } from '@/sdk/scrape'
+import { LoaderIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Trash } from 'react-feather'
 import type { Config } from '.'
 
 export default function Inspector() {
-    const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
-	const uploadImage = useUploadImage()
-
-    const [tweets, setTweets] = useState<Record<string, any>[]>()
+    const uploadImage = useUploadImage()
 
     const [open, setOpen] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
@@ -28,11 +26,6 @@ export default function Inspector() {
     const profileInputRef = useRef<HTMLInputElement>(null)
     const titleInputRef = useRef<HTMLInputElement>(null)
     const bottomTextInputRef = useRef<HTMLInputElement>(null)
-
-    const [coverBg, setCoverBg] = useState<string>(config.background || '#0f0c29')
-
-    const [titleTextColor, setTitleTextColor] = useState<string>(config.title?.color || 'white')
-    const [bottomTextColor, setBottomTextColor] = useState<string>(config.bottom?.color || 'white')
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <>
     useEffect(() => {
@@ -60,11 +53,6 @@ export default function Inspector() {
 
         bottomTextInputRef.current.value = config.bottom.text
     }, [bottomTextInputRef.current])
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    useEffect(() => {
-        setTweets(config.tweets)
-    }, [config.tweets]) // might run into issues if someone updates UI too fast
 
     return (
         <>
@@ -103,22 +91,21 @@ export default function Inspector() {
                         <h2 className="text-lg">Title Color</h2>
                         <ColorPicker
                             className="w-full"
-                            background={titleTextColor}
-                            setBackground={(value: string) => {
-                                setTitleTextColor(value)
+                            background={config.title?.color || 'white'}
+                            setBackground={(value: string) =>
                                 updateConfig({
                                     title: {
                                         ...config.title,
                                         color: value,
                                     },
                                 })
-                            }}
+                            }
                         />
                     </div>
                     <div className="flex flex-col gap-2 w-full">
                         <h2 className="text-lg">Title Weight</h2>
                         <FontWeightPicker
-                            currentFont={config?.title?.fontFamily}
+                            currentFont={config?.title?.fontFamily || 'Roboto'}
                             defaultValue={config?.title?.fontFamily}
                             onSelect={(weight) =>
                                 updateConfig({
@@ -134,8 +121,8 @@ export default function Inspector() {
                         <h2 className="text-lg">Title Style</h2>
 
                         <FontStylePicker
-                            currentFont={config?.title?.fontFamily}
-                            defaultValue={config?.title?.fontStyle}
+                            currentFont={config?.title?.fontFamily || 'Roboto'}
+                            defaultValue={config?.title?.fontStyle || 'normal'}
                             onSelect={(style) =>
                                 updateConfig({
                                     title: {
@@ -172,16 +159,15 @@ export default function Inspector() {
                         <h2 className="text-lg">Bottom Text Color</h2>
                         <ColorPicker
                             className="w-full"
-                            background={bottomTextColor}
-                            setBackground={(value: string) => {
-                                setBottomTextColor(value)
+                            background={config.bottom?.color || 'white'}
+                            setBackground={(value: string) =>
                                 updateConfig({
                                     bottom: {
                                         ...config.bottom,
                                         color: value,
                                     },
                                 })
-                            }}
+                            }
                         />
                     </div>
                     <div className="flex flex-col gap-2 w-full">
@@ -189,11 +175,8 @@ export default function Inspector() {
                         <ColorPicker
                             className="w-full"
                             enabledPickers={['solid', 'gradient', 'image']}
-                            background={coverBg}
-                            setBackground={(e) => {
-                                setCoverBg(e)
-                                updateConfig({ background: e })
-                            }}
+                            background={config.background || '#0f0c29'}
+                            setBackground={(e) => updateConfig({ background: e })}
                             uploadBackground={async (base64String, contentType) => {
                                 const { filePath } = await uploadImage({
                                     base64String: base64String,
@@ -218,6 +201,7 @@ export default function Inspector() {
                             />
                             <Button
                                 size={'lg'}
+                                disabled={loading}
                                 onClick={async () => {
                                     if (!tweetInputRef.current?.value) return
 
@@ -245,19 +229,17 @@ export default function Inspector() {
 
                                     updateConfig({ tweets: newTweets })
 
-                                    setTweets(newTweets)
-
                                     setLoading(false)
 
                                     tweetInputRef.current.value = ''
                                 }}
                             >
-                                ADD
+                                {loading ? <LoaderIcon className="animate-spin" /> : 'ADD'}
                             </Button>
                         </div>
                     </div>
 
-                    {tweets?.map((tweet, index) => (
+                    {config.tweets?.map((tweet, index) => (
                         <div
                             className="flex flex-row gap-2 justify-between items-center w-full h-full"
                             key={tweet.link}
