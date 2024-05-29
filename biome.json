@@ -13,7 +13,8 @@
             },
             "complexity": {
                 "all": true,
-                "noUselessTypeConstraint": "off"
+                "noUselessTypeConstraint": "off",
+                "useLiteralKeys": "off"
             },
             "correctness": {
                 "all": true
