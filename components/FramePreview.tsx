@@ -6,6 +6,7 @@ import { mockOptionsAtom, previewHistoryAtom } from '@/lib/store'
 import { useAtom, useAtomValue } from 'jotai'
 import { type ChangeEvent, type PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { Delete, ExternalLink, PlusCircle } from 'react-feather'
+import { BorderBeam } from './BorderBeam'
 import { Button } from './shadcn/Button'
 import {
     Dialog,
@@ -133,6 +134,13 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                     <div
                         className="pointer-events-none absolute inset-0 overflow-hidden bg-white/30 backdrop-blur-[80px]"
                         style={{ opacity: loadingContainer ? 1 : 0 }}
+                    />
+
+                    <BorderBeam
+                        className={`${loadingContainer ? 'visible' : 'invisible'}`}
+                        colorFrom="#7c65c1"
+                        colorTo="#7c65c1"
+                        borderWidth={4}
                     />
                 </div>
             </div>

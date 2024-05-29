@@ -74,11 +74,17 @@ const config = {
                     '40%': { transform: 'translateX(0) scaleX(0.4)' },
                     '100%': { transform: 'translateX(100%) scaleX(0.5)' },
                 },
+                'border-beam': {
+                    '100%': {
+                        'offset-distance': '100%',
+                    },
+                },
             },
             animation: {
                 'accordion-down': 'accordion-down 0.2s ease-out',
                 'accordion-up': 'accordion-up 0.2s ease-out',
                 'progress': 'progress 1s infinite linear',
+                'border-beam': 'border-beam calc(var(--duration)*0.4s) infinite linear',
             },
             transformOrigin: {
                 'left-right': '0% 50%',
