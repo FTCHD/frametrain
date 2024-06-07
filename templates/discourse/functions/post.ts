@@ -13,11 +13,7 @@ export default async function post(
 ): Promise<BuildFrameData> {
     const buttonIndex = body.untrustedData.buttonIndex
 
-    console.log('params', params)
-    console.log('buttonIndex', buttonIndex)
-
     if (buttonIndex === 1 && params?.currentPage) {
-        console.log('GOT HERE')
         return initial(config, state)
     }
 
