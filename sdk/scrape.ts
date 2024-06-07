@@ -45,6 +45,17 @@ export async function scrape({
     return res
 }
 
+export async function corsFetch(url: string) {
+    console.log('got here')
+
+    const res = await fetch(url)
+        .then((res) => res.text())
+        .catch(console.error)
+
+    return res
+}
+	
+
 interface TWTweet {
     id: string
     createdAt: string
