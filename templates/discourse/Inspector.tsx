@@ -40,7 +40,6 @@ export default function Inspector() {
 
     return (
         <div className="h-full w-full space-y-4">
-            <p>{JSON.stringify(config)}</p>
             <div className="flex flex-col space-y-2">
                 <h2 className="text-lg font-bold">Discourse Link</h2>
                 <Input className="py-2 text-lg" ref={inputRef} onChange={handleInputChange} />
