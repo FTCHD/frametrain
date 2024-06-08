@@ -1,7 +1,7 @@
 "use server";
 import type { BuildFrameData, FrameActionPayload } from "@/lib/farcaster";
 import type { Config, State } from "..";
-import PageView from "../views/Duration";
+import PageView from "../views/Date";
 
 export default async function page(
   body: FrameActionPayload,
@@ -10,7 +10,21 @@ export default async function page(
   params: any
 ): Promise<BuildFrameData> {
   console.log(config.ownerName);
-  console.log(params);
+  const buttonIndex = body.untrustedData.buttonIndex;
+  console.log(body.untrustedData.url);
+
+  switch (buttonIndex) {
+    case 1: {
+      config.duration = 0;
+      console.log(config.duration);
+      break;
+    }
+    case 2: {
+      config.duration = 1;
+      console.log(config.duration);
+      break;
+    }
+  }
   const data = Object.assign(
     {},
     {
@@ -28,11 +42,12 @@ export default async function page(
   return {
     buttons: [
       {
-        label: "15 min",
+        label: "⬅️",
         action: "post",
+        target: body.untrustedData.url + "?date=2",
       },
       {
-        label: "30 min",
+        label: "➡️",
       },
     ],
     component: PageView(data),
