@@ -16,7 +16,7 @@ export default async function page(
   console.log("button index : " + buttonIndex);
   console.log("Status of duration selected : " + config.durationSelected);
 
-  const date = params?.date === undefined ? 0 : Number(params?.date);
+  let date = params?.date === undefined ? 0 : Number(params?.date);
 
   switch (buttonIndex) {
     case 1: {
@@ -59,11 +59,25 @@ export default async function page(
       break;
     }
     case 2: {
-      config.durationSelected = true;
-      config.duration = 1;
-      console.log(config.duration);
-
+      if (params?.date === undefined) {
+        config.durationSelected = true;
+        config.duration = 1;
+        console.log(config.duration);
+      } else {
+        if (Number(params?.date) > 0) {
+          date = Number(params?.date) - 1;
+        } else {
+          date = 6;
+        }
+      }
       break;
+    }
+    case 3: {
+      if (params?.date < 6) {
+        date = Number(params?.date) + 1;
+      } else {
+        date = 0;
+      }
     }
   }
 
