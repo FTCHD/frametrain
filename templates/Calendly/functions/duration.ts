@@ -2,6 +2,7 @@
 import type { BuildFrameData, FrameActionPayload } from "@/lib/farcaster";
 import type { Config, State } from "..";
 import PageView from "../views/Duration";
+import { duration } from "dayjs";
 
 export default async function page(
   body: FrameActionPayload,
@@ -23,6 +24,9 @@ export default async function page(
       duration: config.duration,
       date: config.date,
       slot: config.slot,
+      durationSelected: config.durationSelected,
+      dateSelected: config.dateSelected,
+      slotSelected: config.slotSelected,
     }
   );
   return {

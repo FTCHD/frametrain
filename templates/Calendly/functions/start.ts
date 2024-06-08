@@ -9,13 +9,30 @@ export default async function page(
   state: State,
   params: any
 ): Promise<BuildFrameData> {
+  const data = Object.assign(
+    {},
+    {
+      ownerName: config.ownerName,
+      ownerFid: config.ownerFid,
+      ownerImg: config.ownerImg,
+
+      desc: config.desc,
+
+      duration: config.duration,
+      date: config.date,
+      slot: config.slot,
+      durationSelected: config.durationSelected,
+      dateSelected: config.dateSelected,
+      slotSelected: config.slotSelected,
+    }
+  );
   return {
     buttons: [
       {
         label: "Schedule Now",
       },
     ],
-    component: PageView(config),
+    component: PageView(data),
     functionName: "duration",
   };
 }

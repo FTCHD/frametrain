@@ -107,10 +107,15 @@ export default function CoverView(config: Config) {
             key={index}
             style={{
               padding: 30,
-              //   border: index.toString() === d ? "none" : "1px solid gray",
+              border:
+                index.toString() === config.date.toString()
+                  ? "none"
+                  : "1px solid gray",
               borderRadius: 15,
-              //   backgroundColor: index.toString() === d ? "white" : "none",
-              //   color: index.toString() === d ? "black" : "white",
+              backgroundColor:
+                index.toString() === config.date.toString() ? "white" : "none",
+              color:
+                index.toString() === config.date.toString() ? "black" : "white",
             }}
           >
             {date}

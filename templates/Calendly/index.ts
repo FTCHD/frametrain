@@ -2,6 +2,7 @@ import type { BaseConfig, BaseState, BaseTemplate } from "@/lib/types";
 import Inspector from "./Inspector";
 import cover from "./cover.jpeg";
 import functions from "./functions";
+import { duration } from "dayjs";
 
 export interface Config extends BaseConfig {
   ownerFid: number;
@@ -11,6 +12,9 @@ export interface Config extends BaseConfig {
   duration: number;
   date: number;
   slot: number;
+  durationSelected: boolean;
+  dateSelected: boolean;
+  slotSelected: boolean;
 }
 
 export interface State extends BaseState {}
@@ -32,6 +36,9 @@ export default {
     duration: 15,
     date: 1,
     slot: 1,
+    durationSelected: false,
+    dateSelected: false,
+    slotSelected: false,
   },
   requiresValidation: false,
 } satisfies BaseTemplate;
