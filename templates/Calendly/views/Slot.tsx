@@ -5,7 +5,8 @@ import gettimeslot from "../utils/getTimeSlots";
 export default async function CoverView(config: Config) {
   //   const [configs, updateConfig] = useFrameConfig<Config>();
   const { ownerFid } = config;
-  const t = 0;
+  const t = config.slot;
+  console.log("slots : " + t);
 
   const timeSlots = await gettimeslot(ownerFid.toString());
   const timeslots = createTimeSlots(timeSlots);

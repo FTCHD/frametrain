@@ -4,6 +4,8 @@ import type { Config, State } from "..";
 import PageView from "../views/Date";
 import PrevPage from "../views/Duration";
 import NextPage from "../views/Slot";
+import { duration } from "dayjs";
+import { Slot } from "@radix-ui/react-slot";
 
 export default async function page(
   body: FrameActionPayload,
@@ -25,6 +27,7 @@ export default async function page(
         config.durationSelected = true;
         config.duration = 0;
       } else {
+        console.log(params?.duration + "else");
         const data = Object.assign(
           {},
           {
@@ -34,7 +37,7 @@ export default async function page(
 
             desc: config.desc,
 
-            duration: config.duration,
+            duration: params?.duration,
             date: config.date,
             slot: config.slot,
             durationSelected: config.durationSelected,
@@ -56,6 +59,8 @@ export default async function page(
           functionName: "date",
         };
       }
+      console.log("duration before : " + config.duration);
+
       const data = Object.assign(
         {},
         {
@@ -73,7 +78,6 @@ export default async function page(
           slotSelected: config.slotSelected,
         }
       );
-      console.log("duration : " + config.duration);
       console.log(config.durationSelected);
       return {
         buttons: [
@@ -94,6 +98,7 @@ export default async function page(
         functionName: "date",
         params: {
           date: date,
+          duration: config.duration,
         },
       };
     }
@@ -105,8 +110,10 @@ export default async function page(
       } else {
         if (Number(params?.date) > 0) {
           date = Number(params?.date) - 1;
+          config.duration = params?.duration;
         } else {
           date = 6;
+          config.duration = params?.duration;
         }
       }
       const data = Object.assign(
@@ -118,7 +125,7 @@ export default async function page(
 
           desc: config.desc,
 
-          duration: config.duration,
+          duration: params?.duration,
           date: date,
           slot: config.slot,
           durationSelected: config.durationSelected,
@@ -147,14 +154,17 @@ export default async function page(
         functionName: "date",
         params: {
           date: date,
+          duration: config.duration,
         },
       };
     }
     case 3: {
       if (params?.date < 6) {
         date = Number(params?.date) + 1;
+        config.duration = params?.duration;
       } else {
         date = 0;
+        config.duration = params?.duration;
       }
       const data = Object.assign(
         {},
@@ -165,9 +175,9 @@ export default async function page(
 
           desc: config.desc,
 
-          duration: config.duration,
+          duration: params?.duration,
           date: date,
-          slot: config.slot,
+          slot: 0,
           durationSelected: config.durationSelected,
           dateSelected: config.dateSelected,
           slotSelected: config.slotSelected,
@@ -194,11 +204,13 @@ export default async function page(
         functionName: "date",
         params: {
           date: date,
+          duration: config.duration,
         },
       };
     }
   }
-
+  const duration =
+    params?.duration === undefined ? 10 : Number(params?.duration);
   const data = Object.assign(
     {},
     {
@@ -208,9 +220,9 @@ export default async function page(
 
       desc: config.desc,
 
-      duration: config.duration,
+      duration: duration,
       date: date,
-      slot: config.slot,
+      slot: 0,
       durationSelected: config.durationSelected,
       dateSelected: config.dateSelected,
       slotSelected: config.slotSelected,
@@ -235,5 +247,9 @@ export default async function page(
     ],
     component: await NextPage(data),
     functionName: "slot",
+    params: {
+      date: date,
+      duration: duration,
+    },
   };
 }
