@@ -3,6 +3,7 @@ import type { BuildFrameData, FrameActionPayload } from "@/lib/farcaster";
 import type { Config, State } from "..";
 import PageView from "../views/Slot";
 import PrevPage from "../views/Date";
+import NextPage from "../views/Confirm";
 
 export default async function page(
   body: FrameActionPayload,
@@ -167,7 +168,7 @@ export default async function page(
 
       desc: config.desc,
 
-      duration: config.duration,
+      duration: params.duration,
       date: config.date,
       slot: slot,
       durationSelected: config.durationSelected,
@@ -178,20 +179,14 @@ export default async function page(
   return {
     buttons: [
       {
-        label: "back",
+        label: "Dicard ❌",
       },
       {
-        label: "⬅️",
-      },
-      {
-        label: "➡️",
-      },
-      {
-        label: "proceed",
+        label: "Confirm ✅",
       },
     ],
-    component: await PageView(data),
-    functionName: "initial",
+    component: await NextPage(data),
+    functionName: "confirm",
     params: {
       date: params.date,
       duration: params.duration,

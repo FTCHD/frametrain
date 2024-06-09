@@ -1,7 +1,7 @@
 "use server";
 import type { BuildFrameData, FrameActionPayload } from "@/lib/farcaster";
 import type { Config, State } from "..";
-import PageView from "../views/Start";
+import PageView from "../views/Confirm";
 
 export default async function page(
   body: FrameActionPayload,
@@ -29,10 +29,15 @@ export default async function page(
   return {
     buttons: [
       {
-        label: "Schedule Now",
+        label: "Dicard ❌",
+      },
+      {
+        label: "Confirm ✅",
+        action: "tx",
+        target: "",
       },
     ],
-    component: PageView(data),
+    component: await PageView(data),
     functionName: "duration",
   };
 }
