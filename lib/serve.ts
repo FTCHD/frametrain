@@ -89,6 +89,7 @@ export async function buildPreviewFramePage({
     state,
     fonts,
     component,
+    image,
     functionName,
 }: {
     id: string
@@ -100,16 +101,27 @@ export async function buildPreviewFramePage({
     state?: BaseState
     fonts?: any[]
     component: ReactElement
+    image: string
     functionName?: string
 }) {
-    const image = new ImageResponse(component, {
-        ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
-        fonts,
-    })
+    if (!component && !image) {
+        throw new Error('Either component or image must be provided')
+    }
 
-    // get image data from vercel/og ImageResponse
-    const bufferData = Buffer.from(await image.arrayBuffer())
-    const imageData = bufferData.toString('base64')
+    let imageData
+
+    if (component) {
+        const renderedImage = new ImageResponse(component, {
+            ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+            fonts,
+        })
+
+        // get image data from vercel/og ImageResponse
+        const bufferData = Buffer.from(await renderedImage.arrayBuffer())
+        imageData = bufferData.toString('base64')
+    } else {
+        imageData = image!
+    }
 
     const searchParams =
         params !== undefined
