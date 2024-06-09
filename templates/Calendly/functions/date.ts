@@ -3,7 +3,7 @@ import type { BuildFrameData, FrameActionPayload } from "@/lib/farcaster";
 import type { Config, State } from "..";
 import PageView from "../views/Date";
 import PrevPage from "../views/Duration";
-import { duration } from "dayjs";
+import NextPage from "../views/Slot";
 
 export default async function page(
   body: FrameActionPayload,
@@ -56,7 +56,46 @@ export default async function page(
           functionName: "date",
         };
       }
-      break;
+      const data = Object.assign(
+        {},
+        {
+          ownerName: config.ownerName,
+          ownerFid: config.ownerFid,
+          ownerImg: config.ownerImg,
+
+          desc: config.desc,
+
+          duration: config.duration,
+          date: date,
+          slot: config.slot,
+          durationSelected: config.durationSelected,
+          dateSelected: config.dateSelected,
+          slotSelected: config.slotSelected,
+        }
+      );
+      console.log("duration : " + config.duration);
+      console.log(config.durationSelected);
+      return {
+        buttons: [
+          {
+            label: "back",
+          },
+          {
+            label: "⬅️",
+          },
+          {
+            label: "➡️",
+          },
+          {
+            label: "proceed",
+          },
+        ],
+        component: PageView(data),
+        functionName: "date",
+        params: {
+          date: date,
+        },
+      };
     }
     case 2: {
       if (params?.date === undefined) {
@@ -70,7 +109,46 @@ export default async function page(
           date = 6;
         }
       }
-      break;
+      const data = Object.assign(
+        {},
+        {
+          ownerName: config.ownerName,
+          ownerFid: config.ownerFid,
+          ownerImg: config.ownerImg,
+
+          desc: config.desc,
+
+          duration: config.duration,
+          date: date,
+          slot: config.slot,
+          durationSelected: config.durationSelected,
+          dateSelected: config.dateSelected,
+          slotSelected: config.slotSelected,
+        }
+      );
+      console.log("duration : " + config.duration);
+      console.log(config.durationSelected);
+      return {
+        buttons: [
+          {
+            label: "back",
+          },
+          {
+            label: "⬅️",
+          },
+          {
+            label: "➡️",
+          },
+          {
+            label: "proceed",
+          },
+        ],
+        component: PageView(data),
+        functionName: "date",
+        params: {
+          date: date,
+        },
+      };
     }
     case 3: {
       if (params?.date < 6) {
@@ -78,6 +156,46 @@ export default async function page(
       } else {
         date = 0;
       }
+      const data = Object.assign(
+        {},
+        {
+          ownerName: config.ownerName,
+          ownerFid: config.ownerFid,
+          ownerImg: config.ownerImg,
+
+          desc: config.desc,
+
+          duration: config.duration,
+          date: date,
+          slot: config.slot,
+          durationSelected: config.durationSelected,
+          dateSelected: config.dateSelected,
+          slotSelected: config.slotSelected,
+        }
+      );
+      console.log("duration : " + config.duration);
+      console.log(config.durationSelected);
+      return {
+        buttons: [
+          {
+            label: "back",
+          },
+          {
+            label: "⬅️",
+          },
+          {
+            label: "➡️",
+          },
+          {
+            label: "proceed",
+          },
+        ],
+        component: PageView(data),
+        functionName: "date",
+        params: {
+          date: date,
+        },
+      };
     }
   }
 
@@ -115,10 +233,7 @@ export default async function page(
         label: "proceed",
       },
     ],
-    component: PageView(data),
-    functionName: "date",
-    params: {
-      date: date,
-    },
+    component: await NextPage(data),
+    functionName: "slot",
   };
 }

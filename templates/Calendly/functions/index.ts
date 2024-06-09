@@ -3,6 +3,7 @@ import page from "./page";
 import start from "./start";
 import duration from "./duration";
 import date from "./date";
+import slot from "./slot";
 
 export default {
   initial,
@@ -10,4 +11,5 @@ export default {
   start,
   duration,
   date,
+  slot,
 };
