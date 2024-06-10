@@ -3,6 +3,7 @@ import pdf from './pdf'
 import poll from './poll'
 import sablier from './sablier'
 import twitter from './twitter'
+import form from './form'
 
 export default {
     // basic,
@@ -10,4 +11,5 @@ export default {
     poll,
     sablier,
     twitter,
+    form
 }
