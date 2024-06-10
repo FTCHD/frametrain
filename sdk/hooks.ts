@@ -26,7 +26,7 @@ export function useFrameState() {
     const context = useContext(InspectorContext)
 
     if (!context) {
-        throw new Error('useFrameId must be used within an InspectorProvider')
+        throw new Error('useFrameState must be used within an InspectorProvider')
     }
 
     return context.state
