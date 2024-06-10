@@ -8,7 +8,6 @@ import initial from './initial';
 import review from './review';
 import about from './about';
 import SuccessView from '../views/Success';
-import { kv } from '@vercel/kv'
 
 const grayBackgroundBlackText = '\x1b[47m\x1b[30m'; // Gray background, black text
 const yellowBackgroundBlackText = '\x1b[43m\x1b[30m';
@@ -21,8 +20,6 @@ export default async function input(
     params: any
 ): Promise<BuildFrameData> {
     let _newState = state;
-    
-    console.log("NEW STATE IS : ", _newState);
 
     const fid: number = body.untrustedData.fid
     const buttonIndex: number = body.untrustedData.buttonIndex
@@ -163,13 +160,13 @@ export default async function input(
             // console.log("STATE: ", state);
             // console.log(reset);
 
-            const newState = Object.assign(state, {
+            _newState = Object.assign(_newState, {
                 data: [...(state.data || []), { fid, inputValues: UserState.inputValues, timestamp: (new Date()).getTime() }],
             })
 
-            kv.set(config.form_id, newState)
+            // kv.set(config.form_id, newState)
             console.log(yellowBackgroundBlackText);
-            console.log("STATE: ", newState);
+            console.log("STATE: ", _newState);
             console.log(reset);
 
             return {
@@ -178,7 +175,7 @@ export default async function input(
                         label: 'Back'
                     }
                 ],
-                state: newState,
+                state: _newState,
                 aspectRatio: '1.91:1',
                 component: SuccessView(config),
                 functionName: 'input',
