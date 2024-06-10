@@ -39,7 +39,7 @@ export async function buildFramePage({
 
         // get image data from vercel/og ImageResponse
         const bufferData = Buffer.from(await renderedImage.arrayBuffer())
-        imageData = bufferData.toString('base64')
+        imageData = 'data:image/png;base64,' + bufferData.toString('base64')
     } else {
         imageData = image!
     }
@@ -53,7 +53,7 @@ export async function buildFramePage({
 
     const metadata = buildFrame({
         buttons,
-        image: 'data:image/png;base64,' + imageData,
+        image: imageData,
         aspectRatio,
         inputText,
         refreshPeriod,
@@ -118,7 +118,7 @@ export async function buildPreviewFramePage({
 
         // get image data from vercel/og ImageResponse
         const bufferData = Buffer.from(await renderedImage.arrayBuffer())
-        imageData = bufferData.toString('base64')
+        imageData = 'data:image/png;base64,' + bufferData.toString('base64')
     } else {
         imageData = image!
     }
@@ -132,7 +132,7 @@ export async function buildPreviewFramePage({
 
     const metadata = buildFrame({
         buttons,
-        image: 'data:image/png;base64,' + imageData,
+        image: imageData,
         aspectRatio,
         inputText,
         refreshPeriod,
