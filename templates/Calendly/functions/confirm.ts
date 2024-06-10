@@ -66,7 +66,7 @@ export default async function page(
       {
         label: "Confirm ✅",
         action: "tx",
-        target: txData,
+        target: JSON.stringify(txData),
       },
     ],
     component: await PageView(data),
