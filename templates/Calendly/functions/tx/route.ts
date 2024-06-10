@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { ABI, CONTRACT_ADDRESS } from "../const";
+import { ABI, CONTRACT_ADDRESS } from "../../utils/const";
 // biome-ignore lint/style/useImportType: <explanation>
 import { Abi, encodeFunctionData } from "viem";
 

@@ -2,6 +2,11 @@
 import type { BuildFrameData, FrameActionPayload } from "@/lib/farcaster";
 import type { Config, State } from "..";
 import PageView from "../views/Confirm";
+import { encodeFunctionData } from "viem";
+import type { Abi } from "viem";
+
+import { ABI } from "../utils/const";
+import { getNextSixDates } from "../utils/date";
 
 export default async function page(
   body: FrameActionPayload,
@@ -26,6 +31,33 @@ export default async function page(
       slotSelected: config.slotSelected,
     }
   );
+  const dates = getNextSixDates();
+  const date = dates[params.date];
+
+  const calldata = encodeFunctionData({
+    abi: ABI,
+    functionName: "bookCall",
+    args: [
+      config.ownerFid,
+      body.untrustedData.fid,
+      params.slot,
+      params.duration,
+      date,
+      6,
+      2024,
+    ],
+  });
+
+  const txData = {
+    chainId: "eip155:84532", // OP Mainnet 10
+    method: "eth_sendTransaction",
+    params: {
+      abi: ABI as Abi,
+      to: "0x51d51C87e7f55547D202FCdBb5713bF9d4a5f6A4",
+      data: calldata,
+      value: "0",
+    },
+  };
   return {
     buttons: [
       {
@@ -34,7 +66,7 @@ export default async function page(
       {
         label: "Confirm ✅",
         action: "tx",
-        target: "",
+        target: txData,
       },
     ],
     component: await PageView(data),
