@@ -10,7 +10,7 @@ import type { Config } from '.'
 export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
-	const uploadImage = useUploadImage()
+    const uploadImage = useUploadImage()
 
     const { options } = config
 
@@ -21,6 +21,7 @@ export default function Inspector() {
 
     return (
         <div className="w-full h-full flex flex-col gap-5">
+            <p>{JSON.stringify(config)}</p>
             <div className="flex flex-col gap-2 ">
                 <h2 className="text-lg font-semibold">Question</h2>
                 <Input
@@ -78,6 +79,8 @@ export default function Inspector() {
                             const optionIndex = options?.length
                                 ? Math.max(...options.map((o) => o.index)) + 1
                                 : 1
+
+                            console.log({ optionIndex })
 
                             const newOptions = [
                                 ...(options || []),
