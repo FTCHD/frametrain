@@ -68,7 +68,7 @@ export default async function page(
       {
         label: "Confirm ✅",
         action: "tx",
-        target: "/tx",
+        target: `https://cal-cast-v2.vercel.app/frames/txdata?d=${params.date}&datefixed=true&t=${params.slot}&timefixed=true&confirm=true&userfid=${body.untrustedData.fid}&owner=${config.ownerFid}&duration=${params.duration}&__bi=2-tx`,
       },
     ],
     component: await PageView(data),
