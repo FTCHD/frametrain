@@ -1,3 +1,4 @@
+import discourse from './discourse'
 // import basic from './basic'
 import pdf from './pdf'
 import poll from './poll'
@@ -11,5 +12,6 @@ export default {
     poll,
     sablier,
     twitter,
+    discourse,
     form
 }
