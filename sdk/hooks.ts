@@ -22,6 +22,16 @@ export function useFrameId() {
     return context.frameId
 }
 
+export function useFrameState() {
+    const context = useContext(InspectorContext)
+
+    if (!context) {
+        throw new Error('useFrameId must be used within an InspectorProvider')
+    }
+
+    return context.state
+}
+
 export function useUploadImage() {
     const frameId = useFrameId()
 

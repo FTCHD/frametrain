@@ -236,6 +236,7 @@ export default function FrameEditor({
                             value={{
                                 frameId: frame.id,
                                 config: frame.draftConfig as typeof template.initialConfig,
+                                state: frame.state!,
                                 update: debouncedUpdateConfig,
                                 // setLoading
                             }}
