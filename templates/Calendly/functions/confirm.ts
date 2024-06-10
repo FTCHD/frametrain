@@ -52,9 +52,9 @@ export default async function page(
     chainId: "eip155:84532", // OP Mainnet 10
     method: "eth_sendTransaction",
     params: {
-      abi: ABI as Abi,
+      // abi: ABI as Abi,
       to: "0x51d51C87e7f55547D202FCdBb5713bF9d4a5f6A4",
-      data: calldata,
+      // data: calldata,
       value: "0",
     },
   };
