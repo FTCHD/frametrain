@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { ABI } from "../../utils/const";
+import { ABI } from "../../../templates/Calendly/utils/const";
 // biome-ignore lint/style/useImportType: <explanation>
 import { Abi, encodeFunctionData } from "viem";
 

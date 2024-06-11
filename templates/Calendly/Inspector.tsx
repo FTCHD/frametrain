@@ -14,15 +14,15 @@ export default function Inspector() {
 
   const displayLabelInputRef = useRef<HTMLInputElement>(null);
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    if (verified) {
-      // updateConfig({
-      //   ownerName: sesh.data?.user?.name,
-      //   ownerFid: sesh.data?.user?.id,
-      //   ownerImg: sesh.data?.user?.image,
-      // });
-    }
-  }, [verified]);
+  // useEffect(() => {
+  //   if (verified) {
+  //     // updateConfig({
+  //     //   ownerName: sesh.data?.user?.name,
+  //     //   ownerFid: sesh.data?.user?.id,
+  //     //   ownerImg: sesh.data?.user?.image,
+  //     // });
+  //   }
+  // }, [verified]);
 
   return (
     <div className="w-full h-full space-y-4">
@@ -51,6 +51,7 @@ export default function Inspector() {
             placeholder="Enter your fid Manually to verify"
             ref={displayLabelInputRef}
           />
+
           <Button
             onClick={() => {
               if (!displayLabelInputRef.current?.value) return;
