@@ -1,11 +1,14 @@
+import { ABI } from "../../../templates/Calendly/utils/const";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { ABI } from "../../../templates/Calendly/utils/const";
 // biome-ignore lint/style/useImportType: <explanation>
 import { Abi, encodeFunctionData } from "viem";
+import type { TransactionTargetResponse } from "frames.js";
 
-export async function POST(req: NextRequest) {
+export async function POST(
+  req: NextRequest
+): Promise<NextResponse<TransactionTargetResponse>> {
   const calldata = encodeFunctionData({
     abi: ABI,
     functionName: "bookCall",
