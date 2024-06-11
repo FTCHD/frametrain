@@ -7,6 +7,7 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
+        "format:": "biome format ./templates --write",
         "vercel": "vercel build --prod",
         "deploy": "vercel build --prod && vercel deploy --prebuilt --prod",
         "db:studio": "drizzle-kit studio",
