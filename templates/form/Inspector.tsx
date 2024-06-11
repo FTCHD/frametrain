@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react'
 import type { Config, fieldTypes, State } from '.'
 import { ColorPicker } from '@/sdk/components'
 
+
 export default function Inspector() {
     const state = useFrameState() as State
     const [config, updateConfig] = useFrameConfig<Config>()
