@@ -12,7 +12,7 @@ export interface Config extends BaseConfig {
   }[];
   qna: {
     question: string;
-    answer: number;
+    answer: string;
     choices: number;
     isNumeric: boolean;
     index: number;
