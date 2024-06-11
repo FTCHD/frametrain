@@ -1,8 +1,6 @@
-import type { Config, fieldTypes } from '..'
-import template from '..'
+import type { Config } from '..'
 
 export default function SuccessView(config: Config) {
-
     return (
         <div
             style={{

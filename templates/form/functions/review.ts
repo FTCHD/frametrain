@@ -1,12 +1,13 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData } from '@/lib/farcaster'
 import type { Config, State } from '..'
-import ReviewView from '../views/Review';
-import { SessionUserStateType, UserState } from './userState';
+import ReviewView from '../views/Review'
+import { UserState } from './userState'
 
 export default async function review(
     config: Config,
     state: State,
+    // biome-ignore lint/correctness/noUnusedVariables: <explanation>
     params: any
 ): Promise<BuildFrameData> {
     // const fid: number = body.untrustedData.fid;
@@ -14,7 +15,7 @@ export default async function review(
     // const textInput = body.untrustedData.inputText ?? '';
     // // const currentInput = state.inputFieldNumber + 1;
     // console.log(body);
-    
+
     return {
         buttons: [
             {
@@ -22,7 +23,7 @@ export default async function review(
             },
             {
                 label: 'Submit',
-            }
+            },
         ],
         state,
         aspectRatio: '1.91:1',

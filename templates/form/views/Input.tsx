@@ -1,6 +1,6 @@
-import type { Config, fieldTypes } from '..'
+import type { Config } from '..'
 import template from '..'
-import { SessionUserStateType } from '../functions/userState'
+import type { SessionUserStateType } from '../functions/userState'
 
 export default function InputView(config: Config, userState: SessionUserStateType, options?: { isFieldValid?: boolean }) {
 

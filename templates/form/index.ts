@@ -5,26 +5,29 @@ import functions from './functions'
 import { randomUUID } from 'node:crypto'
 
 export type fieldTypes = {
-    fieldName: string,
-    fieldDescription: string,
-    fieldExample: string,
-    required: boolean,
+    fieldName: string
+    fieldDescription: string
+    fieldExample: string
+    required: boolean
     fieldType: 'text' | 'number' | 'email' | 'phone' | 'address'
 }
 
 export interface Config extends BaseConfig {
-    fields: fieldTypes[] | [],
-    form_id: string,
-    backgroundColor: string,
-    fontColor: string,
-    coverText: string,
-    aboutText: string,
+    fields: fieldTypes[] | []
+    form_id: string
+    backgroundColor: string
+    fontColor: string
+    coverText: string
+    aboutText: string
     successText: string
+    shareText: string
+    frameURL: string
+    allowDuplicates: boolean
 }
 
-interface DATA_RECORD{
-    fid: number,
-    inputValues: string[] | [],
+interface DATA_RECORD {
+    fid: number
+    inputValues: string[] | []
     timestamp: number
 }
 
@@ -35,7 +38,7 @@ interface DATA_RECORD{
 //     totalInputFieldNumber: number
 // }
 export interface State extends BaseState {
-    inputNames: string[],
+    inputNames: string[]
     data: DATA_RECORD[]
 }
 
@@ -48,6 +51,14 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialConfig: {fields: [], form_id: randomUUID(), backgroundColor: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)', fontColor: '#FFFFFF'},
+    initialConfig: {
+        fields: [],
+        form_id: randomUUID(),
+        backgroundColor: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)',
+        fontColor: '#FFFFFF',
+        shareText: 'Check This Out!',
+        frameURL: '',
+        allowDuplicates: false
+    },
     requiresValidation: false,
 } satisfies BaseTemplate

@@ -11,9 +11,13 @@ export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
     const fields: fieldTypes[] = config.fields
 
+    const shareTextInputRef = useRef<HTMLInputElement>(null)
+    const frameURLInputRef = useRef<HTMLInputElement>(null)
+
     const coverInputRef = useRef<HTMLInputElement>(null)
     const aboutInputRef = useRef<HTMLInputElement>(null)
     const successInputRef = useRef<HTMLInputElement>(null)
+    const duplicateInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         if (coverInputRef.current) {
@@ -72,6 +76,18 @@ export default function Inspector() {
                 />
             </div>
 
+            <div className="flex items-center space-x-2">
+                <Input
+                    id="duplicateAllowed"
+                    type="checkbox"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    ref={duplicateInputRef}
+                />
+                <label htmlFor="duplicateAllowed" className="text-lg ml-2">
+                    Duplicate Submissions Allowed?
+                </label>
+            </div>
+
             <Button
                 onClick={() => {
                     if (!coverInputRef.current?.value) return
@@ -82,6 +98,7 @@ export default function Inspector() {
                         coverText: coverInputRef.current.value,
                         aboutText: aboutInputRef.current.value,
                         successText: successInputRef.current.value,
+                        allowDuplicates: itemRequiredInputRef.current?.checked ?? false
                     })
                 }}
                 className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded"
@@ -213,6 +230,39 @@ export default function Inspector() {
                     setBackground={(value) => updateConfig({ fontColor: value })}
                 />
             </div>
+
+            <h2 className="text-lg font-semibold">Share Button's Sentence</h2>
+            <div className="flex flex-col gap-2">
+                <Input
+                    className="text-lg border rounded p-2"
+                    placeholder="Enter Share Text"
+                    ref={shareTextInputRef}
+                />
+            </div>
+
+            <h2 className="text-lg font-semibold">Frame's URL</h2>
+            <div className="flex flex-col gap-2">
+                <Input
+                    className="text-lg border rounded p-2"
+                    placeholder="Click on &quot;URL&quot; from top right and paste here"
+                    ref={frameURLInputRef}
+                />
+            </div>
+
+            <Button
+                onClick={() => {
+                    if (!shareTextInputRef.current?.value) return
+                    if (!frameURLInputRef.current?.value) return
+
+                    updateConfig({
+                        shareText: shareTextInputRef.current.value,
+                        frameURL: frameURLInputRef.current.value,
+                    })
+                }}
+                className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded"
+            >
+                Save
+            </Button>
         </div>
     )
 }

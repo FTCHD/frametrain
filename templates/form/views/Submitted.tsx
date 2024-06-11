@@ -1,8 +1,6 @@
-import type { Config, fieldTypes } from '..'
-import template from '..'
+import type { Config } from '..'
 
 export default function SubmittedView(config: Config) {
-
     return (
         <div
             style={{
@@ -29,7 +27,8 @@ export default function SubmittedView(config: Config) {
                     fontFamily: 'Roboto',
                     fontSize: '30px',
                     color: '#ffffff',
-                }}>
+                }}
+            >
                 Submitted Before! If you continue, you would overwrite the form!
             </div>
             {/* {config.fields[0].fieldName || template.initialConfig.fields} */}

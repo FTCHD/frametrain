@@ -3,29 +3,28 @@ import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import CoverView from '../views/Cover'
-import { updateUserState } from "./userState";
+import { updateUserState } from './userState'
 
-const grayBackgroundBlackText = '\x1b[46m\x1b[30m'; // Gray background, black text
-const reset = '\x1b[0m'; // Reset styles
+const grayBackgroundBlackText = '\x1b[46m\x1b[30m' // Gray background, black text
+const reset = '\x1b[0m' // Reset styles
 
 export default async function initial(config: Config, state: State): Promise<BuildFrameData> {
-    let newState = state;
+    let newState = state
     newState = Object.assign(state, {
-        inputNames: config.fields.map(field => field.fieldName ?? ''),
+        inputNames: config.fields.map((field) => field.fieldName ?? ''),
     })
 
-    updateUserState({ pageType: 'init'})
+    updateUserState({ pageType: 'init' })
 
-    const SHARE_FRAME_TEXT = "Check This Out!"
-    const SHARE_FRAME_URL = "https://farcaster.xyz"
+    const SHARE_FRAME_TEXT = config.shareText
+    const SHARE_FRAME_URL = config.frameURL
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
+    console.log(grayBackgroundBlackText)
+    console.log('state is', newState)
 
-    console.log(grayBackgroundBlackText);
-    console.log('state is',newState);
-    
-    console.log(reset);
+    console.log(reset)
 
     return {
         buttons: [
@@ -34,8 +33,10 @@ export default async function initial(config: Config, state: State): Promise<Bui
             {
                 label: 'Share',
                 action: 'link',
-                target: `https://warpcast.com/~/compose?text=${encodeURIComponent(SHARE_FRAME_TEXT)}&embeds[]=${encodeURIComponent(SHARE_FRAME_URL)}`
-            }
+                target: `https://warpcast.com/~/compose?text=${encodeURIComponent(
+                    SHARE_FRAME_TEXT
+                )}&embeds[]=${encodeURIComponent(SHARE_FRAME_URL)}`,
+            },
         ],
         state: newState,
         fonts: roboto,

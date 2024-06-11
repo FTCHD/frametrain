@@ -7,5 +7,5 @@ export default {
     initial,
     input,
     about,
-    review
+    review,
 }
