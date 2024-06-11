@@ -1,11 +1,10 @@
-import type { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist'
 import { scrape } from '@/sdk/scrape'
 
 interface MediumMetadata {
-    authorUrl: string | null;
-    author: string | null;
-    title: string | null;
-    image: string | null;
+    authorUrl: string | null
+    author: string | null
+    title: string | null
+    image: string | null
 }
 
 // One tag and its contents
@@ -56,12 +55,13 @@ function extractTextFromMediumHTML(html: string): Element[] {
 
     const elementsArray: HTMLElement[] = Array.from(elements) as HTMLElement[]
 
-    // Helper function to extract nested tags with character positions
+    // Helper function to extract nested tags such as <em>, <strong> etc., and remember their positions so they can be re-inserted later
+    // biome-ignore lint/complexity: <explanation>
     function extractNestedTags(element: HTMLElement): { position: number, tag: Element }[] {
         const nestedTags: { position: number, tag: Element }[] = []
         let charIndex = 0
         
-        element.childNodes.forEach((node) => {
+        for ( const node of element.childNodes) {
             if (node.nodeType === Node.TEXT_NODE) {
                 charIndex += node.textContent?.length || 0
             } else if (node.nodeType === Node.ELEMENT_NODE) {
@@ -77,7 +77,7 @@ function extractTextFromMediumHTML(html: string): Element[] {
                     charIndex += childElement.textContent?.length || 0
                 }
             }
-        })
+        }
         return nestedTags
     }
 
@@ -94,19 +94,20 @@ function extractTextFromMediumHTML(html: string): Element[] {
 }
 
 
-function paginateElements(elements: Array<{ tag: string; text: string }>, charLimit: number, metadata:MediumMetadata): Page[] {
-    let pages: Page[] = []
+function paginateElements(elements: Array<{ tag: string, text: string }>, charLimit: number, metadata:MediumMetadata): Page[] {
+    const pages: Page[] = []
     let currentPage: Page = []
     let currentCharCount = 0
 
     // ignore elements if their text is equal to certain keywords including the author, 'Follow', 'Listen', 'Share', or just a number
-    elements = elements.filter(element => {
+    const filteredElements = elements.filter(element => {
         const text = element.text.trim()
+        // biome-ignore lint/complexity: <explanation>
         return !['Follow', 'Listen', 'Share', metadata.author, metadata.title, 'About', 'Contact', 'Subscribe', 'Top highlight'
         ].includes(text) && !text.match(/^\d+(\.\d+)?[KMB]?$/)
     })
 
-    elements.forEach(element => {
+    for (const element of filteredElements) {
         const elementTextLength = element.text?.length ?? 0
     
         if (currentCharCount + elementTextLength <= charLimit) {
@@ -117,7 +118,7 @@ function paginateElements(elements: Array<{ tag: string; text: string }>, charLi
             currentPage = [element]
             currentCharCount = elementTextLength
         }
-    })
+    }
 
     if (currentPage.length > 0) {
         pages.push(currentPage)
@@ -141,7 +142,7 @@ function getMediumMetadata(htmlContent: string): MediumMetadata {
 
     // Extract metadata from meta tags
     const metaTags = tempDiv.querySelectorAll('meta[data-rh="true"]')
-    metaTags.forEach((tag) => {
+    for (const tag of metaTags) {
         const property = tag.getAttribute('property')
         const name = tag.getAttribute('name')
         const content = tag.getAttribute('content')
@@ -155,7 +156,7 @@ function getMediumMetadata(htmlContent: string): MediumMetadata {
         } else if (property === 'og:image') {
             metadata.image = content
         }
-    })
+    }
 
     return metadata
 }

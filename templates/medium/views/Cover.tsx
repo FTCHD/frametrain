@@ -1,4 +1,4 @@
-import { Article } from '../utils'
+import type { Article } from '../utils'
 
 export default function CoverView({
     article,

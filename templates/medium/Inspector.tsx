@@ -1,6 +1,6 @@
 'use client'
 import { Input } from '@/components/shadcn/Input'
-import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { useFrameConfig } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { Config } from '.'
@@ -15,7 +15,6 @@ import {
 } from '@/components/shadcn/Select'
 
 export default function Inspector() {
-    const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const [loading, setLoading] = useState(false)
 
@@ -97,8 +96,6 @@ export default function Inspector() {
                         onChange={() => updateConfig({ showLinkOnAllPages: linkOnAllPagesRef.current?.checked })}
                     />
                 </div>
-
-
             </div>
         </div>
     )

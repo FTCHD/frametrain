@@ -1,5 +1,4 @@
-import { slice } from "viem";
-import { Page } from "../utils";
+import type { Page } from "../utils"
 
 export default function PageView({
     page,
