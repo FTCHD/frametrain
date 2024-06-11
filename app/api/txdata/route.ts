@@ -1,11 +1,11 @@
-import { ABI } from '../../../templates/Calendly/utils/const'
+import { ABI } from '../../../templates/scheduler/utils/const'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
 // biome-ignore lint/style/useImportType: <explanation>
 import { Abi, encodeFunctionData } from 'viem'
 import type { TransactionTargetResponse } from 'frames.js'
-import { getNextSixDates } from '@/templates/Calendly/utils/date'
+import { getNextSixDates } from '@/templates/scheduler/utils/date'
 
 export async function POST(req: NextRequest): Promise<NextResponse<TransactionTargetResponse>> {
     const searchParams = new URLSearchParams(req.url)

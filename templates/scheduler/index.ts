@@ -19,7 +19,7 @@ export interface Config extends BaseConfig {
 export interface State extends BaseState {}
 
 export default {
-    name: 'CalCast',
+    name: 'Scheduler',
     description: 'Sheduling infra for Farcaster',
     creatorFid: '389273',
     creatorName: 'leofrank',
@@ -29,7 +29,7 @@ export default {
     functions,
     initialConfig: {
         ownerFid: 0,
-        desc: 'Please Verify to create a frame',
+        desc: 'Book a call with me',
         ownerName: 'undefined',
         ownerImg: 'undefined',
         duration: 15,

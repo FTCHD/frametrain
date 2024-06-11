@@ -14,6 +14,8 @@ export default async function page(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
+    const host = process.env.NEXT_PUBLIC_HOST
+    console.log(host)
     const data = Object.assign(
         {},
         {
@@ -69,7 +71,7 @@ export default async function page(
                 label: 'Confirm ✅',
                 action: 'tx',
                 // target: `https://cal-cast-v2.vercel.app/frames/txdata?fid=eyJmaWQiOjIxNTc4MSwiZHVyYXRpb24iOjE1fQ%3D%3D&ownerName=fabianferno&ownerimg=https%3A%2Fi.imgur.com%2F56ZfLrq.jpg&d=${params.date}&datefixed=true&t=${params.slot}&timefixed=true&confirm=true&userfid=${body.untrustedData.fid}&owner=${config.ownerFid}&duration=15&__bi=2-tx`,
-                target: `${process.env.NEXT_PUBLIC_HOST}/api/txdata?fid=eyJmaWQiOjIxNTc4MSwiZHVyYXRpb24iOjE1fQ%3D%3D&ownerName=${config.ownerName}&ownerimg=${config.ownerImg}&d=${params.date}&datefixed=true&t=${params.slot}&timefixed=true&confirm=true&userfid=${body.untrustedData.fid}&owner=${config.ownerFid}&duration=${params.duration}&__bi=2-tx`,
+                target: `${host}/api/txdata?fid=eyJmaWQiOjIxNTc4MSwiZHVyYXRpb24iOjE1fQ%3D%3D&ownerName=${config.ownerName}&ownerimg=${config.ownerImg}&d=${params.date}&datefixed=true&t=${params.slot}&timefixed=true&confirm=true&userfid=${body.untrustedData.fid}&owner=${config.ownerFid}&duration=${params.duration}&__bi=2-tx`,
             },
         ],
         component: await PageView(data),

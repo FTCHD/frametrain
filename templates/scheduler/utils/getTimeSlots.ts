@@ -1,5 +1,5 @@
 import { request, gql } from 'graphql-request'
-import { SUBGRAPH_URL } from '../utils/const'
+import { SUBGRAPH_URL } from './const'
 
 async function gettimeslot(farcasterId: string) {
     try {

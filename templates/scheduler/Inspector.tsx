@@ -47,7 +47,7 @@ export default function Inspector() {
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
 
     //
-    const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY
+    const privateKey = process.env.NEXT_PRIVATE_KEY
 
     const account = privateKeyToAccount(privateKey as `0x${string}`)
 
@@ -232,7 +232,20 @@ export default function Inspector() {
                 </div>
             )}
             {profileExist ? (
-                <></>
+                <div>
+                    <Button
+                        onClick={() => {
+                            updateConfig({
+                                ownerName: sesh.data?.user?.name,
+                                // ownerFid: sesh.data?.user?.id,
+                                ownerFid: farcasterId,
+                                ownerImg: sesh.data?.user?.image,
+                            })
+                        }}
+                    >
+                        Refresh
+                    </Button>
+                </div>
             ) : (
                 <Button
                     onClick={handleSubmit}
