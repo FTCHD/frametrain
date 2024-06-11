@@ -5,15 +5,30 @@ import { NextResponse } from "next/server";
 // biome-ignore lint/style/useImportType: <explanation>
 import { Abi, encodeFunctionData } from "viem";
 import type { TransactionTargetResponse } from "frames.js";
+import { getNextSixDates } from "@/templates/Calendly/utils/date";
 
 export async function POST(
   req: NextRequest
 ): Promise<NextResponse<TransactionTargetResponse>> {
+  const searchParams = new URLSearchParams(req.url);
+  const owner = searchParams.get("owner");
+  const user = searchParams.get("userfid");
+  const d = searchParams.get("d");
+  const time = searchParams.get("t");
+  const dates = getNextSixDates();
+  const date = dates[Number.parseInt(d!)];
+
   const calldata = encodeFunctionData({
     abi: ABI,
     functionName: "bookCall",
-    args: [389273, 3892, 1, 0, 25, 6, 2024],
+    args: [owner, user, time, 0, date, 6, 2024],
   });
+
+  // const calldata = encodeFunctionData({
+  //   abi: ABI,
+  //   functionName: "bookCall",
+  //   args: [389273, 3892, 1, 0, 25, 6, 2024],
+  // });
 
   return NextResponse.json({
     chainId: "eip155:84532", // OP Mainnet 10
