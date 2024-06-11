@@ -21,6 +21,7 @@ export default function Inspector() {
     const inputRef = useRef<HTMLInputElement>(null)
 
     const linkOnAllPagesRef = useRef<HTMLInputElement>(null)
+    const hideTitleAuthorRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         if (!inputRef.current) return
@@ -38,7 +39,7 @@ export default function Inspector() {
         setLoading(true)
         
         updateConfig({ article: await getMediumArticle(url) })
-        console.log(config.article)
+        //console.log(config.article)
 
         setLoading(false)
     }
@@ -63,6 +64,18 @@ export default function Inspector() {
                         className="w-full"
                         background={config.textColor || 'white'}
                         setBackground={(value) => updateConfig({ textColor: value })}
+                    />
+                </div>
+
+                <div className="flex gap-2 items-center">
+                    <div className='flex flex-col'>
+                        <h2 className="text-lg font-bold">Don't show Title/Author</h2>
+                    </div>
+                    <Input
+                        className="w-full"
+                        type="checkbox"
+                        ref={hideTitleAuthorRef} 
+                        onChange={() => updateConfig({ hideTitleAuthor: hideTitleAuthorRef.current?.checked })}
                     />
                 </div>
 

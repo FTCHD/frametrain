@@ -8,6 +8,7 @@ export interface Config extends BaseConfig {
     article?: Article,
     textColor: string,
     showLinkOnAllPages: boolean,
+    hideTitleAuthor: boolean,
     bgBlendMode: string
 }
 

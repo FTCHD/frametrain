@@ -3,13 +3,15 @@ import type { Article } from '../utils'
 export default function CoverView({
     article,
     textColor,
-    bgBlendMode
-}: { article?: Article, textColor?: string, bgBlendMode?: string}) {
+    bgBlendMode,
+    hideTitleAuthor
+}: { article?: Article, textColor?: string, bgBlendMode?: string, hideTitleAuthor:boolean}) {
 
     let background = '#000'
     if (article?.metadata.image) {
         background = `url(${article.metadata.image})`
     }
+    console.log('bgBlendMode', bgBlendMode)
 
     return (
         <div

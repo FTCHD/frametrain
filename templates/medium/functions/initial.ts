@@ -18,7 +18,8 @@ export default async function initial(config: Config): Promise<BuildFrameData> {
         component: CoverView({
             article: config.article,
             textColor: config.textColor,
-            bgBlendMode: config.bgBlendMode
+            bgBlendMode: config.bgBlendMode,
+            hideTitleAuthor: config.hideTitleAuthor
         }),
         functionName: 'page',
     }
