@@ -118,7 +118,11 @@ export default function Inspector() {
                             const data = await resp.json()
                             console.log(data.url)
 
-                            logs.current.value = `Complited! ${data.url}`
+                            if (data.url == confDefault.gif) {
+                                logs.current.value = 'Something went wrong. Check params and try again.'
+                            } else {
+                                logs.current.value = `Complited! ${data.url}`
+                            }
 
                             updateConfig({
                                 gif: data.url,
