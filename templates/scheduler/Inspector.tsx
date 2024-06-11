@@ -48,6 +48,7 @@ export default function Inspector() {
 
     //
     const privateKey = process.env.NEXT_PRIVATE_KEY
+    console.log('private key : ' + privateKey)
 
     const account = privateKeyToAccount(privateKey as `0x${string}`)
 
