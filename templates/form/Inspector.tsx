@@ -50,7 +50,7 @@ export default function Inspector() {
             >
                 DOWNLOAD RESULTS
             </Button>
-            <p>{JSON.stringify(config)}</p>
+            <p>refresh to download the latest results</p>
 
             <h2 className="text-lg font-semibold">Poll Title</h2>
             <div className="flex flex-col gap-2">
