@@ -107,6 +107,8 @@ function paginateElements(elements: Array<{ tag: string, text: string }>, charLi
         ].includes(text) && !text.match(/^\d+(\.\d+)?[KMB]?$/)
     })
 
+    //console.log('filteredElements', filteredElements)
+
     for (const element of filteredElements) {
         const elementTextLength = element.text?.length ?? 0
     

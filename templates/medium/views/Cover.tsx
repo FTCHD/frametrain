@@ -24,33 +24,53 @@ export default function CoverView({
                 alignItems: 'center',
                 gap: '100px',
                 padding: '70px',
-                opacity: '0.3',
+                opacity: '0.8',
                 color: textColor || '#fff',
                 backgroundColor: '#000',
                 background: background,
-                backgroundSize: '100% 100%',
-                backgroundBlendMode: bgBlendMode || 'normal',
+                backgroundSize: '100% 100%'
             }}
         >
-            <span
+            <div
                 style={{
-                    fontFamily: 'Georgia',
-                    fontSize: '80px',
-                    textAlign: 'center',
-                    textWrap: 'balance',
-                    margin: '0 auto'
-                }}
-            >{ article?.metadata.title ?? '' }
-            </span>
-            <span
-                style={{
-                    fontFamily: 'Georgia',
-                    fontSize: '40px',
-                    textAlign: 'center',
-                    opacity: '0.8',
-                }}
-            >{ article?.metadata.author ?? 'Paste your medium article link into the URL input' }
-            </span>
+                    position: 'absolute',
+                    top: '0',
+                    bottom: '0',
+                    left: '0',
+                    right: '0',
+                    opacity: bgBlendMode == 'lighten' || bgBlendMode == 'darken'? '0.4' : '0',
+                    backgroundColor: bgBlendMode == 'lighten' ? '#fff' : bgBlendMode == 'darken' ? '#000' : 'transparent'
+                }}>
+
+            </div>
+            {
+                !hideTitleAuthor &&
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <span
+                        style={{
+                            fontFamily: 'Georgia',
+                            fontSize: '80px',
+                            textAlign: 'center',
+                            textWrap: 'balance',
+                            margin: '0 auto'
+                        }}
+                    >{ article?.metadata.title ?? '' }
+                    </span>
+                    <span
+                        style={{
+                            fontFamily: 'Georgia',
+                            fontSize: '40px',
+                            textAlign: 'center'
+                        }}
+                    >{ article?.metadata.author ?? 'Paste your medium article link into the URL input' }
+                    </span>
+                </div>
+            }
         </div>
     )
 }
