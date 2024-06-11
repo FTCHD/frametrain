@@ -1,17 +1,17 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { useFrameConfig } from '@/sdk/hooks'
 import { useEffect, useRef, useState } from 'react'
 import type { Config } from '.'
 import { useSession } from 'next-auth/react'
 
-import { createWalletClient, encodeFunctionData, http } from 'viem'
+import { encodeFunctionData } from 'viem'
 import type { Abi } from 'viem'
-import { baseSepolia } from 'viem/chains'
-import { privateKeyToAccount } from 'viem/accounts'
+
 import { ABI } from './utils/const'
 import { getProfile } from './utils/getProfile'
+import { client } from './utils/config'
 
 export default function Inspector() {
     const [profileExist, setProfileExist] = useState<any>(null)
@@ -45,18 +45,6 @@ export default function Inspector() {
     console.log(sesh.data?.user?.id)
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
-
-    //
-    const privateKey = process.env.NEXT_PRIVATE_KEY
-    console.log('private key : ' + privateKey)
-
-    const account = privateKeyToAccount(privateKey as `0x${string}`)
-
-    const client = createWalletClient({
-        account,
-        chain: baseSepolia,
-        transport: http(),
-    })
 
     const handleSubmit = async () => {
         const calldata = encodeFunctionData({
