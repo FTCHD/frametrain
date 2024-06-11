@@ -15,7 +15,7 @@ export default async function page(
     params: any
 ): Promise<BuildFrameData> {
     const host = process.env.NEXT_PUBLIC_HOST
-    console.log(host)
+    console.log('host' + host)
     const data = Object.assign(
         {},
         {
