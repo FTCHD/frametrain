@@ -29,6 +29,9 @@ export default function Inspector() {
         if (successInputRef.current) {
             successInputRef.current.value = config.successText ?? ''
         }
+        if (duplicateInputRef.current) {
+            duplicateInputRef.current.checked = config.allowDuplicates ?? false
+        }
     }, [config])
 
     const itemNameInputRef = useRef<HTMLInputElement>(null)
