@@ -28,12 +28,12 @@ export async function scrapeTwitterPost(id: string): Promise<TWTweet> {
 
 export async function scrape({
     url,
-    readability,
-    markdown,
-}: { url: string; readability: boolean; markdown: boolean }) {
+    readability = false,
+    markdown = false,
+}: { url: string; readability?: boolean; markdown?: boolean }) {
     const path = markdown ? 'markdown' : readability ? 'readability' : 'scrape'
 
-    const res = await fetch(`${process.env.SCRAPER_URL}/${path}/${encodeURI(url)}`, {
+    const res = await fetch(`${process.env.SCRAPER_URL}/${path}/${encodeURIComponent(url)}`, {
         cache: 'no-store',
         headers: {
             'Content-Type': 'application/json',
