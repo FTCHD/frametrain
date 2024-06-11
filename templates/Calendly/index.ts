@@ -2,7 +2,6 @@ import type { BaseConfig, BaseState, BaseTemplate } from "@/lib/types";
 import Inspector from "./Inspector";
 import cover from "./cover.jpeg";
 import functions from "./functions";
-import { duration } from "dayjs";
 
 export interface Config extends BaseConfig {
   ownerFid: number;
