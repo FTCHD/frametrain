@@ -30,7 +30,7 @@ export default function Inspector() {
             successInputRef.current.value = config.successText ?? ''
         }
         if (duplicateInputRef.current) {
-            duplicateInputRef.current.checked = config.allowDuplicates ?? false
+            duplicateInputRef.current.checked = config.allowDuplicates
         }
     }, [config])
 
@@ -96,12 +96,14 @@ export default function Inspector() {
                     if (!coverInputRef.current?.value) return
                     if (!aboutInputRef.current?.value) return
                     if (!successInputRef.current?.value) return
+                    if (!duplicateInputRef.current) return
+                    
 
                     updateConfig({
                         coverText: coverInputRef.current.value,
                         aboutText: aboutInputRef.current.value,
                         successText: successInputRef.current.value,
-                        allowDuplicates: itemRequiredInputRef.current?.checked ?? false
+                        allowDuplicates: duplicateInputRef.current?.checked ?? false
                     })
                 }}
                 className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded"
