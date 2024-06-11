@@ -11,15 +11,16 @@ const reset = '\x1b[0m'; // Reset styles
 export default async function initial(config: Config, state: State): Promise<BuildFrameData> {
     let newState = state;
     newState = Object.assign(state, {
-        inputNames: config.fields.map(field => field.fieldName ?? '')
+        inputNames: config.fields.map(field => field.fieldName ?? ''),
     })
+
+    updateUserState({ pageType: 'init'})
 
     const SHARE_FRAME_TEXT = "Check This Out!"
     const SHARE_FRAME_URL = "https://farcaster.xyz"
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
-    updateUserState({ pageType: 'init', inputFieldNumber: 0, totalInputFieldNumber: config.fields.length })
 
     console.log(grayBackgroundBlackText);
     console.log('state is',newState);

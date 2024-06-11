@@ -2,18 +2,14 @@ import type { Config, fieldTypes } from '..'
 import template from '..'
 import { SessionUserStateType } from '../functions/userState'
 
-export default function InputView(config: Config, userState: SessionUserStateType) {
-    if (!userState) {
-        return
-    }
-    // console.log("STATE IS: ",userState)
+export default function InputView(config: Config, userState: SessionUserStateType, options?: { isFieldValid?: boolean }) {
 
     return (
         <div
             style={{
                 width: '100%',
                 height: '100%',
-                background: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)',
+                background: config.backgroundColor,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -21,7 +17,7 @@ export default function InputView(config: Config, userState: SessionUserStateTyp
                 textAlign: 'center',
                 fontFamily: 'Roboto',
                 fontSize: '50px',
-                color: '#FFF',
+                color: config.fontColor,
                 boxSizing: 'border-box'
             }}
         >
@@ -56,7 +52,7 @@ export default function InputView(config: Config, userState: SessionUserStateTyp
                     userState.inputValues[userState.inputFieldNumber]?.length > 0 ?
                         <span className="data" style={{ fontSize: '0.9em', color: 'black' }}>{userState.inputValues[userState.inputFieldNumber]}</span>
                         :
-                        <span className="example" style={{ fontSize: '0.9em' }}>{config.fields[userState.inputFieldNumber].fieldExample || template.initialConfig.fields}</span>
+                        <span className="example" style={{ fontSize: '0.7em' }}>Example: {config.fields[userState.inputFieldNumber].fieldExample || template.initialConfig.fields}</span>
                 }
             </div>
             <div
@@ -78,29 +74,53 @@ export default function InputView(config: Config, userState: SessionUserStateTyp
                 Field: <span style={{ fontSize: '0.85em', marginLeft: '0.5em' }}>{userState.inputFieldNumber + 1}/{userState.totalInputFieldNumber}</span>
             </div>
             {
-                config.fields[userState.inputFieldNumber].isNecessary ?
+                config.fields[userState.inputFieldNumber].required ?
                     (<div
                         className="input-wrapper"
                         style={{
-                          backgroundColor: '#FFF',
-                          color: 'red',
-                          position: 'absolute',
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          textAlign: 'center',
-                          fontSize: '0.4em',
-                          borderRadius: '0.5em',
-                          left: '0.5em',
-                          bottom: '0.5em',
-                          padding: '0.3em 0.6em 0.3em 0.5em'
+                            backgroundColor: '#FFF',
+                            color: 'red',
+                            position: 'absolute',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                            fontSize: '0.4em',
+                            borderRadius: '0.5em',
+                            left: '0.5em',
+                            bottom: '0.5em',
+                            padding: '0.3em 0.6em 0.3em 0.5em'
                         }}
-                      >
+                    >
                         * Necessary To Fill
-                      </div>)
-                        :
-                        ''
-                }
+                    </div>)
+                    :
+                    ''
+            }
+            {
+                options?.isFieldValid ?
+                    ''
+                    :
+                    (<div
+                        className="input-wrapper"
+                        style={{
+                            backgroundColor: '#FFF',
+                            color: 'red',
+                            position: 'absolute',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                            fontSize: '0.4em',
+                            borderRadius: '0.5em',
+                            left: '0.5em',
+                            bottom: '2.75em',
+                            padding: '0.3em 0.6em 0.3em 0.5em'
+                        }}
+                    >
+                        * Enter The Correct Value For Type '{config.fields[userState.inputFieldNumber].fieldType}'
+                    </div>)
+            }
         </div>
     )
 }

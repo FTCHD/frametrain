@@ -2,12 +2,13 @@
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import type { Config, State } from '..'
 import InputView from '../views/Input'
-import { UserState, updateUserState } from "./userState";
+import { UserState, resetUserState, updateUserState } from "./userState";
 import CoverView from '../views/Cover';
 import initial from './initial';
 import review from './review';
 import about from './about';
 import SuccessView from '../views/Success';
+import SubmittedView from '../views/Submitted';
 
 const grayBackgroundBlackText = '\x1b[47m\x1b[30m'; // Gray background, black text
 const yellowBackgroundBlackText = '\x1b[43m\x1b[30m';
@@ -30,46 +31,52 @@ export default async function input(
     // console.log(UserState);
     // console.log(reset);
 
-    const prevState = structuredClone(UserState)
+    const prevUserState = structuredClone(UserState)
 
-    switch (prevState.pageType) {
+    switch (prevUserState.pageType) {
         case 'init':
         case undefined:
-            // if pressed button was NEXT show first input and update UserState respectively
-            // INDEX == 2 => START THE POLL
-            if (buttonIndex == 2) {
-                updateUserState({ pageType: 'input' })
-                break
-            }
-            // if pressed button was ABOUT show about view and update the UserState respectively
-            // INDEX == 1 => ABOUT THE POLL
+            // IF "ABOUT" BUTTON WAS PRESSED
             if (buttonIndex == 1) {
                 updateUserState({ pageType: 'about' })
                 break
             }
+
+            // CHECK IF THE USER HAS SUBMITTED THE FORM BEFORE
+            const index = getIndexForFid(fid, _newState)
+            if (index >= 0) {
+                updateUserState({ pageType: 'submitted_before', inputValues: _newState.data[index].inputValues, inputFieldNumber: 0, totalInputFieldNumber: config.fields.length, isOldUser: true })
+                break
+            }
+            // IF "START" BUTTON WAS PRESSED
+            if (buttonIndex == 2) {
+                updateUserState({ inputFieldNumber: 0, totalInputFieldNumber: config.fields.length })
+                updateUserState({ pageType: 'input' })
+                break
+            }
             break;
         case 'about':
+            // Back Button Pressed
             if (buttonIndex == 1) {
                 updateUserState({ pageType: 'init' })
                 break
             }
-        // case 'home':
-        //     // INDEX == 2 => START THE POLL
-        //     if (buttonIndex == 2) {
-        //         updateUserState({ pageType: 'input' })
-        //         break
-        //     }
-        //     // if pressed button was ABOUT show about view and update the UserState respectively
-        //     // INDEX == 1 => ABOUT THE POLL
-        //     if (buttonIndex == 1) {
-        //         updateUserState({ pageType: 'about' })
-        //         break
-        //     }
-        //     break;
+            break
         case 'input':
+            //CHECK IF THE VALUE ENTERED IS VALID FOR THE TYPE
+            if (!isValid(textInput, config.fields[UserState.inputFieldNumber].fieldType)) {
+                // IF INVALID BREAK AND SHOW THE INVALID VALUE MESSAGE
+                updateUserState({ pageType: 'input', isFieldValid: false })
+                break;
+            } else {
+                // IF VALID CONTINUE WITH THE REST OF THE CHECKS
+                updateUserState({ isFieldValid: true })
+            }
             // ADD SUBMITTED INPUT TO STATE
-            if (config.fields[UserState.inputFieldNumber].isNecessary == true) {
-                if (!(textInput.length > 0)) {
+            // CHECK IF THE INPUT IS A "REQUIRED" ONE
+            if (config.fields[UserState.inputFieldNumber].required == true) {
+                if (!(textInput.trim().length > 0) && !UserState.inputValues[UserState.inputFieldNumber]) {
+
                     updateUserState({ pageType: 'input' })
                     break;
                 }
@@ -80,16 +87,15 @@ export default async function input(
                 updateUserState({ inputValues: _inputs })
             }
 
-            if (prevState.inputFieldNumber + 1 == UserState.totalInputFieldNumber) {
-                console.log("TIME TO REVIEWWWWWWWWWWWWWWWWWWWWWWWWWWW");
-
+            if (prevUserState.inputFieldNumber + 1 == UserState.totalInputFieldNumber) {
                 // if button pressed was NEXT_PAGE, show the review page
                 if (buttonIndex == 2) {
                     updateUserState({ pageType: 'review' })
                     break
                 }
             }
-            if (prevState.inputFieldNumber == 0) {
+            // IF ON FIRST INPUT FIELD
+            if (prevUserState.inputFieldNumber == 0) {
                 // if button pressed was PREV_PAGE show initial page
                 if (buttonIndex == 1) {
                     updateUserState({ pageType: 'init' })
@@ -98,11 +104,11 @@ export default async function input(
             }
 
             if (buttonIndex == 1) {
-                updateUserState({ inputFieldNumber: prevState.inputFieldNumber - 1 })
+                updateUserState({ inputFieldNumber: prevUserState.inputFieldNumber - 1 })
                 break
             }
             if (buttonIndex == 2) {
-                updateUserState({ inputFieldNumber: prevState.inputFieldNumber + 1 })
+                updateUserState({ inputFieldNumber: prevUserState.inputFieldNumber + 1 })
                 break
             }
             break
@@ -119,8 +125,20 @@ export default async function input(
                 break
             }
 
-        case 'submitted-before':
-        // ask if wants to submit a new one
+        case 'submitted_before':
+            // ask if wants to submit a new one or not
+            // IF BACK WAS PRESSED
+            if (buttonIndex == 1) {
+                updateUserState({ pageType: 'init' })
+                break
+            }
+
+            // IF CONTINUE WAS PRESSED        
+            if (buttonIndex == 2) {
+                updateUserState({ pageType: 'input', inputFieldNumber: 0 })
+                break
+            }
+
         case 'success':
             updateUserState({ pageType: 'init' })
         default:
@@ -149,26 +167,22 @@ export default async function input(
                 inputText: 'Enter The Value',
                 aspectRatio: '1.91:1',
                 state: _newState,
-                component: InputView(config, UserState),
+                component: InputView(config, UserState, { isFieldValid: UserState.isFieldValid }),
                 functionName: 'input',
             }
         case 'review':
             return review(config, _newState, null)
         case 'success':
-            // console.log(yellowBackgroundBlackText);
-            // console.log("DATA TO BE PUSHED: ", { fid, inputValues: UserState.inputValues, timestamp: (new Date()).getTime() });
-            // console.log("STATE: ", state);
-            // console.log(reset);
-
+            if (UserState.isOldUser) {
+                const index = getIndexForFid(fid, _newState);
+                _newState.data = [..._newState.data.slice(0, index), ..._newState.data.slice(index + 1)]
+            }
+            // CHECK IF USER HAS ALREADY SUBMITTED
             _newState = Object.assign(_newState, {
-                data: [...(state.data || []), { fid, inputValues: UserState.inputValues, timestamp: (new Date()).getTime() }],
+                data: [...(_newState.data || []), { fid, inputValues: UserState.inputValues, timestamp: (new Date()).getTime() }],
             })
-
-            // kv.set(config.form_id, newState)
-            console.log(yellowBackgroundBlackText);
-            console.log("STATE: ", _newState);
-            console.log(reset);
-
+            resetUserState()
+            updateUserState({ pageType: 'success' })
             return {
                 buttons: [
                     {
@@ -178,6 +192,21 @@ export default async function input(
                 state: _newState,
                 aspectRatio: '1.91:1',
                 component: SuccessView(config),
+                functionName: 'input',
+            }
+        case 'submitted_before':
+            return {
+                buttons: [
+                    {
+                        label: 'Back'
+                    },
+                    {
+                        label: 'Continue'
+                    }
+                ],
+                state: _newState,
+                aspectRatio: '1.91:1',
+                component: SubmittedView(config),
                 functionName: 'input',
             }
         default:
@@ -194,5 +223,42 @@ export default async function input(
         aspectRatio: '1.91:1',
         component: InputView(config, UserState),
         functionName: 'initial',
+    }
+}
+
+function getIndexForFid(fid: number | string, state: State): number {
+    let index: number = -1
+    state.data?.find((record, i) => {
+        if (record.fid === fid) {
+            index = i
+        }
+    })
+    return index
+}
+
+function isValid(value: any, varType: 'text' | 'number' | 'email' | 'phone' | 'address'): boolean {
+    if (value.trim().length == 0) {
+        return true
+    }
+    switch (varType) {
+        case 'text':
+            return typeof value === 'string' && value.trim().length > 0;
+
+        case 'number':
+            return !isNaN(value) && !isNaN(parseFloat(value));
+
+        case 'email':
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return typeof value === 'string' && emailRegex.test(value);
+
+        case 'phone':
+            const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+            return typeof value === 'string' && phoneRegex.test(value);
+
+        case 'address':
+            return typeof value === 'string' && value.trim().length > 0;
+
+        default:
+            return false;
     }
 }

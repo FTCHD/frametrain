@@ -6,17 +6,17 @@ export default function CoverView(config: Config) {
             style={{
                 width: '100%',
                 height: '100%',
-                backgroundColor: 'black',
+                background: config.backgroundColor,
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
                 fontFamily: 'Roboto',
                 fontSize: '50px',
-                color: '#ffffff',
+                color: `${config.fontColor}`,
             }}
         >
-            THIS IS A FORM THAT USES A FORM TEMPLATE
+            {config.coverText}
         </div>
     )
 }

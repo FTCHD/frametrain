@@ -8,7 +8,7 @@ export type fieldTypes = {
     fieldName: string,
     fieldDescription: string,
     fieldExample: string,
-    isNecessary: boolean,
+    required: boolean,
     fieldType: 'text' | 'number' | 'email' | 'phone' | 'address'
 }
 
@@ -16,7 +16,9 @@ export interface Config extends BaseConfig {
     fields: fieldTypes[] | [],
     form_id: string,
     backgroundColor: string,
+    fontColor: string,
     coverText: string,
+    aboutText: string,
     successText: string
 }
 
@@ -46,6 +48,6 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialConfig: {fields: [], form_id: randomUUID(), backgroundColor: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)'},
+    initialConfig: {fields: [], form_id: randomUUID(), backgroundColor: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)', fontColor: '#FFFFFF'},
     requiresValidation: false,
 } satisfies BaseTemplate

@@ -110,7 +110,7 @@ export default function ReviewView(config: Config, userState: SessionUserStateTy
             style={{
                 width: '100%',
                 height: '100%',
-                background: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)',
+                background: config.backgroundColor,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -118,7 +118,7 @@ export default function ReviewView(config: Config, userState: SessionUserStateTy
                 textAlign: 'center',
                 fontFamily: 'Roboto',
                 fontSize: '50px',
-                color: '#ffffff',
+                color: config.fontColor,
             }}
         >
             <h5>Review</h5>
