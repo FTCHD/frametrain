@@ -4,8 +4,11 @@ import { NextResponse } from "next/server";
 import { ABI } from "../../utils/const";
 // biome-ignore lint/style/useImportType: <explanation>
 import { Abi, encodeFunctionData } from "viem";
+import type { TransactionTargetResponse } from "frames.js";
 
-export async function POST(req: NextRequest) {
+export async function POST(
+  req: NextRequest
+): Promise<NextResponse<TransactionTargetResponse>> {
   const calldata = encodeFunctionData({
     abi: ABI,
     functionName: "bookCall",
