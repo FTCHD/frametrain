@@ -42,7 +42,7 @@ export default function Inspector() {
 
             <p>
                 Note: Please be patient while the GIF is been creating, approx 10-30 sec. The size
-                of the GIF should be less 10 MB to publish to Farcaster.
+                of the GIF should be less 10 MB to publish to Farcaster. The recommended video length is less 30 min.
             </p>
 
             <h3 className="text-lg font-semibold">Enter parameters</h3>
@@ -179,7 +179,7 @@ export default function Inspector() {
                         scale: null,
                     })
 
-                    logs.current.value = 'Template has been reseted.'
+                    logs.current.value = 'The frame has been reseted.'
                 }}
             >
                 Reset
