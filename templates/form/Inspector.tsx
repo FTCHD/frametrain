@@ -1,18 +1,15 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { useFrameConfig, useFrameId, useFrameState } from '@/sdk/hooks'
+import { useFrameConfig, useFrameState } from '@/sdk/hooks'
 import { useEffect, useRef } from 'react'
 import type { Config, fieldTypes, State } from '.'
 import { ColorPicker } from '@/sdk/components'
 
-
 export default function Inspector() {
     const state = useFrameState() as State
     const [config, updateConfig] = useFrameConfig<Config>()
-    // const frameId = useFrameId()
-    const fields: fieldTypes[] = config.fields;
-
+    const fields: fieldTypes[] = config.fields
 
     const coverInputRef = useRef<HTMLInputElement>(null)
     const aboutInputRef = useRef<HTMLInputElement>(null)
@@ -20,16 +17,15 @@ export default function Inspector() {
 
     useEffect(() => {
         if (coverInputRef.current) {
-            coverInputRef.current.value = config.coverText ?? '';
+            coverInputRef.current.value = config.coverText ?? ''
         }
         if (aboutInputRef.current) {
-            aboutInputRef.current.value = config.aboutText ?? '';
+            aboutInputRef.current.value = config.aboutText ?? ''
         }
         if (successInputRef.current) {
-            successInputRef.current.value = config.successText ?? '';
+            successInputRef.current.value = config.successText ?? ''
         }
-    }, [config]);
-
+    }, [config])
 
     const itemNameInputRef = useRef<HTMLInputElement>(null)
     const itemDescriptionInputRef = useRef<HTMLInputElement>(null)
@@ -41,8 +37,7 @@ export default function Inspector() {
         <div className="w-full h-full space-y-4">
             <Button
                 onClick={() => {
-                    
-                    downloadCSV(state,'form-results.csv')
+                    downloadCSV(state, 'form-results.csv')
                 }}
                 className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded"
             >
@@ -79,30 +74,39 @@ export default function Inspector() {
 
             <Button
                 onClick={() => {
-                    if (!coverInputRef.current?.value) return;
-                    if (!aboutInputRef.current?.value) return;
-                    if (!successInputRef.current?.value) return;
+                    if (!coverInputRef.current?.value) return
+                    if (!aboutInputRef.current?.value) return
+                    if (!successInputRef.current?.value) return
 
                     updateConfig({
                         coverText: coverInputRef.current.value,
                         aboutText: aboutInputRef.current.value,
                         successText: successInputRef.current.value,
-                    });
+                    })
                 }}
                 className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded"
             >
                 Save
             </Button>
 
-
             <h2 className="text-lg font-semibold">Current Input Fields</h2>
             <ol className="list-decimal list-inside">
                 {config.fields?.map((field, index) => (
-                    <li key={index} className="flex items-center justify-between bg-slate-50 bg-opacity-50 p-2 rounded mb-1">
-                        <span>{index + 1}. {field.fieldName}</span>
+                    <li
+                        key={index}
+                        className="flex items-center justify-between bg-slate-50 bg-opacity-50 p-2 rounded mb-1"
+                    >
+                        <span>
+                            {index + 1}. {field.fieldName}
+                        </span>
                         <button
+                            type="button"
                             className="text-slate-500 bg-gray-200  border-red-500 hover:bg-red-500 hover:text-white font-bold py-1 px-2 rounded"
-                            onClick={() => updateConfig({ fields: [...fields.slice(0, index), ...fields.slice(index + 1)] })}
+                            onClick={() =>
+                                updateConfig({
+                                    fields: [...fields.slice(0, index), ...fields.slice(index + 1)],
+                                })
+                            }
                         >
                             X
                         </button>
@@ -134,11 +138,15 @@ export default function Inspector() {
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         ref={itemRequiredInputRef}
                     />
-                    <label htmlFor="required" className="text-lg ml-2">Required</label>
+                    <label htmlFor="required" className="text-lg ml-2">
+                        Required
+                    </label>
                 </div>
 
                 <div className="flex items-center space-x-2">
-                    <label htmlFor="dropdown" className="text-lg">Data Type</label>
+                    <label htmlFor="dropdown" className="text-lg">
+                        Data Type
+                    </label>
                     <select id="dropdown" ref={itemTypeInputRef} className="border rounded p-2">
                         <option value="text">Text</option>
                         <option value="number">Number</option>
@@ -158,11 +166,11 @@ export default function Inspector() {
                                 fieldDescription: itemDescriptionInputRef.current?.value ?? '',
                                 fieldExample: itemExampleInputRef.current?.value ?? '',
                                 required: itemRequiredInputRef.current?.checked,
-                                fieldType: itemTypeInputRef.current?.value
-                            }
+                                fieldType: itemTypeInputRef.current?.value,
+                            },
                         ]
                         updateConfig({
-                            fields: newFields
+                            fields: newFields,
                         })
                         itemNameInputRef.current.value = ''
                         if (!itemExampleInputRef.current?.value) return
@@ -190,7 +198,8 @@ export default function Inspector() {
                     className="w-full"
                     enabledPickers={['solid', 'gradient']}
                     background={
-                        config.backgroundColor || 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
+                        config.backgroundColor ||
+                        'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
                     }
                     setBackground={(value) => updateConfig({ backgroundColor: value })}
                 />
@@ -205,44 +214,38 @@ export default function Inspector() {
                 />
             </div>
         </div>
-
     )
 }
 
-
 function generateCSV(state: State): string {
     // Column names
-    const columnNames = ['timestamp', 'fid', ...state.inputNames];
+    const columnNames = ['timestamp', 'fid', ...state.inputNames]
 
     // Rows
-    const rows = state.data.map(record => [
-        record.timestamp,
-        record.fid,
-        ...record.inputValues
-    ]);
+    const rows = state.data.map((record) => [record.timestamp, record.fid, ...record.inputValues])
 
     // Combine column names and rows into CSV string
     const csvContent = [
-        columnNames.join(','),  // Header row
-        ...rows.map(row => row.join(','))  // Data rows
-    ].join('\n');
+        columnNames.join(','), // Header row
+        ...rows.map((row) => row.join(',')), // Data rows
+    ].join('\n')
 
-    return csvContent;
+    return csvContent
 }
 
 function downloadCSV(state: State, fileName: string): void {
-    const csvContent = generateCSV(state);
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+    const csvContent = generateCSV(state)
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
 
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', fileName);
-    link.style.visibility = 'hidden';
+    const link = document.createElement('a')
+    link.setAttribute('href', url)
+    link.setAttribute('download', fileName)
+    link.style.visibility = 'hidden'
 
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
 }
 
 // Usage example

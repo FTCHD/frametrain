@@ -2,7 +2,7 @@ import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import functions from './functions'
-import { randomUUID } from 'crypto'
+import { randomUUID } from 'node:crypto'
 
 export type fieldTypes = {
     fieldName: string,

@@ -3,7 +3,7 @@ import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import CoverView from '../views/Cover'
-import { updateUserState, UserState } from "./userState";
+import { updateUserState } from "./userState";
 
 const grayBackgroundBlackText = '\x1b[46m\x1b[30m'; // Gray background, black text
 const reset = '\x1b[0m'; // Reset styles
