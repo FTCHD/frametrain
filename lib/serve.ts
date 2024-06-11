@@ -39,7 +39,7 @@ export async function buildFramePage({
 
         // get image data from vercel/og ImageResponse
         const bufferData = Buffer.from(await renderedImage.arrayBuffer())
-        imageData = 'data:image/png;base64,' + bufferData.toString('base64')
+        imageData = bufferData.toString('base64')
     } else {
         imageData = image!
     }
@@ -53,7 +53,7 @@ export async function buildFramePage({
 
     const metadata = buildFrame({
         buttons,
-        image: imageData,
+        image: 'data:image/png;base64,' + imageData,
         aspectRatio,
         inputText,
         refreshPeriod,
@@ -89,7 +89,6 @@ export async function buildPreviewFramePage({
     state,
     fonts,
     component,
-    image,
     functionName,
 }: {
     id: string
@@ -101,27 +100,16 @@ export async function buildPreviewFramePage({
     state?: BaseState
     fonts?: any[]
     component: ReactElement
-    image: string
     functionName?: string
 }) {
-    if (!component && !image) {
-        throw new Error('Either component or image must be provided')
-    }
+    const image = new ImageResponse(component, {
+        ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+        fonts,
+    })
 
-    let imageData
-
-    if (component) {
-        const renderedImage = new ImageResponse(component, {
-            ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
-            fonts,
-        })
-
-        // get image data from vercel/og ImageResponse
-        const bufferData = Buffer.from(await renderedImage.arrayBuffer())
-        imageData = 'data:image/png;base64,' + bufferData.toString('base64')
-    } else {
-        imageData = image!
-    }
+    // get image data from vercel/og ImageResponse
+    const bufferData = Buffer.from(await image.arrayBuffer())
+    const imageData = bufferData.toString('base64')
 
     const searchParams =
         params !== undefined
@@ -132,7 +120,7 @@ export async function buildPreviewFramePage({
 
     const metadata = buildFrame({
         buttons,
-        image: imageData,
+        image: 'data:image/png;base64,' + imageData,
         aspectRatio,
         inputText,
         refreshPeriod,
@@ -205,7 +193,7 @@ function buildFrame({
             }
             metadata[`fc:frame:button:${index + 1}`] = button.label
             if (button.action) {
-                if (!['post', 'post_redirect', 'mint', 'link'].includes(button.action)) {
+                if (!['post', 'post_redirect', 'mint', 'link', 'tx'].includes(button.action)) {
                     throw new Error('Invalid button action.')
                 }
                 metadata[`fc:frame:button:${index + 1}:action`] = button.action

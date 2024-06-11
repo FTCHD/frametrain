@@ -198,7 +198,7 @@ export function frameResultToFrameMetadata(
 
 ////////////////////////////////////////////////
 
-const buttonActionSchema = z.enum(['post', 'post_redirect', 'mint', 'link'])
+const buttonActionSchema = z.enum(['post', 'post_redirect', 'mint', 'link', 'tx'])
 const aspectRatioSchema = z.enum(['1:1', '1.91:1'])
 
 const createButtonSchemas = () => {
