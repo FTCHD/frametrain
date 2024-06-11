@@ -69,7 +69,7 @@ export default async function page(
         label: "Confirm ✅",
         action: "tx",
         // target: `https://cal-cast-v2.vercel.app/frames/txdata?fid=eyJmaWQiOjIxNTc4MSwiZHVyYXRpb24iOjE1fQ%3D%3D&ownerName=fabianferno&ownerimg=https%3A%2Fi.imgur.com%2F56ZfLrq.jpg&d=${params.date}&datefixed=true&t=${params.slot}&timefixed=true&confirm=true&userfid=${body.untrustedData.fid}&owner=${config.ownerFid}&duration=15&__bi=2-tx`,
-        target: `https://frametrain-hack.vercel.app/api/txdata?owner=${config.ownerFid}&userfid=${body.untrustedData.fid}&d=${params.date}&t=${params.slot}`,
+        target: `https://frametrain-hack.vercel.app/api/txdata?fid=eyJmaWQiOjIxNTc4MSwiZHVyYXRpb24iOjE1fQ%3D%3D&ownerName=fabianferno&ownerimg=https%3A%2Fi.imgur.com%2F56ZfLrq.jpg&d=${params.date}&datefixed=true&t=${params.slot}&timefixed=true&confirm=true&userfid=${body.untrustedData.fid}&owner=${config.ownerFid}&duration=15&__bi=2-tx`,
       },
     ],
     component: await PageView(data),
