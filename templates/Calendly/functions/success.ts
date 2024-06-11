@@ -27,11 +27,7 @@ export default async function page(
         }
     )
     return {
-        buttons: [
-            {
-                label: 'Schedule Now',
-            },
-        ],
+        buttons: [],
         component: PageView(data),
         functionName: 'duration',
     }

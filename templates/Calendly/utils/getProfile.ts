@@ -1,11 +1,11 @@
-import request, { gql } from "graphql-request";
-import { SUBGRAPH_URL } from "./const";
+import request, { gql } from 'graphql-request'
+import { SUBGRAPH_URL } from './const'
 
 export async function getProfile(farcasterId: string) {
-  try {
-    const data: any = await request(
-      SUBGRAPH_URL,
-      gql`
+    try {
+        const data: any = await request(
+            SUBGRAPH_URL,
+            gql`
         query GetProfile {
             profiles(where: {farcasterId: "${farcasterId}"}) {
               farcasterId
@@ -29,12 +29,12 @@ export async function getProfile(farcasterId: string) {
             }
         }
       `,
-      {}
-    );
-    console.log(`Profile for ${farcasterId}: `, data);
-    return data?.profiles?.[0];
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return [];
-  }
+            {}
+        )
+        console.log(`Profile for ${farcasterId}: `, data)
+        return data?.profiles?.[0]
+    } catch (error) {
+        console.error('Error fetching data:', error)
+        return []
+    }
 }
