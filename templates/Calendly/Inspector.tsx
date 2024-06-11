@@ -6,70 +6,242 @@ import { useEffect, useRef, useState } from "react";
 import type { Config } from ".";
 import { useSession } from "next-auth/react";
 
+import { createWalletClient, encodeFunctionData, http } from "viem";
+import type { Abi } from "viem";
+import { baseSepolia } from "viem/chains";
+import { privateKeyToAccount } from "viem/accounts";
+import { ABI } from "./utils/const";
+import { getProfile } from "./utils/getProfile";
+
 export default function Inspector() {
-  const [verified, setVerified] = useState(false);
+  const [profileExist, setProfileExist] = useState<any>(null);
+  const [farcasterId, setFarcasterId] = useState<any>(0);
+
+  const [profile, setProfile] = useState<{
+    _karmaGatingEnabled: boolean;
+    _profileMetadata: string;
+    _price: number;
+    _startTimeInSecs: number;
+    _endTimeInSecs: number;
+  }>({
+    _karmaGatingEnabled: false,
+    _profileMetadata: "",
+    _price: 0,
+    _startTimeInSecs: 0,
+    _endTimeInSecs: 0,
+  });
+
+  function generateTimeSlots(startTime: number, endTime: number): number[] {
+    // biome-ignore lint/style/useConst: <explanation>
+    let slots = [];
+    for (let i = startTime; i <= endTime; i += 900) {
+      slots.push(i);
+    }
+    return slots;
+  }
+
   const [config, updateConfig] = useFrameConfig<Config>();
   const sesh = useSession();
-  console.log(sesh.data?.user);
+  console.log(sesh.data?.user?.id);
 
   const displayLabelInputRef = useRef<HTMLInputElement>(null);
+
+  //
+  const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY;
+
+  const account = privateKeyToAccount(privateKey as `0x${string}`);
+
+  const client = createWalletClient({
+    account,
+    chain: baseSepolia,
+    transport: http(),
+  });
+
+  const handleSubmit = async () => {
+    const calldata = encodeFunctionData({
+      abi: ABI,
+      functionName: "createProfile",
+      args: [
+        // sesh.data?.user?.id, // Farcaster ID
+        farcasterId,
+        generateTimeSlots(profile._startTimeInSecs, profile._endTimeInSecs), // Time slots
+        [900], // Time periods
+        [profile._price], // Pricing
+        profile._karmaGatingEnabled, // Karma Gating
+        profile._profileMetadata, // Metadata
+      ],
+    });
+    console.log(calldata);
+    const hash = await client.sendTransaction({
+      to: "0x51d51C87e7f55547D202FCdBb5713bF9d4a5f6A4",
+      value: BigInt(0),
+      abi: ABI as Abi,
+      data: calldata,
+    });
+    console.log(hash);
+    if (hash) {
+      updateConfig({
+        ownerName: sesh.data?.user?.name,
+        // ownerFid: sesh.data?.user?.id,
+        ownerFid: farcasterId,
+        ownerImg: sesh.data?.user?.image,
+      });
+    }
+  };
+  //
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  // useEffect(() => {
-  //   if (verified) {
-  //     // updateConfig({
-  //     //   ownerName: sesh.data?.user?.name,
-  //     //   ownerFid: sesh.data?.user?.id,
-  //     //   ownerImg: sesh.data?.user?.image,
-  //     // });
-  //   }
-  // }, [verified]);
+  useEffect(() => {
+    if (sesh.data?.user?.id) {
+      setFarcasterId(sesh.data?.user?.id);
+      getProfile(farcasterId).then((profile) => setProfileExist(profile));
+    }
+  }, [farcasterId, profileExist, sesh.data?.user?.id]);
 
   return (
-    <div className="w-full h-full space-y-4">
-      <p>{JSON.stringify(config)}</p>
-      <h2 className="text-lg font-semibold">CalCast</h2>
+    <section className="p-5 rounded-xl flex w-full flex-col justify-start items-start">
+      {profileExist ? (
+        <div className="p-4 rounded grid grid-row-3 gap-3 justify-start">
+          <p>
+            <b>Meeting location: </b>
+            {profileExist.metadata}
+          </p>
+          <p>
+            <b>Your availability:</b>{" "}
+            {Number.parseInt(profileExist.timeSlots[0]) / 60 / 60} -{" "}
+            {Number.parseInt(
+              profileExist.timeSlots[profileExist.timeSlots.length - 1]
+            ) /
+              60 /
+              60}
+          </p>
+          <p>
+            <b>Your meeting price:</b> {profileExist.prices?.[0]}
+          </p>
+          <p>
+            <b>Your meeting types:</b>{" "}
+            {profileExist?.timePeriods[0] == "900" ? "15 min" : "30 mins"}
+          </p>
+          <p>
+            <b>Your earnings</b>: {profileExist.totalEarnings} from{" "}
+            {profileExist.totalBookings} bookings
+          </p>
+          <p>
+            <p className="font-bold text-xl">Your bookings:</p>{" "}
+            {profileExist.receivedBookings.length > 0 ? (
+              <table className="min-w-full border-collapse">
+                <thead>
+                  <tr className="">
+                    <th className="border px-4 py-2">Date</th>
+                    <th className="border px-4 py-2">Time</th>
+                    <th className="border px-4 py-2">Duration</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {profileExist?.receivedBookings?.map(
+                    (booking: any, index: any) => {
+                      const date = `${booking.day}/${booking.month}/${booking.year}`;
+                      const time = `${booking.timeStartInSeconds / 60 / 60}`;
+                      const duration = `${
+                        booking.timePeriodInSeconds / 60 / 60
+                      } hours`;
 
-      <h3 className="text-lg font-semibold">Shedule a call</h3>
-
-      <p>
-        {verified
-          ? "You have been verified Enter the necessary Detail to create a frame for yourself"
-          : "Verify First to Edit your Frame"}
-      </p>
-      {verified ? (
-        <div className="flex flex-col gap-2 ">
-          <Input
-            className="text-lg"
-            placeholder="Enter your fid Manually to verify"
-            ref={displayLabelInputRef}
-          />
+                      return (
+                        <tr key={index} className="">
+                          <td className="border px-4 py-2">{date}</td>
+                          <td className="border px-4 py-2">{time}</td>
+                          <td className="border px-4 py-2">{duration}</td>
+                        </tr>
+                      );
+                    }
+                  )}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-gray-500">No bookings yet</p>
+            )}
+          </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-2 ">
-          <Input
-            className="text-lg"
-            placeholder="Enter your fid Manually to verify"
-            ref={displayLabelInputRef}
-          />
-
-          <Button
-            onClick={() => {
-              if (!displayLabelInputRef.current?.value) return;
-              if (displayLabelInputRef.current.value === sesh.data?.user?.id) {
-                updateConfig({
-                  ownerName: sesh.data?.user?.name,
-                  ownerFid: sesh.data?.user?.id,
-                  ownerImg: sesh.data?.user?.image,
+        <div className="grid grid-row-4 w-full items-start gap-5">
+          <div className="flex flex-col space-y-1.5">
+            <label htmlFor="name">Choose Location</label>
+            <Input
+              onChange={(e) => {
+                setProfile({
+                  ...profileExist,
+                  _profileMetadata: e.target.value,
                 });
-                setVerified(true);
-              }
-            }}
-            className="w-full bg-border hover:bg-secondary-border text-primary"
-          >
-            Verify
-          </Button>
+              }}
+              type="text"
+              className="bg-black"
+              placeholder="Huddle01 Url, Zoom Link, etc."
+            />
+          </div>
+          <div className="flex flex-col space-y-1.5">
+            <label htmlFor="name">Set Price</label>
+            <Input
+              onChange={(e) => {
+                setProfile({
+                  ...profileExist,
+                  _price: Number.parseInt(e.target.value),
+                });
+              }}
+              type="number"
+              className="bg-black"
+              placeholder="Amount to charge per call"
+            />
+          </div>
+
+          <div className="flex flex-col space-y-1.5">
+            <label htmlFor="name">Choose availability (start/end):</label>
+            <div className="grid grid-cols-2 gap-2">
+              <Input
+                onChange={(e) => {
+                  // biome-ignore lint/style/noVar: <explanation>
+                  var a = e.target.value.split(":"); // split it at the colons
+                  // biome-ignore lint/style/noVar: <explanation>
+                  var seconds = +a[0] * 60 * 60 + +a[1] * 60;
+                  setProfile({
+                    ...profileExist,
+                    _startTimeInSecs: seconds,
+                  });
+                }}
+                type="time"
+                className="bg-black"
+                placeholder="Start time"
+              />
+              <Input
+                onChange={(e) => {
+                  // biome-ignore lint/style/noVar: <explanation>
+                  var a = e.target.value.split(":"); // split it at the colons
+                  // biome-ignore lint/style/noVar: <explanation>
+                  var seconds = +a[0] * 60 * 60 + +a[1] * 60;
+                  // minutes are worth 60 seconds. Hours are worth 60 minutes.
+                  setProfile({
+                    ...profileExist,
+                    _endTimeInSecs: seconds,
+                  });
+                }}
+                type="time"
+                className="bg-black"
+                placeholder="End time"
+              />
+            </div>
+          </div>
         </div>
       )}
-    </div>
+      {profileExist ? (
+        <></>
+      ) : (
+        <Button
+          onClick={handleSubmit}
+          variant={"outline"}
+          className="bg-black hover:bg-white hover:text-black flex w-full mt-2"
+        >
+          Create Profile
+        </Button>
+      )}
+    </section>
   );
 }
