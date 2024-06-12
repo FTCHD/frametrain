@@ -11,7 +11,13 @@ export default function CoverView({
     if (article?.metadata.image) {
         background = `url(${article.metadata.image})`
     }
-    console.log('bgBlendMode', bgBlendMode)
+
+    let titleFontSize = '80px'
+    let authorFontSize = '40px'
+    if (article && (article?.metadata?.title?.length ?? 0) + (article?.metadata?.author?.length ?? 0) > 80) {
+        titleFontSize = '40px'
+        authorFontSize = '20px'
+    }
 
     return (
         <div
@@ -48,13 +54,13 @@ export default function CoverView({
                 <div style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'center',
+                    justifyContent: 'space-between',
                     alignItems: 'center'
                 }}>
                     <span
                         style={{
                             fontFamily: 'Georgia',
-                            fontSize: '80px',
+                            fontSize: titleFontSize,
                             textAlign: 'center',
                             textWrap: 'balance',
                             margin: '0 auto'
@@ -64,8 +70,9 @@ export default function CoverView({
                     <span
                         style={{
                             fontFamily: 'Georgia',
-                            fontSize: '40px',
-                            textAlign: 'center'
+                            fontSize: authorFontSize,
+                            textAlign: 'center',
+                            margin: '20px auto'
                         }}
                     >{ article?.metadata.author ?? 'Paste your medium article link into the URL input' }
                     </span>
