@@ -5,9 +5,6 @@ import type { Config, State } from '..'
 import CoverView from '../views/Cover'
 import { updateUserState } from './userState'
 
-const grayBackgroundBlackText = '\x1b[46m\x1b[30m' // Gray background, black text
-const reset = '\x1b[0m' // Reset styles
-
 export default async function initial(config: Config, state: State): Promise<BuildFrameData> {
     let newState = state
     newState = Object.assign(state, {
@@ -20,11 +17,6 @@ export default async function initial(config: Config, state: State): Promise<Bui
     const SHARE_FRAME_URL = config.frameURL
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
-
-    console.log(grayBackgroundBlackText)
-    console.log('state is', newState)
-
-    console.log(reset)
 
     return {
         buttons: [
