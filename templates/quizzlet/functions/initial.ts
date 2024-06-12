@@ -8,7 +8,7 @@ export default async function initial(config: Config, _: State): Promise<BuildFr
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
     return {
-        buttons: [{ label: 'START' }],
+        buttons: [{ label: config.cover?.label ?? 'START' }],
         fonts: roboto,
         component: CoverView(config),
         functionName: 'page',

@@ -44,6 +44,8 @@ export default function Inspector() {
     const [choices, setChoices] = useState<number>(0)
     const [showChoices, setShowChoices] = useState<boolean>(false)
 
+    console.log('qna', config.qna)
+
     useEffect(() => {
         console.log('choices', { choices, choicesType })
         if (choices > 1 && choicesType) {
@@ -325,8 +327,8 @@ function QuestionUpdateForm({
     const choices = qna.choices
     const choicesType = qna.isNumeric ? 'numeric' : 'alpha'
     const representation = choicesRepresentation[choicesType]
-    console.log(`QuestionUpdateForm >> qna`, qna)
-    console.log(`QuestionUpdateForm >> representation`, representation)
+    console.log('QuestionUpdateForm >> qna', qna)
+    console.log('QuestionUpdateForm >> representation', representation)
 
     return (
         <div className="flex flex-col gap-5 px-4">
@@ -394,7 +396,7 @@ function QuestionUpdateForm({
                 <RadioGroup
                     defaultValue={qna.answer}
                     onValueChange={(v) => {
-                        console.log(`Answer selection v`, v)
+                        console.log('Answer selection v', v)
                         // onChangeQna({
                         //     ...qna,
                         //     answer:

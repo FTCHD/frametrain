@@ -1,7 +1,6 @@
 import type { Config } from '..'
-import template from '../'
 
-export default function CoverView(config: Config) {
+export default function PreReviewAnswersView(config: Config) {
     return (
         <div
             style={{
@@ -17,7 +16,7 @@ export default function CoverView(config: Config) {
                 color: '#ffffff',
             }}
         >
-            {config.text || template.initialConfig.text}
+            {config.beforeReview?.screen || 'Click to start reviewing your answers'}
         </div>
     )
 }
