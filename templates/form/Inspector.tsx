@@ -2,11 +2,12 @@
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { useFrameConfig, useFrameState } from '@/sdk/hooks'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Config, fieldTypes, State } from '.'
 import { ColorPicker } from '@/sdk/components'
 
 export default function Inspector() {
+    const [showModal, setShowModal] = useState(false)
     const state = useFrameState() as State
     const [config, updateConfig] = useFrameConfig<Config>()
     const fields: fieldTypes[] = config.fields
@@ -43,10 +44,19 @@ export default function Inspector() {
     return (
         <div className="w-full h-full space-y-4">
             <Button
+                className="bg-blue-500 hover:bg-blue-700 text-white py-3 mr-1 rounded"
+                type="button"
+                onClick={() => setShowModal(true)}
+            >
+                Show Submissions
+            </Button>
+            <Modal showModal={showModal} setShowModal={setShowModal} state={state} />
+
+            <Button
                 onClick={() => {
                     downloadCSV(state, 'form-results.csv')
                 }}
-                className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded"
+                className="bg-blue-500 hover:bg-blue-700 text-white py-3 rounded"
             >
                 DOWNLOAD RESULTS
             </Button>
@@ -97,13 +107,12 @@ export default function Inspector() {
                     if (!aboutInputRef.current?.value) return
                     if (!successInputRef.current?.value) return
                     if (!duplicateInputRef.current) return
-                    
 
                     updateConfig({
                         coverText: coverInputRef.current.value,
                         aboutText: aboutInputRef.current.value,
                         successText: successInputRef.current.value,
-                        allowDuplicates: duplicateInputRef.current?.checked ?? false
+                        allowDuplicates: duplicateInputRef.current?.checked ?? false,
                     })
                 }}
                 className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded"
@@ -303,5 +312,85 @@ function downloadCSV(state: State, fileName: string): void {
     document.body.removeChild(link)
 }
 
-// Usage example
-// downloadCSV(state, 'data.csv');
+function generateTable(state: State) {
+    return (
+        <table className="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Timestamp</th>
+                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">FID</th>
+                    {state.inputNames.map((name, index) => (
+                        <th
+                            key={index}
+                            className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100"
+                        >
+                            {name}
+                        </th>
+                    ))}
+                </tr>
+            </thead>
+            <tbody>
+                {state.data.map((record, rowIndex) => (
+                    <tr key={rowIndex}>
+                        <td className="py-2 px-4 border-b border-gray-200">{record.timestamp}</td>
+                        <td className="py-2 px-4 border-b border-gray-200">{record.fid}</td>
+                        {record.inputValues.map((value, colIndex) => (
+                            <td key={colIndex} className="py-2 px-4 border-b border-gray-200">
+                                {value}
+                            </td>
+                        ))}
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    )
+}
+
+const Modal = ({
+    showModal,
+    setShowModal,
+    state,
+}: { showModal: boolean; setShowModal: any; state: State }) => {
+    return (
+        <>
+            {showModal ? (
+                <>
+                    <div className="text-black fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+                        <div className="relative w-auto max-w-3xl mx-auto my-6">
+                            {/*content*/}
+                            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                                {/*header*/}
+                                <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
+                                    <h3 className="text-3xl font-semibold">State Data Table</h3>
+                                    <button
+                                        type="button"
+                                        className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                                        onClick={() => setShowModal(false)}
+                                    >
+                                        <span className="bg-transparent text-black h-6 w-6 text-2xl block outline-none focus:outline-none">
+                                            ×
+                                        </span>
+                                    </button>
+                                </div>
+                                {/*body*/}
+                                <div className="relative p-6 flex-auto">{generateTable(state)}</div>
+                                {/*footer*/}
+                                <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
+                                    <button
+                                        className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                        type="button"
+                                        onClick={() => setShowModal(false)}
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* biome-ignore lint/style/useSelfClosingElements: <explanation> */}
+                    <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+                </>
+            ) : null}
+        </>
+    )
+}
