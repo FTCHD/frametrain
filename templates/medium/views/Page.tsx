@@ -26,6 +26,8 @@ export default function PageView({
              }}>
                 {page.map((element, index) => {
                     switch (element.tag) {
+                        case 'IMG':
+                            return <img key={index} src={element.src} alt="frame" style={{ margin: '8px 0' }} />
                         case 'P':
                             return <p key={index} style={{ margin: '8px 0' }}>{element.text}</p>
                         case 'H1':
