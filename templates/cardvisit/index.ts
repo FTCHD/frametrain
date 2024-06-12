@@ -4,7 +4,14 @@ import cover from './cover.png'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
-    text: string
+    githubLink: string,
+    full_name: string,
+    stargazers_count: number,
+    watchers_count: number,
+    forks_count: number,
+    description: string,
+    owner_avatar_url: string,
+    owner_login: string,
 }
 
 export interface State extends BaseState {}
@@ -19,7 +26,14 @@ export default {
     Inspector,
     functions,
     initialConfig: {
-        text: 'Default Text',
+        githubLink: "",
+        full_name: "",
+        stargazers_count: 0,
+        watchers_count: 0,
+        forks_count: 0,
+        description: "",
+        owner_avatar_url: "",
+        owner_login: "",
     },
     requiresValidation: false,
 } satisfies BaseTemplate

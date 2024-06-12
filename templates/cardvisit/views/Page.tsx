@@ -17,7 +17,7 @@ export default function CoverView(config: Config) {
                 color: '#ffffff',
             }}
         >
-            {config.text || template.initialConfig.text}
+            {"hello"}
         </div>
     )
 }
