@@ -37,9 +37,10 @@ export default function Inspector() {
         }
 
         setLoading(true)
-        
-        updateConfig({ article: await getMediumArticle(url) })
-        //console.log(config.article)
+
+        const newArticle = await getMediumArticle(url)
+        updateConfig({ article: newArticle })
+        console.log(newArticle)
 
         setLoading(false)
     }
@@ -47,12 +48,16 @@ export default function Inspector() {
     return (
         <div className="h-full flex flex-col gap-10">
             <div className="w-full h-full flex flex-col gap-5">
-                <h1 className="text-2xl font-bold">URL<span>{ loading ?? <LoaderIcon className="animate-spin" /> }</span></h1>
+                <div className="flex gap-2 items-center">
+                    <h1 className="text-2xl font-bold">URL</h1>
+                    { loading && <LoaderIcon className="animate-spin" /> }
+                </div>
                 <div className="flex flex-col gap-2">
                     <Input
                         className="py-2 text-lg"
                         placeholder="https://medium.com/..."
-                        ref={inputRef} 
+                        ref={inputRef}
+                        defaultValue={ config.article?.url ?? '' }
                         onChange={renderMediumArticle}
                     />
                 </div>
@@ -73,6 +78,7 @@ export default function Inspector() {
                     </div>
                     <Input
                         className="w-full"
+                        defaultChecked={ config.hideTitleAuthor }
                         type="checkbox"
                         ref={hideTitleAuthorRef} 
                         onChange={() => updateConfig({ hideTitleAuthor: hideTitleAuthorRef.current?.checked })}
@@ -82,7 +88,7 @@ export default function Inspector() {
                 <div className="flex flex-col gap-2">
                     <h2 className="text-lg font-semibold">Background Image Mode</h2>
                     <Select
-                        defaultValue={'normal'}
+                        defaultValue={ config.bgBlendMode }
                         onValueChange={(value) => updateConfig({ bgBlendMode: value })}
                     >
                         <SelectTrigger>
@@ -100,11 +106,12 @@ export default function Inspector() {
                 <div className="flex gap-2 items-center">
                     <div className='flex flex-col'>
                         <h2 className="text-lg font-bold">Show link to article on every frame</h2>
-                        <p>unchecked: show only on last page</p>
+                        <p>uncheck for last page only</p>
                     </div>
                     <Input
                         className="w-full"
                         type="checkbox"
+                        defaultChecked={ config.showLinkOnAllPages }
                         ref={linkOnAllPagesRef} 
                         onChange={() => updateConfig({ showLinkOnAllPages: linkOnAllPagesRef.current?.checked })}
                     />
