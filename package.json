@@ -76,10 +76,10 @@
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-feather": "^2.0.10",
-        "react-github-contribution-calendar": "^2.2.0",
+
         "react-hook-form": "^7.51.5",
         "react-hot-toast": "^2.4.1",
-        "react-ts-github-calendar": "^1.0.3",
+
         "satori": "^0.10.13",
         "tailwind-merge": "^2.3.0",
         "tailwindcss-animate": "^1.0.7",
