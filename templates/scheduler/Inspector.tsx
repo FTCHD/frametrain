@@ -12,6 +12,7 @@ import type { Abi } from 'viem'
 import { ABI } from './utils/const'
 import { getProfile } from './utils/getProfile'
 import { client } from './utils/config'
+import { Toggle } from '@/components/shadcn/Toggle'
 
 export default function Inspector() {
     const [profileExist, setProfileExist] = useState<any>(null)
@@ -44,15 +45,15 @@ export default function Inspector() {
     const sesh = useSession()
     console.log(sesh.data?.user?.id)
 
-    const displayLabelInputRef = useRef<HTMLInputElement>(null)
-
     const handleSubmit = async () => {
+        console.log(profile)
         const calldata = encodeFunctionData({
             abi: ABI,
             functionName: 'createProfile',
             args: [
                 // sesh.data?.user?.id, // Farcaster ID
                 farcasterId,
+
                 generateTimeSlots(profile._startTimeInSecs, profile._endTimeInSecs), // Time slots
                 [900], // Time periods
                 [profile._price], // Pricing
@@ -83,7 +84,16 @@ export default function Inspector() {
     useEffect(() => {
         if (sesh.data?.user?.id) {
             setFarcasterId(sesh.data?.user?.id)
-            getProfile(farcasterId).then((profile) => setProfileExist(profile))
+            getProfile(farcasterId).then((profile) => {
+                setProfileExist(profile)
+                console.log(profile)
+            })
+
+            updateConfig({
+                ownerName: sesh.data?.user?.name,
+                ownerFid: farcasterId,
+                ownerImg: sesh.data?.user?.image,
+            })
         }
     }, [farcasterId, profileExist, sesh.data?.user?.id])
 
@@ -106,6 +116,10 @@ export default function Inspector() {
                     </p>
                     <p>
                         <b>Your meeting price:</b> {profileExist.prices?.[0]}
+                    </p>
+                    <p>
+                        <b>Karma Gating Enabled :</b>{' '}
+                        {profileExist.karmaGatingEnabled ? 'Yes' : 'No'}
                     </p>
                     <p>
                         <b>Your meeting types:</b>{' '}
@@ -158,7 +172,7 @@ export default function Inspector() {
                         <Input
                             onChange={(e) => {
                                 setProfile({
-                                    ...profileExist,
+                                    ...profile,
                                     _profileMetadata: e.target.value,
                                 })
                             }}
@@ -172,7 +186,7 @@ export default function Inspector() {
                         <Input
                             onChange={(e) => {
                                 setProfile({
-                                    ...profileExist,
+                                    ...profile,
                                     _price: Number.parseInt(e.target.value),
                                 })
                             }}
@@ -181,7 +195,21 @@ export default function Inspector() {
                             placeholder="Amount to charge per call"
                         />
                     </div>
+                    <div className="flex flex-col space-y-1.5 mb-5">
+                        <div>Enable Karma Gating</div>
 
+                        <Toggle
+                            variant={'outline'}
+                            aria-label="Toggle italic"
+                            onClick={() => {
+                                profile._karmaGatingEnabled
+                                    ? setProfile({ ...profile, _karmaGatingEnabled: false })
+                                    : setProfile({ ...profile, _karmaGatingEnabled: true })
+                            }}
+                        >
+                            Karma Gating
+                        </Toggle>
+                    </div>
                     <div className="flex flex-col space-y-1.5">
                         <label htmlFor="name">Choose availability (start/end):</label>
                         <div className="grid grid-cols-2 gap-2">
@@ -192,7 +220,7 @@ export default function Inspector() {
                                     // biome-ignore lint/style/noVar: <explanation>
                                     var seconds = +a[0] * 60 * 60 + +a[1] * 60
                                     setProfile({
-                                        ...profileExist,
+                                        ...profile,
                                         _startTimeInSecs: seconds,
                                     })
                                 }}
@@ -208,7 +236,7 @@ export default function Inspector() {
                                     var seconds = +a[0] * 60 * 60 + +a[1] * 60
                                     // minutes are worth 60 seconds. Hours are worth 60 minutes.
                                     setProfile({
-                                        ...profileExist,
+                                        ...profile,
                                         _endTimeInSecs: seconds,
                                     })
                                 }}
@@ -221,25 +249,12 @@ export default function Inspector() {
                 </div>
             )}
             {profileExist ? (
-                <div>
-                    <Button
-                        onClick={() => {
-                            updateConfig({
-                                ownerName: sesh.data?.user?.name,
-                                // ownerFid: sesh.data?.user?.id,
-                                ownerFid: farcasterId,
-                                ownerImg: sesh.data?.user?.image,
-                            })
-                        }}
-                    >
-                        Refresh
-                    </Button>
-                </div>
+                <></>
             ) : (
                 <Button
                     onClick={handleSubmit}
                     variant={'outline'}
-                    className="bg-black hover:bg-white hover:text-black flex w-full mt-2"
+                    className="bg-white hover:bg-slate-300 hover:text-black text-black flex w-full mt-2"
                 >
                     Create Profile
                 </Button>
