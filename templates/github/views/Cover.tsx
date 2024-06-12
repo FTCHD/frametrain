@@ -62,7 +62,7 @@ export default function CoverView(config: Config) {
                             alignItems: 'center',
                         }}
                     >
-                        <img src="http://localhost:3000/repo.png" width={32} alt="" />
+                        <img src={`${process.env.NEXT_PUBLIC_HOST}/repo.png`} width={32} alt="" />
                         <div
                             style={{
                                 width: '280px',
@@ -91,7 +91,11 @@ export default function CoverView(config: Config) {
                             alignItems: 'center',
                         }}
                     >
-                        <img src="http://localhost:3000/commits.png" width={32} alt="" />
+                        <img
+                            src={`${process.env.NEXT_PUBLIC_HOST}/commits.png`}
+                            width={32}
+                            alt=""
+                        />
                         <div
                             style={{
                                 width: '280px',
@@ -120,7 +124,7 @@ export default function CoverView(config: Config) {
                             alignItems: 'center',
                         }}
                     >
-                        <img src="http://localhost:3000/pull.png" width={32} alt="" />
+                        <img src={`${process.env.NEXT_PUBLIC_HOST}/pull.png`} width={32} alt="" />
                         <div
                             style={{
                                 width: '280px',
@@ -149,7 +153,7 @@ export default function CoverView(config: Config) {
                             alignItems: 'center',
                         }}
                     >
-                        <img src="http://localhost:3000/issue.png" width={32} alt="" />
+                        <img src={`${process.env.NEXT_PUBLIC_HOST}/issue.png`} width={32} alt="" />
                         <div
                             style={{
                                 width: '280px',
