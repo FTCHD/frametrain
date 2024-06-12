@@ -27,25 +27,25 @@ export default function PageView({
                 {page.map((element, index) => {
                     switch (element.tag) {
                         case 'P':
-                            return <p key={index} style={{ margin: '10px 0' }}>{element.text}</p>
+                            return <p key={index} style={{ margin: '8px 0' }}>{element.text}</p>
                         case 'H1':
-                            return <h1 key={index} style={{ fontSize: '30px', margin: '10px 0' }}>{element.text}</h1>
+                            return <h1 key={index} style={{ fontSize: '24px', margin: '8px 0' }}>{element.text}</h1>
                         case 'H2':
-                            return <h2 key={index} style={{ fontSize: '24px', margin: '10px 0' }}>{element.text}</h2>
+                            return <h2 key={index} style={{ fontSize: '18px', margin: '8px 0' }}>{element.text}</h2>
                         case 'H3':
-                            return <h3 key={index} style={{ margin: '10px 0' }}>{element.text}</h3>
+                            return <h3 key={index} style={{ margin: '8px 0' }}>{element.text}</h3>
                         case 'H4':
-                            return <h4 key={index} style={{ margin: '10px 0' }}>{element.text}</h4>
+                            return <h4 key={index} style={{ margin: '8px 0' }}>{element.text}</h4>
                         case 'H5':
-                            return <h5 key={index} style={{ margin: '10px 0' }}>{element.text}</h5>
+                            return <h5 key={index} style={{ margin: '8px 0' }}>{element.text}</h5>
                         case 'H6':
-                            return <h6 key={index} style={{ margin: '10px 0' }}>{element.text}</h6>
+                            return <h6 key={index} style={{ margin: '8px 0' }}>{element.text}</h6>
                         case 'STRONG':
-                            return <strong key={index} style={{ margin: '10px 0' }}>{element.text}</strong>
+                            return <strong key={index} style={{ margin: '8px 0' }}>{element.text}</strong>
                         case 'EM':
-                            return <em key={index} style={{ margin: '10px 0' }}>{element.text}</em>
+                            return <em key={index} style={{ margin: '8px 0' }}>{element.text}</em>
                         default:
-                            return <span key={index} style={{ margin: '10px 0' }}>{element.text}</span>
+                            return <span key={index} style={{ margin: '8px 0' }}>{element.text}</span>
                     }
                 })}
             </div>
@@ -54,10 +54,10 @@ export default function PageView({
                 flexFlow: 'column nowrap',
                 padding: '36px',
                 fontFamily: 'Georgia',
-                fontSize: '11px',
+                fontSize: '12px',
                 position: 'absolute',
-                bottom: '12px',
-                left: '0'
+                top: '-18px',
+                right: '0'
              }}>
                 { currentPage }/{ slideCount }
              </div>
