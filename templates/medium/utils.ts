@@ -34,7 +34,7 @@ export async function getMediumArticle(url: string): Promise<Article> {
 
     console.log(metadata)
 
-    const article = { pages: paginateElements(extractedText, 1200, metadata), url, metadata } // character limit
+    const article = { pages: paginateElements(extractedText, 1000, metadata), url, metadata } // character limit
 
     return article
 }
