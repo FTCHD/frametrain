@@ -31,7 +31,9 @@ export default async function results(
         { questionIndex: 6, answerIndex: 1 },
     ]
     const sum = pastAnswers.reduce((acc, answer) => {
+        console.log('Quizzlet.results >> reduce.sum', { acc, answer })
         const qna = config.qna[answer.questionIndex - 1]
+        console.log('Quizzlet.results >> reduce.sum', { qna })
         const choice =
             choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
         console.log('Quizzlet.results >> reduce.sum', { qnaAnswer: qna.answer, choice })
@@ -43,8 +45,8 @@ export default async function results(
 
     console.log('Quizzlet.results >> reduce.sum', { sum })
 
-    const correctChoices = allAnswers.filter((answer) => {
-        const qna = config.qna[answer.questionIndex - 1]
+    const correctChoices = allAnswers.filter((answer, i) => {
+        const qna = config.qna[i]
         const choice =
             choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
         console.log('Quizzlet.results >> filter.correctChoices', { qna, choice })
