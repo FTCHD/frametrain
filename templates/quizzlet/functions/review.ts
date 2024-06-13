@@ -49,7 +49,7 @@ export default async function review(
             label: 'Check Results',
         })
     } else {
-        buttons.push({ label: 'Next' })
+        buttons.push({ label: '→' })
     }
 
     console.log('/review for quizzlet', {

@@ -38,5 +38,6 @@ export default async function prereview(
         aspectRatio: '1.91:1',
         component: ReviewAnswersView({ qna, qnas, colors, userAnswer, ...rest }),
         functionName: 'review',
+        params: { currentPage: 1 },
     }
 }

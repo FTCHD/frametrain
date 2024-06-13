@@ -21,6 +21,28 @@ export default async function results(
         },
     ]
 
+    // use array.reduce to filter out the correct answers
+    const pastAnswers = [
+        { questionIndex: 1, answerIndex: 1 },
+        { questionIndex: 2, answerIndex: 1 },
+        { questionIndex: 3, answerIndex: 1 },
+        { questionIndex: 4, answerIndex: 3 },
+        { questionIndex: 5, answerIndex: 1 },
+        { questionIndex: 6, answerIndex: 1 },
+    ]
+    const sum = pastAnswers.reduce((acc, answer) => {
+        const qna = config.qna[answer.questionIndex]
+        const choice =
+            choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
+        console.log('Quizzlet.results >> reduce.sum', { qnaAnswer: qna.answer, choice })
+        if (qna.answer === choice) {
+            return acc + 1
+        }
+        return acc
+    }, 0)
+
+    console.log('Quizzlet.results >> reduce.sum', { sum })
+
     const correctChoices = allAnswers.filter((answer) => {
         const qna = config.qna[answer.questionIndex]
         const choice =
