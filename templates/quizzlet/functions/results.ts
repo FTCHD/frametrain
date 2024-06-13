@@ -13,6 +13,8 @@ export default async function results(
     const user = body.untrustedData.fid.toString()
     const allAnswers = state.answers?.[user] ?? []
 
+    console.log('Quizzlet.results >> top', { state, user, allAnswers })
+
     const buttons: FrameButtonMetadata[] = [
         {
             label: 'Reset',
@@ -21,21 +23,23 @@ export default async function results(
 
     const correctChoices = allAnswers.filter((answer) => {
         const qna = config.qna[answer.questionIndex]
-        return qna
-            ? qna.answer ===
-                  choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex]
-            : false
+        const choice =
+            choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex]
+        console.log('Quizzlet.results >> filter.correctChoices', { qna, choice })
+        return qna ? qna.answer === choice : false
     })
     const correctAnswers = correctChoices.length
     const wrongAnswers = allAnswers.length - correctAnswers
     const showImage = correctAnswers === config.qna.length
     const percentages = {
-        correct: Math.round((correctAnswers / config.qna.length) * 100),
-        wrong: Math.round((wrongAnswers / config.qna.length) * 100),
+        correct_answers: Math.round((correctAnswers / config.qna.length) * 100),
+        wrong_answers: Math.round((wrongAnswers / config.qna.length) * 100),
     }
     const ok = correctAnswers === config.qna.length
 
     console.log('/results for quizzlet >> ok', ok)
+    console.log('/results for quizzlet >> answers', { correctAnswers, wrongAnswers, allAnswers })
+    console.log('/results for quizzlet >> percentages', percentages)
 
     if (!showImage) {
         buttons.push({

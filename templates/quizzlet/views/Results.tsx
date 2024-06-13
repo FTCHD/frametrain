@@ -45,7 +45,7 @@ export default function ResultsView(
             <div
                 style={{
                     display: 'flex',
-                    fontSize: '70px',
+                    fontSize: '50px',
                     fontWeight: 500,
                     color: colors?.textColor || 'white',
                 }}
