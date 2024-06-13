@@ -12,7 +12,7 @@ export default function CoverView(config: Config) {
             backgroundProp['backgroundImage'] = background
         }
     } else {
-        backgroundProp['backgroundImage'] = 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
+        backgroundProp['backgroundColor'] = '#09203f'
     }
 
     return (

@@ -377,10 +377,7 @@ export default function Inspector() {
                                     <ColorPicker
                                         className="w-full"
                                         enabledPickers={['solid', 'gradient', 'image']}
-                                        background={
-                                            config.background ||
-                                            'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
-                                        }
+                                        background={config.background || '#09203f'}
                                         setBackground={(value) =>
                                             updateConfig({ background: value })
                                         }
