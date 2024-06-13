@@ -90,15 +90,14 @@ function extractTagsFromHTML(html: string, metadata:MediumMetadata): Element[] {
 
 function paginateElements(elements: Element[], charLimit: number, metadata:MediumMetadata): Page[] {
 
-    // ignore elements if their text is equal to certain keywords including the author, 'Follow', 'Listen', 'Share', or just a number
+    // ignore elements if their text is equal to certain keywords including author, 'Follow', 'Listen', 'Share', or just a number
     const filteredElements = elements.filter(element => {
-        const text = element.src ? getFilenameFromUrl(element.src) : element.text.trim();
+        const text = element.text.trim()
         // biome-ignore lint/complexity: <explanation>
         return ![
             'Follow', 'Listen', 'Share', metadata.author, metadata.title, 'About', 'Contact', 'Subscribe', 'Top highlight'
         ].includes(text) && 
-        !text.match(/^\d+(\.\d+)?[KMB]?$/) &&
-        text !== getFilenameFromUrl(metadata.image)
+        !text.match(/^\d+(\.\d+)?[KMB]?$/)
     })
 
     // first loop through all elements and split any that happen to be too long
