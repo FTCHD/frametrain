@@ -12,6 +12,7 @@ export default function Inspector() {
     const [loading, setLoading] = useState(false)
 
     const urlInputRef = useRef<HTMLInputElement>(null)
+    const imgSizeInputRef = useRef<HTMLInputElement>(null)
 
     const linkOnAllPagesRef = useRef<HTMLInputElement>(null)
     const hideTitleAuthorRef = useRef<HTMLInputElement>(null)
@@ -100,7 +101,19 @@ export default function Inspector() {
                         setBackground={(value) => updateConfig({ textColor: value })}
                     />
                 </div>
-
+                <div className="flex flex-col gap-2">
+                    <div className='flex flex-col'>
+                        <h2 className="text-lg font-semibold">Image size - percent</h2>
+                        <p>check that the frame size limit is not exceeded</p>
+                    </div>
+                    <Input
+                        className="w-full"
+                        type="number"
+                        defaultValue={ config.imageSize ?? 20 }
+                        ref={imgSizeInputRef}
+                        onBlur={() => updateConfig({ imageSize: imgSizeInputRef.current?.value })}
+                    />
+                </div>
                 <div className="flex gap-2 items-center">
                     <div className='flex flex-col'>
                         <h2 className="text-lg font-bold">Don't show Title/Author on the cover</h2>

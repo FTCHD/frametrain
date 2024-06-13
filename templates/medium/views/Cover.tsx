@@ -4,8 +4,9 @@ export default function CoverView({
     article,
     bgColor,
     textColor,
+    imageSize,
     hideTitleAuthor
-}: { article?: Article, bgColor?: string, textColor?: string, hideTitleAuthor:boolean}) {
+}: { article?: Article, bgColor?: string, textColor?: string, imageSize: number, hideTitleAuthor:boolean}) {
 
     let titleFontSize = '80px'
     let authorFontSize = '40px'
@@ -35,8 +36,8 @@ export default function CoverView({
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    height: '50px', // testing sizes to stay under 256kb limit
-                    margin: '20px 0 0 0',
+                    height: imageSize ? `${imageSize}%` : '20%',
+                    marginTop: '20px',
                     overflow: 'hidden',
                 }}>
                     <img

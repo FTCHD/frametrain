@@ -8,6 +8,7 @@ export interface Config extends BaseConfig {
     article?: Article
     bgColor: string
     textColor: string
+    imageSize: number
     showLinkOnAllPages: boolean
     hideTitleAuthor: boolean
     maxCharsPerPage: number
