@@ -35,12 +35,12 @@ export default function CoverView({
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    height: '250px',
+                    height: '50px', // testing sizes to stay under 256kb limit
                     margin: '20px 0 0 0',
                     overflow: 'hidden',
                 }}>
                     <img
-                        src={article?.metadata.image}
+                        src={article.metadata.image}
                         alt="."
                         style={{
                             height: '100%',
