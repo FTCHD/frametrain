@@ -376,7 +376,7 @@ export default function Inspector() {
                                     <h2 className="text-lg font-semibold">Background Color</h2>
                                     <ColorPicker
                                         className="w-full"
-                                        enabledPickers={['solid', 'gradient', 'image']}
+                                        enabledPickers={['solid', 'image']}
                                         background={config.background || '#09203f'}
                                         setBackground={(value) =>
                                             updateConfig({ background: value })
