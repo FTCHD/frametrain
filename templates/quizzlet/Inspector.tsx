@@ -99,7 +99,6 @@ export default function Inspector() {
     return (
         <>
             <div className="w-full h-full flex flex-col gap-5">
-                {isDev && <p>{JSON.stringify({ config, answer, question, choicesType })}</p>}{' '}
                 <div className="flex flex-col gap-4 w-full">
                     <div className="flex flex-col border gap-4 rounded-md p-2">
                         <h2 className="text-lg font-bold">Screens Options</h2>
@@ -154,7 +153,6 @@ export default function Inspector() {
                                                     base64String,
                                                     contentType,
                                                 })
-                                                console.log(`Uploaded file ${filePath}`)
                                                 return filePath
                                             }}
                                         />
@@ -257,7 +255,6 @@ export default function Inspector() {
                                                     base64String,
                                                     contentType,
                                                 })
-                                                console.log(`Uploaded file ${filePath}`)
                                                 return filePath
                                             }}
                                         />
@@ -427,7 +424,6 @@ export default function Inspector() {
                             ? Math.max(...config.qna.map((o) => o.index)) + 1
                             : 1
 
-                        console.log({ questionIndex })
                         const qna = [
                             ...config.qna,
                             {
@@ -438,8 +434,6 @@ export default function Inspector() {
                                 index: questionIndex,
                             },
                         ]
-                        // config.qna.push()
-                        console.log('adding new qna', { qna })
                         updateConfig({
                             qna,
                         })
@@ -463,7 +457,7 @@ export default function Inspector() {
                         >
                             <div className="flex flex-row gap-2 justify-center items-center h-full">
                                 <div className="flex flex-col justify-center items-center font-bold text-black bg-white rounded-full min-w-12 min-h-12">
-                                    # {i}
+                                    # {i + 1}
                                 </div>
                                 <p className="font-muet">
                                     {qna.question.length > 100
@@ -487,7 +481,6 @@ export default function Inspector() {
                                         const newQna = config.qna.filter(
                                             (q) => q.index !== qna.index
                                         )
-                                        console.log(`Deleting ${qna.index}`, { newQna })
                                         updateConfig({ qna: newQna })
                                     }}
                                     variant="destructive"
@@ -543,9 +536,6 @@ function QuestionUpdateForm({
 }) {
     const choices = qna.choices
     const choicesType = qna.isNumeric ? 'numeric' : 'alpha'
-    const representation = choicesRepresentation[choicesType]
-    console.log('QuestionUpdateForm >> qna', qna)
-    console.log('QuestionUpdateForm >> representation', representation)
 
     return (
         <div className="flex flex-col gap-5 px-4">
@@ -613,7 +603,6 @@ function QuestionUpdateForm({
                 <RadioGroup
                     defaultValue={qna.answer}
                     onValueChange={(v) => {
-                        console.log('Answer selection v', v)
                         onChangeQna({
                             ...qna,
                             answer: v,

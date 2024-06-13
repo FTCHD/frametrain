@@ -1,49 +1,76 @@
 'use server'
-import type {
-    BuildFrameData,
-    FrameActionPayload,
-    FrameButtonMetadata,
-    FrameValidatedActionPayload,
-} from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import type { Config, State } from '..'
-import initial from './initial'
+import { choicesRepresentation } from '../utils'
+import ResultsView from '../views/Results'
 
 export default async function results(
-    body: FrameActionPayload | FrameValidatedActionPayload,
+    body: FrameActionPayload,
     config: Config,
     state: State,
-    params: any
+    _params: any
 ): Promise<BuildFrameData> {
-    const nextPage =
-        params?.currentPage !== undefined
-            ? body.untrustedData.buttonIndex === 1
-                ? Number(params?.currentPage) - 1
-                : Number(params?.currentPage) + 1
-            : 1
-    const tweetCount = config.tweets.length
+    const user = body.untrustedData.fid.toString()
+    const allAnswers = state.answers?.[user] ?? []
+
     const buttons: FrameButtonMetadata[] = [
         {
-            label: '←',
+            label: 'Reset',
         },
     ]
 
-    if (nextPage < tweetCount) {
-        buttons.push({
-            label: '→',
-        })
+    const correctChoices = allAnswers.filter((answer) => {
+        const qna = config.qna[answer.questionIndex]
+        return qna
+            ? qna.answer ===
+                  choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex]
+            : false
+    })
+    const correctAnswers = correctChoices.length
+    const wrongAnswers = allAnswers.length - correctAnswers
+    const showImage = correctAnswers === config.qna.length
+    const percentages = {
+        correct: Math.round((correctAnswers / config.qna.length) * 100),
+        wrong: Math.round((wrongAnswers / config.qna.length) * 100),
     }
+    const ok = correctAnswers === config.qna.length
 
-    if (body.untrustedData.buttonIndex === 2 && nextPage === tweetCount) {
+    console.log('/results for quizzlet >> ok', ok)
+
+    if (!showImage) {
         buttons.push({
             label: 'Create Your Own',
             action: 'link',
             target: 'https://frametra.in',
         })
+    } else {
+        if (config.success.href && config.success.label && config.success.image) {
+            buttons.push({
+                label: 'A Gift For you',
+                // action: 'function',
+                // target: 'initial',
+            })
+        }
     }
 
-    if (body.untrustedData.buttonIndex === 1 && nextPage === 0) {
-        return initial(config, state)
+    const colors = {
+        background: config?.background,
+        textColor: config?.textColor,
+        barColor: config?.barColor,
     }
 
-    return initial(config, state)
+    return {
+        buttons,
+        component: ResultsView(
+            config.qna.length,
+            percentages,
+            {
+                correct_answers: correctAnswers,
+                wrong_answers: wrongAnswers,
+            },
+            colors
+        ),
+        functionName: showImage ? undefined : 'success',
+        state,
+    }
 }

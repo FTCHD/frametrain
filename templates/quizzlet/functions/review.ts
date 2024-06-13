@@ -1,8 +1,8 @@
 'use server'
+
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import type { Config, State } from '..'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import ResultsView from '../views/Results'
 import { choicesRepresentation } from '../utils'
 import ReviewAnswersView from '../views/Review'
 
@@ -13,41 +13,45 @@ export default async function review(
     params: any
 ): Promise<BuildFrameData> {
     const student = body.untrustedData.fid.toString()
-    const pastAnswers = state.answers?.[student]
-    console.log('Quizzlet.answer >> top', { state, params, student, pastAnswers })
+    const pastAnswers = state.answers?.[student] ?? []
+    console.log('Quizzlet.review >> top', { state, params, student, pastAnswers })
 
     const newState = state
     const nextPage = params?.currentPage !== undefined ? Number(params?.currentPage) + 1 : 1
     const qnaCount = config.qna.length
     const currentPage = nextPage - 1
-    const lastPage = currentPage === qnaCount
+    const lastPage = nextPage === qnaCount
+    const currentQnaIndex = params?.currentPage ? currentPage : 0
+    const lastShow = currentQnaIndex === qnaCount
 
     const buttons: FrameButtonMetadata[] = []
 
-    const qna = config.qna[currentPage]
-    console.log('Quizzlet.answer >> qna', { qna, nextPage, qnaCount, lastPage, currentPage })
+    const qna = config.qna[currentQnaIndex]
+    console.log('Quizzlet.review >> qna', {
+        qna,
+        nextPage,
+        qnaCount,
+        lastPage,
+        currentPage,
+        currentQnaIndex,
+        lastShow,
+    })
     const { qna: qnas, ...rest } = config
-    if (nextPage <= qnaCount) {
-        buttons.push({ label: 'Next' })
-    } else {
-        buttons.push({
-            label: 'Results',
-        })
-    }
+
     const choiceType = qna.isNumeric ? 'numeric' : 'alpha'
     const userChoice = pastAnswers.find((a) => a.questionIndex === currentPage)?.answerIndex ?? 0
     const userAnswer = choicesRepresentation[choiceType][userChoice]
+    console.log('Quizzlet.review >> nextPage <= qnaCount', nextPage <= qnaCount)
 
     // get the total number of correct answers from the user
-    const correctAnswers = pastAnswers.filter(
-        (a) => qnas[a.questionIndex].answer === choicesRepresentation[choiceType][a.answerIndex]
-    ).length
     // get the total number of wrong answers from the user
-    const wrongAnswers = config.qna.length - correctAnswers
-    // get the percentages of correct and wrong answers in the form of { correct: 50, wrong: 50 }
-    const percentages = {
-        correct: Math.round((correctAnswers / config.qna.length) * 100),
-        wrong: Math.round((wrongAnswers / config.qna.length) * 100),
+
+    if (lastShow) {
+        buttons.push({
+            label: 'Check Results',
+        })
+    } else {
+        buttons.push({ label: 'Next' })
     }
 
     console.log('/review for quizzlet', {
@@ -56,9 +60,7 @@ export default async function review(
         nextPage,
         lastPage,
         qna,
-        rest,
         userChoice,
-        userAnswer,
     })
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
@@ -73,19 +75,9 @@ export default async function review(
         buttons,
         state: newState,
         fonts: roboto,
-        aspectRatio: '1:1',
-        component: lastPage
-            ? ResultsView(
-                  config.qna.length,
-                  percentages,
-                  {
-                      correct_answers: correctAnswers,
-                      wrong_answers: wrongAnswers,
-                  },
-                  colors
-              )
-            : ReviewAnswersView({ qnas, qna, colors, userAnswer, ...rest }),
-        functionName: lastPage ? 'results' : 'review',
-        params: !lastPage ? { currentPage: nextPage } : undefined,
+        aspectRatio: '1.91:1',
+        component: ReviewAnswersView({ qnas, qna, colors, userAnswer, ...rest }),
+        functionName: lastShow ? 'results' : 'review',
+        params: !lastShow ? { currentPage: nextPage } : undefined,
     }
 }

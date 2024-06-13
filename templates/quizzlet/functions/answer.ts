@@ -17,16 +17,19 @@ export default async function answer(
     const student = body.untrustedData.fid.toString()
     const choice = body.untrustedData.buttonIndex
     const pastAnswers = state.answers?.[student] ?? []
-    console.log('Quizzlet.answer >> top', { state, params, student, choice, pastAnswers })
+    console.log('Quizzlet.answer >> top', { state, params, choice, pastAnswers })
 
     let newState = state
     const nextPage = params?.currentPage !== undefined ? Number(params?.currentPage) + 1 : 1
     const qnaCount = config.qna.length
     const currentPage = nextPage - 1
-    const lastPage = currentPage === qnaCount
+    const lastPage = nextPage === qnaCount
     const qna = config.qna[currentPage]
+    const nextQna = config.qna[nextPage]
+    const { qna: qnas, ...rest } = config
 
     console.log('Quizzlet.answer >> qna', { qna, nextPage, qnaCount, lastPage, currentPage })
+    console.log('Quizzlet.answer >> nextPage <= qnaCount', nextPage <= qnaCount)
 
     const buttons: FrameButtonMetadata[] = []
 
@@ -38,11 +41,8 @@ export default async function answer(
             [student]: pastAnswers,
         },
     })
-    console.log('Quizzlet.answer >> newState', newState)
-    console.log('Quizzlet.answer >> newState answers.length', newState.answers[student].length)
 
-    const { qna: qnas, ...rest } = config
-    if (nextPage <= qnaCount) {
+    if (!lastPage) {
         const choiceType = qna.isNumeric ? 'numeric' : 'alpha'
         const choices = Array.from({ length: qna.choices })
         choices.forEach((_, choice) => {
@@ -54,24 +54,23 @@ export default async function answer(
         })
     }
 
-    const colors = {
-        background: config?.background,
-        textColor: config?.textColor,
-        barColor: config?.barColor,
-    }
+    // const colors = {
+    //     background: config?.background,
+    //     textColor: config?.textColor,
+    //     barColor: config?.barColor,
+    // }
 
     console.log('/answer for quizzlet', {
-        student,
-        answer,
         pastAnswers,
         nextPage,
         lastPage,
+        nextQna,
     })
 
-    const userAnswer =
-        choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][
-            state.answers[student].find((a) => a.questionIndex === currentPage)?.answerIndex ?? 0
-        ]
+    // const userAnswer =
+    //     choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][
+    //         state.answers[student].find((a) => a.questionIndex === currentPage)?.answerIndex ?? 0
+    //     ]
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
@@ -81,11 +80,9 @@ export default async function answer(
         fonts: roboto,
         aspectRatio: '1.91:1',
         component: lastPage
-            ? isDev
-                ? ReviewAnswersView({ qna: qnas[0], qnas, colors, userAnswer, ...rest })
-                : PreReviewAnswersView(config)
-            : QuestionView({ qnas, qna, ...rest }),
-        functionName: lastPage ? (isDev ? 'review' : 'prereview') : 'answer',
-        params: !lastPage ? { currentPage: nextPage } : undefined,
+            ? PreReviewAnswersView(config)
+            : QuestionView({ qnas, qna: nextQna, ...rest }),
+        functionName: lastPage ? 'prereview' : 'answer',
+        params: lastPage ? undefined : { currentPage: nextPage },
     }
 }

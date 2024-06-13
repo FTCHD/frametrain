@@ -7,7 +7,7 @@ import type {
 } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
-import { choicesRepresentation } from '../utils'
+import { choicesRepresentation, isDev } from '../utils'
 import ReviewAnswersView from '../views/Review'
 
 export default async function prereview(
@@ -20,12 +20,10 @@ export default async function prereview(
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const { qna: qnas, ...rest } = config
     const qna = qnas[0]
-    console.log('Quizzlet.prereview >> top', { userId, rest })
-    console.log('Quizzlet.prereview >> state', state)
 
     const userAnswer =
         choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][
-            state.answers[userId][0].answerIndex
+            isDev ? 0 : state.answers[userId][0].answerIndex
         ]
     const colors = {
         background: config?.background,
