@@ -66,6 +66,6 @@ export default async function review(
             ? ResultsView('j', {})
             : ReviewAnswersView({ qnas, qna, colors, userAnswer, ...rest }),
         functionName: lastPage ? 'results' : 'review',
-        params: lastPage ? { currentPage: nextPage } : undefined,
+        params: !lastPage ? { currentPage: nextPage } : undefined,
     }
 }

@@ -5,10 +5,10 @@ import type {
     FrameActionPayload,
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
-import ReviewAnswersView from '../views/Review'
-import type { Config, State } from '..'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import { choicesRepresentation, isDev, localAnswers } from '../utils'
+import type { Config, State } from '..'
+import { choicesRepresentation } from '../utils'
+import ReviewAnswersView from '../views/Review'
 
 export default async function prereview(
     body: FrameActionPayload | FrameValidatedActionPayload,
@@ -20,10 +20,8 @@ export default async function prereview(
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const { qna: qnas, ...rest } = config
     const qna = qnas[0]
-    const answers = isDev ? [...localAnswers.values()][0] : state.answers[userId]
     console.log('Quizzlet.prereview >> top', { userId, rest })
     console.log('Quizzlet.prereview >> state', state)
-    console.log('Quizzlet.prereview >> answers', answers)
 
     const userAnswer =
         choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][

@@ -516,11 +516,11 @@ export default function Inspector() {
                                     if (!currentQna) {
                                         return
                                     }
-                                    const newTweets = config?.qna?.map((qna) =>
+                                    const newQnas = config?.qna?.map((qna) =>
                                         qna.index === currentQna.index ? currentQna : qna
                                     )
 
-                                    updateConfig({ tweets: newTweets })
+                                    updateConfig({ qna: newQnas })
                                     setOpen(false)
                                 }}
                             >
@@ -614,10 +614,10 @@ function QuestionUpdateForm({
                     defaultValue={qna.answer}
                     onValueChange={(v) => {
                         console.log('Answer selection v', v)
-                        // onChangeQna({
-                        //     ...qna,
-                        //     answer:
-                        // })
+                        onChangeQna({
+                            ...qna,
+                            answer: v,
+                        })
                     }}
                 >
                     {Array.from({ length: choices }).map((_, index) => (

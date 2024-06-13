@@ -15,11 +15,9 @@ export default async function answer(
     params: any
 ): Promise<BuildFrameData> {
     const student = body.untrustedData.fid.toString()
-    const answer = body.untrustedData.buttonIndex
+    const choice = body.untrustedData.buttonIndex
     const pastAnswers = state.answers?.[student] ?? []
-    console.log('Quizzlet.answer >> top', { state, params, student, answer, pastAnswers })
-    const answers = state.answers?.[student] ?? []
-    const userState = answers
+    console.log('Quizzlet.answer >> top', { state, params, student, choice, pastAnswers })
 
     let newState = state
     const nextPage = params?.currentPage !== undefined ? Number(params?.currentPage) + 1 : 1
@@ -32,23 +30,19 @@ export default async function answer(
 
     const buttons: FrameButtonMetadata[] = []
 
+    pastAnswers.push({ questionIndex: currentPage, answerIndex: choice })
+
     newState = Object.assign(state, {
         answers: {
             ...(state.answers ?? {}),
-            [student]: [...answers, { questionIndex: nextPage, answerIndex: answer }],
+            [student]: pastAnswers,
         },
     })
-
-    // if (body.untrustedData.buttonIndex === 2 && lastPage) {
-    //     buttons.push({
-    //         label: 'Create Your Own',
-    //         action: 'link',
-    //         target: 'https://frametra.in',
-    //     })
-    // }
+    console.log('Quizzlet.answer >> newState', newState)
+    console.log('Quizzlet.answer >> newState answers.length', newState.answers[student].length)
 
     const { qna: qnas, ...rest } = config
-    if (nextPage < qnaCount) {
+    if (nextPage <= qnaCount) {
         const choiceType = qna.isNumeric ? 'numeric' : 'alpha'
         const choices = Array.from({ length: qna.choices })
         choices.forEach((_, choice) => {
@@ -72,9 +66,6 @@ export default async function answer(
         pastAnswers,
         nextPage,
         lastPage,
-        qna,
-        rest,
-        newState,
     })
 
     const userAnswer =
@@ -95,6 +86,6 @@ export default async function answer(
                 : PreReviewAnswersView(config)
             : QuestionView({ qnas, qna, ...rest }),
         functionName: lastPage ? (isDev ? 'review' : 'prereview') : 'answer',
-        params: lastPage ? { currentPage: nextPage } : undefined, //{ currentPage: nextPage, answers: newState.answers },
+        params: !lastPage ? { currentPage: nextPage } : undefined,
     }
 }

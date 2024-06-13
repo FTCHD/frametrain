@@ -7,8 +7,6 @@ import CoverView from '../views/Cover'
 export default async function initial(config: Config, _: State): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
-    console.log('Cover config: ', config.cover)
-
     return {
         buttons: [{ label: config.cover.label ? config.cover.label : 'START' }],
         fonts: roboto,

@@ -63,7 +63,8 @@ export default {
         },
         success: {
             image: null,
-            text: null,
+            label: null,
+            href: null,
         },
     },
     requiresValidation: true,
