@@ -13,8 +13,6 @@ export default async function results(
     const user = body.untrustedData.fid.toString()
     const allAnswers = state.answers?.[user] ?? []
 
-    console.log('Quizzlet.results >> top', { state, user, allAnswers })
-
     const buttons: FrameButtonMetadata[] = [
         {
             label: 'Reset',
@@ -22,22 +20,14 @@ export default async function results(
     ]
 
     const correctAnswers = allAnswers.reduce((acc, answer) => {
-        console.log('Quizzlet.results >> reduce.correctAnswers', { acc, answer })
         const qna = config.qna[answer.questionIndex - 1]
-        console.log('Quizzlet.results >> reduce.correctAnswers', { qna })
         const choice =
             choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
-        console.log('Quizzlet.results >> reduce.correctAnswers', { qnaAnswer: qna.answer, choice })
         if (qna.answer === choice) {
-            console.log('Quizzlet.results >> reduce.correctAnswers | qna.answer === choice', {
-                match: qna.answer === choice,
-            })
             return acc + 1
         }
         return acc
     }, 0)
-
-    console.log('Quizzlet.results >> reduce.correctAnswers outside', { correctAnswers })
 
     const wrongAnswers = allAnswers.length - correctAnswers
     const showImage = correctAnswers === config.qna.length
@@ -45,11 +35,6 @@ export default async function results(
         correct_answers: Math.round((correctAnswers / config.qna.length) * 100),
         wrong_answers: Math.round((wrongAnswers / config.qna.length) * 100),
     }
-    const ok = correctAnswers === config.qna.length
-
-    console.log('/results for quizzlet >> ok', ok)
-    console.log('/results for quizzlet >> answers', { correctAnswers, wrongAnswers, allAnswers })
-    console.log('/results for quizzlet >> percentages', percentages)
 
     if (!showImage) {
         buttons.push({
@@ -61,8 +46,12 @@ export default async function results(
         if (config.success.href && config.success.label && config.success.image) {
             buttons.push({
                 label: 'A Gift For you',
-                // action: 'function',
-                // target: 'initial',
+            })
+        } else {
+            buttons.push({
+                label: 'Create Your Own',
+                action: 'link',
+                target: 'https://frametra.in',
             })
         }
     }
@@ -84,7 +73,7 @@ export default async function results(
             },
             colors
         ),
-        functionName: showImage ? undefined : 'success',
+        functionName: 'success',
         state,
     }
 }

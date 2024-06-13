@@ -8,22 +8,23 @@ export default async function success(
     config: Config,
     state: State
 ): Promise<BuildFrameData> {
-    const buttons: FrameButtonMetadata[] = []
-
     if (body.untrustedData.buttonIndex === 1) {
         return initial(config, state)
     }
 
-    if (config.success.href && config.success.label) {
-        buttons.push({
-            label: config.success.label,
-            action: 'link',
-            target: config.success.href,
-        })
-    }
-
     return {
-        buttons,
+        buttons: [
+            {
+                label: config.success.label!,
+                action: 'link',
+                target: config.success.href!,
+            },
+            {
+                label: 'Create Your Own',
+                action: 'link',
+                target: 'https://frametra.in',
+            },
+        ],
         image: config.success.image! ?? undefined,
     }
 }
