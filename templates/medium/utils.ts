@@ -26,9 +26,9 @@ export type Article = {
 }
 
 // Entry function to pass in a medium article URL and return an Article to the inspector 
-export async function getMediumArticle(url: string, maxCharsPerPage: number): Promise<Article> {
+export async function getMediumArticle(url: string): Promise<Article> {
     
-    console.log('scraping medium article', url, 'maxCharsPerPage:', maxCharsPerPage)
+    console.log('scraping medium article', url)
     const res = await scrape({ url })
 
     const metadata = getMediumMetadata(res.content)
@@ -36,7 +36,7 @@ export async function getMediumArticle(url: string, maxCharsPerPage: number): Pr
     
     //console.log('metadata', metadata)
 
-    const article = { pages: paginateElements(extractedTags, maxCharsPerPage, metadata), url, metadata } // character limit
+    const article = { pages: paginateElements(extractedTags, metadata), url, metadata } // character limit
 
     return article
 }
@@ -79,7 +79,7 @@ function extractTagsFromHTML(html: string, metadata:MediumMetadata): Element[] {
     const cleanedElements: Element[] = elementsArray.map(e => {
         return {
             tag: e.tagName,
-            text: e.textContent || '',
+            text: e.textContent?.trim() || '',
             src: e.getAttribute('src') || ''
         }
     })
@@ -88,8 +88,23 @@ function extractTagsFromHTML(html: string, metadata:MediumMetadata): Element[] {
 
 }
 
-function paginateElements(elements: Element[], charLimit: number, metadata:MediumMetadata): Page[] {
+// Function to estimate the number of chars per line for each element based on its type
+function estimateElementCharsAndLines(element: Element): number {
+    const linesPerType:any = {
+        'p': 80,
+        'h1': 40,
+        'h2': 60,
+        'h3': 70,
+        'h4': 70,
+        'h5': 70,
+        'other': 80
+    }
 
+    return linesPerType[element.tag] || linesPerType['other']
+}
+
+function paginateElements(elements: Element[], metadata: MediumMetadata): Page[] {
+    
     // ignore elements if their text is equal to certain keywords including author, 'Follow', 'Listen', 'Share', or just a number
     const filteredElements = elements.filter(element => {
         const text = element.text.trim()
@@ -100,38 +115,43 @@ function paginateElements(elements: Element[], charLimit: number, metadata:Mediu
         !text.match(/^\d+(\.\d+)?[KMB]?$/)
     })
 
-    // first loop through all elements and split any that happen to be too long
-    const chunkedElements:Element[] = filteredElements.reduce((acc:Element[], currentElement) => {
-        const currentElementLength = currentElement.text.length
-        if (currentElementLength > charLimit) {
-            const newElements:Element[] = splitElement(currentElement, charLimit)
+    // Split elements that are too long
+    const chunkedElements: Element[] = filteredElements.reduce((acc: Element[], currentElement) => {
+        const charsPerLine = estimateElementCharsAndLines(currentElement)
+        const charsPerPage = charsPerLine * 24 // 24 lines per page
+        if (currentElement.text.length > charsPerPage) {
+            const newElements: Element[] = splitElement(currentElement, charsPerPage)
             acc.push(...newElements)
         } else {
             acc.push(currentElement)
         }
         return acc
-    },[])
+    }, [])
 
     const pages: Page[] = []
     let currentPage: Page = []
-    let currentPageLength = 0
-    // Then loop through all approprately sized elements and add them to pages
+    let currentPageLinesRemaining = 24 // 24 lines per page
+
     for (const currentElement of chunkedElements) {
-
-        // set images to a 'length' so there's enough room to render them
-        const currentElementLength = currentElement.tag === 'img' ? 500 : currentElement.text.length
-
-        // if this element will go over, then create a new page
-        if (currentPageLength + currentElementLength > charLimit) {
-            // add new pages to pages array
+        const currentElementEstimatedCharsPerLine = estimateElementCharsAndLines(currentElement)        
+        const currentElementLinesRequired = currentElement.src
+            ? 15 // images take up 15 lines
+            : (currentElement.text.length / currentElementEstimatedCharsPerLine) + 2
+    
+        // If this element will exceed the lines remaining, then create a new page
+        if (currentPageLinesRemaining - currentElementLinesRequired <= 0) {
             pages.push(currentPage)
-            currentPageLength = 0
+            currentPageLinesRemaining = 24
             currentPage = []
         }
 
         currentPage.push(currentElement)
-        currentPageLength += currentElementLength
-        
+        currentPageLinesRemaining -= currentElementLinesRequired
+    }
+
+    // Add the last page if it contains any elements
+    if (currentPage.length > 0) {
+        pages.push(currentPage)
     }
 
     return pages

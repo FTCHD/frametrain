@@ -13,11 +13,8 @@ export default function Inspector() {
 
     const urlInputRef = useRef<HTMLInputElement>(null)
     const imgSizeInputRef = useRef<HTMLInputElement>(null)
-
     const linkOnAllPagesRef = useRef<HTMLInputElement>(null)
     const hideTitleAuthorRef = useRef<HTMLInputElement>(null)
-
-    const maxCharInputRef = useRef<HTMLInputElement>(null)
 
     // keep the url input updated with the article URL
     useEffect(() => {
@@ -26,15 +23,6 @@ export default function Inspector() {
 
         urlInputRef.current.value = config.article?.url ?? ''
     }, [config.article])
-
-    // keep the max char input updated with the article URL
-    useEffect(() => {
-        if (!maxCharInputRef.current) return
-        if (!maxCharInputRef.current.value) return
-
-        maxCharInputRef.current.value = config.maxCharsPerPage?.toString() || '1000'
-
-    }, [config.maxCharsPerPage])
 
     // handler for the article URL input
     const urlInputHandler = (e: any) => {
@@ -49,18 +37,12 @@ export default function Inspector() {
         renderMediumArticle(url)
     }
 
-    // handler for the max characters per page input which also calls a re-render of the article
-    const maxCharInputHandler = (e: any) => {
-        updateConfig({ maxCharsPerPage: e.target.value })
-        renderMediumArticle(config.article?.url ?? '')
-    }
-
     const renderMediumArticle = async (url:string) => {
 
         setLoading(true)
 
         // don't rely on config.maxCharsPerPage as it may not have been updated yet
-        const newArticle = await getMediumArticle(url, Number.parseInt(maxCharInputRef.current?.value || '1000', 10))
+        const newArticle = await getMediumArticle(url)
         updateConfig({ article: newArticle })
         console.log(newArticle)
 
@@ -141,21 +123,6 @@ export default function Inspector() {
                         onChange={() => updateConfig({ showLinkOnAllPages: linkOnAllPagesRef.current?.checked })}
                     />
                 </div>
-
-                <div className="flex gap-2 items-center">
-                    <div className='flex flex-col'>
-                        <h2 className="text-lg font-bold">Max characters per page</h2>
-                        <p>may increase/reduce whitespace</p>
-                    </div>
-                    <Input
-                        className="w-full"
-                        type="number"
-                        defaultValue={ config.maxCharsPerPage ?? 1000 }
-                        ref={maxCharInputRef}
-                        onBlur={maxCharInputHandler}
-                    />
-                </div>
-
             </div>
         </div>
     )
