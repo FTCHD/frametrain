@@ -204,7 +204,7 @@ function getMediumMetadata(htmlContent: string): MediumMetadata {
 }
 
 // Helper function to extract the filename from a URL
-function getFilenameFromUrl(url) {
+function getFilenameFromUrl(url:string) {
     if (!url) return '';
     return url.substring(url.lastIndexOf('/') + 1);
 }
