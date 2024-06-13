@@ -5,11 +5,12 @@ import functions from './functions'
 import type { Article } from './utils'
 
 export interface Config extends BaseConfig {
-    article?: Article,
-    textColor: string,
-    showLinkOnAllPages: boolean,
-    hideTitleAuthor: boolean,
+    article?: Article
+    textColor: string
+    showLinkOnAllPages: boolean
+    hideTitleAuthor: boolean
     bgBlendMode: string
+    maxCharsPerPage: number
 }
 
 export interface State extends BaseState {}

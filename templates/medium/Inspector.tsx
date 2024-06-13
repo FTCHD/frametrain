@@ -18,27 +18,55 @@ export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
     const [loading, setLoading] = useState(false)
 
-    const inputRef = useRef<HTMLInputElement>(null)
+    const urlInputRef = useRef<HTMLInputElement>(null)
 
     const linkOnAllPagesRef = useRef<HTMLInputElement>(null)
     const hideTitleAuthorRef = useRef<HTMLInputElement>(null)
 
-    useEffect(() => {
-        if (!inputRef.current) return
-        if (!inputRef.current.value) return
+    const maxCharInputRef = useRef<HTMLInputElement>(null)
 
-        inputRef.current.value = config.article?.url ?? ''
+    // keep the url input updated with the article URL
+    useEffect(() => {
+        if (!urlInputRef.current) return
+        if (!urlInputRef.current.value) return
+
+        urlInputRef.current.value = config.article?.url ?? ''
     }, [config.article])
 
-    const renderMediumArticle = async (e: any) => {
+    // keep the max char input updated with the article URL
+    useEffect(() => {
+        if (!maxCharInputRef.current) return
+        if (!maxCharInputRef.current.value) return
+
+        maxCharInputRef.current.value = config.maxCharsPerPage?.toString() || '1000'
+
+    }, [config.maxCharsPerPage])
+
+    // handler for the article URL input
+    const urlInputHandler = (e: any) => {
+
         const url = e.target.value
+
+        // Accept only valid Medium URLs - later on we can adapt to other platforms
         if (!/^https:\/\/(\w+\.)?medium\.com\//.test(url)) {
             return
         }
 
+        renderMediumArticle(url)
+    }
+
+    // handler for the max characters per page input which also calls a re-render of the article
+    const maxCharInputHandler = (e: any) => {
+        updateConfig({ maxCharsPerPage: e.target.value })
+        renderMediumArticle(config.article?.url ?? '')
+    }
+
+    const renderMediumArticle = async (url:string) => {
+
         setLoading(true)
 
-        const newArticle = await getMediumArticle(url)
+        // don't rely on config.maxCharsPerPage as it may not have been updated yet
+        const newArticle = await getMediumArticle(url, Number.parseInt(maxCharInputRef.current?.value || '1000', 10))
         updateConfig({ article: newArticle })
         console.log(newArticle)
 
@@ -56,9 +84,9 @@ export default function Inspector() {
                     <Input
                         className="py-2 text-lg"
                         placeholder="https://medium.com/..."
-                        ref={inputRef}
+                        ref={urlInputRef}
                         defaultValue={ config.article?.url ?? '' }
-                        onChange={renderMediumArticle}
+                        onChange={urlInputHandler}
                     />
                 </div>
 
@@ -74,7 +102,7 @@ export default function Inspector() {
 
                 <div className="flex gap-2 items-center">
                     <div className='flex flex-col'>
-                        <h2 className="text-lg font-bold">Don't show Title/Author</h2>
+                        <h2 className="text-lg font-bold">Don't show Title/Author on the cover</h2>
                     </div>
                     <Input
                         className="w-full"
@@ -116,6 +144,21 @@ export default function Inspector() {
                         onChange={() => updateConfig({ showLinkOnAllPages: linkOnAllPagesRef.current?.checked })}
                     />
                 </div>
+
+                <div className="flex gap-2 items-center">
+                    <div className='flex flex-col'>
+                        <h2 className="text-lg font-bold">Max characters per page</h2>
+                        <p>may increase/reduce whitespace</p>
+                    </div>
+                    <Input
+                        className="w-full"
+                        type="number"
+                        defaultValue={ config.maxCharsPerPage ?? 1000 }
+                        ref={maxCharInputRef}
+                        onBlur={maxCharInputHandler}
+                    />
+                </div>
+
             </div>
         </div>
     )

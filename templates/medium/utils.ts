@@ -1,5 +1,6 @@
 import { scrape } from '@/sdk/scrape'
 
+// metadata tags pulled from the medium article html
 interface MediumMetadata {
     authorUrl: string | null
     author: string | null
@@ -7,25 +8,27 @@ interface MediumMetadata {
     image: string | null
 }
 
-// One tag and its contents
+// One paragraph, heading, or image tag and its contents
 export type Element = {
     tag: string
     text: string
     src?: string
 }
 
-// A page will be made up of an array of elements
+// A page (frame) will be made up of an array of elements
 export type Page = Element[]
 
+// Our frame-adapted medium article to be passed back to the inspector
 export type Article = {
     pages: Page[]
     url: string
     metadata: MediumMetadata
 }
 
-export async function getMediumArticle(url: string): Promise<Article> {
+// Entry function to pass in a medium article URL and return an Article to the inspector 
+export async function getMediumArticle(url: string, maxCharsPerPage: number): Promise<Article> {
     
-    console.log('scraping medium article', url)
+    console.log('scraping medium article', url, 'maxCharsPerPage:', maxCharsPerPage)
     const res = await scrape({ url })
 
     const metadata = getMediumMetadata(res.content)
@@ -33,20 +36,20 @@ export async function getMediumArticle(url: string): Promise<Article> {
     
     //console.log('metadata', metadata)
 
-    const article = { pages: paginateElements(extractedTags, 1000, metadata), url, metadata } // character limit
+    const article = { pages: paginateElements(extractedTags, maxCharsPerPage, metadata), url, metadata } // character limit
 
     return article
 }
 
-// Attempts to pull out only the relevant content from the HTML
+// Attempts to pull out only the relevant content from the HTML - paragraph, heading, and image tags, stripped of attributes
 function extractTagsFromHTML(html: string, metadata:MediumMetadata): Element[] {
-    // Create a new DOMParser
+
     const parser = new DOMParser()
 
     // Use the DOMParser to turn the HTML string into a Document
     const doc = parser.parseFromString(html, 'text/html')
 
-    // Get the article element and its relevant child elements
+    // Get the relevant child elements from the article tag
     const article = doc.body.querySelector('article')
     const elements = article?.querySelectorAll('p, h1, h2, h3, h4, h5, h6, img')
 
@@ -54,24 +57,25 @@ function extractTagsFromHTML(html: string, metadata:MediumMetadata): Element[] {
 
     const elementsArray: HTMLElement[] = Array.from(elements) as HTMLElement[]
 
-    // loop through images and remove if they alt == author name or the filename == cover image, or if they're really small
+    // Filter images - remove images that match the author, publication, or cover image, or if they're really small
     const indexesToRemove: number[] = []
     elementsArray.forEach((element, index) => {
         if (element.tagName === 'IMG') {
             const alt = element.getAttribute('alt')
             const src = element.getAttribute('src')
             const width = Number.parseInt(element.getAttribute('width') || '') || 0
-            if (width < 300 || alt === 'Top highlight' || alt === metadata.author || getFilenameFromUrl(src) == getFilenameFromUrl(metadata.image)) {
+            if (width < 300 || alt === 'Top highlight' || alt === metadata.author || ( src && metadata.image && getFilenameFromUrl(src) == getFilenameFromUrl(metadata.image))) {
+                // keep track of indexes to remove
                 indexesToRemove.push(index)
-                //elementsArray.splice(index, 1)
             }
         }
     })
+    // remove elements without iterating the same array
     for (let i = indexesToRemove.length - 1; i >= 0; i--) {
         elementsArray.splice(indexesToRemove[i], 1)
     }
 
-    // Clean elements so we only have the tag and its contents
+    // Clean elements so we only have the tag and its contents, and src if it's an image
     const cleanedElements: Element[] = elementsArray.map(e => {
         return {
             tag: e.tagName,
