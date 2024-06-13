@@ -22,7 +22,6 @@ export default async function review(
     const currentPage = nextPage - 1
     const lastPage = nextPage === qnaCount
     const currentQnaIndex = params?.currentPage ? currentPage : 0
-    const lastShow = currentQnaIndex === qnaCount
 
     const buttons: FrameButtonMetadata[] = []
 
@@ -34,14 +33,13 @@ export default async function review(
         lastPage,
         currentPage,
         currentQnaIndex,
-        lastShow,
     })
     const { qna: qnas, ...rest } = config
 
     const choiceType = qna.isNumeric ? 'numeric' : 'alpha'
-    const userChoice = pastAnswers.find((a) => a.questionIndex === currentPage)?.answerIndex ?? 0
+    const foundChoice = pastAnswers.find((a) => a.questionIndex === qna.index)
+    const userChoice = foundChoice?.answerIndex ?? 0
     const userAnswer = choicesRepresentation[choiceType][userChoice]
-    console.log('Quizzlet.review >> nextPage <= qnaCount', nextPage <= qnaCount)
 
     // get the total number of correct answers from the user
     // get the total number of wrong answers from the user
@@ -57,10 +55,12 @@ export default async function review(
     console.log('/review for quizzlet', {
         student,
         pastAnswers,
+        foundChoice,
         nextPage,
         lastPage,
         qna,
         userChoice,
+        userAnswer,
     })
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
