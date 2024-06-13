@@ -38,6 +38,18 @@ export default async function review(
     const userChoice = pastAnswers.find((a) => a.questionIndex === currentPage)?.answerIndex ?? 0
     const userAnswer = choicesRepresentation[choiceType][userChoice]
 
+    // get the total number of correct answers from the user
+    const correctAnswers = pastAnswers.filter(
+        (a) => qnas[a.questionIndex].answer === choicesRepresentation[choiceType][a.answerIndex]
+    ).length
+    // get the total number of wrong answers from the user
+    const wrongAnswers = config.qna.length - correctAnswers
+    // get the percentages of correct and wrong answers in the form of { correct: 50, wrong: 50 }
+    const percentages = {
+        correct: Math.round((correctAnswers / config.qna.length) * 100),
+        wrong: Math.round((wrongAnswers / config.qna.length) * 100),
+    }
+
     console.log('/review for quizzlet', {
         student,
         pastAnswers,
@@ -63,7 +75,15 @@ export default async function review(
         fonts: roboto,
         aspectRatio: '1:1',
         component: lastPage
-            ? ResultsView('j', {})
+            ? ResultsView(
+                  config.qna.length,
+                  percentages,
+                  {
+                      correct_answers: correctAnswers,
+                      wrong_answers: wrongAnswers,
+                  },
+                  colors
+              )
             : ReviewAnswersView({ qnas, qna, colors, userAnswer, ...rest }),
         functionName: lastPage ? 'results' : 'review',
         params: !lastPage ? { currentPage: nextPage } : undefined,

@@ -4,7 +4,7 @@ import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/
 import type { Config, State } from '..'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import QuestionView from '../views/Question'
-import { choicesRepresentation, isDev, localAnswers } from '../utils'
+import { choicesRepresentation, isDev } from '../utils'
 import PreReviewAnswersView from '../views/PreReview'
 import ReviewAnswersView from '../views/Review'
 
