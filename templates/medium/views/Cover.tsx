@@ -14,7 +14,7 @@ export default function CoverView({
         authorFontSize = '20px'
     }
 
-    return (
+    return ( 
         <div
             style={{
                 width: '100%',
