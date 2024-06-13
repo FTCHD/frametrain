@@ -67,5 +67,5 @@ export default {
             href: null,
         },
     },
-    requiresValidation: true,
+    requiresValidation: false,
 } satisfies BaseTemplate
