@@ -145,6 +145,7 @@ export default function ReviewAnswersView(config: Config) {
                                 fontWeight: 900,
                                 color: 'rgba(255, 255, 255, 0.6)',
                                 paddingLeft: '5px',
+                                backgroundColor: 'white',
                             }}
                         >
                             {userAnswer === correctAnswer ? '✅' : '❌'}

@@ -83,15 +83,6 @@ export default async function answer(
         ]
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    if (isDev) {
-        if (localAnswers.has(answers)) {
-            localAnswers.delete(answers)
-            localAnswers.add(newState.answers[student])
-        }
-
-        const v = [...localAnswers][0]
-        console.log('Quizzlet.answer >> localAnswers', { localAnswers, v })
-    }
 
     return {
         buttons,

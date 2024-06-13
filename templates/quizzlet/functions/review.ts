@@ -6,7 +6,7 @@ import ResultsView from '../views/Results'
 import { choicesRepresentation } from '../utils'
 import ReviewAnswersView from '../views/Review'
 
-export default async function answer(
+export default async function review(
     body: FrameActionPayload,
     config: Config,
     state: State,
@@ -24,7 +24,8 @@ export default async function answer(
 
     const buttons: FrameButtonMetadata[] = []
 
-    const qna = config.qna[nextPage]
+    const qna = config.qna[currentPage]
+    console.log('Quizzlet.answer >> qna', { qna, nextPage, qnaCount, lastPage, currentPage })
     const { qna: qnas, ...rest } = config
     if (nextPage < qnaCount) {
         buttons.push({ label: 'Next' })
