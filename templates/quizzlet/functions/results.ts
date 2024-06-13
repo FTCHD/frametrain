@@ -43,7 +43,7 @@ export default async function results(
             target: 'https://frametra.in',
         })
     } else {
-        if (config.success.href && config.success.label && config.success.image) {
+        if (config.success.image) {
             buttons.push({
                 label: 'A Gift For you',
             })
