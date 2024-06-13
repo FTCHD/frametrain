@@ -13,6 +13,7 @@ export default function Inspector() {
     const { githubLink } = config
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
+    const displayLabelTokenAddressRef = useRef<HTMLInputElement>(null)
 
     return (
         <div className="w-full h-full space-y-4">
@@ -28,14 +29,22 @@ export default function Inspector() {
                     placeholder="Input something"
                     ref={displayLabelInputRef}
                 />
+                <Input
+                    className="text-lg"
+                    placeholder="Donate Token Address"
+                    ref={displayLabelTokenAddressRef}
+                />
                 <Button
                     onClick={async() => {
-                        if (!displayLabelInputRef.current?.value) return
+                        if (!displayLabelInputRef.current?.value || !displayLabelTokenAddressRef.current?.value) return
 
                         const ownerAndRepo = displayLabelInputRef.current.value.split('/')
                         const githubInfo = await corsFetch(`https://api.github.com/repos/${ownerAndRepo[ownerAndRepo.length-2]}/${ownerAndRepo[ownerAndRepo.length-1]}`)
 
                         const infoObject = JSON.parse(githubInfo as string)
+                        const to = infoObject.topics[0]
+                        const tokenAddress = displayLabelTokenAddressRef.current.value
+
                         updateConfig({
                             githubLink: displayLabelInputRef.current.value,
                             full_name: infoObject.full_name,
@@ -44,7 +53,9 @@ export default function Inspector() {
                             forks_count: infoObject.forks_count,
                             description: infoObject.description,
                             owner_avatar_url: infoObject.owner?.avatar_url,
-                            owner_login: infoObject.owner?.login
+                            owner_login: infoObject.owner?.login,
+                            to,
+                            tokenAddress,
                         })
 
                         displayLabelInputRef.current.value = ''

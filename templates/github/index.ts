@@ -12,6 +12,8 @@ export interface Config extends BaseConfig {
     description: string,
     owner_avatar_url: string,
     owner_login: string,
+    tokenAddress: string,
+    to: string
 }
 
 export interface State extends BaseState {}

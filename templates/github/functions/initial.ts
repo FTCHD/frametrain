@@ -8,7 +8,13 @@ export default async function initial(config: Config, state: State): Promise<Bui
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
     return {
-        buttons: [{ label: 'VIEW' }],
+        buttons: [{
+            label: 'Donate'
+        }, {
+            label: 'VIEW',
+            action: 'link',
+            target: config.githubLink,
+        }],
         fonts: roboto,
         component: CoverView(config),
         functionName: 'page',
