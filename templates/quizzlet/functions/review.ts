@@ -38,7 +38,7 @@ export default async function review(
 
     const choiceType = qna.isNumeric ? 'numeric' : 'alpha'
     const foundChoice = pastAnswers.find((a) => a.questionIndex === qna.index)
-    const userChoice = foundChoice?.answerIndex ?? 0
+    const userChoice = foundChoice?.answerIndex ? foundChoice.answerIndex - 1 : 0
     const userAnswer = choicesRepresentation[choiceType][userChoice]
 
     // get the total number of correct answers from the user

@@ -24,7 +24,7 @@ export default async function results(
     const correctChoices = allAnswers.filter((answer) => {
         const qna = config.qna[answer.questionIndex]
         const choice =
-            choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex]
+            choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
         console.log('Quizzlet.results >> filter.correctChoices', { qna, choice })
         return qna ? qna.answer === choice : false
     })

@@ -23,7 +23,7 @@ export default async function prereview(
 
     const userAnswer =
         choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][
-            isDev ? 0 : state.answers[userId][0].answerIndex
+            isDev ? 0 : state.answers[userId][0].answerIndex - 1
         ]
     const colors = {
         background: config?.background,

@@ -1,5 +1,4 @@
 import type { Config as BaseConfig } from '..'
-import { choicesRepresentation } from '../utils'
 
 type Config = Omit<BaseConfig, 'qna'> & {
     qna: BaseConfig['qna'][number]
