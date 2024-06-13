@@ -6,15 +6,25 @@ import AnswerView from '../views/Answer'
 import { choicesRepresentation } from '../utils'
 
 export default async function page(
-    _body: FrameActionPayload,
+    body: FrameActionPayload,
     { qna: qnas, ...config }: Config,
-    _state: State,
+    state: State,
     _params: any
 ): Promise<BuildFrameData> {
+    const user = body.untrustedData.fid.toString()
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const qna = qnas[0]
     const choiceType = qna.isNumeric ? 'numeric' : 'alpha'
     const buttons: FrameButtonMetadata[] = []
+
+    // reset user state
+    const newState = {
+        ...state,
+        answers: {
+            ...state.answers,
+            [user]: [],
+        },
+    }
 
     const choices = Array.from({ length: qna.choices })
 
@@ -24,6 +34,7 @@ export default async function page(
     })
 
     return {
+        state: newState,
         buttons,
         fonts: roboto,
         aspectRatio: '1.91:1',
