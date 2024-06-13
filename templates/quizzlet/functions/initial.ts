@@ -8,9 +8,11 @@ export default async function initial(config: Config, _: State): Promise<BuildFr
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
     return {
-        buttons: [{ label: config.cover?.label ?? 'START' }],
+        buttons: [{ label: config.cover.label ?? 'START' }],
         fonts: roboto,
-        component: CoverView(config),
+        component: config.cover.image ? undefined : CoverView(config),
         functionName: 'page',
+        image: config.cover.image ?? undefined,
+        aspectRatio: config.cover.image ? '1:1' : undefined,
     }
 }

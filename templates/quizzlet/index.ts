@@ -2,14 +2,8 @@ import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import functions from './functions'
-import { before } from 'node:test'
 
 export interface Config extends BaseConfig {
-    options: {
-        buttonLabel: string
-        displayLabel: string
-        index: number
-    }[]
     qna: {
         question: string
         answer: string
@@ -24,9 +18,14 @@ export interface Config extends BaseConfig {
     background?: string
     textColor?: string
     barColor?: string
-    cover?: {
-        text: string
-        label: string
+    cover: {
+        image: string | null
+        label: string | null
+    }
+    success: {
+        image: string | null
+        label: string | null
+        href: string | null
     }
 }
 
@@ -57,6 +56,14 @@ export default {
         beforeReview: {
             screen: `Next, let's review your answers.`,
             label: 'Review your answers',
+        },
+        cover: {
+            image: null,
+            label: null,
+        },
+        success: {
+            image: null,
+            text: null,
         },
     },
     requiresValidation: true,

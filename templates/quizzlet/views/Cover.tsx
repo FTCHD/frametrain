@@ -46,8 +46,7 @@ export default function CoverView(config: Config) {
                     textWrap: 'balance',
                 }}
             >
-                {config.cover?.text ||
-                    '🎉 Welcome to Quizzlet! Press "START" to being your journey'}
+                🎉 Welcome to Quizzlet! Press "START" to being your journey
             </div>
         </div>
     )
