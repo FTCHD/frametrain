@@ -4,6 +4,9 @@ export default function ResultsView(
     choicesForOption: Record<string, number>,
     colors: Record<string, string | undefined>
 ) {
+    console.log('ResultsView >> percentageForEachOption', percentageForEachOption)
+    console.log('ResultsView >> choicesForOption', choicesForOption)
+
     const backgroundProp: Record<string, string> = {}
     const options: { key: string; displayLabel: string; color: string }[] = [
         {
@@ -12,7 +15,7 @@ export default function ResultsView(
             color: 'green',
         },
         {
-            key: 'incorrect_answers',
+            key: 'wrong_answers',
             displayLabel: 'Wrong Answers',
             color: 'red',
         },

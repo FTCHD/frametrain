@@ -4,9 +4,8 @@ import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/
 import type { Config, State } from '..'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import QuestionView from '../views/Question'
-import { choicesRepresentation, isDev } from '../utils'
+import { choicesRepresentation } from '../utils'
 import PreReviewAnswersView from '../views/PreReview'
-import ReviewAnswersView from '../views/Review'
 
 export default async function answer(
     body: FrameActionPayload,
@@ -33,7 +32,7 @@ export default async function answer(
 
     const buttons: FrameButtonMetadata[] = []
 
-    pastAnswers.push({ questionIndex: currentPage, answerIndex: choice })
+    pastAnswers.push({ questionIndex: qna.index, answerIndex: choice })
 
     newState = Object.assign(state, {
         answers: {
@@ -54,23 +53,12 @@ export default async function answer(
         })
     }
 
-    // const colors = {
-    //     background: config?.background,
-    //     textColor: config?.textColor,
-    //     barColor: config?.barColor,
-    // }
-
     console.log('/answer for quizzlet', {
         pastAnswers,
         nextPage,
         lastPage,
         nextQna,
     })
-
-    // const userAnswer =
-    //     choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][
-    //         state.answers[student].find((a) => a.questionIndex === currentPage)?.answerIndex ?? 0
-    //     ]
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
