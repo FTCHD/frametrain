@@ -2,15 +2,10 @@ import type { Article } from '../utils'
 
 export default function CoverView({
     article,
+    bgColor,
     textColor,
-    bgBlendMode,
     hideTitleAuthor
-}: { article?: Article, textColor?: string, bgBlendMode?: string, hideTitleAuthor:boolean}) {
-
-    let background = '#000'
-    if (article?.metadata.image) {
-        background = `url(${article.metadata.image})`
-    }
+}: { article?: Article, bgColor?: string, textColor?: string, hideTitleAuthor:boolean}) {
 
     let titleFontSize = '80px'
     let authorFontSize = '40px'
@@ -32,23 +27,28 @@ export default function CoverView({
                 padding: '70px',
                 opacity: '0.8',
                 color: textColor || '#fff',
-                backgroundColor: '#000',
-                background: background,
-                backgroundSize: '100% 100%'
+                backgroundColor: bgColor || '#000'
             }}
         >
-            <div
-                style={{
-                    position: 'absolute',
-                    top: '0',
-                    bottom: '0',
-                    left: '0',
-                    right: '0',
-                    opacity: bgBlendMode == 'lighten' || bgBlendMode == 'darken'? '0.4' : '0',
-                    backgroundColor: bgBlendMode == 'lighten' ? '#fff' : bgBlendMode == 'darken' ? '#000' : 'transparent'
+            { article?.metadata.image &&
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '250px',
+                    margin: '20px 0 0 0',
+                    overflow: 'hidden',
                 }}>
-
-            </div>
+                    <img
+                        src={article?.metadata.image}
+                        alt="."
+                        style={{
+                            height: '100%',
+                            objectFit: 'contain',
+                        }}
+                    />
+                </div>
+            }
             {
                 !hideTitleAuthor &&
                 <div style={{

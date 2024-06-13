@@ -6,13 +6,6 @@ import { useEffect, useRef, useState } from 'react'
 import type { Config } from '.'
 import getMediumArticle from './utils'
 import { ColorPicker } from '@/sdk/components'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -92,6 +85,14 @@ export default function Inspector() {
 
                 <h1 className="text-2xl font-bold">Cover Style</h1>
                 <div className="flex flex-col gap-2">
+                    <h2 className="text-lg font-semibold">Background Colour</h2>
+                    <ColorPicker
+                        className="w-full"
+                        background={config.textColor || 'black'}
+                        setBackground={(value) => updateConfig({ bgColor: value })}
+                    />
+                </div>
+                <div className="flex flex-col gap-2">
                     <h2 className="text-lg font-semibold">Text Colour</h2>
                     <ColorPicker
                         className="w-full"
@@ -111,23 +112,6 @@ export default function Inspector() {
                         ref={hideTitleAuthorRef} 
                         onChange={() => updateConfig({ hideTitleAuthor: hideTitleAuthorRef.current?.checked })}
                     />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                    <h2 className="text-lg font-semibold">Background Image Mode</h2>
-                    <Select
-                        defaultValue={ config.bgBlendMode }
-                        onValueChange={(value) => updateConfig({ bgBlendMode: value })}
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Background Image Mode" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value={'normal'}>Normal</SelectItem>
-                            <SelectItem value={'lighten'}>Lighten</SelectItem>
-                            <SelectItem value={'darken'}>Darken</SelectItem>
-                        </SelectContent>
-                    </Select>
                 </div>
 
                 <h1 className="text-2xl font-bold">Options</h1>

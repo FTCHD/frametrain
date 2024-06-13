@@ -6,10 +6,10 @@ import type { Article } from './utils'
 
 export interface Config extends BaseConfig {
     article?: Article
+    bgColor: string
     textColor: string
     showLinkOnAllPages: boolean
     hideTitleAuthor: boolean
-    bgBlendMode: string
     maxCharsPerPage: number
 }
 
