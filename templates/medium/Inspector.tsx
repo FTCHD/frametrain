@@ -88,7 +88,7 @@ export default function Inspector() {
                     <h2 className="text-lg font-semibold">Background Colour</h2>
                     <ColorPicker
                         className="w-full"
-                        background={config.textColor || 'black'}
+                        background={config.bgColor || 'black'}
                         setBackground={(value) => updateConfig({ bgColor: value })}
                     />
                 </div>
