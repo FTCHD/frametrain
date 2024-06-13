@@ -46,7 +46,7 @@ export default async function review(
     // get the total number of correct answers from the user
     // get the total number of wrong answers from the user
 
-    if (lastShow) {
+    if (lastPage) {
         buttons.push({
             label: 'Check Results',
         })
@@ -77,7 +77,7 @@ export default async function review(
         fonts: roboto,
         aspectRatio: '1.91:1',
         component: ReviewAnswersView({ qnas, qna, colors, userAnswer, ...rest }),
-        functionName: lastShow ? 'results' : 'review',
-        params: !lastShow ? { currentPage: nextPage } : undefined,
+        functionName: lastPage ? 'results' : 'review',
+        params: !lastPage ? { currentPage: nextPage } : undefined,
     }
 }
