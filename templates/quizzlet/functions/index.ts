@@ -4,6 +4,7 @@ import page from './page'
 import prereview from './pre-review'
 import results from './results'
 import review from './review'
+import success from './success'
 
 export default {
     initial,
@@ -12,4 +13,5 @@ export default {
     answer,
     prereview,
     review,
+    success,
 }
