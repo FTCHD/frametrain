@@ -22,8 +22,8 @@ export default async function answer(
     let newState = state
     const nextPage = params?.currentPage !== undefined ? Number(params?.currentPage) + 1 : 1
     const qnaCount = config.qna.length
-    const lastPage = nextPage === qnaCount
     const currentPage = nextPage - 1
+    const lastPage = currentPage === qnaCount
     const qna = config.qna[currentPage]
 
     console.log('Quizzlet.answer >> qna', { qna, nextPage, qnaCount, lastPage, currentPage })
@@ -82,7 +82,7 @@ export default async function answer(
         aspectRatio: '1.91:1',
         component: lastPage
             ? isDev
-                ? ReviewAnswersView({ qna, qnas, colors, userAnswer, ...rest })
+                ? ReviewAnswersView({ qna: qnas[0], qnas, colors, userAnswer, ...rest })
                 : PreReviewAnswersView(config)
             : QuestionView({ qnas, qna, ...rest }),
         functionName: lastPage ? (isDev ? 'review' : 'prereview') : 'answer',

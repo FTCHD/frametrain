@@ -20,14 +20,14 @@ export default async function review(
     const nextPage = params?.currentPage !== undefined ? Number(params?.currentPage) + 1 : 1
     const qnaCount = config.qna.length
     const currentPage = nextPage - 1
-    const lastPage = nextPage === qnaCount
+    const lastPage = currentPage === qnaCount
 
     const buttons: FrameButtonMetadata[] = []
 
     const qna = config.qna[currentPage]
     console.log('Quizzlet.answer >> qna', { qna, nextPage, qnaCount, lastPage, currentPage })
     const { qna: qnas, ...rest } = config
-    if (nextPage < qnaCount) {
+    if (nextPage <= qnaCount) {
         buttons.push({ label: 'Next' })
     } else {
         buttons.push({
