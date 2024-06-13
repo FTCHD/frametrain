@@ -11,6 +11,7 @@
         "vercel": "vercel build --prod",
         "deploy": "vercel build --prod && vercel deploy --prebuilt --prod",
         "db:studio": "drizzle-kit studio",
+        "db:push": "drizzle-kit push",
         "db:generate": "drizzle-kit generate",
         "db:up": "drizzle-kit up",
         "db:migrate": "drizzle-kit migrate",
