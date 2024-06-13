@@ -19,7 +19,7 @@ type Config = Omit<BaseConfig, 'qna'> & {
  */
 
 export default function ReviewAnswersView(config: Config) {
-    const { qna, background, textColor, qnas, userAnswer, colors } = config
+    const { qna, background, qnas, userAnswer, colors } = config
 
     const backgroundProp: Record<string, string> = {}
 
@@ -74,7 +74,7 @@ export default function ReviewAnswersView(config: Config) {
                             width: '100%',
                             fontFamily: 'Roboto',
                             color: colors?.textColor || 'white',
-                            fontSize: '25px',
+                            fontSize: '20px',
                             fontWeight: 500,
                             lineHeight: '1.4',
                             textWrap: 'balance',
@@ -94,7 +94,7 @@ export default function ReviewAnswersView(config: Config) {
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '20px',
+                    fontSize: '15px',
                     fontWeight: 600,
                     gap: '20px',
                     color: 'white',
@@ -107,60 +107,64 @@ export default function ReviewAnswersView(config: Config) {
                     <span>
                         {qna.index}/{qnas.length}
                     </span>
-                    {/* This is the answer view for the option the user chose to this question */}
-                    <div
-                        style={{
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                            borderRadius: '10px',
-                            padding: '20px',
-                        }}
-                    >
-                        <p
+                </div>
+            </div>
+            {/* A view to show user's answer and the right answer */}
+            {/* 
+            Format: 
+                Your Answer: {userAnswer} {isCorrect ? '✅' : '❌'}
+                Correct Answer: {correctAnswer}
+            
+            */}
+            <div
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '20px',
+                    padding: '10px',
+                }}
+            >
+                <div
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: '10px',
+                        padding: '10px',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <span style={{ fontFamily: 'Roboto', fontSize: '20px', fontWeight: 500 }}>
+                        Your Answer: {userAnswer}
+                        <span
                             style={{
-                                width: '100%',
                                 fontFamily: 'Roboto',
-                                color: textColor || 'white',
-                                fontSize: '25px',
-                                fontWeight: 500,
-                                lineHeight: '1.4',
-                                textWrap: 'balance',
-                                overflowWrap: 'break-word',
-                                wordWrap: 'break-word',
+                                // fontSize: '20px',
+                                fontWeight: 900,
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                paddingLeft: '5px',
                             }}
                         >
-                            {userAnswer}
-                        </p>
-                    </div>
-                    {/* This is the answer view for the correct answer to this question */}
-                    <div
-                        style={{
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                            borderRadius: '10px',
-                            padding: '20px',
-                        }}
-                    >
-                        <p
-                            style={{
-                                width: '100%',
-                                fontFamily: 'Roboto',
-                                color: textColor || 'white',
-                                fontSize: '25px',
-                                fontWeight: 500,
-                                lineHeight: '1.4',
-                                textWrap: 'balance',
-                                overflowWrap: 'break-word',
-                                wordWrap: 'break-word',
-                            }}
-                        >
-                            {correctAnswer}
-                        </p>
-                    </div>
+                            {userAnswer === correctAnswer ? '✅' : '❌'}
+                        </span>
+                    </span>
+                </div>
+                <div
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: '10px',
+                        padding: '10px',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <span style={{ fontFamily: 'Roboto', fontSize: '20px', fontWeight: 500 }}>
+                        Correct Answer: {correctAnswer}
+                    </span>
                 </div>
             </div>
         </div>

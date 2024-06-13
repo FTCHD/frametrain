@@ -4,8 +4,9 @@ import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/
 import type { Config, State } from '..'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import QuestionView from '../views/Question'
-import { choicesRepresentation } from '../utils'
+import { choicesRepresentation, isDev, localAnswers } from '../utils'
 import PreReviewAnswersView from '../views/PreReview'
+import ReviewAnswersView from '../views/Review'
 
 export default async function answer(
     body: FrameActionPayload,
@@ -18,6 +19,7 @@ export default async function answer(
     const pastAnswers = state.answers?.[student] ?? []
     console.log('Quizzlet.answer >> top', { state, params, student, answer, pastAnswers })
     const answers = state.answers?.[student] ?? []
+    const userState = answers
 
     let newState = state
     const nextPage = params?.currentPage !== undefined ? Number(params?.currentPage) + 1 : 1
@@ -58,6 +60,12 @@ export default async function answer(
         })
     }
 
+    const colors = {
+        background: config?.background,
+        textColor: config?.textColor,
+        barColor: config?.barColor,
+    }
+
     console.log('/answer for quizzlet', {
         student,
         answer,
@@ -69,15 +77,33 @@ export default async function answer(
         newState,
     })
 
+    const userAnswer =
+        choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][
+            state.answers[student].find((a) => a.questionIndex === currentPage)?.answerIndex ?? 0
+        ]
+
     const roboto = await loadGoogleFontAllVariants('Roboto')
+    if (isDev) {
+        if (localAnswers.has(answers)) {
+            localAnswers.delete(answers)
+            localAnswers.add(newState.answers[student])
+        }
+
+        const v = [...localAnswers][0]
+        console.log('Quizzlet.answer >> localAnswers', { localAnswers, v })
+    }
 
     return {
         buttons,
         state: newState,
         fonts: roboto,
         aspectRatio: '1.91:1',
-        component: lastPage ? PreReviewAnswersView(config) : QuestionView({ qnas, qna, ...rest }),
-        functionName: lastPage ? 'prereview' : 'answer',
+        component: lastPage
+            ? isDev
+                ? ReviewAnswersView({ qna, qnas, colors, userAnswer, ...rest })
+                : PreReviewAnswersView(config)
+            : QuestionView({ qnas, qna, ...rest }),
+        functionName: lastPage ? (isDev ? 'review' : 'prereview') : 'answer',
         params: lastPage ? { currentPage: nextPage } : undefined, //{ currentPage: nextPage, answers: newState.answers },
     }
 }
