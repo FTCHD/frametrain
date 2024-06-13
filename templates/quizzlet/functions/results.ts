@@ -21,38 +21,24 @@ export default async function results(
         },
     ]
 
-    // use array.reduce to filter out the correct answers
-    const pastAnswers = [
-        { questionIndex: 1, answerIndex: 1 },
-        { questionIndex: 2, answerIndex: 1 },
-        { questionIndex: 3, answerIndex: 1 },
-        { questionIndex: 4, answerIndex: 3 },
-        { questionIndex: 5, answerIndex: 1 },
-        { questionIndex: 6, answerIndex: 1 },
-    ]
-    const sum = pastAnswers.reduce((acc, answer) => {
-        console.log('Quizzlet.results >> reduce.sum', { acc, answer })
+    const correctAnswers = allAnswers.reduce((acc, answer) => {
+        console.log('Quizzlet.results >> reduce.correctAnswers', { acc, answer })
         const qna = config.qna[answer.questionIndex - 1]
-        console.log('Quizzlet.results >> reduce.sum', { qna })
+        console.log('Quizzlet.results >> reduce.correctAnswers', { qna })
         const choice =
             choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
-        console.log('Quizzlet.results >> reduce.sum', { qnaAnswer: qna.answer, choice })
+        console.log('Quizzlet.results >> reduce.correctAnswers', { qnaAnswer: qna.answer, choice })
         if (qna.answer === choice) {
+            console.log('Quizzlet.results >> reduce.correctAnswers | qna.answer === choice', {
+                match: qna.answer === choice,
+            })
             return acc + 1
         }
         return acc
     }, 0)
 
-    console.log('Quizzlet.results >> reduce.sum', { sum })
+    console.log('Quizzlet.results >> reduce.correctAnswers outside', { correctAnswers })
 
-    const correctChoices = allAnswers.filter((answer, i) => {
-        const qna = config.qna[i]
-        const choice =
-            choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
-        console.log('Quizzlet.results >> filter.correctChoices', { qna, choice })
-        return qna ? qna.answer === choice : false
-    })
-    const correctAnswers = correctChoices.length
     const wrongAnswers = allAnswers.length - correctAnswers
     const showImage = correctAnswers === config.qna.length
     const percentages = {
