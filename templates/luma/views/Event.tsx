@@ -65,14 +65,7 @@ export default function EventView(event: EventDetails | null) {
                         </svg>
                         <span>{event.date}</span>
                     </div>
-                    <div
-                        tw="flex items-center gap-2 text-lg"
-                        style={
-                            {
-                                // gap:'0.5rem',
-                            }
-                        }
-                    >
+                    <div tw="flex items-center gap-2 text-lg">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -93,14 +86,7 @@ export default function EventView(event: EventDetails | null) {
                         </svg>
                         <span>{event.onlineEvent}</span>
                     </div>
-                    <div
-                        tw="flex items-center gap-2 text-lg"
-                        style={
-                            {
-                                // gap:'0.5rem',
-                            }
-                        }
-                    >
+                    <div tw="flex items-center gap-2 text-lg">
                         {event.hosts.length > 1 ? (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -117,8 +103,9 @@ export default function EventView(event: EventDetails | null) {
                                     height: '1rem',
                                 }}
                             >
-                                <circle cx="12" cy="8" r="5" />
-                                <path d="M20 21a8 8 0 0 0-16 0" />
+                                <path d="M18 21a8 8 0 0 0-16 0" />
+                                <circle cx="10" cy="8" r="5" />
+                                <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3" />
                             </svg>
                         ) : (
                             <svg
