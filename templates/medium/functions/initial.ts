@@ -20,6 +20,7 @@ export default async function initial(config: Config, state: State): Promise<Bui
             bgColor: config.bgColor,
             textColor: config.textColor,
             imageSize: config.imageSize,
+            textPosition: config.textPosition,
             hideTitleAuthor: config.hideTitleAuthor
         }),
         functionName: 'page',

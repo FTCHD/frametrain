@@ -9,6 +9,7 @@ export interface Config extends BaseConfig {
     bgColor: string
     textColor: string
     imageSize: number
+    textPosition: boolean
     showLinkOnAllPages: boolean
     hideTitleAuthor: boolean
     maxCharsPerPage: number

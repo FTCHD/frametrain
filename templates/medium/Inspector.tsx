@@ -13,6 +13,7 @@ export default function Inspector() {
 
     const urlInputRef = useRef<HTMLInputElement>(null)
     const imgSizeInputRef = useRef<HTMLInputElement>(null)
+    const textPositionOverlayRef = useRef<HTMLInputElement>(null)
     const linkOnAllPagesRef = useRef<HTMLInputElement>(null)
     const hideTitleAuthorRef = useRef<HTMLInputElement>(null)
 
@@ -35,6 +36,13 @@ export default function Inspector() {
         }
 
         renderMediumArticle(url)
+    }
+
+    // handler for the textPosition radio group
+    const textPositionHandler = (e: any) => {
+        const textPosition = e.target.value
+        console.log('textPosition', textPosition)
+        //updateConfig({ textPosition: textPosition })
     }
 
     const renderMediumArticle = async (url:string) => {
@@ -70,7 +78,7 @@ export default function Inspector() {
 
                 <h1 className="text-2xl font-bold">Cover Style</h1>
                 <div className="flex flex-col gap-2">
-                    <h2 className="text-lg">Background Colour</h2>
+                    <h2 className="text-lg">Background Color</h2>
                     <ColorPicker
                         className="w-full"
                         background={config.bgColor || 'black'}
@@ -78,7 +86,7 @@ export default function Inspector() {
                     />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <h2 className="text-lg">Text Colour</h2>
+                    <h2 className="text-lg">Text Color</h2>
                     <ColorPicker
                         className="w-full"
                         background={config.textColor || 'white'}
@@ -87,16 +95,48 @@ export default function Inspector() {
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className='flex flex-col'>
-                        <h2 className="text-lg">Image size - percent</h2>
-                        <p className="text-sm">check that the frame size limit is not exceeded</p>
+                        <h2 className="text-lg">Image Size</h2>
+                        <p className="text-sm text-gray-400">Enter a percent value and test (frame size limit is 256kb!)</p>
                     </div>
                     <Input
                         className="w-full"
                         type="number"
-                        defaultValue={ config.imageSize ?? 20 }
+                        defaultValue={ config.imageSize ?? 40 }
                         ref={imgSizeInputRef}
                         onBlur={() => updateConfig({ imageSize: imgSizeInputRef.current?.value })}
                     />
+                </div>
+
+                <hr className="my-4 opacity-50" /> 
+
+                <h1 className="text-2xl font-bold">Options</h1>
+                <div className="flex flex-col gap-2">
+                    <div className='flex flex-col'>
+                        <h2 className="text-lg">Image Position</h2>
+                    </div>
+                    <div className='flex flex-col'>
+                        <label className='flex gap-x-4 items-center'>
+                            <Input
+                                className="w-6"
+                                name="textPosition"
+                                type="radio"
+                                defaultChecked={ true }
+                                ref={textPositionOverlayRef}
+                                onChange={() => updateConfig({ textPosition: textPositionOverlayRef.current?.checked })}
+                            />
+                            <p className="text-sm text-gray-400">Place the text over the image</p>
+                        </label>
+                        <label className='flex gap-x-4 items-center'>
+                            <Input
+                                className="w-6"
+                                name="textPosition"
+                                type="radio"
+                                defaultChecked = { false }
+                                onChange={() => updateConfig({ textPosition: textPositionOverlayRef.current?.checked })}
+                            />
+                            <p className="text-sm text-gray-400">Place the text below the image</p>
+                        </label>
+                    </div>
                 </div>
                 <div className="flex">
                     <label className='flex gap-x-4 items-center'>
@@ -110,10 +150,6 @@ export default function Inspector() {
                         <h2 className="text-lg">Hide the Title & Author</h2>
                     </label>
                 </div>
-
-                <hr className="my-4 opacity-50" /> 
-
-                <h1 className="text-2xl font-bold">Options</h1>
                 <div className="flex items-center">
                     <label className='flex gap-x-4 items-center'>
                         <Input

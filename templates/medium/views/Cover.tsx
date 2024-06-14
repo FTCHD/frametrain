@@ -5,8 +5,9 @@ export default function CoverView({
     bgColor,
     textColor,
     imageSize,
+    textPosition,
     hideTitleAuthor
-}: { article?: Article, bgColor?: string, textColor?: string, imageSize: number, hideTitleAuthor:boolean}) {
+}: { article?: Article, bgColor?: string, textColor?: string, imageSize: number, textPosition: boolean, hideTitleAuthor:boolean}) {
 
     let titleFontSize = '80px'
     let authorFontSize = '40px'
@@ -14,6 +15,8 @@ export default function CoverView({
         titleFontSize = '40px'
         authorFontSize = '20px'
     }
+
+    console.log('textPosition', textPosition)
 
     return ( 
         <div
@@ -24,9 +27,6 @@ export default function CoverView({
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                gap: '100px',
-                padding: '70px',
-                opacity: '0.8',
                 color: textColor || '#fff',
                 backgroundColor: bgColor || '#000'
             }}
@@ -36,26 +36,30 @@ export default function CoverView({
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    height: imageSize ? `${imageSize}%` : '20%',
-                    marginTop: '20px',
-                    overflow: 'hidden',
+                    width: imageSize ? `${imageSize}%` : '40%',
+                    opacity: textPosition ? '0.66' : '1'
                 }}>
                     <img
                         src={article.metadata.image}
                         alt="."
                         style={{
-                            height: '100%',
                             objectFit: 'contain',
                         }}
                     />
                 </div>
             }
             {
-                !hideTitleAuthor &&
+                // image is overlaid with text
+                textPosition && !hideTitleAuthor &&
                 <div style={{
                     display: 'flex',
+                    position: 'absolute',
+                    top: '8%',
+                    right: '8%',
+                    bottom: '8%',
+                    left: '8%',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
+                    justifyContent: 'center',
                     alignItems: 'center'
                 }}>
                     <span
@@ -74,6 +78,36 @@ export default function CoverView({
                             fontSize: authorFontSize,
                             textAlign: 'center',
                             margin: '20px auto'
+                        }}
+                    >{ article?.metadata.author ?? 'Paste your medium article link into the URL input' }
+                    </span>
+                </div>
+            }
+            {
+                // biome-ignore lint/complexity: <explanation>
+                !textPosition && !hideTitleAuthor &&
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <span
+                        style={{
+                            fontFamily: 'Georgia',
+                            fontSize: titleFontSize,
+                            textAlign: 'center',
+                            textWrap: 'balance',
+                            margin: '12px auto'
+                        }}
+                    >{ article?.metadata.title ?? '' }
+                    </span>
+                    <span
+                        style={{
+                            fontFamily: 'Georgia',
+                            fontSize: authorFontSize,
+                            textAlign: 'center',
+                            margin: '8px auto'
                         }}
                     >{ article?.metadata.author ?? 'Paste your medium article link into the URL input' }
                     </span>
