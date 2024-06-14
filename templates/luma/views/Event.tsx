@@ -10,10 +10,10 @@ export default function EventView(event: EventDetails | null) {
         title: event.title,
         img: event.cover,
     })
-    const price = event.eventPaymentType === 'FREE' ? 'Free' : event.price
+    const price = event.price
 
     const host = event.hosts.length
-        ? event.hosts.length > 0
+        ? event.hosts.length === 1
             ? event.hosts[0].name
             : event.hosts.map((h) => h.name).join(', ')
         : 'UNKNOWN HOST'
@@ -24,12 +24,25 @@ export default function EventView(event: EventDetails | null) {
                 <img src={bg} alt="Preview" tw="h-full w-full rounded-[inherit] object-cover" />
             </label>
 
-            <div tw="sm:inline-flex absolute right-2 top-2 group flex items-center justify-center border-gray-200 bg-white text-gray-600 h-8 max-w-full text-lg rounded-md p-2 transition-all hover:bg-gray-100">
+            <div
+                tw="sm:inline-flex absolute right-2 top-2 group flex items-center justify-center border-gray-200 bg-white text-gray-600 h-8 max-w-full text-lg rounded-md p-2 transition-all"
+                style={{
+                    fontSize: '1.125rem',
+                    lineHeight: '1.75rem',
+                }}
+            >
                 {price}
             </div>
             <div tw="flex absolute bottom-2 left-2 rounded-md bg-[#414142] px-1.5 py-px text-white">
-                <div tw="flex flex-row items-center gap-4">
-                    <div tw="flex items-center gap-4 text-lg">
+                <div
+                    tw="flex flex-row items-center"
+                    style={{
+                        gap: '0.5rem',
+                        fontSize: '1.125rem',
+                        lineHeight: '1.75rem',
+                    }}
+                >
+                    <div tw="flex items-center text-lg">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -52,7 +65,14 @@ export default function EventView(event: EventDetails | null) {
                         </svg>
                         <span>{event.date}</span>
                     </div>
-                    <div tw="flex items-center gap-2 text-lg">
+                    <div
+                        tw="flex items-center gap-2 text-lg"
+                        style={
+                            {
+                                // gap:'0.5rem',
+                            }
+                        }
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -73,7 +93,14 @@ export default function EventView(event: EventDetails | null) {
                         </svg>
                         <span>{event.onlineEvent}</span>
                     </div>
-                    <div tw="flex items-center gap-2 text-lg">
+                    <div
+                        tw="flex items-center gap-2 text-lg"
+                        style={
+                            {
+                                // gap:'0.5rem',
+                            }
+                        }
+                    >
                         {event.hosts.length > 1 ? (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"

@@ -42,7 +42,6 @@ export type EventDetails = {
     obfuscated: boolean
     onlineEvent: string
     eventOrganiserName: string | undefined
-    eventPaymentType: 'FREE' | 'PAID'
     description: string
     isSoldOut: boolean
     hosts: Host[]

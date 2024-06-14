@@ -32,7 +32,6 @@ export async function extractEventDetails(url: string): Promise<EventDetails | n
     const cover = (eventData?.cover_url ?? '') as string
     const address = (eventData?.geo_address_info?.full_address ?? '') as string
     const obfuscated = eventData?.geo_address_info?.mode === 'obfuscated'
-    const priceType = eventData?.ticket_price_cents ? 'PAID' : 'FREE'
     const onlineEvent = eventData?.location_type === 'offline' ? 'OFFLINE' : 'ONLINE'
     const descriptions = eventData?.description_mirror?.content ?? []
     const desc = (
@@ -42,11 +41,11 @@ export async function extractEventDetails(url: string): Promise<EventDetails | n
         }>
     ).flatMap((d) => [...d.content])
     const description = desc.length > 0 ? desc[0].text : 'N/A'
-    const ticketInfo = eventData?.ticket_info as TicketInfo | null
+    const ticketInfo = data?.ticket_info as TicketInfo | null
 
     const price = ticketInfo?.price
         ? ticketInfo.is_free
-            ? 'free'
+            ? 'FREE'
             : formatAmount(ticketInfo.price.cents, ticketInfo.price.currency)
         : 'N/A'
     const isSoldOut = (eventData?.ticket_info?.is_sold_out ?? false) as boolean
@@ -71,7 +70,6 @@ export async function extractEventDetails(url: string): Promise<EventDetails | n
         obfuscated,
         onlineEvent,
         eventOrganiserName,
-        eventPaymentType: priceType,
         description,
         isSoldOut,
         hosts,
@@ -87,7 +85,7 @@ export function formatAmount(cents: number, currency = 'usd') {
         currency,
     })
 
-    return parser.format(cents)
+    return parser.format(cents / 100)
 }
 
 export function generateSocialCard({

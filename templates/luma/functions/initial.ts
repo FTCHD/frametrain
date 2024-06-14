@@ -1,4 +1,5 @@
 'use server'
+
 import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
@@ -9,7 +10,6 @@ export default async function initial(config: Config, _state: State): Promise<Bu
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const eventUrl = 'https://lu.ma/' + config.eventId
     const event = await extractEventDetails(eventUrl)
-    console.log('data:', event)
 
     return {
         buttons: [
