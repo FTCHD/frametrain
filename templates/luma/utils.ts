@@ -1,7 +1,7 @@
 import HTMLParser from 'node-html-parser'
 import type { EventDetails, HostData, TicketInfo } from './types'
 import Dayjs from 'dayjs'
-import LocalizedFormat from 'dayjs/plugin/LocalizedFormat'
+import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 
 Dayjs.extend(LocalizedFormat)
 
