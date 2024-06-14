@@ -50,10 +50,10 @@ export default function Inspector() {
     }
 
     return (
-        <div className="h-full flex flex-col gap-10">
+        <div className="h-full flex flex-col gap-10 mr-12">
             <div className="w-full h-full flex flex-col gap-5">
                 <div className="flex gap-2 items-center">
-                    <h1 className="text-2xl font-bold">URL</h1>
+                    <h1 className="text-2xl font-bold">Medium Article URL</h1>
                     { loading && <LoaderIcon className="animate-spin" /> }
                 </div>
                 <div className="flex flex-col gap-2">
@@ -66,9 +66,11 @@ export default function Inspector() {
                     />
                 </div>
 
+                <hr className="my-4 opacity-50" /> 
+
                 <h1 className="text-2xl font-bold">Cover Style</h1>
                 <div className="flex flex-col gap-2">
-                    <h2 className="text-lg font-semibold">Background Colour</h2>
+                    <h2 className="text-lg">Background Colour</h2>
                     <ColorPicker
                         className="w-full"
                         background={config.bgColor || 'black'}
@@ -76,7 +78,7 @@ export default function Inspector() {
                     />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <h2 className="text-lg font-semibold">Text Colour</h2>
+                    <h2 className="text-lg">Text Colour</h2>
                     <ColorPicker
                         className="w-full"
                         background={config.textColor || 'white'}
@@ -85,8 +87,8 @@ export default function Inspector() {
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className='flex flex-col'>
-                        <h2 className="text-lg font-semibold">Image size - percent</h2>
-                        <p>check that the frame size limit is not exceeded</p>
+                        <h2 className="text-lg">Image size - percent</h2>
+                        <p className="text-sm">check that the frame size limit is not exceeded</p>
                     </div>
                     <Input
                         className="w-full"
@@ -96,32 +98,36 @@ export default function Inspector() {
                         onBlur={() => updateConfig({ imageSize: imgSizeInputRef.current?.value })}
                     />
                 </div>
-                <div className="flex gap-2 items-center">
-                    <div className='flex flex-col'>
-                        <h2 className="text-lg font-bold">Don't show Title/Author on the cover</h2>
-                    </div>
-                    <Input
-                        className="w-full"
-                        defaultChecked={ config.hideTitleAuthor }
-                        type="checkbox"
-                        ref={hideTitleAuthorRef} 
-                        onChange={() => updateConfig({ hideTitleAuthor: hideTitleAuthorRef.current?.checked })}
-                    />
+                <div className="flex">
+                    <label className='flex gap-x-4 items-center'>
+                        <Input
+                            className="w-6 h-6"
+                            defaultChecked={ config.hideTitleAuthor }
+                            type="checkbox"
+                            ref={hideTitleAuthorRef} 
+                            onChange={() => updateConfig({ hideTitleAuthor: hideTitleAuthorRef.current?.checked })}
+                        />
+                        <h2 className="text-lg">Hide the Title & Author</h2>
+                    </label>
                 </div>
 
+                <hr className="my-4 opacity-50" /> 
+
                 <h1 className="text-2xl font-bold">Options</h1>
-                <div className="flex gap-2 items-center">
-                    <div className='flex flex-col'>
-                        <h2 className="text-lg font-bold">Show link to article on every frame</h2>
-                        <p>uncheck for last page only</p>
-                    </div>
-                    <Input
-                        className="w-full"
-                        type="checkbox"
-                        defaultChecked={ config.showLinkOnAllPages }
-                        ref={linkOnAllPagesRef} 
-                        onChange={() => updateConfig({ showLinkOnAllPages: linkOnAllPagesRef.current?.checked })}
-                    />
+                <div className="flex items-center">
+                    <label className='flex gap-x-4 items-center'>
+                        <Input
+                            className="w-6 h-6" 
+                            type="checkbox"
+                            defaultChecked={ config.showLinkOnAllPages }
+                            ref={linkOnAllPagesRef} 
+                            onChange={() => updateConfig({ showLinkOnAllPages: linkOnAllPagesRef.current?.checked })}
+                        />
+                        <div className="flex flex-col">
+                            <h2 className="text-lg">Show link to article on every frame</h2>
+                            <p className="text-sm">uncheck for last page only</p>
+                        </div>
+                    </label>
                 </div>
             </div>
         </div>

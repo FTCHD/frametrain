@@ -36,7 +36,7 @@ export default async function page(
 
     if (config.article?.url && (config.showLinkOnAllPages || nextPage === slideCount)) {
         buttons.push({
-            label: 'Support the author on Medium',
+            label: 'Medium',
             action: 'link',
             target: config.article?.url
         })
