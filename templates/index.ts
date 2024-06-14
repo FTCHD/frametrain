@@ -1,3 +1,4 @@
+import calcom from './calcom'
 import discourse from './discourse'
 // import basic from './basic'
 import pdf from './pdf'
@@ -12,4 +13,5 @@ export default {
     sablier,
     twitter,
     discourse,
+    calcom,
 }
