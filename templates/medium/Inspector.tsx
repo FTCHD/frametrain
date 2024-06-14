@@ -120,22 +120,22 @@ export default function Inspector() {
                                 className="w-6"
                                 name="textPosition"
                                 type="radio"
-                                defaultChecked={ true }
-                                ref={textPositionOverlayRef}
+                                defaultChecked = { true }
                                 onChange={() => updateConfig({ textPosition: textPositionOverlayRef.current?.checked })}
                             />
-                            <p className="text-sm text-gray-400">Place the text over the image</p>
+                            <p className="text-sm text-gray-400">Place the text below the image</p>
                         </label>
                         <label className='flex gap-x-4 items-center'>
                             <Input
                                 className="w-6"
                                 name="textPosition"
                                 type="radio"
-                                defaultChecked = { false }
+                                defaultChecked={ false }
+                                ref={textPositionOverlayRef}
                                 onChange={() => updateConfig({ textPosition: textPositionOverlayRef.current?.checked })}
                             />
-                            <p className="text-sm text-gray-400">Place the text below the image</p>
-                        </label>
+                            <p className="text-sm text-gray-400">Place the text over the image</p>
+                        </label>                        
                     </div>
                 </div>
                 <div className="flex">
