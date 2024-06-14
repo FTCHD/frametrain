@@ -110,7 +110,7 @@ function paginateElements(elements: Element[], metadata: MediumMetadata): Page[]
         const text = element.text.trim()
         // biome-ignore lint/complexity: <explanation>
         return ![
-            'Follow', 'Listen', 'Share', metadata.author, metadata.title, 'About', 'Contact', 'Subscribe', 'Top highlight'
+            'Follow', 'Listen', 'Share', metadata.author, metadata.title, 'About', 'Contact', 'Subscribe', 'Top highlight', 'medium.com'
         ].includes(text) && 
         !text.match(/^\d+(\.\d+)?[KMB]?$/)
     })
