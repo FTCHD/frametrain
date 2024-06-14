@@ -15,7 +15,10 @@ export default function EventView(event: EventDetails | null) {
     const host = event.hosts.length
         ? event.hosts.length === 1
             ? event.hosts[0].name
-            : event.hosts.map((h) => h.name).join(', ')
+            : event.hosts
+                  .slice(0, 3)
+                  .map((h) => h.name)
+                  .join(', ')
         : 'UNKNOWN HOST'
 
     return (
