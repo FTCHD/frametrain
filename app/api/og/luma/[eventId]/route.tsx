@@ -153,9 +153,26 @@ export async function GET(_: NextRequest, { params }: { params: { eventId: strin
             }
         )
     } catch (_) {
-        return new ImageResponse(<>Event data not found for event id {params.eventId}</>, {
-            width: 955,
-            height: 500,
-        })
+        return new ImageResponse(
+            <div
+                style={{
+                    fontSize: 40,
+                    color: 'black',
+                    background: 'white',
+                    width: '100%',
+                    height: '100%',
+                    padding: '50px 200px',
+                    textAlign: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                Event data not found for event id {params.eventId}
+            </div>,
+            {
+                width: 955,
+                height: 500,
+            }
+        )
     }
 }
