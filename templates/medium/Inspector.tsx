@@ -94,10 +94,7 @@ export default function Inspector() {
                     />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <div className='flex flex-col'>
-                        <h2 className="text-lg">Image Size</h2>
-                        <p className="text-sm text-gray-400">Enter a percent value and test (frame size limit is 256kb!)</p>
-                    </div>
+                    <h2 className="text-lg">Image Size</h2>
                     <Input
                         className="w-full"
                         type="number"
@@ -105,43 +102,37 @@ export default function Inspector() {
                         ref={imgSizeInputRef}
                         onBlur={() => updateConfig({ imageSize: imgSizeInputRef.current?.value })}
                     />
+                    <p className="text-sm text-gray-400">Enter a percent value and test (frame size limit is 256kb!)</p>
                 </div>
 
                 <hr className="my-4 opacity-50" /> 
 
                 <h1 className="text-2xl font-bold">Options</h1>
-                <div className="flex flex-col gap-2">
-                    <div className='flex flex-col'>
-                        <h2 className="text-lg">Image Position</h2>
-                    </div>
-                    <div className='flex flex-col'>
-                        <label className='flex gap-x-4 items-center'>
-                            <Input
-                                className="w-6"
-                                name="textPosition"
-                                type="radio"
-                                defaultChecked = { true }
-                                onChange={() => updateConfig({ textPosition: textPositionOverlayRef.current?.checked })}
-                            />
-                            <p className="text-sm text-gray-400">Place the text below the image</p>
-                        </label>
-                        <label className='flex gap-x-4 items-center'>
-                            <Input
-                                className="w-6"
-                                name="textPosition"
-                                type="radio"
-                                defaultChecked={ false }
-                                ref={textPositionOverlayRef}
-                                onChange={() => updateConfig({ textPosition: textPositionOverlayRef.current?.checked })}
-                            />
-                            <p className="text-sm text-gray-400">Place the text over the image</p>
-                        </label>                        
-                    </div>
-                </div>
-                <div className="flex">
+                <div className="flex flex-col">
                     <label className='flex gap-x-4 items-center'>
                         <Input
-                            className="w-6 h-6"
+                            className="w-4 h-4"
+                            name="textPosition"
+                            type="radio"
+                            defaultChecked = { true }
+                            onChange={() => updateConfig({ textPosition: textPositionOverlayRef.current?.checked })}
+                        />
+                        <p className="text-lg">Place the text below the image</p>
+                    </label>
+                    <label className='flex gap-x-4 items-center'>
+                        <Input
+                            className="w-4 h-4"
+                            name="textPosition"
+                            type="radio"
+                            defaultChecked={ false }
+                            ref={textPositionOverlayRef}
+                            onChange={() => updateConfig({ textPosition: textPositionOverlayRef.current?.checked })}
+                        />
+                        <p className="text-lg">Place the text over the image</p>
+                    </label>                        
+                    <label className='mt-4 flex gap-x-4 items-center'>
+                        <Input
+                            className="w-4 h-4"
                             defaultChecked={ config.hideTitleAuthor }
                             type="checkbox"
                             ref={hideTitleAuthorRef} 
@@ -149,11 +140,9 @@ export default function Inspector() {
                         />
                         <h2 className="text-lg">Hide the Title & Author</h2>
                     </label>
-                </div>
-                <div className="flex items-center">
-                    <label className='flex gap-x-4 items-center'>
+                    <label className='mt-1 flex gap-x-4 items-center'>
                         <Input
-                            className="w-6 h-6" 
+                            className="w-4 h-4" 
                             type="checkbox"
                             defaultChecked={ config.showLinkOnAllPages }
                             ref={linkOnAllPagesRef} 
@@ -161,7 +150,7 @@ export default function Inspector() {
                         />
                         <div className="flex flex-col">
                             <h2 className="text-lg">Show link to article on every frame</h2>
-                            <p className="text-sm">uncheck for last page only</p>
+                            <p className="text-sm text-gray-400">uncheck for last page only</p>
                         </div>
                     </label>
                 </div>
