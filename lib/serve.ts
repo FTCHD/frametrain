@@ -205,7 +205,7 @@ function buildFrame({
             }
             metadata[`fc:frame:button:${index + 1}`] = button.label
             if (button.action) {
-                if (!['post', 'post_redirect', 'mint', 'link'].includes(button.action)) {
+                if (!['post', 'post_redirect', 'mint', 'link', 'tx'].includes(button.action)) {
                     throw new Error('Invalid button action.')
                 }
                 metadata[`fc:frame:button:${index + 1}:action`] = button.action
