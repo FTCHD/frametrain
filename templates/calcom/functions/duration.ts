@@ -16,7 +16,7 @@ export default async function duration(
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: `["${372953}"]`,
+            body: `["${config.fid}"]`,
         }
 
         try {

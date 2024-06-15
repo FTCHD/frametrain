@@ -54,7 +54,7 @@ export default function Inspector() {
                 />
 
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Set Maximum Booking Days Ahead</h2>
+                    <h2 className="text-lg">Set Maximum Booking Days Ahead(3-10)</h2>
                     <Input
                         type="number"
                         min={3}

@@ -6,6 +6,7 @@ export function extractDatesAndSlots(data: any) {
             return dateObject.toLocaleString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
+                timeZone: 'UTC',
             })
         })
     })
