@@ -1,9 +1,18 @@
 export default function CoverView({
     title,
     postCount,
+    viewCount,
     backgroundColor,
-    textColor,
-}: { title?: string; postCount?: string; backgroundColor?: string; textColor?: string }) {
+    highlightColor,
+    highlightFont,
+}: {
+    title?: string
+    postCount: number
+    viewCount: number
+    backgroundColor?: string
+    highlightColor?: string
+    highlightFont?: string
+}) {
     const backgroundProp: Record<string, string> = {}
 
     if (backgroundColor) {
@@ -27,28 +36,29 @@ export default function CoverView({
                 alignItems: 'center',
                 gap: '100px',
                 padding: '70px',
-                color: textColor || 'white',
+                color: highlightColor || 'white',
+                fontFamily: highlightFont || 'Urbanist',
                 ...backgroundProp,
             }}
         >
             <span
                 style={{
-                    fontFamily: 'Roboto',
                     fontSize: '100px',
                     textAlign: 'center',
                     textWrap: 'balance',
+                    fontWeight: 'bold',
                 }}
             >
-                {title ?? 'Title'}
+                {title || 'Title'}
             </span>
             <span
                 style={{
-                    fontFamily: 'Roboto',
                     fontSize: '50px',
                     opacity: '0.8',
+                    fontWeight: 'medium',
                 }}
             >
-                {postCount ?? 'No'} posts
+                {postCount || 'No'} posts | {viewCount || 'No'} views
             </span>
         </div>
     )

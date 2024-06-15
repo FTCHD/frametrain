@@ -1,6 +1,36 @@
 
 
-export default function PostView(post: any) {
+export default function PostView({
+    post,
+    postCount,
+    postNumber,
+    backgroundColor,
+    textFont,
+    textColor,
+    highlightFont,
+    highlightColor,
+}: {
+    post: Record<string, any>
+    postCount: number
+    postNumber: number
+    backgroundColor?: string
+    textFont?: string
+    textColor?: string
+    highlightFont?: string
+    highlightColor?: string
+}) {
+    const backgroundProp: Record<string, string> = {}
+
+    if (backgroundColor) {
+        if (backgroundColor.startsWith('#')) {
+            backgroundProp['backgroundColor'] = backgroundColor
+        } else {
+            backgroundProp['backgroundImage'] = backgroundColor
+        }
+    } else {
+        backgroundProp['backgroundColor'] = 'black'
+    }
+
     const rawPost = post.raw
     let cleanedPost = rawPost
 
@@ -23,19 +53,20 @@ export default function PostView(post: any) {
                 color: '#ffffff',
                 padding: '15px 20px',
                 gap: '15px',
-                fontFamily: 'Lato',
+                fontFamily: textFont || 'Lato',
+                ...backgroundProp,
             }}
         >
             <span
                 style={{
-                    fontFamily: 'Urbanist',
+                    fontFamily: highlightFont || 'Urbanist',
                     fontSize: '25px',
                     fontWeight: 900,
                     fontStyle: 'italic',
-                    color: 'orange',
+                    color: highlightColor || 'orange',
                 }}
             >
-                {post.name} says...
+                {post.name || post.username} says...
             </span>
             <div
                 style={{
@@ -45,9 +76,10 @@ export default function PostView(post: any) {
                     flexDirection: 'column',
                     padding: '15px 20px',
                     borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.15)',
+                    background: 'rgba(0, 0, 0, 0.15)',
                     gap: '10px',
-                    border: '2px solid #392a3b',
+                    color: textColor || 'white',
+                    overflow: 'hidden',
                 }}
             >
                 <div
@@ -64,32 +96,65 @@ export default function PostView(post: any) {
                         .split('\n\n')
                         .map((line: string) =>
                             line.split('\n').map((line: string) => (
-                                <div key={line} style={tokenRowStyle}>
+                                <div key={line} style={textLineStyle}>
                                     {line}
                                 </div>
                             ))
                         )}
                 </div>
-                {post?.reply_to_user ? (
-                    <span style={{ fontSize: '10px', fontWeight: 900, color: 'orange' }}>
-                        Replied to {post.reply_to_user.name}
-                    </span>
-                ) : null}
-                {/* <span
+
+                <div
                     style={{
-                        fontSize: '20px',
-                        fontWeight: 900,
-                        color: 'orange',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: '100%',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        fontFamily: highlightFont || 'Urbanist',
+                        color: highlightColor || 'orange',
                     }}
                 >
-                    Posted on {new Date(post.created_at).toLocaleTimeString('en-US')}
-                </span> */}
+                    <div
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                        }}
+                    >
+                        {post?.reply_to_user ? `Replied to ${post.reply_to_user.name}` : ''}
+                    </div>
+
+                    <div
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        {new Date(post.created_at).toLocaleDateString('en-US')}
+                        {' @ '}
+                        {new Date(post.created_at).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: false,
+                        })}
+                    </div>
+
+                    <div
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                        }}
+                    >
+                        {postNumber}/{postCount}
+                    </div>
+                </div>
             </div>
         </div>
     )
 }
 
-const tokenRowStyle = {
+const textLineStyle = {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
