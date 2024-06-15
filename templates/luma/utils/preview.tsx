@@ -10,7 +10,7 @@ type RenderImagePreviewParams = {
         hosts: string[]
         locationType: string
         date: string
-        isOld: boolean
+        title: string
     }
 }
 
@@ -21,7 +21,7 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
             : event.hosts.slice(0, 3).join(', ')
         : 'UNKNOWN HOST'
 
-    const imageResponse = new ImageResponse(
+    const rendered = new ImageResponse(
         <div tw="flex relative">
             <div tw="relative isolate flex w-full flex-col items-center justify-center bg-white">
                 <img
@@ -39,6 +39,9 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
                 }}
             >
                 {event.price}
+            </div>
+            <div tw="flex absolute top-50 left-20 rounded-md bg-[#414142] font-medium p-10 max-w-3xl max-h-sm text-xl text-white">
+                <h3 tw="inline break-words overflow-hidden">{event.title}</h3>
             </div>
             <div tw="flex absolute bottom-2 left-2 rounded-md bg-[#414142] p-3 text-white">
                 <div
@@ -143,13 +146,14 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
                     </div>
                 </div>
             </div>
-        </div>
-        // {
-        //     width: 955,
-        //     height: 500,
-        // }
+        </div>,
+        {
+            // width: 955,
+            // height: 500,
+            // width: 630,
+            // height: 630,
+        }
     )
-    const response = await imageResponse.arrayBuffer()
-    const buffer = Buffer.from(response)
-    return `data:image/png;base64,${buffer.toString('base64')}`
+    const imageResponse = await rendered.arrayBuffer()
+    return `data:image/png;base64,${Buffer.from(imageResponse).toString('base64')}`
 }

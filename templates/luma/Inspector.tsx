@@ -8,8 +8,6 @@ import { LoaderIcon } from 'lucide-react'
 import { fetchData } from './utils/fetch'
 import type { HostData, TicketInfo } from './utils/types'
 import { formatAmount } from './utils/numbers'
-import { dayjs } from './utils/dayjs'
-import { generateSocialCard } from './utils/fetch-social-image'
 import {
     Select,
     SelectContent,
@@ -77,26 +75,20 @@ export default function Inspector() {
                         : formatAmount(ticketInfo.price.cents, ticketInfo.price.currency)
                     : 'N/A'
 
-                const backgroundCover = generateSocialCard({
-                    title: title,
-                    img: cover,
-                })
                 const date = await formatTimezone(startsAt, tz)
 
                 const data = {
+                    id,
                     hosts: hostData.map((h) => h.name),
                     price,
                     date,
-                    backgroundCover,
+                    backgroundCover: cover,
                     locationType: onlineEvent,
+                    title,
+                    timezone: tz,
                 }
-
                 updateConfig({
-                    event: {
-                        id,
-                        ...data,
-                        timezone: tz,
-                    },
+                    event: data,
                 })
                 setLoading(false)
             } catch {

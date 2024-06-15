@@ -3,5 +3,7 @@
 import { dayjs } from './dayjs'
 
 export async function formatTimezone(date: string, timezone: string) {
-    return Promise.resolve(dayjs(date).tz(timezone).format('LLL'))
+    const tz = dayjs(date).tz(timezone).format('LLL z')
+
+    return Promise.resolve(tz)
 }

@@ -11,8 +11,8 @@ export interface Config extends BaseConfig {
         hosts: string[]
         locationType: string
         date: string
-        isOld: boolean
         timezone: string
+        title: string
     }
 }
 

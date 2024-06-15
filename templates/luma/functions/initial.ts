@@ -4,7 +4,6 @@ import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import type { Config, State } from '..'
 import CoverView from '../views/Cover'
 import renderImagePreview from '../utils/preview'
-import { dayjs } from '../utils/dayjs'
 
 export default async function initial(config: Config, _state: State): Promise<BuildFrameData> {
     const buttons: FrameButtonMetadata[] = []
