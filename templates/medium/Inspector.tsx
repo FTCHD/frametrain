@@ -74,8 +74,6 @@ export default function Inspector() {
                     />
                 </div>
 
-                <hr className="my-4 opacity-50" /> 
-
                 <h1 className="text-2xl font-bold">Cover Style</h1>
                 <div className="flex flex-col gap-2">
                     <h2 className="text-lg">Background Color</h2>
@@ -104,8 +102,6 @@ export default function Inspector() {
                     />
                     <p className="text-sm text-gray-400">Enter a percent value and test (frame size limit is 256kb!)</p>
                 </div>
-
-                <hr className="my-4 opacity-50" /> 
 
                 <h1 className="text-2xl font-bold">Options</h1>
                 <div className="flex flex-col">
