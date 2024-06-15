@@ -2,12 +2,7 @@
 
 import HTMLParser from 'node-html-parser'
 import type { EventDetails, HostData, TicketInfo } from './types'
-import Dayjs from 'dayjs'
-import LocalizedFormat from 'dayjs/plugin/localizedFormat'
-
-Dayjs.extend(LocalizedFormat)
-
-export const dayjs = Dayjs
+import { dayjs } from './dayjs'
 
 export async function extractEventDetails(url: string): Promise<EventDetails | null> {
     const response = await fetch(url)
@@ -26,6 +21,15 @@ export async function extractEventDetails(url: string): Promise<EventDetails | n
 
     if (!(eventData && hostData)) {
         return null
+    }
+
+    const formatAmount = (cents: number, currency = 'usd') => {
+        const parser = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency,
+        })
+
+        return parser.format(cents / 100)
     }
 
     const startsAt = (eventData?.start_at ?? '') as string
@@ -79,40 +83,4 @@ export async function extractEventDetails(url: string): Promise<EventDetails | n
     } as EventDetails
 
     return event
-}
-
-export function formatAmount(cents: number, currency = 'usd') {
-    const parser = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency,
-    })
-
-    return parser.format(cents / 100)
-}
-
-export function generateSocialCard({
-    title,
-    img,
-}: {
-    title: string
-    img: string
-}) {
-    const baseUrl =
-        'https://social-images.lu.ma/cdn-cgi/image/format=auto,fit=cover,dpr=1,quality=75,width=800,height=419/api/event-one'
-    const url = new URL(baseUrl)
-
-    const params: Record<string, string> = {
-        color0: '#6c5041',
-        color1: '#271917',
-        color2: '#af9b85',
-        color3: '#cdd0d1',
-        name: title,
-        img,
-    }
-
-    for (const key in params) {
-        url.searchParams.append(key, params[key])
-    }
-
-    return url.toString()
 }
