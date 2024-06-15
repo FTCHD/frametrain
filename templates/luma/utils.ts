@@ -1,3 +1,5 @@
+'use server'
+
 import HTMLParser from 'node-html-parser'
 import type { EventDetails, HostData, TicketInfo } from './types'
 import Dayjs from 'dayjs'
