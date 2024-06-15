@@ -8,7 +8,7 @@ import github from './github'
 
 export default {
     // basic,
-    // pdf,
+    pdf,
     poll,
     sablier,
     twitter,
