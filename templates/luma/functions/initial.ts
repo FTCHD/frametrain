@@ -8,8 +8,12 @@ export default async function initial(config: Config, _state: State): Promise<Bu
 
     return {
         buttons: [
-            { label: 'Visit event page', target: eventUrl },
-            { label: 'Create a lu.ma Preview Frame', target: 'https://frametra.in' },
+            { label: 'Visit event page', action: 'link', target: eventUrl },
+            {
+                label: 'Create a lu.ma Preview Frame',
+                action: 'link',
+                target: 'https://frametra.in',
+            },
         ],
         image: `${process.env.NEXT_PUBLIC_HOST}/api/og/luma/${config.eventId}`,
     }
