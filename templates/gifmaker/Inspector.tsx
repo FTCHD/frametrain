@@ -216,7 +216,7 @@ export default function Inspector() {
 					onClick={create}
 					className="w-full bg-border hover:bg-secondary-border text-primary"
 				>
-					Create GIF
+					Create Frame
 				</Button>
 			</div>
 			<Button
