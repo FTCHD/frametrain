@@ -73,16 +73,16 @@ export default function Inspector() {
                     <h2 className="text-lg">Background Color</h2>
                     <ColorPicker
                         className="w-full"
-                        background={config.bgColor || 'black'}
-                        setBackground={(value) => updateConfig({ bgColor: value })}
+                        background={config.coverBgColor || 'black'}
+                        setBackground={(value) => updateConfig({ coverBgColor: value })}
                     />
                 </div>
                 <div className="flex flex-col gap-2">
                     <h2 className="text-lg">Text Color</h2>
                     <ColorPicker
                         className="w-full"
-                        background={config.textColor || 'white'}
-                        setBackground={(value) => updateConfig({ textColor: value })}
+                        background={config.coverTextColor || 'white'}
+                        setBackground={(value) => updateConfig({ coverTextColor: value })}
                     />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -97,7 +97,7 @@ export default function Inspector() {
                     <p className="text-sm text-gray-400">Enter a percent value and test (frame size limit is 256kb!)</p>
                 </div>
 
-                <h1 className="text-2xl font-bold">Options</h1>
+                <h1 className="text-2xl font-bold">Cover Options</h1>
                 <div className="flex flex-col">
                     <label className='flex gap-x-4 items-center'>
                         <Input
@@ -143,6 +143,34 @@ export default function Inspector() {
                             <p className="text-sm text-gray-400">uncheck for last page only</p>
                         </div>
                     </label>
+                </div>
+
+                <h1 className="text-2xl font-bold">Pages Style</h1>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg">Background Color</h2>
+                    <ColorPicker
+                        className="w-full"
+                        background={ config.pagesBgColor || 'white' }
+                        setBackground={(value) => updateConfig({ pagesBgColor: value })}
+                    />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg">Text Color</h2>
+                    <ColorPicker
+                        className="w-full"
+                        background={ config.pagesTextColor || 'black' }
+                        setBackground={(value) => updateConfig({ pagesTextColor: value })}
+                    />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg">Font Size</h2>
+                    <Input
+                        className="w-full"
+                        type="number"
+                        defaultValue={ config.pagesFontSize ?? 18 }
+                        ref={ pagesFontSizeInputRef }
+                        onBlur={() => updateConfig({ pagesFontSize: pagesFontSizeInputRef.current?.value })}
+                    />
                 </div>
             </div>
         </div>

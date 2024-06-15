@@ -17,8 +17,8 @@ export default async function initial(config: Config, state: State): Promise<Bui
         fonts: georgia,
         component: CoverView({
             article: config.article,
-            bgColor: config.bgColor,
-            textColor: config.textColor,
+            bgColor: config.coverBgColor,
+            textColor: config.coverTextColor,
             imageSize: config.imageSize,
             textPosition: config.textPosition,
             hideTitleAuthor: config.hideTitleAuthor

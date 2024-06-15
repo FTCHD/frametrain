@@ -16,8 +16,6 @@ export default function CoverView({
         authorFontSize = '20px'
     }
 
-    console.log('textPosition', textPosition)
-
     return ( 
         <div
             style={{

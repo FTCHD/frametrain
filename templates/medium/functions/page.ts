@@ -4,6 +4,7 @@ import type { Config, State } from '..'
 import PageView from '../views/Page'
 import initial from './initial'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { pages } from 'next/dist/build/templates/app-page'
 
 export default async function page(
     body: FrameActionPayload,
@@ -57,6 +58,9 @@ export default async function page(
             page: page || [],
             currentPage: nextPage,
             slideCount: slideCount,
+            pagesBgColor: config.pagesBgColor,
+            pagesTextColor: config.pagesTextColor,
+            pagesFontSize: config.pagesFontSize
         }),
         functionName: 'page',
         params: {

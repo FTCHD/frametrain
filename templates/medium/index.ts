@@ -6,13 +6,15 @@ import type { Article } from './utils'
 
 export interface Config extends BaseConfig {
     article?: Article
-    bgColor: string
-    textColor: string
+    coverBgColor: string
+    coverTextColor: string
     imageSize: number
     textPosition: boolean
     showLinkOnAllPages: boolean
     hideTitleAuthor: boolean
-    maxCharsPerPage: number
+    pagesBgColor: string
+    pagesTextColor: string
+    pagesFontSize: number
 }
 
 export interface State extends BaseState {}

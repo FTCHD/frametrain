@@ -3,8 +3,12 @@ import type { Page } from "../utils"
 export default function PageView({
     page,
     currentPage,
-    slideCount
-}: { page: Page, currentPage: number, slideCount: number}) {
+    slideCount,
+    pagesBgColor,
+    pagesTextColor,
+    pagesFontSize
+}: { page: Page, currentPage: number, slideCount: number, pagesBgColor?: string, pagesTextColor?: string, pagesFontSize?: number}) {
+
     return (
         <div
             style={{
@@ -13,8 +17,8 @@ export default function PageView({
                 alignItems: 'stretch',
                 width: '100%',
                 height: '100%',
-                backgroundColor: '#fff',
-                color: '#000',
+                backgroundColor: pagesBgColor || '#fff',
+                color: pagesTextColor || '#000',
             }}
         >
             <div style={{
@@ -22,7 +26,7 @@ export default function PageView({
                 flexFlow: 'column nowrap',
                 padding: '36px',
                 fontFamily: 'Georgia',
-                fontSize: '18px',
+                fontSize: `${ pagesFontSize?.toString() || '36' }px`,
              }}>
                 {page.map((element, index) => {
                     switch (element.tag) {
