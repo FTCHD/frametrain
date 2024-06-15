@@ -38,13 +38,6 @@ export default function Inspector() {
         renderMediumArticle(url)
     }
 
-    // handler for the textPosition radio group
-    const textPositionHandler = (e: any) => {
-        const textPosition = e.target.value
-        console.log('textPosition', textPosition)
-        //updateConfig({ textPosition: textPosition })
-    }
-
     const renderMediumArticle = async (url:string) => {
 
         setLoading(true)
@@ -110,7 +103,7 @@ export default function Inspector() {
                             className="w-4 h-4"
                             name="textPosition"
                             type="radio"
-                            defaultChecked = { true }
+                            defaultChecked ={ !config.textPosition }
                             onChange={() => updateConfig({ textPosition: textPositionOverlayRef.current?.checked })}
                         />
                         <p className="text-lg">Place the text below the image</p>
@@ -120,7 +113,7 @@ export default function Inspector() {
                             className="w-4 h-4"
                             name="textPosition"
                             type="radio"
-                            defaultChecked={ false }
+                            defaultChecked={ config.textPosition }
                             ref={textPositionOverlayRef}
                             onChange={() => updateConfig({ textPosition: textPositionOverlayRef.current?.checked })}
                         />
