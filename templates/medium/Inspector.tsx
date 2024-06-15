@@ -6,13 +6,16 @@ import { useEffect, useRef, useState } from 'react'
 import type { Config } from '.'
 import getMediumArticle from './utils'
 import { ColorPicker } from '@/sdk/components'
+import { toast } from 'react-hot-toast'
 
 export default function Inspector() {
+
     const [config, updateConfig] = useFrameConfig<Config>()
     const [loading, setLoading] = useState(false)
 
     const urlInputRef = useRef<HTMLInputElement>(null)
     const imgSizeInputRef = useRef<HTMLInputElement>(null)
+    const pagesFontSizeInputRef = useRef<HTMLInputElement>(null)
     const textPositionOverlayRef = useRef<HTMLInputElement>(null)
     const linkOnAllPagesRef = useRef<HTMLInputElement>(null)
     const hideTitleAuthorRef = useRef<HTMLInputElement>(null)
@@ -32,6 +35,8 @@ export default function Inspector() {
 
         // Accept only valid Medium URLs - later on we can adapt to other platforms
         if (!/^https:\/\/(\w+\.)?medium\.com\//.test(url)) {
+            toast.remove()
+            toast.error('Please enter a valid medium article URL')
             return
         }
 
@@ -39,14 +44,10 @@ export default function Inspector() {
     }
 
     const renderMediumArticle = async (url:string) => {
-
         setLoading(true)
-
-        // don't rely on config.maxCharsPerPage as it may not have been updated yet
         const newArticle = await getMediumArticle(url)
         updateConfig({ article: newArticle })
         console.log(newArticle)
-
         setLoading(false)
     }
 
