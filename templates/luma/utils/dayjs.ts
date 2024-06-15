@@ -1,6 +1,10 @@
 import Dayjs from 'dayjs'
-import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 
-Dayjs.extend(LocalizedFormat)
+Dayjs.extend(localizedFormat)
+Dayjs.extend(timezone)
+Dayjs.extend(utc)
 
 export const dayjs = Dayjs

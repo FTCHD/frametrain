@@ -1,42 +1,46 @@
-import type { EventDetails } from '../utils/types'
-import { generateSocialCard } from '../utils/fetch-social-image'
+'use server'
 
-export default function EventView(event: EventDetails | null) {
-    if (!event) {
-        return <div tw="text-center">Event Not Found</div>
+import { ImageResponse } from 'next/og'
+
+type RenderImagePreviewParams = {
+    event: {
+        id: string
+        price: string
+        backgroundCover: string
+        hosts: string[]
+        locationType: string
+        date: string
+        isOld: boolean
     }
+}
 
-    const bg = generateSocialCard({
-        title: event.title,
-        img: event.cover,
-    })
-    const price = event.price
-
+export default async function renderImagePreview({ event }: RenderImagePreviewParams) {
     const host = event.hosts.length
         ? event.hosts.length === 1
-            ? event.hosts[0].name
-            : event.hosts
-                  .slice(0, 3)
-                  .map((h) => h.name)
-                  .join(', ')
+            ? event.hosts[0]
+            : event.hosts.slice(0, 3).join(', ')
         : 'UNKNOWN HOST'
 
-    return (
-        <div tw="flex group relative overflow-hidden rounded-2xl border border-gray-300">
-            <label tw="group relative isolate flex aspect-[1200/630] w-full flex-col items-center justify-center overflow-hidden bg-white transition-all hover:bg-gray-50">
-                <img src={bg} alt="Preview" tw="h-full w-full rounded-[inherit] object-cover" />
-            </label>
+    const imageResponse = new ImageResponse(
+        <div tw="flex relative">
+            <div tw="relative isolate flex w-full flex-col items-center justify-center bg-white">
+                <img
+                    src={event.backgroundCover}
+                    alt="Preview"
+                    tw="h-full w-full rounded-[inherit] object-cover"
+                />
+            </div>
 
             <div
-                tw="sm:inline-flex absolute right-2 top-2 group flex items-center justify-center border-gray-200 bg-white text-gray-600 h-8 max-w-full text-lg rounded-md p-2 transition-all"
+                tw="absolute right-1 top-2 flex items-center justify-center bg-white text-gray-600 h-8 max-w-full text-lg rounded-md p-5"
                 style={{
                     fontSize: '1.125rem',
                     lineHeight: '1.75rem',
                 }}
             >
-                {price}
+                {event.price}
             </div>
-            <div tw="flex absolute bottom-2 left-2 rounded-md bg-[#414142] px-1.5 py-px text-white">
+            <div tw="flex absolute bottom-2 left-2 rounded-md bg-[#414142] p-3 text-white">
                 <div
                     tw="flex flex-row items-center"
                     style={{
@@ -45,7 +49,12 @@ export default function EventView(event: EventDetails | null) {
                         lineHeight: '1.75rem',
                     }}
                 >
-                    <div tw="flex items-center text-lg">
+                    <div
+                        tw="flex items-center text-lg"
+                        style={{
+                            gap: '0.25rem',
+                        }}
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -68,7 +77,7 @@ export default function EventView(event: EventDetails | null) {
                         </svg>
                         <span>{event.date}</span>
                     </div>
-                    <div tw="flex items-center gap-2 text-lg">
+                    <div tw="flex items-center text-lg">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -87,9 +96,9 @@ export default function EventView(event: EventDetails | null) {
                             <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                             <circle cx="12" cy="10" r="3" />
                         </svg>
-                        <span>{event.onlineEvent}</span>
+                        <span>{event.locationType}</span>
                     </div>
-                    <div tw="flex items-center gap-2 text-lg">
+                    <div tw="flex items-center text-lg">
                         {event.hosts.length > 1 ? (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -135,5 +144,12 @@ export default function EventView(event: EventDetails | null) {
                 </div>
             </div>
         </div>
+        // {
+        //     width: 955,
+        //     height: 500,
+        // }
     )
+    const response = await imageResponse.arrayBuffer()
+    const buffer = Buffer.from(response)
+    return `data:image/png;base64,${buffer.toString('base64')}`
 }

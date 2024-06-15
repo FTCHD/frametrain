@@ -4,7 +4,16 @@ import cover from './cover.png'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
-    eventId: string
+    event?: {
+        id: string
+        price: string
+        backgroundCover: string
+        hosts: string[]
+        locationType: string
+        date: string
+        isOld: boolean
+        timezone: string
+    }
 }
 
 export interface State extends BaseState {}
@@ -18,8 +27,8 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialConfig: {
-        eventId: 's5-kickoff',
-    },
     requiresValidation: false,
+    initialConfig: {
+        event: undefined,
+    },
 } satisfies BaseTemplate
