@@ -13,7 +13,7 @@ export interface State extends BaseState {}
 
 export default {
     name: 'GIF Maker',
-    description: 'Create a GIF/Trailer Frame from YouTube.',
+    description: 'Create a GIF/Trailer Frame from video.',
     creatorFid: '416810',
     creatorName: 'alekcangp',
     cover,
@@ -21,9 +21,9 @@ export default {
     Inspector,
     functions,
     initialConfig: {
-        gif: 'https://i.postimg.cc/fLRwTKnF/roboto.gif',
-        label: 'VIEW',
-        link: 'https://www.youtube.com/watch?v=DYCIlghl5rI#t=15',
+        gif: 'https://ipfs.io/ipfs/QmZ3SuHbBcZvyBTsCEWZgYFXBXpUW9TQQLctv6Fr2Eva9U',
+        label: 'LINK',
+        link: 'https://frametra.in'
     },
     requiresValidation: false,
 } satisfies BaseTemplate

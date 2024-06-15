@@ -20,6 +20,8 @@
         "@aws-sdk/client-s3": "^3.583.0",
         "@coinbase/onchainkit": "^0.11.0",
         "@farcaster/auth-kit": "^0.3.1",
+        "@ffmpeg/ffmpeg": "^0.12.10",
+        "@ffmpeg/util": "^0.12.1",
         "@formkit/auto-animate": "^0.8.2",
         "@hookform/resolvers": "^3.4.2",
         "@libsql/client": "0.3.3",
