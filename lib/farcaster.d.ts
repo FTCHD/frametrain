@@ -19,7 +19,7 @@ export type FrameActionPayloadValidated = FrameActionPayload & {
     validatedData: FrameValidatedActionPayload['validatedData']
 }
 
-export interface BuildFrameData {
+export interface FrameData {
     buttons: FrameButtonMetadata[]
     aspectRatio?: '1.91:1' | '1:1' | undefined
     inputText?: string
@@ -30,4 +30,7 @@ export interface BuildFrameData {
     component?: ReactElement
     image?: string
     functionName?: string
+    error?: string
 }
+
+export type BuildFrameData = FrameData | { error: string }

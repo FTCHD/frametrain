@@ -1,6 +1,6 @@
 import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
-import type { FrameActionPayload, FrameActionPayloadValidated } from '@/lib/farcaster'
+import type { FrameActionPayload, FrameActionPayloadValidated, FrameData } from '@/lib/farcaster'
 import { updateFrameCalls, updateFrameState } from '@/lib/frame'
 import { buildFramePage, validatePayload } from '@/lib/serve'
 import type { BaseConfig, BaseState } from '@/lib/types'
@@ -63,11 +63,17 @@ export async function POST(
         searchParams
     )
 
+    if (buildParameters.error) {
+        return new Response(JSON.stringify({ message: buildParameters.error }), {
+            status: 400,
+        })
+    }
+
     // state can be taken directly from the handler
     // no need to pass it back and forth in the future
     const { frame: renderedFrame, state: newState } = await buildFramePage({
         id: frame.id,
-        ...buildParameters,
+        ...(buildParameters as FrameData),
     })
 
     if (newState) {
