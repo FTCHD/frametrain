@@ -4,32 +4,6 @@ import type { Config, State } from '..'
 import PageView from '../views/Page'
 import { Abi, encodeFunctionData } from 'viem'
 
-const contractAbi = [
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_to",
-                "type": "address"
-            },
-            {
-                "name": "_value",
-                "type": "uint256"
-            }
-        ],
-        "name": "transfer",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-]
-
 export default async function page(
     body: FrameActionPayload,
     config: Config,
@@ -38,6 +12,31 @@ export default async function page(
 ): Promise<BuildFrameData> {
     const { tokenAddress, to } = config
     const inputToken = body.untrustedData.inputText
+    const contractAbi = [
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_to",
+                    "type": "address"
+                },
+                {
+                    "name": "_value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "transfer",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+    ]
 
     const calldata = encodeFunctionData({
         abi: contractAbi as Abi,
