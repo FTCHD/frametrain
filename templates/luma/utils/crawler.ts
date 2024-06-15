@@ -1,9 +1,8 @@
-'use server'
-
-import HTMLParser from 'node-html-parser'
-import type { EventDetails, HostData, TicketInfo } from './types'
 import { dayjs } from './dayjs'
+import type { EventDetails, HostData, TicketInfo } from './types'
+import HTMLParser from 'node-html-parser'
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export async function extractEventDetails(url: string): Promise<EventDetails | null> {
     const response = await fetch(url)
     const html = await response.text()
