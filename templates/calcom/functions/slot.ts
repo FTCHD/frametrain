@@ -18,18 +18,37 @@ export default async function slot(
         case 1: {
             const slot =
                 Number.parseInt(params.slot) == 0
-                    ? params.slotlen - 1
+                    ? params.slotLength - 1
                     : Number.parseInt(params.slot) - 1
-            const dates = getCurrentAndFutureDate(config.maxBookingDays)
-            const slots = await fetch(
-                `https://api.cal.com/v1/slots?apiKey=${config.apiKey}&eventTypeId=${params.duration}&startTime=${dates[0]}&endTime=${dates[1]}`,
-                {
-                    method: 'GET',
-                }
-            )
-            const slotsResponse = await slots.json()
-            const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse)
+            const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+            const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
+                JSON.stringify({
+                    json: {
+                        isTeamEvent: false,
+                        usernameList: [`${config.username}`],
+                        eventTypeSlug: params.duration,
+                        startTime: dates[0],
+                        endTime: dates[1],
+                        timeZone: 'UTC',
+                        duration: null,
+                        rescheduleUid: null,
+                        orgSlug: null,
+                    },
+                    meta: {
+                        values: {
+                            duration: ['undefined'],
+                            orgSlug: ['undefined'],
+                        },
+                    },
+                })
+            )}`
 
+            const slots = await fetch(url)
+            const slotsResponse = await slots.json()
+
+            const [datesArray, slotsArray] = extractDatesAndSlots(
+                slotsResponse.result.data.json.slots
+            )
             return {
                 buttons: [
                     {
@@ -50,20 +69,40 @@ export default async function slot(
                     duration: params.duration,
                     date: params.date,
                     slot: slot,
-                    slotlen: slotsArray[params.date].length,
+                    slotLength: slotsArray[params.date].length,
                 },
             }
         }
         case 2: {
-            const dates = getCurrentAndFutureDate(config.maxBookingDays)
-            const slots = await fetch(
-                `https://api.cal.com/v1/slots?apiKey=${config.apiKey}&eventTypeId=${params.duration}&startTime=${dates[0]}&endTime=${dates[1]}`,
-                {
-                    method: 'GET',
-                }
-            )
+            const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+            const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
+                JSON.stringify({
+                    json: {
+                        isTeamEvent: false,
+                        usernameList: [`${config.username}`],
+                        eventTypeSlug: params.duration,
+                        startTime: dates[0],
+                        endTime: dates[1],
+                        timeZone: 'UTC',
+                        duration: null,
+                        rescheduleUid: null,
+                        orgSlug: null,
+                    },
+                    meta: {
+                        values: {
+                            duration: ['undefined'],
+                            orgSlug: ['undefined'],
+                        },
+                    },
+                })
+            )}`
+
+            const slots = await fetch(url)
             const slotsResponse = await slots.json()
-            const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse)
+
+            const [datesArray, slotsArray] = extractDatesAndSlots(
+                slotsResponse.result.data.json.slots
+            )
             return {
                 buttons: [
                     {
@@ -92,19 +131,38 @@ export default async function slot(
 
         case 3: {
             const slot =
-                Number.parseInt(params.slot) == params.slotlen - 1
+                Number.parseInt(params.slot) == params.slotLength - 1
                     ? 0
                     : Number.parseInt(params.slot) + 1
-            const dates = getCurrentAndFutureDate(config.maxBookingDays)
-            const slots = await fetch(
-                `https://api.cal.com/v1/slots?apiKey=${config.apiKey}&eventTypeId=${params.duration}&startTime=${dates[0]}&endTime=${dates[1]}`,
-                {
-                    method: 'GET',
-                }
-            )
-            const slotsResponse = await slots.json()
-            const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse)
+            const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+            const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
+                JSON.stringify({
+                    json: {
+                        isTeamEvent: false,
+                        usernameList: [`${config.username}`],
+                        eventTypeSlug: params.duration,
+                        startTime: dates[0],
+                        endTime: dates[1],
+                        timeZone: 'UTC',
+                        duration: null,
+                        rescheduleUid: null,
+                        orgSlug: null,
+                    },
+                    meta: {
+                        values: {
+                            duration: ['undefined'],
+                            orgSlug: ['undefined'],
+                        },
+                    },
+                })
+            )}`
 
+            const slots = await fetch(url)
+            const slotsResponse = await slots.json()
+
+            const [datesArray, slotsArray] = extractDatesAndSlots(
+                slotsResponse.result.data.json.slots
+            )
             return {
                 buttons: [
                     {
@@ -125,7 +183,7 @@ export default async function slot(
                     duration: params.duration,
                     date: params.date,
                     slot: slot,
-                    slotlen: slotsArray[params.date].length,
+                    slotLength: slotsArray[params.date].length,
                 },
             }
         }

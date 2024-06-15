@@ -59,29 +59,10 @@ export default function CoverView(config: Config) {
                         fontSize: '60px',
                         color: config.primaryColor || 'white',
                         fontFamily: config.fontFamily || 'Roboto',
-                        fontWeight: 'bold',
-                    }}
-                >
-                    {config.name}
-                </div>
-                <div
-                    style={{
-                        fontSize: '25px',
-                        color: config.primaryColor || 'white',
-                        fontFamily: config.fontFamily || 'Roboto',
                         alignSelf: 'flex-end',
                     }}
                 >
                     {`@${config.username}`}
-                </div>
-                <div
-                    style={{
-                        fontSize: '45px',
-                        color: config.primaryColor || 'white',
-                        fontFamily: config.fontFamily || 'Roboto',
-                    }}
-                >
-                    {config.bio}
                 </div>
             </div>
             <div>Choose the duration</div>

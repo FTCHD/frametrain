@@ -15,47 +15,57 @@ export default async function duration(
 ): Promise<BuildFrameData> {
     let date = params?.date === undefined || params?.date === 'NaN' ? 0 : Number(params?.date)
 
-    const data = await fetch(`https://api.cal.com/v1/event-types?apiKey=${config.apiKey}`, {
-        method: 'GET',
-    })
-
-    const response = await data.json()
-
-    const eventTypes = response.event_types
-    const eventIDs = []
-    // biome-ignore lint/style/useConst: <explanation>
-    for (let event of eventTypes) {
-        if (event.slug == '15min') {
-            eventIDs[0] = event.id
-        } else if (event.slug == '30min') {
-            eventIDs[1] = event.id
-        }
-    }
-
     const buttonIndex = body.untrustedData.buttonIndex
-    let duration = 0
-    let duration_time = '0'
+    let duration = ''
+    let durationTime = '0'
+
+    // try {
+    //     const response = await fetch(url)
+    //     const data = await response.json()
+    //     console.log(data.result.data.json.slots)
+    // } catch (error) {
+    //     console.error('Error:', error)
+    // }
 
     switch (buttonIndex) {
         case 1: {
             if (params.date === undefined) {
-                duration = eventIDs[buttonIndex - 1]
-                duration_time = '15'
+                duration = '15min'
+                durationTime = '15'
             } else {
-                date = date == 0 ? params.datelen - 1 : date - 1
+                date = date == 0 ? params.dateLength - 1 : date - 1
                 duration = params.duration
-                duration_time = params.duration_time
+                durationTime = params.durationTime
             }
-            const dates = getCurrentAndFutureDate(config.maxBookingDays)
-            const slots = await fetch(
-                `https://api.cal.com/v1/slots?apiKey=${config.apiKey}&eventTypeId=${duration}&startTime=${dates[0]}&endTime=${dates[1]}`,
-                {
-                    method: 'GET',
-                }
-            )
+            const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+            const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
+                JSON.stringify({
+                    json: {
+                        isTeamEvent: false,
+                        usernameList: [`${config.username}`],
+                        eventTypeSlug: duration,
+                        startTime: dates[0],
+                        endTime: dates[1],
+                        timeZone: 'UTC',
+                        duration: null,
+                        rescheduleUid: null,
+                        orgSlug: null,
+                    },
+                    meta: {
+                        values: {
+                            duration: ['undefined'],
+                            orgSlug: ['undefined'],
+                        },
+                    },
+                })
+            )}`
+
+            const slots = await fetch(url)
             const slotsResponse = await slots.json()
 
-            const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse)
+            const [datesArray, slotsArray] = extractDatesAndSlots(
+                slotsResponse.result.data.json.slots
+            )
 
             return {
                 buttons: [
@@ -70,33 +80,53 @@ export default async function duration(
                     },
                 ],
 
-                component: PageView(config, duration, datesArray, date, duration_time),
+                component: PageView(config, duration, datesArray, date, durationTime),
                 functionName: 'date',
+
                 params: {
                     durationFixed: 'fixed',
                     duration: duration,
                     date: date,
-                    duration_time: duration_time,
-                    datelen: datesArray.length,
+                    durationTime: durationTime,
+                    dateLength: datesArray.length,
                 },
             }
         }
 
         case 2: {
             if (params.date === undefined) {
-                duration = eventIDs[buttonIndex - 1]
-                duration_time = '30'
+                duration = '30min'
+                durationTime = '30'
 
-                const dates = getCurrentAndFutureDate(config.maxBookingDays)
-                const slots = await fetch(
-                    `https://api.cal.com/v1/slots?apiKey=${config.apiKey}&eventTypeId=${duration}&startTime=${dates[0]}&endTime=${dates[1]}`,
-                    {
-                        method: 'GET',
-                    }
-                )
+                const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+                const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
+                    JSON.stringify({
+                        json: {
+                            isTeamEvent: false,
+                            usernameList: [`${config.username}`],
+                            eventTypeSlug: duration,
+                            startTime: dates[0],
+                            endTime: dates[1],
+                            timeZone: 'UTC',
+                            duration: null,
+                            rescheduleUid: null,
+                            orgSlug: null,
+                        },
+                        meta: {
+                            values: {
+                                duration: ['undefined'],
+                                orgSlug: ['undefined'],
+                            },
+                        },
+                    })
+                )}`
+
+                const slots = await fetch(url)
                 const slotsResponse = await slots.json()
 
-                const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse)
+                const [datesArray, slotsArray] = extractDatesAndSlots(
+                    slotsResponse.result.data.json.slots
+                )
 
                 return {
                     buttons: [
@@ -111,14 +141,14 @@ export default async function duration(
                         },
                     ],
 
-                    component: PageView(config, duration, datesArray, date, duration_time),
+                    component: PageView(config, duration, datesArray, date, durationTime),
                     functionName: 'date',
                     params: {
                         durationFixed: 'fixed',
                         duration: duration,
                         date: date,
-                        duration_time: duration_time,
-                        datelen: datesArray.length,
+                        durationTime: durationTime,
+                        dateLength: datesArray.length,
                     },
                 }
                 // biome-ignore lint/style/noUselessElse: <explanation>
@@ -126,19 +156,37 @@ export default async function duration(
                 // biome-ignore lint/style/useConst: <explanation>
                 let slot = params.slot ? 0 : Number.parseInt(params.slot)
                 duration = params.duration
-                duration_time = params.duration_time
+                durationTime = params.durationTime
 
-                const dates = getCurrentAndFutureDate(config.maxBookingDays)
-                const slots = await fetch(
-                    `https://api.cal.com/v1/slots?apiKey=${config.apiKey}&eventTypeId=${duration}&startTime=${dates[0]}&endTime=${dates[1]}`,
-                    {
-                        method: 'GET',
-                    }
-                )
+                const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+                const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
+                    JSON.stringify({
+                        json: {
+                            isTeamEvent: false,
+                            usernameList: [`${config.username}`],
+                            eventTypeSlug: duration,
+                            startTime: dates[0],
+                            endTime: dates[1],
+                            timeZone: 'UTC',
+                            duration: null,
+                            rescheduleUid: null,
+                            orgSlug: null,
+                        },
+                        meta: {
+                            values: {
+                                duration: ['undefined'],
+                                orgSlug: ['undefined'],
+                            },
+                        },
+                    })
+                )}`
+
+                const slots = await fetch(url)
                 const slotsResponse = await slots.json()
 
-                const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse)
-
+                const [datesArray, slotsArray] = extractDatesAndSlots(
+                    slotsResponse.result.data.json.slots
+                )
                 return {
                     buttons: [
                         {
@@ -159,29 +207,45 @@ export default async function duration(
                         duration: duration,
                         date: date,
                         slot: 0,
-                        duration_time: duration_time,
-                        slotlen: slotsArray[date].length,
+                        durationTime: durationTime,
+                        slotLength: slotsArray[date].length,
                     },
                 }
             }
         }
         case 3: {
-            date = date == params.datelen - 1 ? 0 : date + 1
+            date = date == params.dateLength - 1 ? 0 : date + 1
             duration = params.duration
-            duration_time = params.duration_time
+            durationTime = params.durationTime
         }
     }
+    const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+    const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
+        JSON.stringify({
+            json: {
+                isTeamEvent: false,
+                usernameList: [`${config.username}`],
+                eventTypeSlug: duration,
+                startTime: dates[0],
+                endTime: dates[1],
+                timeZone: 'UTC',
+                duration: null,
+                rescheduleUid: null,
+                orgSlug: null,
+            },
+            meta: {
+                values: {
+                    duration: ['undefined'],
+                    orgSlug: ['undefined'],
+                },
+            },
+        })
+    )}`
 
-    const dates = getCurrentAndFutureDate(config.maxBookingDays)
-    const slots = await fetch(
-        `https://api.cal.com/v1/slots?apiKey=${config.apiKey}&eventTypeId=${duration}&startTime=${dates[0]}&endTime=${dates[1]}`,
-        {
-            method: 'GET',
-        }
-    )
+    const slots = await fetch(url)
     const slotsResponse = await slots.json()
 
-    const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse)
+    const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
 
     return {
         buttons: [
@@ -196,14 +260,14 @@ export default async function duration(
             },
         ],
 
-        component: PageView(config, duration, datesArray, date, duration_time),
+        component: PageView(config, duration, datesArray, date, durationTime),
         functionName: 'date',
         params: {
             durationFixed: 'fixed',
             duration: duration,
             date: date,
-            duration_time: duration_time,
-            datelen: datesArray.length,
+            durationTime: durationTime,
+            dateLength: datesArray.length,
         },
     }
 }

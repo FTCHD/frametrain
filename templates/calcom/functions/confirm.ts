@@ -6,6 +6,8 @@ import FailView from '../views/Failed'
 
 import { getCurrentAndFutureDate } from '../utils/getDays'
 import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
+import { getEventSlug } from '../utils/getEventSlug'
+import { bookCall } from '../utils/bookCall'
 
 export default async function confirm(
     body: FrameActionPayload,
@@ -13,54 +15,44 @@ export default async function confirm(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    const dates = getCurrentAndFutureDate(config.maxBookingDays)
-    const slots = await fetch(
-        `https://api.cal.com/v1/slots?apiKey=${config.apiKey}&eventTypeId=${params.duration}&startTime=${dates[0]}&endTime=${dates[1]}`,
-        {
-            method: 'GET',
-        }
-    )
+    const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+    const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
+        JSON.stringify({
+            json: {
+                isTeamEvent: false,
+                usernameList: [`${config.username}`],
+                eventTypeSlug: params.duration,
+                startTime: dates[0],
+                endTime: dates[1],
+                timeZone: 'UTC',
+                duration: null,
+                rescheduleUid: null,
+                orgSlug: null,
+            },
+            meta: {
+                values: {
+                    duration: ['undefined'],
+                    orgSlug: ['undefined'],
+                },
+            },
+        })
+    )}`
+
+    const slots = await fetch(url)
     const slotsResponse = await slots.json()
-    const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse)
+
+    const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
     const date = datesArray[params.date]
 
     const email = body.untrustedData.inputText
-
-    const requestBody = {
-        responses: {
-            email: email,
-            name: email?.split('@')[0],
-            location: 'online',
-        },
-        start: slotsResponse.slots[date][params.slot].time,
-        eventTypeId: Number.parseInt(params.duration),
-        timeZone: config.timeZone,
-        language: 'en',
-        location: '',
-        metadata: {},
-    }
-
-    // biome-ignore lint/style/noVar: <explanation>
-    var myHeaders = new Headers()
-    myHeaders.append('Content-Type', 'application/json')
-
-    const raw = JSON.stringify(requestBody)
-
-    const response = await fetch(`https://api.cal.com/v1/bookings?=&apiKey=${config.apiKey}`, {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow',
-    })
-    const data = await response.json()
-    console.log(data)
-    if (response.status !== 200) {
-        return {
-            buttons: [],
-            component: FailView(config),
-            functionName: 'initial',
-        }
-    }
+    const eventTypeId = await getEventSlug(config.username, params.duration)
+    await bookCall(
+        email?.split('@')[0] || '',
+        email!,
+        slotsResponse.result.data.json.slots[date][params.slot].time,
+        eventTypeId,
+        config.username
+    )
 
     return {
         buttons: [

@@ -11,7 +11,7 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
     } else {
         backgroundProp['backgroundColor'] = '#black'
     }
-    console.log(slotParam)
+
     const visibleIndex = Math.floor(Number.parseInt(slotParam.toString()) / 10)
     const startIndex = visibleIndex * 10
     const endIndex = Math.min(startIndex + 10, slots.length)
@@ -19,8 +19,6 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
 
     const firstRowSlots = visibleTimeSlots.slice(0, 5)
     const secondRowSlots = visibleTimeSlots.slice(5, 10)
-
-    console.log(visibleTimeSlots)
 
     return (
         <div
@@ -72,16 +70,6 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
                             color: config.primaryColor || 'white',
                             fontFamily: config.fontFamily || 'Roboto',
                             fontWeight: 'bold',
-                        }}
-                    >
-                        {config.name}
-                    </div>
-                    <div
-                        style={{
-                            fontSize: '25px',
-                            color: config.primaryColor || 'white',
-                            fontFamily: config.fontFamily || 'Roboto',
-                            alignSelf: 'flex-end',
                         }}
                     >
                         {`@${config.username}`}

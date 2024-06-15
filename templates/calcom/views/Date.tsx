@@ -3,7 +3,7 @@ import { months } from '../utils/const'
 
 export default function CoverView(
     config: Config,
-    duration: number,
+    duration: string,
     dates: string[],
     dateParam: number,
     mins: string
@@ -66,17 +66,8 @@ export default function CoverView(
                             fontSize: '60px',
                             color: config.primaryColor || 'white',
                             fontFamily: config.fontFamily || 'Roboto',
-                            fontWeight: 'bold',
-                        }}
-                    >
-                        {config.name}
-                    </div>
-                    <div
-                        style={{
-                            fontSize: '25px',
-                            color: config.primaryColor || 'white',
-                            fontFamily: config.fontFamily || 'Roboto',
                             alignSelf: 'flex-end',
+                            fontWeight: 'bold',
                         }}
                     >
                         {`@${config.username}`}

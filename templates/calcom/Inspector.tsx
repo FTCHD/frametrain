@@ -1,5 +1,4 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { useFrameConfig, useFrameId } from '@/sdk/hooks'
 import { useRef } from 'react'
@@ -13,25 +12,16 @@ import { useSession } from 'next-auth/react'
 export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
+    // const fid = useFarcasterId()
     const sesh = useSession()
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
     const displayLabelDaysRef = useRef<HTMLInputElement>(null)
 
-    const handleSubmit = async (apikey: string) => {
-        const data = await fetch(`https://api.cal.com/v1/me?apiKey=${apikey}`, {
-            method: 'GET',
-        })
-
-        const response = await data.json()
-        console.log(response.user.name)
+    const handleSubmit = async (username: string) => {
         updateConfig({
-            name: response.user.name,
-            id: response.user.id,
-            bio: response.user.bio,
-            timeZone: response.user.timeZone,
-            username: response.user.username,
-            apiKey: apikey,
+            username: username,
+
             fid: sesh.data?.user?.id,
         })
     }
@@ -41,12 +31,12 @@ export default function Inspector() {
             <p>{JSON.stringify(config)}</p>
             <h2 className="text-lg font-semibold">Cal.com</h2>
 
-            <h3 className="text-lg font-semibold">cal.com api key</h3>
+            <h3 className="text-lg font-semibold">cal.com username</h3>
 
             <div className="flex flex-col gap-2 ">
                 <Input
                     className="text-lg"
-                    placeholder="Enter your cal.com api key"
+                    placeholder="Enter your cal.com username"
                     ref={displayLabelInputRef}
                     onChange={() => {
                         handleSubmit(displayLabelInputRef.current!.value)
