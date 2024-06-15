@@ -1,6 +1,6 @@
 import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.png'
+import cover from './cover.webp'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
@@ -19,8 +19,8 @@ export interface Config extends BaseConfig {
 export interface State extends BaseState {}
 
 export default {
-    name: 'Cardvisit Template',
-    description: 'You can create your own cardvisit as frame',
+    name: 'Github Template',
+    description: 'You can share your awesome project as frame',
     creatorFid: '6',
     creatorName: 'Taio Newgate',
     cover,

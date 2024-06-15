@@ -10,18 +10,20 @@ export default async function page(
     params: any
 ): Promise<BuildFrameData> {
     const { tokenAddress, to, value } = config
+    const inputToken = body.untrustedData.inputText
+
     return {
         buttons: [
             {
                 label: 'Send',
                 action: 'post',
-                target: `${process.env.NEXT_PUBLIC_HOST}/api/tx?tokenAddress=${tokenAddress}&to=${to}$value=${value}`
+                target: `${process.env.NEXT_PUBLIC_HOST}/api/tx?tokenAddress=${tokenAddress}&to=${to}&value=${inputToken}`
             },
             {
                 label: 'Back',
             },
         ],
-        inputText: 'Input $Degen',
+        inputText: 'Input token amount',
         component: PageView(config),
         functionName: 'initial',
     }

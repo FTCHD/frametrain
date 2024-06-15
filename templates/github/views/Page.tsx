@@ -7,17 +7,37 @@ export default function CoverView(config: Config) {
             style={{
                 width: '100%',
                 height: '100%',
-                backgroundColor: 'black',
+                justifyContent: 'space-between',
+                backgroundColor: 'white',
                 display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
                 fontFamily: 'Roboto',
                 fontSize: '50px',
-                color: '#ffffff',
+                padding: '50px',
             }}
         >
-            {"hello"}
+            <span
+                style={{
+                    width: '100%',
+                    height: '80%',
+                    fontFamily: 'Roboto',
+                    color: 'black',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '20px',
+                    fontSize: '40px',
+                    overflow: 'hidden',
+                    fontWeight: '300',
+                    paddingRight: '15px',
+                }}
+            >
+                Repo Owner: {config.to}
+                <span style={{fontSize: '30px'}}>
+                    Token Address: {config.tokenAddress}
+                </span>
+                <span style={{fontSize: '30px'}}>
+                    Your contribution will help the project develop further
+                </span>
+            </span>
         </div>
     )
 }

@@ -10,23 +10,22 @@ export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
 
-    const { githubLink } = config
+    const { githubLink, tokenAddress } = config
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
     const displayLabelTokenAddressRef = useRef<HTMLInputElement>(null)
 
     return (
         <div className="w-full h-full space-y-4">
-            <p>{JSON.stringify(config)}</p>
+            <h3 className="text-lg font-semibold">Input</h3>
 
-            <h3 className="text-lg font-semibold">Input github repo</h3>
-
-            <p>{githubLink}</p>
+            <p>Github: {githubLink}</p>
+            <p>Token Address: {tokenAddress}</p>
 
             <div className="flex flex-col gap-2 ">
                 <Input
                     className="text-lg"
-                    placeholder="Input something"
+                    placeholder="Input Your Github"
                     ref={displayLabelInputRef}
                 />
                 <Input
