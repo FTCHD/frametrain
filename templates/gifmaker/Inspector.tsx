@@ -1,14 +1,7 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
-import { ColorPicker, FontStylePicker } from '@/sdk/components'
+import { ColorPicker, FontFamilyPicker } from '@/sdk/components'
 import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { useRef, useState, useEffect } from 'react'
 import type { Config } from '.'
@@ -46,36 +39,13 @@ export default function Inspector() {
     const inputButtonLabel = useRef<HTMLInputElement>(null)
     const inputButtonLink = useRef<HTMLInputElement>(null)
 
-    const fontStyles = [
-        {
-            name: 'ABeeZee',
-            url: 'https://cdn.jsdelivr.net/npm/@fontsource/abeezee@5.0.13/files/abeezee-latin-400-normal.woff',
-        },
-        {
-            name: 'Roboto',
-            url: 'https://cdn.jsdelivr.net/npm/@fontsource/roboto@5.0.13/files/roboto-latin-400-normal.woff',
-        },
-        {
-            name: 'Lobster',
-            url: 'https://cdn.jsdelivr.net/npm/@fontsource/lobster@5.0.20/files/lobster-latin-400-normal.woff',
-        },
-        {
-            name: 'Orbitron',
-            url: 'https://cdn.jsdelivr.net/npm/@fontsource/orbitron@5.0.19/files/orbitron-latin-400-normal.woff',
-        },
-        {
-            name: 'Jaro',
-            url: 'https://cdn.jsdelivr.net/npm/@fontsource/jaro@5.0.1/files/jaro-latin-400-normal.woff',
-        },
-    ]
-
     const confDefault = {
         start: '0',
         duration: '10',
         caption: 'Hello from FrameTrain',
         fontSize: '30',
         fontColor: 'white',
-        fontStyle: fontStyles[0].url,
+        fontStyle: 'ABeeZee',
         y: '20',
         label: 'Do It',
         link: 'https://frametra.in',
@@ -99,10 +69,11 @@ export default function Inspector() {
                 label: inputButtonLabel.current?.value || confDefault.label,
                 link: inputButtonLink.current?.value || confDefault.link,
             }
+            const font = params.fontStyle.replace(/\s/g, "-").toLowerCase()
             const ffmpeg = ffmpegRef.current
             const ty = file.type.substring(file.type.indexOf('/') + 1)
             await ffmpeg.writeFile(`input.${ty}`, await fetchFile(file))
-            await ffmpeg.writeFile('font.woff', await fetchFile(params.fontStyle))
+            await ffmpeg.writeFile('font.woff', await fetchFile(`https://cdn.jsdelivr.net/npm/@fontsource/${font}@5.0.6/files/${font}-latin-400-normal.woff`))
             ffmpeg.exec([
                 '-i',
                 `input.${ty}`,
@@ -223,28 +194,17 @@ export default function Inspector() {
                     }
                 />
                 <h2 className="text-lg font-bold">Font Style</h2>
-                <Select
-                    defaultValue={fontStyles[0].url}
-                    onValueChange={(value: string) =>
+                <FontFamilyPicker
+                    defaultValue={config?.params?.fontStyle || confDefault.fontStyle}
+                    onSelect={(font) => {
                         updateConfig({
                             params: {
                                 ...config.params,
-                                fontStyle: value,
+                                fontStyle: font,
                             },
                         })
-                    }
-                >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Aspect Ratio" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value={fontStyles[0].url}>{fontStyles[0].name}</SelectItem>
-                        <SelectItem value={fontStyles[1].url}>{fontStyles[1].name}</SelectItem>
-                        <SelectItem value={fontStyles[2].url}>{fontStyles[2].name}</SelectItem>
-                        <SelectItem value={fontStyles[3].url}>{fontStyles[3].name}</SelectItem>
-                        <SelectItem value={fontStyles[4].url}>{fontStyles[4].name}</SelectItem>
-                    </SelectContent>
-                </Select>
+                    }}
+                />
                 <h2 className="text-lg font-bold">Button Label</h2>
                 <Input className="text-lg" ref={inputButtonLabel} />
                 <h2 className="text-lg font-bold">Button Link</h2>
@@ -271,10 +231,12 @@ export default function Inspector() {
                     onClick={() => {
                         const { params } = config
                         inputStart.current.value = config.params?.start || confDefault.start
-                        inputDuration.current.value = config.params?.duration || confDefault.duration
+                        inputDuration.current.value =
+                            config.params?.duration || confDefault.duration
                         inputCaption.current.value = config.params?.caption || confDefault.caption
                         inputY.current.value = config.params?.y || confDefault.y
-                        inputFontSize.current.value = config.params?.fontSize || confDefault.fontSize
+                        inputFontSize.current.value =
+                            config.params?.fontSize || confDefault.fontSize
                         inputButtonLabel.current.value = config.params?.label || confDefault.label
                         inputButtonLink.current.value = config.params?.link || confDefault.link
                     }}
