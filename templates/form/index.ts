@@ -14,7 +14,7 @@ export type fieldTypes = {
 
 export interface Config extends BaseConfig {
     fields: fieldTypes[] | []
-    form_id: string
+    formId: string
     backgroundColor: string
     fontColor: string
     coverText: string
@@ -31,12 +31,6 @@ interface DATA_RECORD {
     timestamp: number
 }
 
-// export interface State extends BaseState {
-//     pageType: 'init' | 'input' | 'review' | 'success' | 'submitted-before' | 'about' | undefined,
-//     inputValues: string[] | [],
-//     inputFieldNumber: number,
-//     totalInputFieldNumber: number
-// }
 export interface State extends BaseState {
     inputNames: string[]
     data: DATA_RECORD[]
@@ -53,7 +47,7 @@ export default {
     functions,
     initialConfig: {
         fields: [],
-        form_id: randomUUID(),
+        formId: randomUUID(),
         backgroundColor: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)',
         fontColor: '#FFFFFF',
         shareText: 'Check This Out!',
