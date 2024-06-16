@@ -4,6 +4,7 @@ import type { FrameActionPayload, FrameActionPayloadValidated, FrameData } from 
 import { updateFrameCalls, updateFrameState } from '@/lib/frame'
 import { buildFramePage, validatePayload } from '@/lib/serve'
 import type { BaseConfig, BaseState } from '@/lib/types'
+import { FrameError } from '@/sdk/handlers'
 import templates from '@/templates'
 import { eq } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
