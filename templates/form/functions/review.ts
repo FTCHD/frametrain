@@ -2,11 +2,12 @@
 import type { BuildFrameData } from '@/lib/farcaster'
 import type { Config, State } from '..'
 import ReviewView from '../views/Review'
-import { UserState } from './userState'
+import { UsersState } from './userState'
 
 export default async function review(
     config: Config,
     state: State,
+    fid:number,
     // biome-ignore lint/correctness/noUnusedVariables: <explanation>
     params: any
 ): Promise<BuildFrameData> {
@@ -27,7 +28,7 @@ export default async function review(
         ],
         state,
         aspectRatio: '1.91:1',
-        component: ReviewView(config, UserState),
+        component: ReviewView(config, UsersState[fid]),
         functionName: 'input',
     }
 }

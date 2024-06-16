@@ -1,9 +1,9 @@
 import type { Config } from '..'
-import template from '..'
+// import template from '..'
 import type { SessionUserStateType } from '../functions/userState'
 
 export default function InputView(config: Config, userState: SessionUserStateType, options?: { isFieldValid?: boolean }) {
-
+    
     return (
         <div
             style={{
@@ -32,8 +32,8 @@ export default function InputView(config: Config, userState: SessionUserStateTyp
                     textAlign: 'center',
                 }}
             >
-                {config.fields[userState.inputFieldNumber].fieldName || template.initialConfig.fields}
-                <span style={{ paddingLeft: '1em', fontSize: '0.6em' }}>{config.fields[userState.inputFieldNumber].fieldDescription || template.initialConfig.fields}</span>
+                {config.fields[userState.inputFieldNumber].fieldName}
+                <span style={{ paddingLeft: '1em', fontSize: '0.6em' }}>{config.fields[userState.inputFieldNumber].fieldDescription}</span>
             </div>
             <div
                 className="input-wrapper"
@@ -52,7 +52,7 @@ export default function InputView(config: Config, userState: SessionUserStateTyp
                     userState.inputValues[userState.inputFieldNumber]?.length > 0 ?
                         <span className="data" style={{ fontSize: '0.9em', color: 'black' }}>{userState.inputValues[userState.inputFieldNumber]}</span>
                         :
-                        <span className="example" style={{ fontSize: '0.7em' }}>Example: {config.fields[userState.inputFieldNumber].fieldExample || template.initialConfig.fields}</span>
+                        <span className="example" style={{ fontSize: '0.7em' }}>Example: {config.fields[userState.inputFieldNumber].fieldExample}</span>
                 }
             </div>
             <div
@@ -66,8 +66,8 @@ export default function InputView(config: Config, userState: SessionUserStateTyp
                     alignItems: 'center',
                     textAlign: 'center',
                     fontSize: '0.6em',
-                    right: '0',
-                    bottom: '0',
+                    right: 0,
+                    bottom: 0,
                     padding: '0.5em 0.5em 0.5em 0.8em'
                 }}
             >

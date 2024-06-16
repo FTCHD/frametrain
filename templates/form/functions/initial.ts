@@ -3,7 +3,7 @@ import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import CoverView from '../views/Cover'
-import { updateUserState } from './userState'
+// import { updateUserState } from './userState'
 
 export default async function initial(config: Config, state: State): Promise<BuildFrameData> {
     let newState = state
@@ -11,7 +11,7 @@ export default async function initial(config: Config, state: State): Promise<Bui
         inputNames: config.fields.map((field) => field.fieldName ?? ''),
     })
 
-    updateUserState({ pageType: 'init' })
+    // updateUserState({ pageType: 'init' })
 
     const SHARE_FRAME_TEXT = config.shareText
     const SHARE_FRAME_URL = config.frameURL

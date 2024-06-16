@@ -22,7 +22,9 @@ export default async function input(
     const fid: number = body.untrustedData.fid
     const buttonIndex: number = body.untrustedData.buttonIndex
     const textInput = body.untrustedData.inputText ?? ''
-
+    if (!UsersState[fid]) {
+        updateUserState(fid, { pageType: 'init', inputValues: [] })
+    }
     const prevUserState = structuredClone(UsersState[fid])
 
     switch (prevUserState.pageType) {
@@ -87,6 +89,8 @@ export default async function input(
                     !(textInput.trim().length > 0) &&
                     !UsersState[fid].inputValues[UsersState[fid].inputFieldNumber]
                 ) {
+                    console.log("RETURNING ERROR");
+                    
                     updateUserState(fid, { pageType: 'input' })
                     // RETURN ERROR SAYING THE FIELD IS NECESSARY TO BE FILLED
                     return {
@@ -98,7 +102,7 @@ export default async function input(
                                 label: '→',
                             },
                         ],
-                        error: "*This Field Must Be Filled!",
+                        error: 'This Field Is Required To Be Filled',
                         inputText: 'Enter The Value',
                         aspectRatio: '1.91:1',
                         state: newState,
@@ -200,7 +204,7 @@ export default async function input(
                 functionName: 'input',
             }
         case 'review':
-            return review(config, newState, null)
+            return review(config, newState, fid, null)
         case 'success':
             // CHECK IF USER HAS ALREADY SUBMITTED
             // biome-ignore lint/style/useSingleCaseStatement: <explanation>
