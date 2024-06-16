@@ -26,7 +26,11 @@ export default async function input(
     if (!UsersState[fid]) {
         updateUserState(fid, { pageType: 'init', inputValues: [] })
     }
+
     const prevUserState = structuredClone(UsersState[fid])
+
+    console.log("BEFORE SWITCH THE STATE IS : ", state);
+    console.log("BEFORE SWITCH THE USER STATE IS : ", UsersState);
 
     switch (prevUserState.pageType) {
         case 'init':
@@ -89,7 +93,7 @@ export default async function input(
                     // biome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
                     !(textInput.trim().length > 0) &&
                     !UsersState[fid].inputValues[UsersState[fid].inputFieldNumber]
-                ) {                    
+                ) {
                     updateUserState(fid, { pageType: 'input' })
                     throw new FrameError('You Cannot Leave A Required Field Empty!')
                 }
@@ -156,10 +160,16 @@ export default async function input(
             }
 
         case 'success':
-            updateUserState(fid, { pageType: 'init' })
+            // biome-ignore lint/style/useSingleCaseStatement: <explanation>
+            removeFidFromUserState(fid)
+            updateUserState(fid, { pageType: 'init', inputValues: [] })
+            break;
         default:
             break
     }
+
+    console.log('\x1b[33m%s\x1b[0m', UsersState);
+
 
     switch (UsersState[fid].pageType) {
         case 'init':
@@ -177,7 +187,6 @@ export default async function input(
                     },
                 ],
                 inputText: 'Enter The Value',
-                aspectRatio: '1.91:1',
                 state: newState,
                 component: InputView(config, UsersState[fid], {
                     isFieldValid: UsersState[fid].isFieldValid,
@@ -208,8 +217,6 @@ export default async function input(
                     },
                 ],
             })
-            removeFidFromUserState(fid)
-            updateUserState(fid, { pageType: 'success' })
             return {
                 buttons: [
                     {
@@ -217,7 +224,6 @@ export default async function input(
                     },
                 ],
                 state: newState,
-                aspectRatio: '1.91:1',
                 component: SuccessView(config),
                 functionName: 'input',
             }
@@ -232,13 +238,14 @@ export default async function input(
                     },
                 ],
                 state: newState,
-                aspectRatio: '1.91:1',
                 component: SubmittedView(config),
                 functionName: 'input',
             }
         default:
             break
     }
+
+    console.log('\x1b[36m%s\x1b[0m', 'WAS NOT CAUGHT BY ANYTHING');
 
     return {
         buttons: [
@@ -247,7 +254,6 @@ export default async function input(
             },
         ],
         state,
-        aspectRatio: '1.91:1',
         component: InputView(config, UsersState[fid]),
         functionName: 'initial',
     }
