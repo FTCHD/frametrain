@@ -125,7 +125,7 @@ function paginateElements(elements: Element[], metadata: MediumMetadata): Page[]
         } else {
             acc.push(currentElement)
         }
-        return acc
+        return acc 
     }, [])
 
     const pages: Page[] = []
