@@ -21,8 +21,6 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@/components/shadcn/Accordion'
-import { Separator } from '@/components/shadcn/Separator'
-import { ScrollArea } from '@/components/shadcn/ScrollArea'
 import {
     Drawer,
     DrawerContent,
@@ -31,7 +29,7 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from '@/components/shadcn/Drawer'
-import { choicesRepresentation, isDev } from './utils'
+import { choicesRepresentation } from './utils'
 
 function UploadSlide({
     setSlide,
@@ -89,9 +87,11 @@ export default function Inspector() {
     const [choices, setChoices] = useState<number>(0)
     const [showChoices, setShowChoices] = useState<boolean>(false)
     const uploadImage = useUploadImage()
+    const [coverType, setCoverType] = useState<'image' | 'text'>('text')
 
     useEffect(() => {
         if (choices > 1 && choicesType) {
+            console.log(`Choices: ${choices} and ChoicesType: ${choicesType}`)
             setShowChoices(true)
         }
     }, [choices, choicesType])
@@ -171,7 +171,6 @@ export default function Inspector() {
                                 </div>
                             ) : null}
                         </div>
-                        <Separator className="my-4" />
                         <div className="flex flex-col gap-2 w-full">
                             <h1 className="text-2xl font-bold">Thank You screen options</h1>
                             <p className="text-sm text-muted-foreground">
@@ -323,7 +322,6 @@ export default function Inspector() {
                                     </h2>
 
                                     <Select
-                                        defaultValue={choicesType ?? undefined}
                                         onValueChange={(v: 'alpha' | 'numeric') =>
                                             setChoicesType(v)
                                         }
@@ -343,10 +341,7 @@ export default function Inspector() {
                                     <h2 className="text-2xl tracking-tight font-semibold">
                                         Select the right answer for this question:
                                     </h2>
-                                    <RadioGroup
-                                        defaultValue={choicesRepresentation[choicesType][0]}
-                                        onValueChange={setAnswer}
-                                    >
+                                    <RadioGroup onValueChange={setAnswer}>
                                         {Array.from({ length: choices }).map((_, index) => (
                                             <div
                                                 key={index}
@@ -444,7 +439,6 @@ export default function Inspector() {
                 >
                     Add Question
                 </Button>
-                <Separator className="my-4" />
                 <div className="flex flex-col gap-4 w-full">
                     <h2 className="text-2xl font-bold">Questions</h2>
                     {config.qna.map((qna, i) => (
@@ -540,18 +534,16 @@ function QuestionUpdateForm({
                 <div className="flex flex-col space-y-1">
                     <h2 className="text-2xl tracking-tight font-semibold">Question</h2>
                 </div>
-                <ScrollArea className="px-5 rounded-md border">
-                    <Textarea
-                        onChange={(e) => {
-                            onChangeQna({
-                                ...qna,
-                                question: e.target.value,
-                            })
-                        }}
-                        value={qna.question}
-                        className="w-full max-h-40 border-none"
-                    />
-                </ScrollArea>
+                <Textarea
+                    onChange={(e) => {
+                        onChangeQna({
+                            ...qna,
+                            question: e.target.value,
+                        })
+                    }}
+                    value={qna.question}
+                    className="w-full max-h-40 border-none"
+                />
             </div>
 
             <div className="flex flex-col gap-2">

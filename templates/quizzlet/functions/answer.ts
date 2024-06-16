@@ -1,11 +1,11 @@
 'use server'
 
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
-import type { Config, State } from '..'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import QuestionView from '../views/Question'
+import type { Config, State } from '..'
 import { choicesRepresentation } from '../utils'
-import PreReviewAnswersView from '../views/PreReview'
+import QuestionView from '../views/Question'
+import ResultsView from '../views/Results'
 
 export default async function answer(
     body: FrameActionPayload,
@@ -16,7 +16,6 @@ export default async function answer(
     const student = body.untrustedData.fid.toString()
     const choice = body.untrustedData.buttonIndex
     const pastAnswers = state.answers?.[student] ?? []
-    console.log('Quizzlet.answer >> top', { state, params, choice, pastAnswers })
 
     let newState = state
     const nextPage = params?.currentPage !== undefined ? Number(params?.currentPage) + 1 : 1
@@ -26,9 +25,6 @@ export default async function answer(
     const qna = config.qna[currentPage]
     const nextQna = config.qna[nextPage]
     const { qna: qnas, ...rest } = config
-
-    console.log('Quizzlet.answer >> qna', { qna, nextPage, qnaCount, lastPage, currentPage })
-    console.log('Quizzlet.answer >> nextPage <= qnaCount', nextPage <= qnaCount)
 
     const buttons: FrameButtonMetadata[] = []
 
@@ -48,19 +44,40 @@ export default async function answer(
             buttons.push({ label: choicesRepresentation[choiceType][choice] })
         })
     } else {
-        buttons.push({
-            label: config.beforeReview?.label ?? 'Review Answers',
-        })
+        buttons.push(
+            {
+                label: '← Home',
+            },
+            {
+                label: 'My Answers',
+            },
+            { label: 'Create Your Own', action: 'link', target: 'https://frametra.in' }
+        )
     }
 
-    console.log('/answer for quizzlet', {
-        pastAnswers,
-        nextPage,
-        lastPage,
-        nextQna,
-    })
+    const correctAnswers = pastAnswers.reduce((acc, answer) => {
+        const qna = config.qna[answer.questionIndex - 1]
+        const choice =
+            choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
+        if (qna.answer === choice) {
+            return acc + 1
+        }
+        return acc
+    }, 0)
+
+    const wrongAnswers = pastAnswers.length - correctAnswers
+    const percentages = {
+        correct_answers: Math.round((correctAnswers / config.qna.length) * 100),
+        wrong_answers: Math.round((wrongAnswers / config.qna.length) * 100),
+    }
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
+
+    const colors = {
+        background: config?.background,
+        textColor: config?.textColor,
+        barColor: config?.barColor,
+    }
 
     return {
         buttons,
@@ -68,9 +85,17 @@ export default async function answer(
         fonts: roboto,
         aspectRatio: '1.91:1',
         component: lastPage
-            ? PreReviewAnswersView(config)
+            ? ResultsView(
+                  config.qna.length,
+                  percentages,
+                  {
+                      correct_answers: correctAnswers,
+                      wrong_answers: wrongAnswers,
+                  },
+                  colors
+              )
             : QuestionView({ qnas, qna: nextQna, ...rest }),
-        functionName: lastPage ? 'prereview' : 'answer',
+        functionName: lastPage ? 'results' : 'answer',
         params: lastPage ? undefined : { currentPage: nextPage },
     }
 }

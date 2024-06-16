@@ -14,7 +14,6 @@ export default async function review(
 ): Promise<BuildFrameData> {
     const student = body.untrustedData.fid.toString()
     const pastAnswers = state.answers?.[student] ?? []
-    console.log('Quizzlet.review >> top', { state, params, student, pastAnswers })
 
     const newState = state
     const nextPage = params?.currentPage !== undefined ? Number(params?.currentPage) + 1 : 1
@@ -26,14 +25,7 @@ export default async function review(
     const buttons: FrameButtonMetadata[] = []
 
     const qna = config.qna[currentQnaIndex]
-    console.log('Quizzlet.review >> qna', {
-        qna,
-        nextPage,
-        qnaCount,
-        lastPage,
-        currentPage,
-        currentQnaIndex,
-    })
+
     const { qna: qnas, ...rest } = config
 
     const choiceType = qna.isNumeric ? 'numeric' : 'alpha'
@@ -41,27 +33,38 @@ export default async function review(
     const userChoice = foundChoice?.answerIndex ? foundChoice.answerIndex - 1 : 0
     const userAnswer = choicesRepresentation[choiceType][userChoice]
 
-    // get the total number of correct answers from the user
-    // get the total number of wrong answers from the user
+    const correctAnswers = pastAnswers.reduce((acc, answer) => {
+        const qna = config.qna[answer.questionIndex - 1]
+        const choice =
+            choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
+        if (qna.answer === choice) {
+            return acc + 1
+        }
+        return acc
+    }, 0)
 
+    const showImage = correctAnswers === config.qna.length
     if (lastPage) {
         buttons.push({
-            label: 'Check Results',
+            label: '← Home',
         })
+
+        if (showImage) {
+            if (config.success.image) {
+                buttons.push({
+                    label: 'A Gift For you',
+                })
+            }
+        } else {
+            buttons.push({
+                label: 'Create Your Own',
+                action: 'link',
+                target: 'https://frametra.in',
+            })
+        }
     } else {
         buttons.push({ label: '→' })
     }
-
-    console.log('/review for quizzlet', {
-        student,
-        pastAnswers,
-        foundChoice,
-        nextPage,
-        lastPage,
-        qna,
-        userChoice,
-        userAnswer,
-    })
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
@@ -77,7 +80,7 @@ export default async function review(
         fonts: roboto,
         aspectRatio: '1.91:1',
         component: ReviewAnswersView({ qnas, qna, colors, userAnswer, ...rest }),
-        functionName: lastPage ? 'results' : 'review',
+        functionName: lastPage ? 'success' : 'review',
         params: !lastPage ? { currentPage: nextPage } : undefined,
     }
 }

@@ -1,8 +1,10 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import type { Config, State } from '..'
-import { choicesRepresentation } from '../utils'
-import ResultsView from '../views/Results'
+import { choicesRepresentation, isDev } from '../utils'
+import ReviewAnswersView from '../views/Review'
+import initial from './initial'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function results(
     body: FrameActionPayload,
@@ -10,52 +12,22 @@ export default async function results(
     state: State,
     _params: any
 ): Promise<BuildFrameData> {
-    const user = body.untrustedData.fid.toString()
-    const allAnswers = state.answers?.[user] ?? []
+    const userId = body.untrustedData.fid.toString()
+    const choice = body.untrustedData.buttonIndex
 
-    const buttons: FrameButtonMetadata[] = [
-        {
-            label: 'Reset',
-        },
-    ]
-
-    const correctAnswers = allAnswers.reduce((acc, answer) => {
-        const qna = config.qna[answer.questionIndex - 1]
-        const choice =
-            choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
-        if (qna.answer === choice) {
-            return acc + 1
-        }
-        return acc
-    }, 0)
-
-    const wrongAnswers = allAnswers.length - correctAnswers
-    const showImage = correctAnswers === config.qna.length
-    const percentages = {
-        correct_answers: Math.round((correctAnswers / config.qna.length) * 100),
-        wrong_answers: Math.round((wrongAnswers / config.qna.length) * 100),
+    if (choice === 1) {
+        return initial(config, state)
     }
 
-    if (!showImage) {
-        buttons.push({
-            label: 'Create Your Own',
-            action: 'link',
-            target: 'https://frametra.in',
-        })
-    } else {
-        if (config.success.image) {
-            buttons.push({
-                label: 'A Gift For you',
-            })
-        } else {
-            buttons.push({
-                label: 'Create Your Own',
-                action: 'link',
-                target: 'https://frametra.in',
-            })
-        }
-    }
+    const roboto = await loadGoogleFontAllVariants('Roboto')
 
+    const { qna: qnas, ...rest } = config
+    const qna = qnas[0]
+
+    const userAnswer =
+        choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][
+            isDev ? 0 : state.answers[userId][0].answerIndex - 1
+        ]
     const colors = {
         background: config?.background,
         textColor: config?.textColor,
@@ -63,17 +35,12 @@ export default async function results(
     }
 
     return {
-        buttons,
-        component: ResultsView(
-            config.qna.length,
-            percentages,
-            {
-                correct_answers: correctAnswers,
-                wrong_answers: wrongAnswers,
-            },
-            colors
-        ),
-        functionName: 'success',
+        buttons: [{ label: '→' }],
+        fonts: roboto,
         state,
+        aspectRatio: '1.91:1',
+        component: ReviewAnswersView({ qna, qnas, colors, userAnswer, ...rest }),
+        functionName: 'review',
+        params: { currentPage: 1 },
     }
 }
