@@ -98,6 +98,7 @@ export default async function input(
                                 label: '→',
                             },
                         ],
+                        error: "*This Field Must Be Filled!",
                         inputText: 'Enter The Value',
                         aspectRatio: '1.91:1',
                         state: newState,
