@@ -3,9 +3,9 @@ import { dimensionsForRatio } from '@/sdk/constants'
 import { ImageResponse } from '@vercel/og'
 import type { ReactElement } from 'react'
 import type {
+    BuildFrameData,
     FrameActionPayload,
     FrameButtonMetadata,
-    FrameData,
     FrameValidatedActionPayload,
 } from './farcaster'
 import type { BaseState } from './types'
@@ -24,7 +24,7 @@ export async function buildFramePage({
     functionName,
 }: {
     id: string
-} & FrameData) {
+} & BuildFrameData) {
     if (!component && !image) {
         throw new Error('Either component or image must be provided')
     }
