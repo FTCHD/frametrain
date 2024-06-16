@@ -56,17 +56,31 @@ export async function POST(
         })
     }
 	
-    const buildParameters = await handler(
-        body,
-        frame.config as BaseConfig,
-        frame.state as BaseState,
-        searchParams
-    )
+    let buildParameters = {} as BuildFrameData
 
-    if (buildParameters.error) {
-        return new Response(JSON.stringify({ message: buildParameters.error }), {
-            status: 400,
-        })
+    try {
+        buildParameters = await handler(
+            body,
+            frame.config as BaseConfig,
+            frame.state as BaseState,
+            searchParams
+        )
+    } catch (error) {
+        if (error instanceof FrameError) {
+            return Response.json(
+                { message: error.message },
+                {
+                    status: 400,
+                }
+            )
+        }
+
+        return Response.json(
+            { message: 'Unknown error' },
+            {
+                status: 500,
+            }
+        )
     }
 
     // state can be taken directly from the handler
