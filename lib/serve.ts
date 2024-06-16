@@ -3,9 +3,9 @@ import { dimensionsForRatio } from '@/sdk/constants'
 import { ImageResponse } from '@vercel/og'
 import type { ReactElement } from 'react'
 import type {
-    BuildFrameData,
     FrameActionPayload,
     FrameButtonMetadata,
+    FrameData,
     FrameValidatedActionPayload,
 } from './farcaster'
 import type { BaseState } from './types'
@@ -24,7 +24,7 @@ export async function buildFramePage({
     functionName,
 }: {
     id: string
-} & BuildFrameData) {
+} & FrameData) {
     if (!component && !image) {
         throw new Error('Either component or image must be provided')
     }
@@ -205,7 +205,7 @@ function buildFrame({
             }
             metadata[`fc:frame:button:${index + 1}`] = button.label
             if (button.action) {
-                if (!['post', 'post_redirect', 'mint', 'link'].includes(button.action)) {
+                if (!['post', 'post_redirect', 'mint', 'link', 'tx'].includes(button.action)) {
                     throw new Error('Invalid button action.')
                 }
                 metadata[`fc:frame:button:${index + 1}:action`] = button.action

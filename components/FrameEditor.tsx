@@ -25,9 +25,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shad
 export default function FrameEditor({
     frame,
     template,
+    fid,
 }: {
     frame: InferSelectModel<typeof frameTable>
     template: (typeof templates)[keyof typeof templates]
+    fid: string
 }) {
     const [editingName, setEditingName] = useState(false)
     const [temporaryName, setTemporaryName] = useState(frame.name)
@@ -238,6 +240,7 @@ export default function FrameEditor({
                                 config: frame.draftConfig as typeof template.initialConfig,
                                 state: frame.state!,
                                 update: debouncedUpdateConfig,
+                                fid: fid,
                                 // setLoading
                             }}
                         >
