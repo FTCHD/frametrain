@@ -26,7 +26,7 @@ export default function PageView({
                 flexFlow: 'column nowrap',
                 padding: '36px',
                 fontFamily: 'Georgia',
-                fontSize: `${ pagesFontSize?.toString() || '36' }px`,
+                fontSize: `${ pagesFontSize?.toString() || '18' }px`,
              }}>
                 {page.map((element, index) => {
                     switch (element.tag) {

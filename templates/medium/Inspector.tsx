@@ -34,7 +34,7 @@ export default function Inspector() {
         const url = e.target.value
 
         // Accept only valid Medium URLs - later on we can adapt to other platforms
-        if (!/^https:\/\/(\w+\.)?medium\.com\//.test(url)) {
+        if (!/^https:\/\/([\w-]+\.)?medium\.com\//.test(url)) {
             toast.remove()
             toast.error('Please enter a valid medium article URL')
             return
