@@ -31,15 +31,15 @@ export default async function input(
             // IF "ABOUT" BUTTON WAS PRESSED
             // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             if (buttonIndex == 1) {
-                updateUserState(fid,{ pageType: 'about' })
+                updateUserState(fid, { pageType: 'about' })
                 break
             }
 
             // CHECK IF THE USER HAS SUBMITTED THE FORM BEFORE
-            if (config.allowDuplicates == false){
+            if (config.allowDuplicates == false) {
                 const index = getIndexForFid(fid, newState)
                 if (index >= 0) {
-                    updateUserState(fid,{
+                    updateUserState(fid, {
                         pageType: 'submitted_before',
                         inputValues: newState.data[index].inputValues,
                         inputFieldNumber: 0,
@@ -51,11 +51,11 @@ export default async function input(
             }
             // IF "START" BUTTON WAS PRESSED
             if (buttonIndex == 2) {
-                updateUserState(fid,{
+                updateUserState(fid, {
                     inputFieldNumber: 0,
                     totalInputFieldNumber: config.fields.length,
                 })
-                updateUserState(fid,{ pageType: 'input' })
+                updateUserState(fid, { pageType: 'input' })
                 break
             }
             break
@@ -63,7 +63,7 @@ export default async function input(
             // Back Button Pressed
             // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             if (buttonIndex == 1) {
-                updateUserState(fid,{ pageType: 'init' })
+                updateUserState(fid, { pageType: 'init' })
                 break
             }
             break
@@ -72,12 +72,12 @@ export default async function input(
             // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             if (!isValid(textInput, config.fields[UsersState[fid].inputFieldNumber].fieldType)) {
                 // IF INVALID BREAK AND SHOW THE INVALID VALUE MESSAGE
-                updateUserState(fid,{ pageType: 'input', isFieldValid: false })
+                updateUserState(fid, { pageType: 'input', isFieldValid: false })
                 break
                 // biome-ignore lint/style/noUselessElse: <explanation>
             } else {
                 // IF VALID CONTINUE WITH THE REST OF THE CHECKS
-                updateUserState(fid,{ isFieldValid: true })
+                updateUserState(fid, { isFieldValid: true })
             }
             // ADD SUBMITTED INPUT TO STATE
             // CHECK IF THE INPUT IS A "REQUIRED" ONE
@@ -87,21 +87,38 @@ export default async function input(
                     !(textInput.trim().length > 0) &&
                     !UsersState[fid].inputValues[UsersState[fid].inputFieldNumber]
                 ) {
-                    updateUserState(fid,{ pageType: 'input' })
-                    break
+                    updateUserState(fid, { pageType: 'input' })
+                    // RETURN ERROR SAYING THE FIELD IS NECESSARY TO BE FILLED
+                    return {
+                        buttons: [
+                            {
+                                label: '←',
+                            },
+                            {
+                                label: '→',
+                            },
+                        ],
+                        inputText: 'Enter The Value',
+                        aspectRatio: '1.91:1',
+                        state: newState,
+                        component: InputView(config, UsersState[fid], {
+                            isFieldValid: UsersState[fid].isFieldValid,
+                        }),
+                        functionName: 'input',
+                    }
                 }
             }
             if (textInput.length > 0) {
                 // biome-ignore lint/style/useConst: <explanation>
                 let _inputs = UsersState[fid].inputValues
                 _inputs[UsersState[fid].inputFieldNumber] = textInput
-                updateUserState(fid,{ inputValues: _inputs })
+                updateUserState(fid, { inputValues: _inputs })
             }
 
             if (prevUserState.inputFieldNumber + 1 == UsersState[fid].totalInputFieldNumber) {
                 // if button pressed was NEXT_PAGE, show the review page
                 if (buttonIndex == 2) {
-                    updateUserState(fid,{ pageType: 'review' })
+                    updateUserState(fid, { pageType: 'review' })
                     break
                 }
             }
@@ -109,17 +126,17 @@ export default async function input(
             if (prevUserState.inputFieldNumber == 0) {
                 // if button pressed was PREV_PAGE show initial page
                 if (buttonIndex == 1) {
-                    updateUserState(fid,{ pageType: 'init' })
+                    updateUserState(fid, { pageType: 'init' })
                     break
                 }
             }
 
             if (buttonIndex == 1) {
-                updateUserState(fid,{ inputFieldNumber: prevUserState.inputFieldNumber - 1 })
+                updateUserState(fid, { inputFieldNumber: prevUserState.inputFieldNumber - 1 })
                 break
             }
             if (buttonIndex == 2) {
-                updateUserState(fid,{ inputFieldNumber: prevUserState.inputFieldNumber + 1 })
+                updateUserState(fid, { inputFieldNumber: prevUserState.inputFieldNumber + 1 })
                 break
             }
             break
@@ -127,13 +144,13 @@ export default async function input(
             // if pressed button was submit, show the success page
             // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             if (buttonIndex == 2) {
-                updateUserState(fid,{ pageType: 'success' })
+                updateUserState(fid, { pageType: 'success' })
                 break
             }
 
             // if pressed button was back, go through the form again
             if (buttonIndex == 1) {
-                updateUserState(fid,{ pageType: 'input', inputFieldNumber: 0 })
+                updateUserState(fid, { pageType: 'input', inputFieldNumber: 0 })
                 break
             }
 
@@ -142,18 +159,18 @@ export default async function input(
             // IF BACK WAS PRESSED
             // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             if (buttonIndex == 1) {
-                updateUserState(fid,{ pageType: 'init' })
+                updateUserState(fid, { pageType: 'init' })
                 break
             }
 
             // IF CONTINUE WAS PRESSED
             if (buttonIndex == 2) {
-                updateUserState(fid,{ pageType: 'input', inputFieldNumber: 0 })
+                updateUserState(fid, { pageType: 'input', inputFieldNumber: 0 })
                 break
             }
 
         case 'success':
-            updateUserState(fid,{ pageType: 'init' })
+            updateUserState(fid, { pageType: 'init' })
         default:
             break
     }
@@ -176,7 +193,9 @@ export default async function input(
                 inputText: 'Enter The Value',
                 aspectRatio: '1.91:1',
                 state: newState,
-                component: InputView(config, UsersState[fid], { isFieldValid: UsersState[fid].isFieldValid }),
+                component: InputView(config, UsersState[fid], {
+                    isFieldValid: UsersState[fid].isFieldValid,
+                }),
                 functionName: 'input',
             }
         case 'review':
@@ -196,11 +215,15 @@ export default async function input(
             newState = Object.assign(newState, {
                 data: [
                     ...(newState.data || []),
-                    { fid, inputValues: UsersState[fid].inputValues, timestamp: new Date().getTime() },
+                    {
+                        fid,
+                        inputValues: UsersState[fid].inputValues,
+                        timestamp: new Date().getTime(),
+                    },
                 ],
             })
             removeFidFromUserState(fid)
-            updateUserState(fid,{ pageType: 'success' })
+            updateUserState(fid, { pageType: 'success' })
             return {
                 buttons: [
                     {
