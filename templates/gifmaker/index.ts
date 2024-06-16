@@ -21,7 +21,7 @@ export default {
     Inspector,
     functions,
     initialConfig: {
-        gif: 'https://ipfs.io/ipfs/QmZ3SuHbBcZvyBTsCEWZgYFXBXpUW9TQQLctv6Fr2Eva9U',
+        gif: 'https://iili.io/d9WJ44I.gif',
         label: 'LINK',
         link: 'https://frametra.in'
     },

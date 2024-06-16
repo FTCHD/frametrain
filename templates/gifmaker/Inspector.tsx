@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@/components/shadcn/Button';
 import { Input } from '@/components/shadcn/Input';
+import { ColorPicker } from '@/sdk/components'
 import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks';
 import { useRef, useState, useEffect } from 'react';
 import type { Config } from '.';
@@ -17,7 +18,7 @@ export default function Inspector() {
 	const [file, setFile] = useState<File>();
 	const ffmpegRef = useRef(new FFmpeg());
 
-	//LOAD FFMPEG INGINE
+	// LOAD FFMPEG ENGINE
 	const load = async () => {
 		const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
 		const ffmpeg = ffmpegRef.current;
@@ -39,7 +40,6 @@ export default function Inspector() {
 	const inputDuration = useRef<HTMLInputElement>(null);
 	const inputCaption = useRef<HTMLInputElement>(null);
 	const inputFontSize = useRef<HTMLInputElement>(null);
-	const inputFontColor = useRef<HTMLInputElement>(null);
 	const inputY = useRef<HTMLInputElement>(null);
 	const inputButtonLabel = useRef<HTMLInputElement>(null);
 	const inputButtonLink = useRef<HTMLInputElement>(null);
@@ -48,15 +48,15 @@ export default function Inspector() {
 		start: '0',
 		duration: '10',
 		caption: 'Hello from FrameTrain',
-		fontsize: '30',
-		fontcolor: 'white',
+		fontSize: '30',
+		fontColor: 'white',
 		y: '20',
 		label: 'Do It',
 		link: 'https://frametra.in',
 	};
 
 
-	//CRATE GIF FROM PARAMS AND PREVIEW
+	// CREATE GIF FROM PARAMETERS AND SHOW A PREVIEW
 	let data = null;
 	let params = {};
 
@@ -68,8 +68,8 @@ export default function Inspector() {
 				duration: inputDuration.current?.value.toString() || confDefault.duration,
 				caption: inputCaption.current?.value || confDefault.caption,
 				y: inputY.current?.value.toString() || confDefault.y,
-				fontsize: inputFontSize.current?.value.toString() || confDefault.fontsize,
-				fontcolor: inputFontColor.current?.value || confDefault.fontcolor,
+				fontSize: inputFontSize.current?.value.toString() || confDefault.fontSize,
+				fontColor: config.params?.fontColor || confDefault.fontColor,
 				label: inputButtonLabel.current?.value || confDefault.label,
 				link: inputButtonLink.current?.value || confDefault.link,
 			};
@@ -77,8 +77,8 @@ export default function Inspector() {
 			const ty = file.type.substring(file.type.indexOf('/') + 1);
 			await ffmpeg.writeFile(`input.${ty}`, await fetchFile(file));
 			await ffmpeg.writeFile(
-				'arial.ttf',
-				await fetchFile('https://ipfs.io/ipfs/QmcWFzXah4SAbKruiDjUN9rgSzztDwJU4F9d6qreRZNF1C'),
+				'ABeeZee.woff',
+				await fetchFile('https://cdn.jsdelivr.net/npm/@fontsource/abeezee@5.0.13/files/abeezee-latin-400-normal.woff'),
 			); 
 			ffmpeg.exec([
 				'-i',
@@ -90,7 +90,7 @@ export default function Inspector() {
 				'-r',
 				'8',
 				'-vf',
-				`scale=-1:210,drawtext=fontfile=arial.ttf:text='${params.caption}':fontcolor=${params.fontcolor}:fontsize=${params.fontsize}:x=(w-text_w)/2:y=(h-text_h)-${params.y}`,
+				`scale=-1:210,drawtext=fontfile=ABeeZee.woff:text='${params.caption}':fontcolor=${params.fontColor}:bordercolor=black:borderw=1:fontsize=${params.fontSize}:x=(w-text_w)/2:y=(h-text_h)-${params.y}`,
 				'output.gif',
 			]);
 
@@ -101,9 +101,9 @@ export default function Inspector() {
 				);
 				imageRef.current.src = url;
 			}
-			logs.current.value = `Successfully!`;
+			logs.current.value = 'Successfully!';
 		} catch (e) {
-			logs.current.value = `Something went wrong. Upload a file and check the params. ${JSON.stringify(e)}`;
+			logs.current.value = `Something went wrong. Upload a file and check the parameters. ${JSON.stringify(e)}`;
 		}
 	};
 
@@ -111,7 +111,7 @@ export default function Inspector() {
 	const create = async () => {
 		try {
 			if (!data) {
-				logs.current.value = 'Preview not found. Hit "Privew" button.';
+				logs.current.value = 'Preview not found. Hit "Preview" button.';
 				return;
 			}
 			logs.current.value = 'Creating Frame . . .';
@@ -140,107 +140,92 @@ export default function Inspector() {
 	}, [file]);
 
 	return (
-		<div className="w-full h-full space-y-4">
-			<h1 className="text-lg font-semibold">GIF Maker</h1>
-			<video ref={videoRef} width="100%" controls></video>
-			<label
-				htmlFor="uploadFile"
-				className="flex cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
-			>
-				Upload a video file
-				<Input
-					id="uploadFile"
-					accept="video/*"
-					type="file"
-					onChange={(e) => {
-						if (e.target.files?.[0]) {
-							setFile(e.target.files?.[0]);
-						}
-					}}
-					className="sr-only"
-				/>
-			</label>
-			<h3 className="text-lg font-semibold">Enter parameters</h3>
-			<div className="flex flex-col gap-2 ">
-				<Input
-					className="text-lg"
-					placeholder="Start time in sec or mm:ss (default: 0)"
-					ref={inputStart}
-				/>
-				<Input
-					className="text-lg"
-					placeholder="Duration in sec (default: 10)"
-					ref={inputDuration}
-				/>
-				<Input
-					className="text-lg"
-					placeholder="Caption (default: Hello from FrameTrain)"
-					ref={inputCaption}
-				/>
-				<Input
-					className="text-lg"
-					placeholder="Position Y (default: 20)"
-					ref={inputY}
-				/>
-				<Input
-					className="text-lg"
-					placeholder="Font size (default: 30)"
-					ref={inputFontSize}
-				/>
-				<Input
-					className="text-lg"
-					placeholder="Font color (default: white)"
-					ref={inputFontColor}
-				/>
-				<Input
-					className="text-lg"
-					placeholder="Button label (default: LINK)"
-					ref={inputButtonLabel}
-				/>
-				<Input
-					className="text-lg"
-					placeholder="Button link (default: https://frametra.in)"
-					ref={inputButtonLink}
-				/>
-				<img ref={imageRef} width="100%"></img>
-				<br />
-				<button
-					onClick={transcode}
-					className="bg-green-500 hover:bg-green-700 text-white py-3 px-6 rounded"
-				>
-					Preview
-				</button>
-				Console: <textarea style={{ color: "#00FFFF" }} ref={logs}></textarea>
-				<p>Note: The recommended gif's duration is less 10 sec.</p>
-				<Button
-					onClick={create}
-					className="w-full bg-border hover:bg-secondary-border text-primary"
-				>
-					Create Frame
-				</Button>
-			</div>
-			<Button
-				className="w-full"
-				onClick={() => {
-					const { params } = config;
-					inputStart.current.value = config.params?.start || confDefault.start;
-					inputDuration.current.value =
-						config.params?.duration || confDefault.duration;
-					inputCaption.current.value =
-						config.params?.caption || confDefault.caption;
-					inputY.current.value = config.params?.y || confDefault.y;
-					inputFontSize.current.value =
-						config.params?.fontsize || confDefault.fontsize;
-					inputFontColor.current.value =
-						config.params?.fontcolor || confDefault.fontcolor;
-					inputButtonLabel.current.value =
-						config.params?.label || confDefault.label;
-					inputButtonLink.current.value =
-						config.params?.link || confDefault.link;
-				}}
-			>
-				Pre-saved configuration
-			</Button>
-		</div>
-	);
+    <div className="w-full h-full space-y-4">
+        <video ref={videoRef} width="100%" controls></video>
+        <label
+            htmlFor="uploadFile"
+            className="flex cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
+        >
+            Upload a video file
+            <Input
+                id="uploadFile"
+                accept="video/*"
+                type="file"
+                onChange={(e) => {
+                    if (e.target.files?.[0]) {
+                        setFile(e.target.files?.[0])
+                    }
+                }}
+                className="sr-only"
+            />
+        </label>
+
+        <div className="flex flex-col gap-2 ">
+            <h2 className="text-lg font-bold">Start time</h2>
+            <Input className="text-lg" ref={inputStart} />
+            <p className="text-sm text-muted-foreground">in seconds or mm:ss</p>
+            <h2 className="text-lg font-bold">Duration</h2>
+            <Input className="text-lg" ref={inputDuration} />
+            <p className="text-sm text-muted-foreground">in seconds</p>
+            <h2 className="text-lg font-bold">Caption</h2>
+            <Input className="text-lg" ref={inputCaption} />
+            <p className="text-sm text-muted-foreground">e.g. Hello from FrameTrain</p>
+            <h2 className="text-lg font-bold">Caption positioning</h2>
+            <Input className="text-lg" ref={inputY} />
+            <p className="text-sm text-muted-foreground">in pixel values from bottom</p>
+            <h2 className="text-lg font-bold">Font size</h2>
+            <Input className="text-lg" ref={inputFontSize} />
+            <p className="text-sm text-muted-foreground">in pixel values</p>
+            <h2 className="text-lg font-bold">Font color</h2>
+            <ColorPicker
+                className="w-full"
+                background={config.params?.fontColor || 'white'}
+                setBackground={(value: string) =>
+                    updateConfig({
+                        params: {
+                            ...config.params,
+                            fontColor: value,
+                        },
+                    })
+                }
+            />
+            <h2 className="text-lg font-bold">Button label</h2>
+            <Input className="text-lg" ref={inputButtonLabel} />
+            <h2 className="text-lg font-bold">Button link</h2>
+            <Input className="text-lg" ref={inputButtonLink} />
+            <p className="text-sm text-muted-foreground">e.g. https://frametra.in</p>
+            <img ref={imageRef} width="100%"></img>
+            <br />
+            <button
+                onClick={transcode}
+                className="bg-green-500 hover:bg-green-700 text-white py-3 px-6 rounded"
+            >
+                Preview
+            </button>
+            Console: <textarea style={{ color: '#00FFFF' }} ref={logs}></textarea>
+            <p>Note: The recommended gif's duration is less 10 sec.</p>
+            <Button
+                onClick={create}
+                className="w-full bg-border hover:bg-secondary-border text-primary"
+            >
+                Create Frame
+            </Button>
+            <Button
+                className="w-full"
+                onClick={() => {
+                    const { params } = config
+                    inputStart.current.value = config.params?.start || confDefault.start
+                    inputDuration.current.value = config.params?.duration || confDefault.duration
+                    inputCaption.current.value = config.params?.caption || confDefault.caption
+                    inputY.current.value = config.params?.y || confDefault.y
+                    inputFontSize.current.value = config.params?.fontSize || confDefault.fontSize
+                    inputButtonLabel.current.value = config.params?.label || confDefault.label
+                    inputButtonLink.current.value = config.params?.link || confDefault.link
+                }}
+            >
+                Pre-saved configuration
+            </Button>
+        </div>
+    </div>
+)
 }
