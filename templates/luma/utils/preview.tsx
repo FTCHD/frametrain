@@ -156,7 +156,52 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
         }
     )
     const imageResponse = await rendered.arrayBuffer()
-    const pngBuffer = await sharp(Buffer.from(imageResponse)).png().toBuffer()
+    const compressedImgBlob = await compressImage(imageResponse, 256)
+    // const imageBuffer = await sharp(Buffer.from(imageResponse)).jpeg().toBuffer()
+    // const sizeKB = imageBuffer.length / 1024
+    // console.log({ sizeKB })
+    return compressedImgBlob
+    // return `data:image/jpeg;base64,${imageBuffer.toString('base64')}`
+}
 
-    return `data:image/png;base64,${pngBuffer.toString('base64')}`
+async function compressImage(arrayBuffer: ArrayBuffer, targetSizeKB: number) {
+    let imageBuffer = Buffer.from(arrayBuffer)
+
+    let sizeKB = imageBuffer.length / 1024
+    console.log(`compressImage >> initial sizeKB: ${sizeKB}`)
+
+    // Iterate until the image size is less than or equal to the target size
+    let reducedQuality = 80
+
+    let loop = 0
+
+    while (sizeKB > targetSizeKB) {
+        console.log('start reducedQuality', reducedQuality)
+
+        if (reducedQuality <= 20) {
+            reducedQuality = 2
+        }
+        console.log('again running reducedQuality', reducedQuality)
+
+        // Resize the image by reducing the quality
+        imageBuffer = await sharp(imageBuffer)
+            .jpeg({ quality: reducedQuality }) // Adjust quality as needed
+            .toBuffer()
+
+        sizeKB = imageBuffer.length / 1024
+        console.log(`sizeKB after loop ${loop}: ${sizeKB}`)
+        reducedQuality -= 10
+        console.log('running')
+        loop++
+    }
+
+    console.log(`final reducedQuality after loop ${loop} is`, reducedQuality)
+
+    // Convert the resized image buffer to base64
+    const resizedBase64 = imageBuffer.toString('base64')
+
+    // Construct the base64 URL of the resized image
+    const resizedBase64Url = `data:image/jpeg;base64,${resizedBase64}`
+
+    return resizedBase64Url
 }
