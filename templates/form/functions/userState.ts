@@ -1,13 +1,13 @@
 export interface SessionUserStateType {
     pageType:
-        | 'init'
-        | 'home'
-        | 'input'
-        | 'review'
-        | 'success'
-        | 'submitted_before'
-        | 'about'
-        | undefined
+    | 'init'
+    | 'home'
+    | 'input'
+    | 'review'
+    | 'success'
+    | 'submitted_before'
+    | 'about'
+    | undefined
     inputValues: string[] | []
     inputFieldNumber: number
     totalInputFieldNumber: number
@@ -15,24 +15,29 @@ export interface SessionUserStateType {
     isOldUser?: boolean
 }
 
-export let UserState: SessionUserStateType = {
-    pageType: 'init',
-    inputValues: [],
-    inputFieldNumber: 0,
-    totalInputFieldNumber: 0,
-    isFieldValid: true,
+export type UsersStateType = {
+    [fid: string]: SessionUserStateType
+} | Record<string, never>
+
+export let UsersState: UsersStateType = {}
+
+export function removeFidFromUserState(fid: number): void {
+    if (UsersState && fid in UsersState) {
+        const { [fid.toString()]: _, ...rest } = UsersState;
+        UsersState = rest;
+    }
 }
 
-export function updateUserState(updates: Partial<SessionUserStateType>) {
-    Object.assign(UserState, updates)
-}
-
-export function resetUserState() {
-    UserState = {
-        pageType: 'init',
-        inputValues: [],
-        inputFieldNumber: 0,
-        totalInputFieldNumber: 0,
-        isFieldValid: true,
+export function updateUserState(fid: number, userState: Partial<SessionUserStateType>): void {
+    if (UsersState && typeof UsersState === 'object') {
+        UsersState = {
+            ...UsersState,
+            [fid.toString()]: {
+                ...UsersState[fid.toString()],
+                ...userState
+            }
+        };
+    } else {
+        UsersState = { [fid.toString()]: userState as SessionUserStateType };
     }
 }
