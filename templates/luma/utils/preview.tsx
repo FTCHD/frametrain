@@ -33,7 +33,7 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
             </div>
 
             <div
-                tw="absolute right-1 top-2 flex items-center justify-center bg-white text-gray-600 h-8 max-w-full text-lg rounded-md p-5"
+                tw="absolute right-1 top-2 flex items-center justify-center bg-white text-gray-600 h-8 max-w-full text-3xl rounded-md p-5"
                 style={{
                     fontSize: '1.125rem',
                     lineHeight: '1.75rem',
@@ -44,7 +44,7 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
             <div tw="flex absolute top-50 left-20 rounded-md bg-[#414142] font-medium p-10 max-w-3xl max-h-sm text-xl text-white">
                 <h3 tw="inline break-words overflow-hidden">{event.title}</h3>
             </div>
-            <div tw="flex absolute bottom-2 left-2 rounded-md bg-[#414142] p-3 text-white">
+            <div tw="flex absolute bottom-2 left-2 max-w-4xl">
                 <div
                     tw="flex flex-row items-center"
                     style={{
@@ -54,7 +54,7 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
                     }}
                 >
                     <div
-                        tw="flex items-center text-lg"
+                        tw="flex flex-auto text-3xl items-center rounded-md bg-[#414142] p-3 text-white"
                         style={{
                             gap: '0.25rem',
                         }}
@@ -70,8 +70,8 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             style={{
-                                width: '1rem',
-                                height: '1rem',
+                                width: '2rem',
+                                height: '2rem',
                             }}
                         >
                             <path d="M8 2v4" />
@@ -81,7 +81,7 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
                         </svg>
                         <span>{event.date}</span>
                     </div>
-                    <div tw="flex items-center text-lg">
+                    <div tw="flex flex-auto items-center text-3xl rounded-md bg-[#414142] p-3 text-white">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -93,8 +93,8 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             style={{
-                                width: '1rem',
-                                height: '1rem',
+                                width: '2rem',
+                                height: '2rem',
                             }}
                         >
                             <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
@@ -102,7 +102,7 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
                         </svg>
                         <span>{event.locationType}</span>
                     </div>
-                    <div tw="flex items-center text-lg">
+                    <div tw="flex flex-auto items-center text-3xl rounded-md bg-[#414142] p-3 text-white">
                         {event.hosts.length > 1 ? (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -115,8 +115,8 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                                 style={{
-                                    width: '1rem',
-                                    height: '1rem',
+                                    width: '2rem',
+                                    height: '2rem',
                                 }}
                             >
                                 <path d="M18 21a8 8 0 0 0-16 0" />
@@ -126,8 +126,8 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
                         ) : (
                             <svg
                                 style={{
-                                    width: '1rem',
-                                    height: '1rem',
+                                    width: '2rem',
+                                    height: '2rem',
                                 }}
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -147,21 +147,11 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
                     </div>
                 </div>
             </div>
-        </div>,
-        {
-            // width: 955,
-            // height: 500,
-            // width: 630,
-            // height: 630,
-        }
+        </div>
     )
     const imageResponse = await rendered.arrayBuffer()
     const compressedImgBlob = await compressImage(imageResponse, 256)
-    // const imageBuffer = await sharp(Buffer.from(imageResponse)).jpeg().toBuffer()
-    // const sizeKB = imageBuffer.length / 1024
-    // console.log({ sizeKB })
     return compressedImgBlob
-    // return `data:image/jpeg;base64,${imageBuffer.toString('base64')}`
 }
 
 async function compressImage(arrayBuffer: ArrayBuffer, targetSizeKB: number) {
@@ -176,6 +166,7 @@ async function compressImage(arrayBuffer: ArrayBuffer, targetSizeKB: number) {
     let loop = 0
 
     while (sizeKB > targetSizeKB) {
+        loop++
         console.log('start reducedQuality', reducedQuality)
 
         if (reducedQuality <= 20) {
@@ -192,7 +183,6 @@ async function compressImage(arrayBuffer: ArrayBuffer, targetSizeKB: number) {
         console.log(`sizeKB after loop ${loop}: ${sizeKB}`)
         reducedQuality -= 10
         console.log('running')
-        loop++
     }
 
     console.log(`final reducedQuality after loop ${loop} is`, reducedQuality)
