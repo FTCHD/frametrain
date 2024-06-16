@@ -161,22 +161,17 @@ export default function Inspector() {
         </label>
 
         <div className="flex flex-col gap-2 ">
-            <h2 className="text-lg font-bold">Start time</h2>
-            <Input className="text-lg" ref={inputStart} />
-            <p className="text-sm text-muted-foreground">in seconds or mm:ss</p>
+			<h2 className="text-lg font-bold">Start Time</h2>
+            <Input className="text-lg" placeholder="Seconds or mm:ss" ref={inputStart} />
             <h2 className="text-lg font-bold">Duration</h2>
-            <Input className="text-lg" ref={inputDuration} />
-            <p className="text-sm text-muted-foreground">in seconds</p>
+            <Input className="text-lg" placeholder="GIF duration in seconds" ref={inputDuration} />
             <h2 className="text-lg font-bold">Caption</h2>
-            <Input className="text-lg" ref={inputCaption} />
-            <p className="text-sm text-muted-foreground">e.g. Hello from FrameTrain</p>
-            <h2 className="text-lg font-bold">Caption positioning</h2>
-            <Input className="text-lg" ref={inputY} />
-            <p className="text-sm text-muted-foreground">in pixel values from bottom</p>
-            <h2 className="text-lg font-bold">Font size</h2>
-            <Input className="text-lg" ref={inputFontSize} />
-            <p className="text-sm text-muted-foreground">in pixel values</p>
-            <h2 className="text-lg font-bold">Font color</h2>
+            <Input className="text-lg" placeholder="Text on a GIF" ref={inputCaption} />
+            <h2 className="text-lg font-bold">Caption Positioning</h2>
+            <Input className="text-lg" placeholder="Bottom indent of the caption in pixel values" ref={inputY} />
+            <h2 className="text-lg font-bold">Font Size</h2>
+            <Input className="text-lg" placeholder="Font size in pixel values" ref={inputFontSize} />
+            <h2 className="text-lg font-bold">Font Color</h2>
             <ColorPicker
                 className="w-full"
                 background={config.params?.fontColor || 'white'}
@@ -189,9 +184,9 @@ export default function Inspector() {
                     })
                 }
             />
-            <h2 className="text-lg font-bold">Button label</h2>
+            <h2 className="text-lg font-bold">Button Label</h2>
             <Input className="text-lg" ref={inputButtonLabel} />
-            <h2 className="text-lg font-bold">Button link</h2>
+            <h2 className="text-lg font-bold">Button Link</h2>
             <Input className="text-lg" ref={inputButtonLink} />
             <p className="text-sm text-muted-foreground">e.g. https://frametra.in</p>
             <img ref={imageRef} width="100%"></img>
