@@ -29,8 +29,8 @@ export default async function input(
 
     const prevUserState = structuredClone(UsersState[fid])
 
-    console.log("BEFORE SWITCH THE STATE IS : ", state);
-    console.log("BEFORE SWITCH THE USER STATE IS : ", UsersState);
+    // console.log("BEFORE SWITCH THE STATE IS : ", state);
+    // console.log("BEFORE SWITCH THE USER STATE IS : ", UsersState);
 
     switch (prevUserState.pageType) {
         case 'init':
@@ -107,7 +107,7 @@ export default async function input(
 
             if (prevUserState.inputFieldNumber + 1 == UsersState[fid].totalInputFieldNumber) {
                 // if button pressed was NEXT_PAGE, show the review page
-                if (buttonIndex == 2) {
+                if (buttonIndex == 3) {
                     updateUserState(fid, { pageType: 'review' })
                     break
                 }
@@ -115,18 +115,25 @@ export default async function input(
             // IF ON FIRST INPUT FIELD
             if (prevUserState.inputFieldNumber == 0) {
                 // if button pressed was PREV_PAGE show initial page
-                if (buttonIndex == 1) {
+                if (buttonIndex == 2) {
                     updateUserState(fid, { pageType: 'init' })
                     break
                 }
             }
-
-            if (buttonIndex == 1) {
+            // IF PREV WAS PRESSED
+            if (buttonIndex == 2) {
                 updateUserState(fid, { inputFieldNumber: prevUserState.inputFieldNumber - 1 })
                 break
             }
-            if (buttonIndex == 2) {
+            // IF NEXT WAS PRESSED
+            if (buttonIndex == 3) {
                 updateUserState(fid, { inputFieldNumber: prevUserState.inputFieldNumber + 1 })
+                break
+            }
+            // IF RESET WAS PRESSED
+            if (buttonIndex == 1) {
+                removeFidFromUserState(fid)
+                updateUserState(fid, { pageType: 'init', inputValues: [] })
                 break
             }
             break
@@ -168,7 +175,7 @@ export default async function input(
             break
     }
 
-    console.log('\x1b[33m%s\x1b[0m', UsersState);
+    // console.log('\x1b[33m%s\x1b[0m', UsersState);
 
 
     switch (UsersState[fid].pageType) {
@@ -179,6 +186,9 @@ export default async function input(
         case 'input':
             return {
                 buttons: [
+                    {
+                        label: 'Reset'
+                    },
                     {
                         label: '←',
                     },
@@ -245,7 +255,7 @@ export default async function input(
             break
     }
 
-    console.log('\x1b[36m%s\x1b[0m', 'WAS NOT CAUGHT BY ANYTHING');
+    // console.log('\x1b[36m%s\x1b[0m', 'WAS NOT CAUGHT BY ANYTHING');
 
     return {
         buttons: [
