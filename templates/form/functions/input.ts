@@ -77,6 +77,12 @@ export default async function input(
         case 'input':
             //CHECK IF THE VALUE ENTERED IS VALID FOR THE TYPE
             // biome-ignore lint/style/useSingleCaseStatement: <explanation>
+            if (buttonIndex == 1) {
+                // IF RESET WAS PRESSED
+                removeFidFromUserState(fid)
+                updateUserState(fid, { pageType: 'init', inputValues: [] })
+                break
+            }
             if (!isValid(textInput, config.fields[UsersState[fid].inputFieldNumber].fieldType)) {
                 // IF INVALID BREAK AND SHOW THE INVALID VALUE MESSAGE
                 updateUserState(fid, { pageType: 'input', isFieldValid: false })
@@ -128,12 +134,6 @@ export default async function input(
             // IF NEXT WAS PRESSED
             if (buttonIndex == 3) {
                 updateUserState(fid, { inputFieldNumber: prevUserState.inputFieldNumber + 1 })
-                break
-            }
-            // IF RESET WAS PRESSED
-            if (buttonIndex == 1) {
-                removeFidFromUserState(fid)
-                updateUserState(fid, { pageType: 'init', inputValues: [] })
                 break
             }
             break
