@@ -1,10 +1,10 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { ColorPicker, FontFamilyPicker } from '@/sdk/components'
 import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { useRef, useState, useEffect } from 'react'
 import type { Config } from '.'
+import { LoaderPinwheel } from 'lucide-react'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
 
@@ -12,10 +12,11 @@ export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const uploadImage = useUploadImage()
-    const imageRef = useRef<HTMLImageElement | null>(null)
     const videoRef = useRef<HTMLVideoElement | null>(null)
     const logs = useRef(null)
     const [file, setFile] = useState<File>()
+    const [loading, setLoading] = useState(false)
+
     const ffmpegRef = useRef(new FFmpeg())
 
     // LOAD FFMPEG ENGINE
@@ -31,99 +32,47 @@ export default function Inspector() {
         })
     }
 
-    const inputStart = useRef<HTMLInputElement>(null)
-    const inputDuration = useRef<HTMLInputElement>(null)
-    const inputCaption = useRef<HTMLInputElement>(null)
-    const inputFontSize = useRef<HTMLInputElement>(null)
-    const inputY = useRef<HTMLInputElement>(null)
-    const inputButtonLabel = useRef<HTMLInputElement>(null)
-    const inputButtonLink = useRef<HTMLInputElement>(null)
-
-    const confDefault = {
-        start: '0',
-        duration: '10',
-        caption: 'Hello from FrameTrain',
-        fontSize: '30',
-        fontColor: 'white',
-        fontStyle: 'ABeeZee',
-        y: '20',
-        label: 'Do It',
-        link: 'https://frametra.in',
-    }
-
     // CREATE GIF FROM PARAMETERS AND SHOW A PREVIEW
-    let data = null
-    let params = {}
-
     const transcode = async () => {
         try {
-            logs.current.value = 'Creating GIF. Please wait. . .'
-            params = {
-                start: inputStart.current?.value.toString() || confDefault.start,
-                duration: inputDuration.current?.value.toString() || confDefault.duration,
-                caption: inputCaption.current?.value || confDefault.caption,
-                y: inputY.current?.value.toString() || confDefault.y,
-                fontSize: inputFontSize.current?.value.toString() || confDefault.fontSize,
-                fontColor: config.params?.fontColor || confDefault.fontColor,
-                fontStyle: config.params?.fontStyle || confDefault.fontStyle,
-                label: inputButtonLabel.current?.value || confDefault.label,
-                link: inputButtonLink.current?.value || confDefault.link,
-            }
-            const font = params.fontStyle.replace(/\s/g, "-").toLowerCase()
+            setLoading(true)
+            const font = config.fontStyle.replace(/\s/g, '-').toLowerCase()
             const ffmpeg = ffmpegRef.current
             const ty = file.type.substring(file.type.indexOf('/') + 1)
             await ffmpeg.writeFile(`input.${ty}`, await fetchFile(file))
-            await ffmpeg.writeFile('font.woff', await fetchFile(`https://cdn.jsdelivr.net/npm/@fontsource/${font}@5.0.6/files/${font}-latin-400-normal.woff`))
+            await ffmpeg.writeFile(
+                'font.woff',
+                await fetchFile(
+                    `https://cdn.jsdelivr.net/npm/@fontsource/${font}@5.0.6/files/${font}-latin-400-normal.woff`
+                )
+            )
             ffmpeg.exec([
                 '-i',
                 `input.${ty}`,
                 '-ss',
-                params.start,
+                config.start,
                 '-t',
-                params.duration,
+                config.duration,
                 '-r',
                 '8',
                 '-vf',
-                `scale=-1:210,drawtext=fontfile=font.woff:text='${params.caption}':fontcolor=${params.fontColor}:bordercolor=black:borderw=1:fontsize=${params.fontSize}:x=(w-text_w)/2:y=(h-text_h)-${params.y}`,
+                `scale=-1:210,drawtext=fontfile=font.woff:text='${config.caption}':fontcolor=${config.fontColor}:bordercolor=black:borderw=1:fontsize=${config.fontSize}:x=(w-text_w)/2:y=(h-text_h)-${config.y}`,
                 'output.gif',
             ])
-
-            data = await ffmpeg.readFile('output.gif')
-            if (imageRef.current) {
-                const url = URL.createObjectURL(new Blob([data.buffer], { type: 'image/gif' }))
-                imageRef.current.src = url
-            }
-            logs.current.value = 'Successfully!'
-        } catch (e) {
-            logs.current.value = `Something went wrong. Upload a file and check the parameters. ${JSON.stringify(e)}`
-        }
-    }
-
-    //CREATE FRAME AND STORE CONFIGURATION
-    const create = async () => {
-        try {
-            if (!data) {
-                logs.current.value = 'Preview not found. Hit "Preview" button.'
-                return
-            }
-            logs.current.value = 'Creating Frame . . .'
+            const data = await ffmpeg.readFile('output.gif')
             const b64 = Buffer.from(data).toString('base64')
             const { filePath } = await uploadImage({
                 base64String: b64,
                 contentType: 'image/gif',
             })
             const gifUrl = process.env.NEXT_PUBLIC_CDN_HOST + '/' + filePath
-            console.log(gifUrl)
             updateConfig({
                 gif: gifUrl,
-                label: params.label,
-                link: params.link,
-                params: params,
             })
-            logs.current.value = 'Successfully!'
         } catch (e) {
-            logs.current.value =
-                'Something went wrong. Perhaps, the GIF is too large. Check params and try again.'
+            console.log(e)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -133,9 +82,40 @@ export default function Inspector() {
     }, [file])
 
     useEffect(() => {
-        updateConfig({ time: new Date().toJSON() })
+        if (
+            !file ||
+            !config.start ||
+            !config.duration ||
+            !config.caption ||
+            !config.y ||
+            !config.fontSize ||
+            !config.fontStyle ||
+            !config.fontColor
+        )
+            return
+        transcode()
+    }, [
+        file,
+        config.start,
+        config.duration,
+        config.caption,
+        config.y,
+        config.fontSize,
+        config.fontStyle,
+        config.fontColor,
+    ])
+
+    useEffect(() => {
+        updateConfig({
+            gif: 'https://iili.io/d9WJ44I.gif',
+            fontColor: 'white',
+            fontStyle: 'ABeeZee',
+            label: 'LINK',
+            link: 'https://frametra.in',
+        })
         load()
     }, [])
+
     return (
         <div className="w-full h-full space-y-4">
             <video ref={videoRef} width="100%" controls></video>
@@ -157,92 +137,75 @@ export default function Inspector() {
                 />
             </label>
 
+            <div className="flex items-center justify-center h-7">
+                {loading && <LoaderPinwheel className="animate-spin" />}
+            </div>
+
             <div className="flex flex-col gap-2 ">
                 <h2 className="text-lg font-bold">Start Time</h2>
-                <Input className="text-lg" placeholder="Seconds or mm:ss" ref={inputStart} />
+                <Input
+                    className="text-lg"
+                    placeholder="Seconds or mm:ss"
+                    defaultValue={config.start}
+                    onChange={(e) => updateConfig({ start: e.target.value })}
+                />
                 <h2 className="text-lg font-bold">Duration</h2>
                 <Input
                     className="text-lg"
                     placeholder="GIF duration in seconds"
-                    ref={inputDuration}
+                    defaultValue={config.duration}
+                    onChange={(e) => updateConfig({ duration: e.target.value })}
                 />
+                <p className="text-sm text-muted-foreground">
+                    The recommended gif's duration is less 10 sec.
+                </p>
                 <h2 className="text-lg font-bold">Caption</h2>
-                <Input className="text-lg" placeholder="Text on a GIF" ref={inputCaption} />
+                <Input
+                    className="text-lg"
+                    placeholder="Text on a GIF"
+                    defaultValue={config.caption}
+                    onChange={(e) => updateConfig({ caption: e.target.value })}
+                />
                 <h2 className="text-lg font-bold">Caption Positioning</h2>
                 <Input
                     className="text-lg"
                     placeholder="Bottom indent of the сaption in pixel values"
-                    ref={inputY}
+                    defaultValue={config.y}
+                    onChange={(e) => updateConfig({ y: e.target.value })}
                 />
                 <h2 className="text-lg font-bold">Font Size</h2>
                 <Input
                     className="text-lg"
                     placeholder="Font size in pixel values"
-                    ref={inputFontSize}
+                    defaultValue={config.fontSize}
+                    onChange={(e) => updateConfig({ fontSize: e.target.value })}
                 />
                 <h2 className="text-lg font-bold">Font Color</h2>
                 <ColorPicker
                     className="w-full"
-                    background={config.params?.fontColor || 'white'}
-                    setBackground={(value: string) =>
-                        updateConfig({
-                            params: {
-                                ...config.params,
-                                fontColor: value,
-                            },
-                        })
-                    }
+                    background={config.fontColor || 'white'}
+                    setBackground={(value: string) => updateConfig({ fontColor: value })}
                 />
                 <h2 className="text-lg font-bold">Font Style</h2>
                 <FontFamilyPicker
-                    defaultValue={config?.params?.fontStyle || confDefault.fontStyle}
-                    onSelect={(font) => {
-                        updateConfig({
-                            params: {
-                                ...config.params,
-                                fontStyle: font,
-                            },
-                        })
-                    }}
+                    defaultValue={config.fontStyle}
+                    onSelect={(font: string) => updateConfig({ fontStyle: font })}
                 />
                 <h2 className="text-lg font-bold">Button Label</h2>
-                <Input className="text-lg" ref={inputButtonLabel} />
+                <Input
+                    className="text-lg"
+                    defaultValue={config.label}
+                    onChange={(e) => updateConfig({ label: e.target.value })}
+                />
                 <h2 className="text-lg font-bold">Button Link</h2>
-                <Input className="text-lg" ref={inputButtonLink} />
-                <p className="text-sm text-muted-foreground">e.g. https://frametra.in</p>
-                <img ref={imageRef} width="100%"></img>
-                <br />
-                <button
-                    onClick={transcode}
-                    className="bg-green-500 hover:bg-green-700 text-white py-3 px-6 rounded"
-                >
-                    Preview
-                </button>
-                Console: <textarea style={{ color: '#00FFFF' }} ref={logs}></textarea>
-                <p>Note: The recommended gif's duration is less 10 sec.</p>
-                <Button
-                    onClick={create}
-                    className="w-full bg-border hover:bg-secondary-border text-primary"
-                >
-                    Create Frame
-                </Button>
-                <Button
-                    className="w-full"
-                    onClick={() => {
-                        const { params } = config
-                        inputStart.current.value = config.params?.start || confDefault.start
-                        inputDuration.current.value =
-                            config.params?.duration || confDefault.duration
-                        inputCaption.current.value = config.params?.caption || confDefault.caption
-                        inputY.current.value = config.params?.y || confDefault.y
-                        inputFontSize.current.value =
-                            config.params?.fontSize || confDefault.fontSize
-                        inputButtonLabel.current.value = config.params?.label || confDefault.label
-                        inputButtonLink.current.value = config.params?.link || confDefault.link
-                    }}
-                >
-                    Pre-saved configuration
-                </Button>
+                <Input
+                    className="text-lg"
+                    defaultValue={config.link}
+                    onChange={(e) => updateConfig({ link: e.target.value })}
+                />
+                <div className="flex items-center justify-center h-7">
+                    {loading && <LoaderPinwheel className="animate-spin" />}
+                </div>
             </div>
         </div>
     )

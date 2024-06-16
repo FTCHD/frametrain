@@ -20,10 +20,6 @@ export default {
     enabled: true,
     Inspector,
     functions,
-    initialConfig: {
-        gif: 'https://iili.io/d9WJ44I.gif',
-        label: 'LINK',
-        link: 'https://frametra.in'
-    },
+    initialConfig: {},
     requiresValidation: false,
 } satisfies BaseTemplate
