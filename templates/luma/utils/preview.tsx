@@ -1,6 +1,7 @@
 'use server'
 
 import { ImageResponse } from 'next/og'
+import sharp from 'sharp'
 
 type RenderImagePreviewParams = {
     event: {
@@ -155,5 +156,7 @@ export default async function renderImagePreview({ event }: RenderImagePreviewPa
         }
     )
     const imageResponse = await rendered.arrayBuffer()
-    return `data:image/png;base64,${Buffer.from(imageResponse).toString('base64')}`
+    const pngBuffer = await sharp(Buffer.from(imageResponse)).png().toBuffer()
+
+    return `data:image/png;base64,${pngBuffer.toString('base64')}`
 }
