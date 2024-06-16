@@ -170,13 +170,12 @@ export default async function input(
             // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             removeFidFromUserState(fid)
             updateUserState(fid, { pageType: 'init', inputValues: [] })
-            break;
+            break
         default:
             break
     }
 
     // console.log('\x1b[33m%s\x1b[0m', UsersState);
-
 
     switch (UsersState[fid].pageType) {
         case 'init':
@@ -187,7 +186,7 @@ export default async function input(
             return {
                 buttons: [
                     {
-                        label: 'Reset'
+                        label: 'Reset',
                     },
                     {
                         label: '←',
