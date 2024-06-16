@@ -16,7 +16,7 @@ export default async function success(
         },
     ]
 
-    if (body.untrustedData.buttonIndex === 1) {
+    if (!config.success.image || body.untrustedData.buttonIndex === 1) {
         return initial(config, state)
     }
 
@@ -30,7 +30,7 @@ export default async function success(
 
     return {
         buttons,
-        image: config.success.image! ?? undefined,
+        image: config.success.image,
         aspectRatio: '1.91:1',
     }
 }
