@@ -8,6 +8,7 @@ import review from './review'
 import about from './about'
 import SuccessView from '../views/Success'
 import SubmittedView from '../views/Submitted'
+import { FrameError } from '@/sdk/handlers'
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export default async function input(
@@ -88,29 +89,9 @@ export default async function input(
                     // biome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
                     !(textInput.trim().length > 0) &&
                     !UsersState[fid].inputValues[UsersState[fid].inputFieldNumber]
-                ) {
-                    console.log("RETURNING ERROR");
-                    
+                ) {                    
                     updateUserState(fid, { pageType: 'input' })
-                    // RETURN ERROR SAYING THE FIELD IS NECESSARY TO BE FILLED
-                    return {
-                        buttons: [
-                            {
-                                label: '←',
-                            },
-                            {
-                                label: '→',
-                            },
-                        ],
-                        error: 'This Field Is Required To Be Filled',
-                        inputText: 'Enter The Value',
-                        aspectRatio: '1.91:1',
-                        state: newState,
-                        component: InputView(config, UsersState[fid], {
-                            isFieldValid: UsersState[fid].isFieldValid,
-                        }),
-                        functionName: 'input',
-                    }
+                    throw new FrameError('You Cannot Leave A Required Field Empty!')
                 }
             }
             if (textInput.length > 0) {
