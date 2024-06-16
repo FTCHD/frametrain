@@ -45,31 +45,22 @@ export default async function duration(
         }
         const query = `query MyQuery {
   TokenBalances(
-    input: {filter: {tokenAddress: {_eq: "${config.nftAddress}"}}, blockchain: ethereum, limit: 1}
+    input: {filter: {tokenAddress: {_eq: "${
+        config.nftAddress
+    }"}, owner: {_in: ["${body.validatedData.interactor.verified_addresses.eth_addresses.join(
+        '","'
+    )}"]}}, blockchain: ethereum}
   ) {
     TokenBalance {
       owner {
-        socials(
-          input: {filter: {dappName: {_eq: farcaster}, userAssociatedAddresses: {_in: ["${body.validatedData.interactor.verified_addresses.eth_addresses.join(
-              '","'
-          )}"]}}}
-        ) {
-          userId
-          profileName
-          userAddress
-          userAssociatedAddresses
-        }
+        addresses
       }
     }
   }
 }`
-
         const { data, error } = await fetchQuery(query)
 
-        if (
-            data.TokenBalances.TokenBalance === null
-            // data.TokenBalances.TokenBalance?.owner?.socials === null
-        ) {
+        if (data.TokenBalances.TokenBalance === null) {
             nftGate = false
         }
     }
