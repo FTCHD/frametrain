@@ -214,31 +214,39 @@ export default function Inspector() {
                                     config.aspectRatio as keyof typeof dimensionsForRatio
                                 ]
                             //   https://stackoverflow.com/a/73744343
-                            const bitmap = await createImageBitmap(blob)
-                            const canvas = document.createElement('canvas')
-                            const ctx = canvas.getContext('2d')
-                            if (!ctx) {
-                                return null
+                            const compressImage = async () => {
+                                const bitmap = await createImageBitmap(blob)
+                                const canvas = document.createElement('canvas')
+                                const ctx = canvas.getContext('2d')
+                                if (!ctx) {
+                                    return null
+                                }
+                                const width = sizes.width
+                                const height = sizes.height
+
+                                const srcX = (bitmap.width - sizes.width) / 2
+                                const srcY = (bitmap.height - sizes.height) / 2
+
+                                canvas.width = sizes.width
+                                canvas.height = sizes.height
+
+                                ctx.fillStyle = '#fff'
+                                ctx.fillRect(0, 0, canvas.width, canvas.height)
+                                ctx.save()
+                                ctx.translate(sizes.width / 2, sizes.height / 2)
+                                ctx.drawImage(bitmap, srcX, srcY, width, height)
+                                const dataUrl = canvas.toDataURL('image/jpeg', 0.8)
+                                console.log(`compressedCover for ${url}`, dataUrl)
+                                return dataUrl
                             }
-                            const width = sizes.width
-                            const height = sizes.height
-
-                            const srcX = (bitmap.width - sizes.width) / 2
-                            const srcY = (bitmap.height - sizes.height) / 2
-
-                            canvas.width = sizes.width
-                            canvas.height = sizes.height
-
-                            ctx.fillStyle = '#fff'
-                            ctx.fillRect(0, 0, canvas.width, canvas.height)
-                            ctx.save()
-                            ctx.translate(sizes.width / 2, sizes.height / 2)
-                            ctx.drawImage(bitmap, srcX, srcY, width, height)
-                            const compressedCover = canvas.toDataURL('image/jpeg', 0.8)
-                            console.log(`compressedCover for ${url}`, compressedCover)
+                            const compressedCover = await compressImage()
                             try {
-                                const compressedSize = atob(compressedCover.split(',')[1]).length
-                                console.log(`compressedSize for ${url}`, compressedSize)
+                                if (compressedCover) {
+                                    const compressedSize = atob(
+                                        compressedCover?.split(',')?.[1]
+                                    ).length
+                                    console.log(`compressedSize for ${url}`, compressedSize)
+                                }
                             } catch {}
 
                             updateConfig({
