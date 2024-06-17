@@ -76,7 +76,7 @@ export default function CoverView(config: Config) {
                         alignSelf: 'flex-end',
                     }}
                 >
-                    {`NFT - ${config.nftAddress} is needed to book the Call`}
+                    {`NFT - ${config.nftName} is needed to book the Call`}
                 </div>
             ) : (
                 <></>

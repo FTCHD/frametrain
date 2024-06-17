@@ -3,7 +3,8 @@ import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import type { Config, State } from '..'
 import PageView from '../views/Duration'
 import NotSatisfied from '../views/NotSatisfied'
-import { init, fetchQuery } from '@airstack/node'
+
+import { balances } from '../utils/balances'
 
 export default async function duration(
     body: FrameActionPayload,
@@ -11,8 +12,6 @@ export default async function duration(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    init(process.env.AIRSTACK_API_KEY || '')
-
     let containsUserFID = true
     let nftGate = true
     if (config.karmaGating) {
@@ -43,26 +42,11 @@ export default async function duration(
                 functionName: 'initial',
             }
         }
-        const query = `query MyQuery {
-  TokenBalances(
-    input: {filter: {tokenAddress: {_eq: "${
-        config.nftAddress
-    }"}, owner: {_in: ["${body.validatedData.interactor.verified_addresses.eth_addresses.join(
-        '","'
-    )}"]}}, blockchain: ethereum}
-  ) {
-    TokenBalance {
-      owner {
-        addresses
-      }
-    }
-  }
-}`
-        const { data, error } = await fetchQuery(query)
 
-        if (data.TokenBalances.TokenBalance === null) {
-            nftGate = false
-        }
+        nftGate = await balances(
+            body.validatedData.interactor.verified_addresses.eth_addresses,
+            config.nftAddress
+        )
     }
 
     if (!containsUserFID) {
@@ -80,7 +64,7 @@ export default async function duration(
             buttons: [],
             component: NotSatisfied(
                 config,
-                `You havent satisfied the requirements to meet the call. You need to hold the NFT - ${config.nftAddress} to schedule the call.`
+                `You havent satisfied the requirements to meet the call. You need to hold the NFT - ${config.nftName} to schedule the call.`
             ),
             functionName: 'initial',
         }

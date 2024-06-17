@@ -5,9 +5,10 @@ import { useRef } from 'react'
 import type { Config } from '.'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
 import { uploadImage } from '@/sdk/upload'
-import { ToggleGroup } from '@radix-ui/react-toggle-group'
+import { ToggleGroup } from '@/components/shadcn/ToggleGroup'
 import { ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
-import { useSession } from 'next-auth/react'
+import { getName } from './utils/metadata'
+import { balances } from './utils/balances'
 
 export default function Inspector() {
     const frameId = useFrameId()
@@ -21,10 +22,17 @@ export default function Inspector() {
         updateConfig({
             username: username,
 
-            fid:fid
+            fid: fid,
         })
     }
 
+    const handleNFT = async (nftAddress: string) => {
+        const nftName = await getName(nftAddress)
+        updateConfig({
+            nftAddress: nftAddress,
+            nftName: nftName,
+        })
+    }
     return (
         <div className="w-full h-full space-y-4">
             <p>{JSON.stringify(config)}</p>
@@ -118,10 +126,8 @@ export default function Inspector() {
                         <Input
                             className="text-lg"
                             placeholder="Enter your NFT address"
-                            onChange={(e) => {
-                                updateConfig({
-                                    nftAddress: e.target.value,
-                                })
+                            onChange={async (e) => {
+                                await handleNFT(e.target.value)
                             }}
                         />
                     </div>

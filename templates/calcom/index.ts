@@ -23,6 +23,7 @@ export interface Config extends BaseConfig {
     karmaGating: boolean
     nftGating: boolean
     nftAddress: string
+    nftName: string
     fid: number
 }
 
