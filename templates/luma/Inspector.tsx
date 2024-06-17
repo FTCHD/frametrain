@@ -235,8 +235,11 @@ export default function Inspector() {
                             ctx.translate(sizes.width / 2, sizes.height / 2)
                             ctx.drawImage(bitmap, srcX, srcY, width, height)
                             const compressedCover = canvas.toDataURL('image/jpeg', 0.8)
-                            const compressedSize = atob(compressedCover.split(',')[1]).length
-                            console.log(`compressedSize for ${url}`, compressedSize)
+                            console.log(`compressedCover for ${url}`, compressedCover)
+                            try {
+                                const compressedSize = atob(compressedCover.split(',')[1]).length
+                                console.log(`compressedSize for ${url}`, compressedSize)
+                            } catch {}
 
                             updateConfig({
                                 event: {
