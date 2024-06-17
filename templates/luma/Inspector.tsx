@@ -64,7 +64,7 @@ export default function Inspector() {
     )
 
     // uzjhg2is
-
+    console.log({ eventId, timezone, aspectRatio, loading })
     const timezones = Intl.supportedValuesOf('timeZone')
     const timezoneOptions = timezones.map((tz) => {
         return {
@@ -150,6 +150,8 @@ export default function Inspector() {
                         onClick={async () => {
                             if (!eventId) return
 
+                            setLoading(true)
+
                             const url = `https://lu.ma/${eventId}`
                             const html = await corsFetch(url)
                             if (!html) {
@@ -205,7 +207,7 @@ export default function Inspector() {
                                 timezone,
                             }
                             const b64 = await fetchCover(data.backgroundCover)
-                            console.log('gotten base64')
+                            console.log('gotten base64', b64)
                             const blob = b64toBlob(b64, 'image/jpeg')
                             const sizes =
                                 dimensionsForRatio[
