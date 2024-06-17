@@ -1,7 +1,10 @@
 'use server'
-export async function fetchData(url: string) {
-    const res = await fetch(url)
-    const html = await res.text()
 
-    return html
+export async function fetchCover(url: string) {
+    const res = await fetch(url)
+    const buffer = await res.arrayBuffer()
+    const bufferData = Buffer.from(buffer)
+    const imageData = 'data:image/png;base64,' + bufferData.toString('base64')
+
+    return imageData
 }
