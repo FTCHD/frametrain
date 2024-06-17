@@ -6,8 +6,8 @@ import type { Config, State } from '..'
 export default async function initial(config: Config, state: State): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
     return {
-        buttons: [{ label: `${config.label}`, action: 'link', target: `${config.link}` }],
-        image: config.gif,
+        buttons: [{ label: `${config.buttonLabel}`, action: 'link', target: `${config.buttonLink}` }],
+        image: config.gifUrl,
         fonts: roboto,
     }
 }

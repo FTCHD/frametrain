@@ -50,13 +50,13 @@ export default function Inspector() {
                 '-i',
                 `input.${ty}`,
                 '-ss',
-                config.start,
+                config.timeStart,
                 '-t',
-                config.duration,
+                config.gifDuration,
                 '-r',
                 '8',
                 '-vf',
-                `scale=-1:210,drawtext=fontfile=font.woff:text='${config.caption}':fontcolor=${config.fontColor}:bordercolor=black:borderw=1:fontsize=${config.fontSize}:x=(w-text_w)/2:y=(h-text_h)-${config.y}`,
+                `scale=-1:210,drawtext=fontfile=font.woff:text='${config.gifCaption}':fontcolor=${config.fontColor}:bordercolor=black:borderw=1:fontsize=${config.fontSize}:x=(w-text_w)/2:y=(h-text_h)-${config.captionY}`,
                 'output.gif',
             ])
             const data = await ffmpeg.readFile('output.gif')
@@ -67,7 +67,7 @@ export default function Inspector() {
             })
             const gifUrl = process.env.NEXT_PUBLIC_CDN_HOST + '/' + filePath
             updateConfig({
-                gif: gifUrl,
+                gifUrl: gifUrl,
             })
         } catch (e) {
             console.log(e)
@@ -84,10 +84,10 @@ export default function Inspector() {
     useEffect(() => {
         if (
             !file ||
-            !config.start ||
-            !config.duration ||
-            !config.caption ||
-            !config.y ||
+            !config.timeStart ||
+            !config.gifDuration ||
+            !config.gifCaption ||
+            !config.captionY ||
             !config.fontSize ||
             !config.fontStyle ||
             !config.fontColor
@@ -96,10 +96,10 @@ export default function Inspector() {
         transcode()
     }, [
         file,
-        config.start,
-        config.duration,
-        config.caption,
-        config.y,
+        config.timeStart,
+        config.gifDuration,
+        config.gifCaption,
+        config.captionY,
         config.fontSize,
         config.fontStyle,
         config.fontColor,
@@ -107,11 +107,16 @@ export default function Inspector() {
 
     useEffect(() => {
         updateConfig({
-            gif: 'https://iili.io/d9WJ44I.gif',
-            fontColor: 'white',
-            fontStyle: 'ABeeZee',
-            label: 'LINK',
-            link: 'https://frametra.in',
+            gifUrl: config?.gifUrl || 'https://iili.io/d9WJ44I.gif',
+            timeStart: config?.timeStart || null,
+            gifDuration: config?.gifDuration || null,
+            gifCaption: config?.gifCaption || null,
+            captionY: config?.captionY || null,
+            fontSize: config?.fontSize || null,
+            fontColor: config?.fontColor || 'white',
+            fontStyle: config?.fontStyle || 'ABeeZee',
+            buttonLabel: config?.buttonLabel || 'LINK',
+            buttonLink: config?.buttonLink || 'https://frametra.in',
         })
         load()
     }, [])
@@ -146,15 +151,15 @@ export default function Inspector() {
                 <Input
                     className="text-lg"
                     placeholder="Seconds or mm:ss"
-                    defaultValue={config.start}
-                    onChange={(e) => updateConfig({ start: e.target.value })}
+                    defaultValue={config.timeStart}
+                    onChange={(e) => updateConfig({ timeStart: e.target.value })}
                 />
                 <h2 className="text-lg font-bold">Duration</h2>
                 <Input
                     className="text-lg"
                     placeholder="GIF duration in seconds"
-                    defaultValue={config.duration}
-                    onChange={(e) => updateConfig({ duration: e.target.value })}
+                    defaultValue={config.gifDuration}
+                    onChange={(e) => updateConfig({ gifDuration: e.target.value })}
                 />
                 <p className="text-sm text-muted-foreground">
                     The recommended gif's duration is less 10 sec.
@@ -163,15 +168,15 @@ export default function Inspector() {
                 <Input
                     className="text-lg"
                     placeholder="Text on a GIF"
-                    defaultValue={config.caption}
-                    onChange={(e) => updateConfig({ caption: e.target.value })}
+                    defaultValue={config.gifCaption}
+                    onChange={(e) => updateConfig({ gifCaption: e.target.value })}
                 />
                 <h2 className="text-lg font-bold">Caption Positioning</h2>
                 <Input
                     className="text-lg"
                     placeholder="Bottom indent of the сaption in pixel values"
-                    defaultValue={config.y}
-                    onChange={(e) => updateConfig({ y: e.target.value })}
+                    defaultValue={config.captionY}
+                    onChange={(e) => updateConfig({ captionY: e.target.value })}
                 />
                 <h2 className="text-lg font-bold">Font Size</h2>
                 <Input
@@ -194,14 +199,14 @@ export default function Inspector() {
                 <h2 className="text-lg font-bold">Button Label</h2>
                 <Input
                     className="text-lg"
-                    defaultValue={config.label}
-                    onChange={(e) => updateConfig({ label: e.target.value })}
+                    defaultValue={config.buttonLabel}
+                    onChange={(e) => updateConfig({ buttonLabel: e.target.value })}
                 />
                 <h2 className="text-lg font-bold">Button Link</h2>
                 <Input
                     className="text-lg"
-                    defaultValue={config.link}
-                    onChange={(e) => updateConfig({ link: e.target.value })}
+                    defaultValue={config.buttonLink}
+                    onChange={(e) => updateConfig({ buttonLink: e.target.value })}
                 />
                 <div className="flex items-center justify-center h-7">
                     {loading && <LoaderPinwheel className="animate-spin" />}
