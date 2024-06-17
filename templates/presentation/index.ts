@@ -45,7 +45,7 @@ export interface State extends BaseState {}
 export default {
     name: 'Presentation Template',
     description: 'Turn your images and long texts into a slideshow.',
-    creatorFid: '0',
+    creatorFid: '661506',
     creatorName: 'oynozan',
     cover,
     enabled: true,
