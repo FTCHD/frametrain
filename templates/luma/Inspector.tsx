@@ -207,9 +207,7 @@ export default function Inspector() {
                                 timezone,
                             }
                             const sizes =
-                                dimensionsForRatio[
-                                    config.aspectRatio as keyof typeof dimensionsForRatio
-                                ]
+                                dimensionsForRatio[aspectRatio as keyof typeof dimensionsForRatio]
                             const b64 = await fetchCover(data.backgroundCover)
                             console.log('gotten base64 with sizes', sizes)
                             const blob = b64toBlob(b64, 'image/jpeg')
