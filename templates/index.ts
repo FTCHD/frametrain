@@ -1,4 +1,5 @@
 import discourse from './discourse'
+import framepress from './framepress'
 // import basic from './basic'
 import pdf from './pdf'
 import poll from './poll'
@@ -12,4 +13,5 @@ export default {
     sablier,
     twitter,
     discourse,
+    framepress
 }
