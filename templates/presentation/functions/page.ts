@@ -20,7 +20,7 @@ export default async function page(
     const buttons: FrameButtonMetadata[] = []
 
     let maxPage = texts?.length + (title ? 1 : 0)
-    if (config?.type === "image") maxPage = config?.images?.length;
+    if (config?.type === 'image') maxPage = config?.images?.length
 
     let currentPage: number
 
@@ -51,7 +51,7 @@ export default async function page(
     return {
         buttons,
         fonts: contentFont,
-        aspectRatio: config?.type === "image" ? (config?.aspect || '1:1') : '1:1',
+        aspectRatio: config?.type === 'image' ? config?.aspect || '1:1' : '1:1',
         component: CoverView(config, currentPage),
         functionName: 'page',
         params: { page: currentPage },

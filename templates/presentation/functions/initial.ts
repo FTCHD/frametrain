@@ -12,7 +12,7 @@ export default async function initial(config: Config): Promise<BuildFrameData> {
     const buttons: FrameButtonMetadata[] = []
 
     let maxPage = texts?.length + (title ? 1 : 0)
-    if (config?.type === "image") maxPage = config?.images?.length;
+    if (config?.type === 'image') maxPage = config?.images?.length
 
     if (maxPage > 1)
         buttons.push({
@@ -22,7 +22,7 @@ export default async function initial(config: Config): Promise<BuildFrameData> {
     return {
         buttons,
         fonts: inter,
-        aspectRatio: config?.type === "image" ? (config?.aspect || '1:1') : '1:1',
+        aspectRatio: config?.type === 'image' ? config?.aspect || '1:1' : '1:1',
         component: CoverView(config),
         functionName: 'page',
     }

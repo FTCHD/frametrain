@@ -19,7 +19,7 @@ export default function CoverView(config: Config, page: number = 0) {
     }
 
     /* Images */
-    if (config?.images?.length && config?.types === "image") {
+    if (config?.images?.length && config?.types === 'image') {
         background['backgroundImage'] = `url(${config.images[page]})`
         background['backgroundRepeat'] = 'no-repeat'
         background['backgroundSize'] = '100% 100%'
