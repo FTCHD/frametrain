@@ -3,7 +3,7 @@ import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { useFrameConfig } from '@/sdk/hooks'
 import type { Config } from '.'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { LoaderIcon } from 'lucide-react'
 import type { HostData, TicketInfo } from './utils/types'
 import { formatAmount } from './utils/numbers'
@@ -206,13 +206,13 @@ export default function Inspector() {
                                 title,
                                 timezone,
                             }
-                            const b64 = await fetchCover(data.backgroundCover)
-                            console.log('gotten base64', b64)
-                            const blob = b64toBlob(b64, 'image/jpeg')
                             const sizes =
                                 dimensionsForRatio[
                                     config.aspectRatio as keyof typeof dimensionsForRatio
                                 ]
+                            const b64 = await fetchCover(data.backgroundCover)
+                            console.log('gotten base64 with sizes', sizes)
+                            const blob = b64toBlob(b64, 'image/jpeg')
                             //   https://stackoverflow.com/a/73744343
                             const compressImage = async () => {
                                 const bitmap = await createImageBitmap(blob)
@@ -225,7 +225,7 @@ export default function Inspector() {
                                 canvas.width = sizes.width
                                 canvas.height = sizes.height
 
-                                ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+                                ctx.drawImage(bitmap, 0, 0, sizes.width, sizes.height)
                                 const dataUrl = canvas.toDataURL('image/jpeg', 0.8)
                                 console.log(`compressedCover for ${url}`, dataUrl)
                                 return dataUrl
