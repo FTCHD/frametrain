@@ -253,9 +253,10 @@ export default async function input(
         default:
             break
     }
+    
 
-    // console.log('\x1b[36m%s\x1b[0m', 'WAS NOT CAUGHT BY ANYTHING');
-
+    // RETURN INITIAL VIEW IF ANYTHING UNEXPECTED HAPPENS
+    updateUserState(fid, { pageType: 'init', inputValues: [] })
     return {
         buttons: [
             {
