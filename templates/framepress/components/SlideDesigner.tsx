@@ -47,7 +47,6 @@ const SlideDesigner = ({
     const [figmaUrl, setFigmaUrl] = useState(slideConfig.figmaUrl)
     const [figmaDesign, setFigmaDesign] = useState<FigmaDesign>()
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: unnecessary
     useEffect(() => {
         const loadFigmaDesign = async () => {
             if (slideConfig.figmaUrl !== undefined) {
@@ -58,7 +57,7 @@ const SlideDesigner = ({
             }
         }
         loadFigmaDesign()
-    }, [figmaUrl])
+    }, [slideConfig, figmaPAT])
 
     const updateButton = (updatedButton: ButtonConfig) => {
         console.debug(`SlideDesigner[${slideConfig.id}]::updateButton(${updatedButton.id})`)
