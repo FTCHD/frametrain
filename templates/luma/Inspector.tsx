@@ -221,20 +221,11 @@ export default function Inspector() {
                                 if (!ctx) {
                                     return null
                                 }
-                                const width = sizes.width
-                                const height = sizes.height
-
-                                const srcX = (bitmap.width - sizes.width) / 2
-                                const srcY = (bitmap.height - sizes.height) / 2
 
                                 canvas.width = sizes.width
                                 canvas.height = sizes.height
 
-                                ctx.fillStyle = '#fff'
-                                ctx.fillRect(0, 0, canvas.width, canvas.height)
-                                ctx.save()
-                                ctx.translate(sizes.width / 2, sizes.height / 2)
-                                ctx.drawImage(bitmap, srcX, srcY, width, height)
+                                ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
                                 const dataUrl = canvas.toDataURL('image/jpeg', 0.8)
                                 console.log(`compressedCover for ${url}`, dataUrl)
                                 return dataUrl
