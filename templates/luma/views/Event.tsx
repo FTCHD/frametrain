@@ -25,13 +25,12 @@ export default function EventView(props: Props) {
                     }}
                 >
                     <img
-                        src={event.compressedCover ?? event.backgroundCover}
+                        src={event.backgroundCover}
                         alt="Preview"
                         tw="h-full w-full"
                         className="object-cover"
                         style={{
                             objectFit: 'cover',
-                            borderRadius: 'inherit',
                         }}
                     />
                 </div>
@@ -57,11 +56,9 @@ export default function EventView(props: Props) {
                     }`}
                 >
                     <h3
-                        tw="inline overflow-hidden"
-                        className="inline"
+                        tw="overflow-hidden"
                         style={{
                             wordBreak: 'break-all',
-                            display: 'initial',
                         }}
                     >
                         {event.title}

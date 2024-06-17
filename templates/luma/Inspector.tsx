@@ -64,7 +64,6 @@ export default function Inspector() {
     )
 
     // uzjhg2is
-    console.log({ eventId, timezone, aspectRatio, loading })
     const timezones = Intl.supportedValuesOf('timeZone')
     const timezoneOptions = timezones.map((tz) => {
         return {
@@ -201,15 +200,13 @@ export default function Inspector() {
                                 hosts: hostData.map((h) => h.name),
                                 price,
                                 date,
-                                backgroundCover: cover,
                                 locationType: onlineEvent,
                                 title,
                                 timezone,
                             }
                             const sizes =
                                 dimensionsForRatio[aspectRatio as keyof typeof dimensionsForRatio]
-                            const b64 = await fetchCover(data.backgroundCover)
-                            console.log('gotten base64 with sizes', sizes)
+                            const b64 = await fetchCover(cover)
                             const blob = b64toBlob(b64, 'image/jpeg')
                             //   https://stackoverflow.com/a/73744343
                             const compressImage = async () => {
@@ -225,23 +222,14 @@ export default function Inspector() {
 
                                 ctx.drawImage(bitmap, 0, 0, sizes.width, sizes.height)
                                 const dataUrl = canvas.toDataURL('image/jpeg', 0.8)
-                                console.log(`compressedCover for ${url}`, dataUrl)
                                 return dataUrl
                             }
-                            const compressedCover = await compressImage()
-                            try {
-                                if (compressedCover) {
-                                    const compressedSize = atob(
-                                        compressedCover?.split(',')?.[1]
-                                    ).length
-                                    console.log(`compressedSize for ${url}`, compressedSize)
-                                }
-                            } catch {}
+                            const backgroundCover = await compressImage()
 
                             updateConfig({
                                 event: {
                                     ...data,
-                                    compressedCover,
+                                    backgroundCover,
                                 },
                                 aspectRatio,
                             })

@@ -14,7 +14,6 @@ export interface Config extends BaseConfig {
     date: string;
     timezone: string;
     title: string;
-    compressedCover?: string;
   };
   backgroundColor?: string;
   textColor?: string;
