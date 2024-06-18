@@ -24,13 +24,25 @@ import { FigmaDesigner } from './FigmaDesigner'
 import { TextLayerDesigner } from './TextLayerDesigner'
 import { type FigmaDesign, getFigmaDesign } from '../utils/FigmaApi'
 import { useEffect, useState } from 'react'
-import { LoaderIcon } from 'lucide-react'
+import {
+    FileDownIcon,
+    FileUpIcon,
+    LoaderIcon,
+    SquareArrowDownIcon,
+    SquareArrowUpIcon,
+    Trash2Icon,
+} from 'lucide-react'
 
 type SlideDesignerProps = {
     figmaPAT: string
+    isFirstSlide: boolean
+    isSecondSlide: boolean
+    isLastSlide: boolean
     slideConfig: SlideConfig
     buttonTargets: ButtonTarget[]
     onUpdate: (updatedSlideConfig: SlideConfig) => void
+    onMoveUp: () => void
+    onMoveDown: () => void
     onAddAbove: () => void
     onAddBelow: () => void
     onDelete: () => void
@@ -38,9 +50,14 @@ type SlideDesignerProps = {
 
 const SlideDesigner = ({
     figmaPAT,
+    isFirstSlide,
+    isSecondSlide,
+    isLastSlide,
     slideConfig,
     buttonTargets,
     onUpdate,
+    onMoveUp,
+    onMoveDown,
     onAddAbove,
     onAddBelow,
     onDelete,
@@ -169,15 +186,40 @@ const SlideDesigner = ({
                     </TabsContent>
                 </Tabs>
             </CardContent>
-            <CardFooter className="grid grid-cols-3 gap-4">
-                {slideConfig.id != INITIAL_SLIDE_ID && (
+            <CardFooter className="grid grid-cols-5 gap-4">
+                {!(isFirstSlide || isSecondSlide) && (
+                    <Button
+                        variant="secondary"
+                        onClick={() => {
+                            onMoveUp()
+                        }}
+                    >
+                        <SquareArrowUpIcon />
+                        Move up
+                    </Button>
+                )}
+
+                {!(isFirstSlide || isLastSlide) && (
+                    <Button
+                        variant="secondary"
+                        onClick={() => {
+                            onMoveDown()
+                        }}
+                    >
+                        <SquareArrowDownIcon />
+                        Move down
+                    </Button>
+                )}
+
+                {!isFirstSlide && (
                     <Button
                         variant="secondary"
                         onClick={() => {
                             onAddAbove()
                         }}
                     >
-                        🔼 Add slide above
+                        <FileUpIcon />
+                        Insert above
                     </Button>
                 )}
 
@@ -187,7 +229,8 @@ const SlideDesigner = ({
                         onAddBelow()
                     }}
                 >
-                    🔽 Add slide below
+                    <FileDownIcon />
+                    Insert below
                 </Button>
 
                 {slideConfig.id != INITIAL_SLIDE_ID && (
@@ -197,6 +240,7 @@ const SlideDesigner = ({
                             onDelete()
                         }}
                     >
+                        <Trash2Icon />
                         Delete
                     </Button>
                 )}

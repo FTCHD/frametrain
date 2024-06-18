@@ -90,6 +90,34 @@ export default function Inspector() {
         }
     }
 
+    const moveSlide = (index: number, direction: 'up' | 'down') => {
+        console.debug(`Inspector::moveSlide(${index}, ${direction})`)
+
+        const updatedSlides = [...config.slides]
+
+        if (index < 0 || index >= updatedSlides.length) {
+            console.error('Invalid index:', index)
+            return
+        }
+
+        const swapIndex = direction === 'up' ? index - 1 : index + 1
+
+        if (swapIndex < 0 || swapIndex >= updatedSlides.length) {
+            console.error('Cannot move slide out of bounds:', swapIndex)
+            return
+        }
+
+        // Swap the slides
+        const temp = updatedSlides[index]
+        updatedSlides[index] = updatedSlides[swapIndex]
+        updatedSlides[swapIndex] = temp
+
+        updateConfig({
+            ...config,
+            slides: updatedSlides,
+        })
+    }
+
     const buttonTargets = config.slides
         ?.filter((slide) => slide.title !== undefined) // Filter out slides without a title
         .map((slide) => ({
@@ -125,9 +153,14 @@ export default function Inspector() {
                 <SlideDesigner
                     key={slideConfig.id}
                     figmaPAT={config.figmaPAT}
+                    isFirstSlide={index == 0}
+                    isSecondSlide={index == 1}
+                    isLastSlide={index == config.slides.length - 1}
                     slideConfig={slideConfig}
                     buttonTargets={buttonTargets}
                     onUpdate={(updatedSlideConfig) => updateSlide(updatedSlideConfig)}
+                    onMoveUp={() => moveSlide(index, 'up')}
+                    onMoveDown={() => moveSlide(index, 'down')}
                     onAddAbove={() => addSlide(index, 'above')}
                     onAddBelow={() => addSlide(index, 'below')}
                     onDelete={() => removeSlide(index)}
