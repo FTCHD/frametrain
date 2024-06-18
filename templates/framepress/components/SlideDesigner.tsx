@@ -10,8 +10,6 @@ import {
     CardTitle,
 } from '@/components/shadcn/Card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
-
-import { INITIAL_SLIDE_ID } from '../Constants'
 import type {
     AspectRatio,
     ButtonConfig,
@@ -28,8 +26,8 @@ import {
     FileDownIcon,
     FileUpIcon,
     LoaderIcon,
-    SquareArrowDownIcon,
-    SquareArrowUpIcon,
+    MoveDownIcon,
+    MoveUpIcon,
     Trash2Icon,
 } from 'lucide-react'
 
@@ -186,56 +184,67 @@ const SlideDesigner = ({
                     </TabsContent>
                 </Tabs>
             </CardContent>
-            <CardFooter className="grid grid-cols-5 gap-4">
-                {!(isFirstSlide || isSecondSlide) && (
+            <CardFooter className="grid grid-cols-5 gap-2">
+                <div className="col-start-1 col-end-2">
                     <Button
                         variant="secondary"
+                        className="w-full"
+                        disabled={isFirstSlide || isSecondSlide}
                         onClick={() => {
                             onMoveUp()
                         }}
                     >
-                        <SquareArrowUpIcon />
-                        Move up
+                        <MoveUpIcon />
+                        Up
                     </Button>
-                )}
+                </div>
 
-                {!(isFirstSlide || isLastSlide) && (
+                <div className="col-start-2 col-end-3">
                     <Button
                         variant="secondary"
+                        className="w-full"
+                        disabled={isFirstSlide || isLastSlide}
                         onClick={() => {
                             onMoveDown()
                         }}
                     >
-                        <SquareArrowDownIcon />
-                        Move down
+                        <MoveDownIcon />
+                        Down
                     </Button>
-                )}
+                </div>
 
-                {!isFirstSlide && (
+                <div className="col-start-3 col-end-4">
                     <Button
                         variant="secondary"
+                        className="w-full"
+                        disabled={isFirstSlide}
                         onClick={() => {
                             onAddAbove()
                         }}
                     >
                         <FileUpIcon />
-                        Insert above
+                        Add Above
                     </Button>
-                )}
+                </div>
 
-                <Button
-                    variant="secondary"
-                    onClick={() => {
-                        onAddBelow()
-                    }}
-                >
-                    <FileDownIcon />
-                    Insert below
-                </Button>
+                <div className="col-start-4 col-end-5">
+                    <Button
+                        variant="secondary"
+                        className="w-full"
+                        onClick={() => {
+                            onAddBelow()
+                        }}
+                    >
+                        <FileDownIcon />
+                        Add Below
+                    </Button>
+                </div>
 
-                {slideConfig.id != INITIAL_SLIDE_ID && (
+                <div className="col-start-5 col-end-6">
                     <Button
                         variant="destructive"
+                        className="w-full"
+                        disabled={isFirstSlide}
                         onClick={() => {
                             onDelete()
                         }}
@@ -243,7 +252,7 @@ const SlideDesigner = ({
                         <Trash2Icon />
                         Delete
                     </Button>
-                )}
+                </div>
             </CardFooter>
         </Card>
     )
