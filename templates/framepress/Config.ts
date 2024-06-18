@@ -4,15 +4,19 @@ interface FramePressConfig {
     nextSlideId: number
 }
 
+type AspectRatio = '1.91:1' | '1:1'
+
 type SlideConfig = {
     id: string
+    aspectRatio: AspectRatio
     title?: string
     figmaUrl?: string
-    aspectRatio?: '1.91:1' | '1:1'
     description?: string
-    textLayers: Record<string, TextLayerConfig>
+    textLayers: TextLayerConfigs
     buttons: ButtonConfig[]
 }
+
+type TextLayerConfigs = Record<string, TextLayerConfig>
 
 type TextLayerConfig = {
     id: string
@@ -39,4 +43,11 @@ type ButtonConfig = {
     link?: string
 }
 
-export type { FramePressConfig, TextLayerConfig, ButtonConfig, SlideConfig }
+export type {
+    FramePressConfig,
+    TextLayerConfigs,
+    TextLayerConfig,
+    ButtonConfig,
+    AspectRatio,
+    SlideConfig,
+}

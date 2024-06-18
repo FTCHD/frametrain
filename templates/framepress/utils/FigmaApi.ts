@@ -1,15 +1,19 @@
 /*
 
-This code is an almost exact port to TS of experimental_FigmaImageResponse()
-from @vercel/og/dist/index.node.js
+    This code is an almost exact port to TS of experimental_FigmaImageResponse()
+    from @vercel/og/dist/index.node.js
 
-IMO it should be rewritten to use a proper XML parser.
+    It adds user-friendly error messages, but it should be rewritten to use a proper 
+    XML parser instead of regex.
 
 */
+
+type Result<T> = { success: true; value: T } | { success: false; error: string }
 
 export type FigmaDesign = {
     width: number
     height: number
+    aspectRatio?: number
     textLayers: FigmaTextLayer[]
     base64: string
 }
@@ -29,42 +33,78 @@ type FigmaTextLayer = {
     content: string
 }
 
-export async function getFigmaDesign(figmaPAT: string, url: string): Promise<FigmaDesign> {
-    const { fileId, nodeId } = parseFigmaUrl(url)
-    const figmaResponse = await fetch(
-        `https://api.figma.com/v1/images/${fileId}?ids=${nodeId}&svg_outline_text=false&format=svg&svg_include_id=true`,
-        {
-            method: 'GET',
-            headers: {
-                'X-FIGMA-TOKEN': figmaPAT,
-            },
-            cache: 'no-store',
-        }
-    )
-    const figmaResponseJson = await figmaResponse.json()
-    const svgDownloadPath = figmaResponseJson.images[nodeId.replace('-', ':')]
-    const svgResponse = await fetch(svgDownloadPath, { cache: 'no-store' })
-    const svg = await svgResponse.text()
-    const { width, height } = getSvgDimensions(svg)
-    const textNodes = getTextNodes(svg)
-    const textLayers = textNodes.map(parseSvgText)
-    const base64 = svgToBase64(svg)
+export async function getFigmaDesign(figmaPAT: string, url?: string): Promise<Result<FigmaDesign>> {
+    if (!figmaPAT) {
+        return { success: false, error: 'Personal Access Token (PAT) is missing or empty' }
+    }
 
-    return {
-        width: width,
-        height: height,
-        textLayers: textLayers,
-        base64: base64,
+    const { fileId, nodeId } = parseFigmaUrl(url)
+    if (!(fileId && nodeId)) {
+        return { success: false, error: 'Not a valid Figma URL' }
+    }
+
+    try {
+        const figmaResponse = await fetch(
+            `https://api.figma.com/v1/images/${fileId}?ids=${nodeId}&svg_outline_text=false&format=svg&svg_include_id=true`,
+            {
+                method: 'GET',
+                headers: {
+                    'X-FIGMA-TOKEN': figmaPAT,
+                },
+                cache: 'no-store',
+            }
+        )
+
+        if (!figmaResponse.ok) {
+            return { success: false, error: `Figma API error: ${figmaResponse.statusText}` }
+        }
+
+        const figmaResponseJson = await figmaResponse.json()
+        const svgDownloadPath = figmaResponseJson.images[nodeId.replace('-', ':')]
+
+        if (!svgDownloadPath) {
+            return { success: false, error: 'Figma API failed to return an SVG download path' }
+        }
+
+        const svgResponse = await fetch(svgDownloadPath, { cache: 'no-store' })
+
+        if (!svgResponse.ok) {
+            return { success: false, error: `Failed to download SVG: ${svgResponse.statusText}` }
+        }
+
+        const svg = await svgResponse.text()
+        const { width, height } = getSvgDimensions(svg)
+
+        if (width === 0 || height === 0) {
+            return { success: false, error: 'Failed to extract dimensions from SVG' }
+        }
+
+        const textNodes = getTextNodes(svg)
+        const textLayers = textNodes.map(parseSvgText)
+        const base64 = svgToBase64(svg)
+        const aspectRatio = width / height
+
+        return {
+            success: true,
+            value: {
+                width: width,
+                height: height,
+                aspectRatio: aspectRatio,
+                textLayers: textLayers,
+                base64: base64,
+            },
+        }
+    } catch (error) {
+        const message = error instanceof Error ? error.message : `${error}`
+        return { success: false, error: `Network or unknown error: ${message}` }
     }
 }
 
-const isComplexTemplate = (template: any) => {
-    return typeof template !== 'string' && template !== void 0 && 'value' in template
-}
 function svgToBase64(svg: any) {
     const base64 = Buffer.from(svg).toString('base64')
     return 'data:image/svg+xml;base64,' + base64
 }
+
 function getSvgDimensions(svg: any) {
     const widthMatch = svg.match(/width="(\d+)/)
     const heightMatch = svg.match(/height="(\d+)/)
@@ -75,6 +115,7 @@ function getSvgDimensions(svg: any) {
     }
     return { width: 0, height: 0 }
 }
+
 function getTextNodes(svg: any) {
     const regex = /<text[^>]*>(.*?)<\/text>/g
     let match
@@ -84,6 +125,7 @@ function getTextNodes(svg: any) {
     }
     return matches
 }
+
 function parseSvgText(svgText: any): FigmaTextLayer {
     const id = svgText.match(/id="([^"]*)"/)?.[1] || ''
     const fill = svgText.match(/fill="([^"]*)"/)?.[1] || ''
@@ -113,9 +155,10 @@ function parseSvgText(svgText: any): FigmaTextLayer {
         content,
     }
 }
-function parseFigmaUrl(figmaUrl: string) {
+
+function parseFigmaUrl(figmaUrl?: string) {
     const regex = /\/design\/([^\/]+)\/[^?]+\?[^#]*node-id=([^&#]+)/
-    const match = figmaUrl.match(regex)
+    const match = figmaUrl?.match(regex)
     let fileId = ''
     let nodeId = ''
     if (match) {

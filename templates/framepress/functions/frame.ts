@@ -3,31 +3,34 @@ import type { BuildFrameData } from '@/lib/farcaster'
 import FigmaView from '../views/FigmaView'
 import type { FramePressConfig, SlideConfig } from '../Config'
 import { getFigmaDesign } from '../utils/FigmaApi'
-import Message from '../views/Message'
+import ErrorView from '../views/ErrorView'
 import type { FontStyle, FontWeight } from 'satori'
+import type { FrameActionPayload } from 'frames.js'
 
 export default async function buildFrame(
     config: FramePressConfig,
-    slideConfig?: SlideConfig
+    slideConfig?: SlideConfig,
+    body?: FrameActionPayload
 ): Promise<BuildFrameData> {
-    let fonts: any[] = []
-    let view
+    // TODO this leaks information if the initial Frame later becomes misconfigured; we need a way to reliably determine this
+    const isDebug = !body || body.untrustedData.castId.hash === '0xDebug'
 
+    let errorView
     if (!config.figmaPAT) {
-        view = Message('Please configure your Figma Personal Access Token')
+        errorView = ErrorView(isDebug, 'Please configure your Figma Personal Access Token')
     } else if (!slideConfig) {
-        view = Message('This is no longer a valid slide, reconfigure the button')
+        errorView = ErrorView(isDebug, 'This is no longer a valid slide, reconfigure the button')
     } else if (!slideConfig.figmaUrl) {
-        view = Message('Please configure the Figma URL for this slide')
+        errorView = ErrorView(isDebug, 'Please configure the Figma URL for this slide')
     } else {
         const figmaDesign = await getFigmaDesign(config.figmaPAT, slideConfig.figmaUrl)
 
-        if (!figmaDesign) {
-            view = Message('Failed to get Figma Design, check PAT & URL')
+        if (!figmaDesign.success) {
+            errorView = ErrorView(isDebug, figmaDesign.error)
         } else {
-            view = FigmaView(slideConfig, figmaDesign)
+            const view = FigmaView(slideConfig, figmaDesign.value)
 
-            const fontsInDesign = Object.values(figmaDesign.textLayers).map(
+            const fontsInDesign = Object.values(figmaDesign.value.textLayers).map(
                 (textLayer) =>
                     new FontConfig(textLayer.fontFamily, textLayer.fontWeight, textLayer.fontStyle)
             )
@@ -45,35 +48,36 @@ export default async function buildFrame(
             const distinctFonts = distinctFontKeys
                 .map((key) => combinedFonts.find((font) => font.key === key))
                 .filter((font): font is FontConfig => font !== undefined)
+            const fontPromises = distinctFonts.map(({ fontFamily, fontWeight, fontStyle }) => {
+                console.debug(`Loading font ${fontFamily} ${fontWeight} ${fontStyle}`)
+                return loadGoogleFontV2(fontFamily, fontWeight, fontStyle)
+            })
+            const fonts = await Promise.all(fontPromises)
 
-            if (distinctFonts.length > 0) {
-                const fontPromises = distinctFonts.map(({ fontFamily, fontWeight, fontStyle }) => {
-                    console.debug(`Loading font ${fontFamily} ${fontWeight} ${fontStyle}`)
-                    return loadGoogleFontV2(fontFamily, fontWeight, fontStyle)
-                })
-                fonts = await Promise.all(fontPromises)
+            const buttons = slideConfig?.buttons
+                .filter((button) => button.enabled)
+                .map((button) => ({
+                    label: button.caption,
+                }))
+
+            return {
+                buttons: buttons || [],
+                fonts,
+                aspectRatio: slideConfig.aspectRatio,
+                component: view,
+                functionName: 'slide',
+                params: { origin: slideConfig.id },
             }
         }
     }
 
-    if (fonts.length === 0) {
-        const roboto = await loadGoogleFontV2('Roboto', 400, 'normal')
-        fonts = [roboto]
-    }
-
-    const buttons = slideConfig?.buttons
-        .filter((button) => button.enabled)
-        .map((button) => ({
-            label: button.caption,
-        }))
-
+    const roboto = await loadGoogleFontV2('Roboto', 400, 'normal')
     return {
-        buttons: buttons || [],
-        fonts,
-        aspectRatio: slideConfig.aspectRatio,
-        component: view,
+        buttons: [],
+        fonts: [roboto],
+        aspectRatio: '1:1',
+        component: errorView,
         functionName: 'slide',
-        params: { origin: slideConfig.id },
     }
 }
 
@@ -124,7 +128,7 @@ export async function loadGoogleFontV2(
     fontName: string,
     fontWeight: FontWeight,
     fontStyle: FontStyle
-): Promise<Array<{ name: string; data: ArrayBuffer; weight: FontWeight; style: FontStyle }>> {
+): Promise<{ name: string; data: ArrayBuffer; weight: FontWeight; style: FontStyle }> {
     const requestFontName = fontName.replace(' ', '+')
     const fontWeightValue = fontWeight as number
     const italicValue = fontStyle === 'italic' ? '1' : '0'

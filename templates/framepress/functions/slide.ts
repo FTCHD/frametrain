@@ -16,5 +16,5 @@ export default async function slide(
     const buttonConfig = slideConfig?.buttons.find((button) => button.id === buttonIndex)
     const targetSlideConfig = config.slides?.find((slide) => slide.id === buttonConfig?.target)
 
-    return buildFrame(config, targetSlideConfig)
+    return buildFrame(config, targetSlideConfig, body)
 }

@@ -1,10 +1,6 @@
 'use client'
-
-import React, { useEffect } from 'react'
-import { useState } from 'react'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { Checkbox } from '@/components/shadcn/Checkbox'
 import {
     Card,
     CardContent,
@@ -16,12 +12,19 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
 
 import { INITIAL_SLIDE_ID } from '../Constants'
-import type { ButtonConfig, SlideConfig, TextLayerConfig } from '../Config'
-import { type FigmaDesign, getFigmaDesign } from '../utils/FigmaApi'
+import type {
+    AspectRatio,
+    ButtonConfig,
+    SlideConfig,
+    TextLayerConfig,
+    TextLayerConfigs,
+} from '../Config'
 import { type ButtonTarget, ButtonDesigner } from './ButtonDesigner'
-import { FigmaDesignPreview, FigmaDesignSummary } from './FigmaDesigners'
+import { FigmaDesigner } from './FigmaDesigner'
 import { TextLayerDesigner } from './TextLayerDesigner'
-import { dimensionsForRatio } from '@/sdk/constants'
+import { type FigmaDesign, getFigmaDesign } from '../utils/FigmaApi'
+import { useEffect, useState } from 'react'
+import { LoaderIcon } from 'lucide-react'
 
 type SlideDesignerProps = {
     figmaPAT: string
@@ -42,22 +45,29 @@ const SlideDesigner = ({
     onAddBelow,
     onDelete,
 }: SlideDesignerProps) => {
-    const [isLoading, setIsLoading] = useState(false)
-
-    const [figmaUrl, setFigmaUrl] = useState(slideConfig.figmaUrl)
+    const [isLoadingDesign, setIsLoadingDesign] = useState<boolean>()
     const [figmaDesign, setFigmaDesign] = useState<FigmaDesign>()
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: causes infinite recursion
     useEffect(() => {
         const loadFigmaDesign = async () => {
-            if (slideConfig.figmaUrl !== undefined) {
-                setIsLoading(true)
-                const figmaDesign = await getFigmaDesign(figmaPAT, slideConfig.figmaUrl)
-                setFigmaDesign(figmaDesign)
-                setIsLoading(false)
-            }
+            setIsLoadingDesign(true)
+            const figmaDesign = await getFigmaDesign(figmaPAT, slideConfig.figmaUrl)
+            if (figmaDesign.success) setFigmaDesign(figmaDesign.value)
+            setIsLoadingDesign(false)
         }
         loadFigmaDesign()
-    }, [slideConfig, figmaPAT])
+    }, [])
+
+    const updateFigmaUrl = (figmaUrl: string, textLayers: TextLayerConfigs) => {
+        console.debug(`SlideDesigner[${slideConfig.id}]::updateFigma()`)
+        onUpdate({ ...slideConfig, figmaUrl, textLayers })
+    }
+
+    const updateAspectRatio = (aspectRatio: AspectRatio) => {
+        console.debug(`SlideDesigner[${slideConfig.id}]::updateAspectRatio()`)
+        onUpdate({ ...slideConfig, aspectRatio })
+    }
 
     const updateButton = (updatedButton: ButtonConfig) => {
         console.debug(`SlideDesigner[${slideConfig.id}]::updateButton(${updatedButton.id})`)
@@ -76,71 +86,18 @@ const SlideDesigner = ({
         onUpdate({ ...slideConfig, textLayers: updatedTextLayers })
     }
 
-    const updateFigmaUrl = () => {
-        console.debug(`SlideDesigner[${slideConfig.id}]::updateFigmaUrl()`)
-        const loadFigmaUrl = async () => {
-            setIsLoading(true)
-
-            // TODO error handling
-            const figmaDesign = await getFigmaDesign(figmaPAT, figmaUrl!)
-
-            const aspectRatio =
-                figmaDesign.width == dimensionsForRatio['1.91/1'].width &&
-                figmaDesign.height == dimensionsForRatio['1.91/1'].height
-                    ? '1.91:1'
-                    : figmaDesign.width == dimensionsForRatio['1/1'].width &&
-                        figmaDesign.height == dimensionsForRatio['1/1'].height
-                      ? '1:1'
-                      : undefined
-
-            const updatedTextLayers = figmaDesign.textLayers
-                .map((textLayer) => {
-                    // Don't overwrite an existing config
-                    const existingConfig = slideConfig.textLayers[textLayer.id]
-
-                    return (
-                        existingConfig ?? {
-                            id: textLayer.id,
-                            enabled: false,
-                            fill: textLayer.fill || 'black',
-                            stroke: textLayer.stroke || '',
-                            fontFamily: textLayer.fontFamily || 'Roboto',
-                            fontSize: textLayer.fontSize || 12,
-                            fontWeight: textLayer.fontWeight || '400',
-                            fontStyle: textLayer.fontStyle || 'normal',
-                            letterSpacing: textLayer.letterSpacing || '',
-                            style: textLayer.style || '',
-                            x: textLayer.x,
-                            y: textLayer.y,
-                        }
-                    )
-                })
-                .reduce(
-                    (acc, textLayer) => {
-                        acc[textLayer.id] = textLayer
-                        return acc
-                    },
-                    {} as Record<string, TextLayerConfig>
-                )
-
-            onUpdate({
-                ...slideConfig,
-                figmaUrl: figmaUrl,
-                aspectRatio: aspectRatio,
-                textLayers: updatedTextLayers,
-            })
-
-            setIsLoading(false)
-        }
-
-        if (figmaUrl !== undefined) loadFigmaUrl()
-    }
-
     return (
         <Card className="w-full">
             <CardHeader className="grid grid-cols-[100px_1fr] items-center gap-4">
-                <div className="overflow-hidden rounded-md">
-                    <FigmaDesignPreview figmaDesign={figmaDesign} isLoading={isLoading} />
+                <div className="overflow-hidden w-[100px] h-[100px] border-[1px] border-dashed border-white rounded-md">
+                    {!isLoadingDesign && figmaDesign && (
+                        <img
+                            src={figmaDesign?.base64}
+                            alt="Preview"
+                            className="justify-self-center"
+                        />
+                    )}
+                    {isLoadingDesign && <LoaderIcon className="animate-spin" />}
                 </div>
                 <div className="space-y-1">
                     <CardTitle>
@@ -169,19 +126,15 @@ const SlideDesigner = ({
                         <TabsTrigger value="buttons">Buttons</TabsTrigger>
                     </TabsList>
                     <TabsContent value="figma">
-                        <div className="flex items-center gap-2">
-                            <Input
-                                type="url"
-                                placeholder="URL"
-                                value={slideConfig.figmaUrl}
-                                onChange={(e) => setFigmaUrl(e.target.value)}
-                            />
-                            <Button onClick={updateFigmaUrl}>Update</Button>
-                        </div>
-                        <FigmaDesignSummary
+                        <FigmaDesigner
+                            slideConfigId={slideConfig.id}
+                            textLayers={slideConfig.textLayers}
                             aspectRatio={slideConfig.aspectRatio}
+                            figmaPAT={figmaPAT}
+                            figmaUrl={slideConfig.figmaUrl}
                             figmaDesign={figmaDesign}
-                            isLoading={isLoading}
+                            onUpdateUrl={updateFigmaUrl}
+                            onUpdateAspectRatio={updateAspectRatio}
                         />
                     </TabsContent>
                     <TabsContent value="text">

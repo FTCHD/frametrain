@@ -37,6 +37,7 @@ export const DEFAULT_SLIDES: SlideConfig[] = [
     {
         id: INITIAL_SLIDE_ID,
         title: 'Initial slide',
+        aspectRatio: '1:1',
         description: 'What users will see while scrolling their feed',
         figmaUrl: undefined,
         textLayers: {},
