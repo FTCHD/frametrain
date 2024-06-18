@@ -8,7 +8,7 @@ import type { FontStyle, FontWeight } from 'satori'
 
 export default async function buildFrame(
     config: FramePressConfig,
-    slideConfig: SlideConfig
+    slideConfig?: SlideConfig
 ): Promise<BuildFrameData> {
     let fonts: any[] = []
     let view
