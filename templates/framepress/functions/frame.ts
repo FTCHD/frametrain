@@ -3,81 +3,77 @@ import type { BuildFrameData } from '@/lib/farcaster'
 import FigmaView from '../views/FigmaView'
 import type { FramePressConfig, SlideConfig } from '../Config'
 import { getFigmaDesign } from '../utils/FigmaApi'
-import ErrorView from '../views/ErrorView'
 import type { FontStyle, FontWeight } from 'satori'
 import type { FrameActionPayload } from 'frames.js'
+import { FrameError } from '@/sdk/handlers'
 
 export default async function buildFrame(
     config: FramePressConfig,
     slideConfig?: SlideConfig,
     body?: FrameActionPayload
 ): Promise<BuildFrameData> {
-    // TODO this leaks information if the initial Frame later becomes misconfigured; we need a way to reliably determine this
-    const isDebug = !body || body.untrustedData.castId.hash === '0xDebug'
-
-    let errorView
     if (!config.figmaPAT) {
-        errorView = ErrorView(isDebug, 'Please configure your Figma Personal Access Token')
-    } else if (!slideConfig) {
-        errorView = ErrorView(isDebug, 'This is no longer a valid slide, reconfigure the button')
-    } else if (!slideConfig.figmaUrl) {
-        errorView = ErrorView(isDebug, 'Please configure the Figma URL for this slide')
-    } else {
-        const figmaDesign = await getFigmaDesign(config.figmaPAT, slideConfig.figmaUrl)
-
-        if (!figmaDesign.success) {
-            errorView = ErrorView(isDebug, figmaDesign.error)
-        } else {
-            const view = FigmaView(slideConfig, figmaDesign.value)
-
-            const fontsInDesign = Object.values(figmaDesign.value.textLayers).map(
-                (textLayer) =>
-                    new FontConfig(textLayer.fontFamily, textLayer.fontWeight, textLayer.fontStyle)
-            )
-            const fontsInConfig = Object.values(slideConfig.textLayers).map(
-                (textLayerConfig) =>
-                    new FontConfig(
-                        textLayerConfig.fontFamily,
-                        textLayerConfig.fontWeight,
-                        textLayerConfig.fontStyle
-                    )
-            )
-
-            const combinedFonts = [...fontsInDesign, ...fontsInConfig]
-            const distinctFontKeys = Array.from(new Set(combinedFonts.map((font) => font.key)))
-            const distinctFonts = distinctFontKeys
-                .map((key) => combinedFonts.find((font) => font.key === key))
-                .filter((font): font is FontConfig => font !== undefined)
-            const fontPromises = distinctFonts.map(({ fontFamily, fontWeight, fontStyle }) => {
-                console.debug(`Loading font ${fontFamily} ${fontWeight} ${fontStyle}`)
-                return loadGoogleFontV2(fontFamily, fontWeight, fontStyle)
-            })
-            const fonts = await Promise.all(fontPromises)
-
-            const buttons = slideConfig?.buttons
-                .filter((button) => button.enabled)
-                .map((button) => ({
-                    label: button.caption,
-                }))
-
-            return {
-                buttons: buttons || [],
-                fonts,
-                aspectRatio: slideConfig.aspectRatio,
-                component: view,
-                functionName: 'slide',
-                params: { origin: slideConfig.id },
-            }
-        }
+        throw new FrameError('Please configure your Figma Personal Access Token')
     }
 
-    const roboto = await loadGoogleFontV2('Roboto', 400, 'normal')
+    if (!slideConfig) {
+        throw new FrameError('This is no longer a valid slide, reconfigure the button')
+    }
+
+    if (!slideConfig.figmaUrl) {
+        throw new FrameError('Please configure the Figma URL for this slide')
+    }
+
+    const figmaDesign = await getFigmaDesign(config.figmaPAT, slideConfig.figmaUrl)
+
+    if (!figmaDesign.success) {
+        throw new FrameError(figmaDesign.error)
+    }
+
+    const view = FigmaView(slideConfig, figmaDesign.value)
+
+    // We need to merge the fonts in the design with the fonts in the config
+    // (fonts in the design may be missing from the config if the Figma was
+    // updated without updating the config in the Inspector)
+
+    const fontsInDesign = Object.values(figmaDesign.value.textLayers).map(
+        (textLayer) =>
+            new FontConfig(textLayer.fontFamily, textLayer.fontWeight, textLayer.fontStyle)
+    )
+
+    const fontsInConfig = Object.values(slideConfig.textLayers).map(
+        (textLayerConfig) =>
+            new FontConfig(
+                textLayerConfig.fontFamily,
+                textLayerConfig.fontWeight,
+                textLayerConfig.fontStyle
+            )
+    )
+
+    const combinedFonts = [...fontsInDesign, ...fontsInConfig]
+    const distinctFontKeys = Array.from(new Set(combinedFonts.map((font) => font.key)))
+    const distinctFonts = distinctFontKeys
+        .map((key) => combinedFonts.find((font) => font.key === key))
+        .filter((font): font is FontConfig => font !== undefined)
+    const fontPromises = distinctFonts.map(({ fontFamily, fontWeight, fontStyle }) => {
+        console.debug(`Loading font ${fontFamily} ${fontWeight} ${fontStyle}`)
+        return loadGoogleFontV2(fontFamily, fontWeight, fontStyle)
+    })
+    const fonts = await Promise.all(fontPromises)
+
+    const buttons = slideConfig?.buttons
+        .filter((button) => button.enabled)
+        .map((button) => ({
+            label: button.caption,
+        }))
+
     return {
-        buttons: [],
-        fonts: [roboto],
-        aspectRatio: '1:1',
-        component: errorView,
+        buttons: buttons || [],
+        fonts,
+        aspectRatio: slideConfig.aspectRatio,
+        component: view,
         functionName: 'slide',
+        params: { origin: slideConfig.id },
     }
 }
 
