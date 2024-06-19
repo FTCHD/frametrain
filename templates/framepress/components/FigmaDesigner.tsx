@@ -1,11 +1,12 @@
 'use client'
 
+import { useState } from 'react'
+import toast from 'react-hot-toast'
+import { LoaderIcon, RectangleHorizontalIcon, SquareIcon } from 'lucide-react'
+import type { AspectRatio, TextLayerConfig, TextLayerConfigs } from '../Config'
 import { type FigmaDesign, getFigmaDesign } from '../utils/FigmaApi'
 import { Input } from '@/components/shadcn/Input'
 import { Button } from '@/components/shadcn/Button'
-import { useState } from 'react'
-import type { AspectRatio, TextLayerConfig, TextLayerConfigs } from '../Config'
-import { LoaderIcon, RectangleHorizontalIcon, SquareIcon } from 'lucide-react'
 import {
     Select,
     SelectContent,
@@ -38,17 +39,15 @@ export const FigmaDesigner = ({
 }: FigmaDesignerProps) => {
     const [newUrl, setNewUrl] = useState(figmaUrl)
     const [isUpdating, setIsUpdating] = useState(false)
-    const [error, setError] = useState<string>('')
 
     const updateUrl = async () => {
         console.debug(`FigmaDesigner[${slideConfigId}]::updateFigmaUrl()`)
 
         setIsUpdating(true)
-        setError('')
 
         const figmaDesign = await getFigmaDesign(figmaPAT, newUrl)
         if (!figmaDesign.success) {
-            setError(figmaDesign.error)
+            toast.error(figmaDesign.error)
             setIsUpdating(false)
             return
         }
@@ -109,7 +108,6 @@ export const FigmaDesigner = ({
                     {!isUpdating && figmaUrl && 'Update'}
                 </Button>
             </div>
-            {error && <div className="flex items-center gap-2 text-red-600">{error}</div>}
             {!isUpdating && figmaDesign && (
                 <div className="grid grid-cols-[1fr_1fr] gap-4 mt-4">
                     <div className="flex items-center">Width</div>
