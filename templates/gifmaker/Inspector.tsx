@@ -47,10 +47,10 @@ export default function Inspector() {
                 )
             )
             ffmpeg.exec([
-                '-i',
-                `input.${ty}`,
                 '-ss',
                 config.timeStart,
+                '-i',
+                `input.${ty}`,
                 '-t',
                 config.gifDuration,
                 '-r',
@@ -150,7 +150,7 @@ export default function Inspector() {
                 <h2 className="text-lg font-bold">Start Time</h2>
                 <Input
                     className="text-lg"
-                    placeholder="Seconds or mm:ss"
+                    placeholder="Seconds or hh:mm:ss"
                     defaultValue={config.timeStart}
                     onChange={(e) => updateConfig({ timeStart: e.target.value })}
                 />
