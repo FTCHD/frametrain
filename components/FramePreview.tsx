@@ -219,6 +219,9 @@ function FrameButton({
             },
             mockOptions
         )
+		
+		if (!result) return
+		
         setPreviewHistory((prev: any) => [...prev, result])
     }, [target, index, inputText, mockOptions, setPreviewHistory])
 
