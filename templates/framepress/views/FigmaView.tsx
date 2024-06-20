@@ -1,5 +1,5 @@
-import type { FigmaSvgImage } from '../utils/FigmaApi'
-import type { HorizontalAlignment, SlideConfig, VerticalAlignment } from '../Config'
+import type { FigmaSvgImage, TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
+import type { SlideConfig } from '../Config'
 import he from 'he'
 
 /*
@@ -17,7 +17,7 @@ it produces a parent <div> containing an <img> for all non-text SVG nodes,
 and then a <div> containing transformed versions of the SVG text nodes.
 
 */
-export default function FigmaView(slideConfig: SlideConfig, figmaDesign: FigmaSvgImage) {
+export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgImage) {
     const parseCSS = (cssString: string): Record<string, string> => {
         if (!cssString) return {}
 
@@ -33,26 +33,26 @@ export default function FigmaView(slideConfig: SlideConfig, figmaDesign: FigmaSv
         )
     }
 
-    const horzAlignmentToCss = (alignment: HorizontalAlignment): string => {
+    const horzAlignmentToCss = (alignment: TextAlignHorizontal): string => {
         switch (alignment) {
-            case 'left':
+            case 'LEFT':
                 return 'flex-start'
-            case 'center':
+            case 'CENTER':
                 return 'center'
-            case 'right':
+            case 'RIGHT':
                 return 'flex-end'
             default:
                 return 'flex-start'
         }
     }
 
-    const vertAlignmentToCss = (alignment: VerticalAlignment): string => {
+    const vertAlignmentToCss = (alignment: TextAlignVertical): string => {
         switch (alignment) {
-            case 'top':
+            case 'TOP':
                 return 'flex-start'
-            case 'middle':
+            case 'CENTER':
                 return 'center'
-            case 'bottom':
+            case 'BOTTOM':
                 return 'flex-end'
             default:
                 return 'flex-start'
@@ -63,10 +63,10 @@ export default function FigmaView(slideConfig: SlideConfig, figmaDesign: FigmaSv
         <div style={{ display: 'flex' }}>
             <img
                 style={{ position: 'absolute' }}
-                alt="Figma Design"
-                width={figmaDesign.width}
-                height={figmaDesign.height}
-                src={figmaDesign.base64}
+                alt={slideConfig.title}
+                width={svgImage.width}
+                height={svgImage.height}
+                src={svgImage.base64}
             />
             <div
                 style={{
@@ -75,37 +75,35 @@ export default function FigmaView(slideConfig: SlideConfig, figmaDesign: FigmaSv
                     width: '100%',
                 }}
             >
-                {figmaDesign.textNodes.map((textLayer) => {
+                {svgImage.textNodes.map((svg) => {
                     // If the figma design was modified after configuration,
                     // we will not find a layer config. We could give an error,
                     // but that seems unfriendly, instead we fallback to the layer.
-                    const textLayerConfig = slideConfig.textLayers[textLayer.id]
-                    const fill = textLayerConfig?.fill || textLayer.fill
-                    const stroke = textLayerConfig?.stroke || textLayer.stroke
-                    const fontFamily = textLayerConfig?.fontFamily || textLayer.fontFamily
-                    const fontSize = textLayerConfig?.fontSize || textLayer.fontSize
-                    const fontWeight = textLayerConfig?.fontWeight || textLayer.fontWeight
-                    const fontStyle = textLayerConfig?.fontStyle || textLayer.fontStyle
-                    const letterSpacing = textLayerConfig?.letterSpacing || textLayer.letterSpacing
-                    const css = parseCSS(textLayerConfig?.css || textLayer.style)
-                    const horzAlignment = horzAlignmentToCss(textLayerConfig?.horzAlignment || '')
-                    const vertAlignment = vertAlignmentToCss(textLayerConfig?.vertAlignment || '')
-                    const x = textLayerConfig.boundsX
-                    const y = textLayerConfig.boundsY
-                    const width = textLayerConfig.boundsWidth
-                    const height = textLayerConfig.boundsHeight
+                    const config = slideConfig.textLayers[svg.figmaNodeId]
+
+                    const fill = config?.fill || svg.fill
+                    const stroke = config?.stroke || svg.stroke
+                    const fontFamily = config?.fontFamily || svg.fontFamily
+                    const fontSize = config?.fontSize || svg.fontSize
+                    const fontWeight = config?.fontWeight || svg.fontWeight
+                    const fontStyle = config?.fontStyle || svg.fontStyle
+                    const letterSpacing = config?.letterSpacing || svg.letterSpacing
+                    const css = parseCSS(config?.cssStyle || svg.style)
+                    const horzAlignment = horzAlignmentToCss(config?.textAlignHorizontal)
+                    const vertAlignment = vertAlignmentToCss(config?.textAlignVertical)
+                    const x = config.boundsX
+                    const y = config.boundsY
+                    const width = config.boundsWidth
+                    const height = config.boundsHeight
 
                     // Allow the user to backout of the override by saving empty content
                     const content =
-                        textLayerConfig?.contentOverride &&
-                        textLayerConfig.contentOverride.length > 0
-                            ? textLayerConfig.contentOverride
-                            : textLayer.content
+                        config?.content && config.content.length > 0 ? config.content : svg.content
 
                     // TODO support centered text
                     return (
                         <div
-                            key={textLayer.id}
+                            key={svg.id}
                             style={{
                                 position: 'absolute',
                                 display: 'flex',

@@ -2,7 +2,7 @@
 import type { BuildFrameData } from '@/lib/farcaster'
 import FigmaView from '../views/FigmaView'
 import type { FramePressConfig, SlideConfig } from '../Config'
-import { getFigmaDesign } from '../utils/FigmaApi'
+import { getFigmaDesign, getFigmaSvgImage } from '../utils/FigmaApi'
 import type { FontStyle, FontWeight } from 'satori'
 import type { FrameActionPayload } from 'frames.js'
 import { FrameError } from '@/sdk/handlers'
@@ -24,19 +24,19 @@ export default async function buildFrame(
         throw new FrameError('Please configure the Figma URL for this slide')
     }
 
-    const figmaDesign = await getFigmaDesign(config.figmaPAT, slideConfig.figmaUrl)
+    const svgImage = await getFigmaSvgImage(config.figmaPAT, slideConfig.figmaUrl)
 
-    if (!figmaDesign.success) {
-        throw new FrameError(figmaDesign.error)
+    if (!svgImage.success) {
+        throw new FrameError(svgImage.error)
     }
 
-    const view = FigmaView(slideConfig, figmaDesign.value)
+    const view = FigmaView(slideConfig, svgImage.value)
 
     // We need to merge the fonts in the design with the fonts in the config
     // (fonts in the design may be missing from the config if the Figma was
     // updated without updating the config in the Inspector)
 
-    const fontsInDesign = Object.values(figmaDesign.value.textLayers).map(
+    const fontsInDesign = Object.values(svgImage.value.textNodes).map(
         (textLayer) =>
             new FontConfig(textLayer.fontFamily, textLayer.fontWeight, textLayer.fontStyle)
     )
