@@ -13,14 +13,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Ta
 import type {
     AspectRatio,
     ButtonConfig,
+    FigmaMetadata,
     SlideConfig,
-    TextLayerConfig,
     TextLayerConfigs,
 } from '../Config'
 import { type ButtonTarget, ButtonDesigner } from './ButtonDesigner'
 import { FigmaDesigner } from './FigmaDesigner'
 import { TextLayerDesigner } from './TextLayerDesigner'
-import { type FigmaDesign, getFigmaDesign } from '../utils/FigmaApi'
+import { type FigmaSvgImage, getFigmaSvgImage, type FigmaTextLayer } from '../utils/FigmaApi'
 import { useEffect, useState } from 'react'
 import {
     FileDownIcon,
@@ -61,22 +61,26 @@ const SlideDesigner = ({
     onDelete,
 }: SlideDesignerProps) => {
     const [isLoadingDesign, setIsLoadingDesign] = useState<boolean>()
-    const [figmaDesign, setFigmaDesign] = useState<FigmaDesign>()
+    const [figmaSvgImage, setFigmaSvgImage] = useState<FigmaSvgImage>()
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: causes infinite recursion
     useEffect(() => {
         const loadFigmaDesign = async () => {
             setIsLoadingDesign(true)
-            const figmaDesign = await getFigmaDesign(figmaPAT, slideConfig.figmaUrl)
-            if (figmaDesign.success) setFigmaDesign(figmaDesign.value)
+            const figmaSvgImage = await getFigmaSvgImage(figmaPAT, slideConfig.figmaUrl)
+            if (figmaSvgImage.success) setFigmaSvgImage(figmaSvgImage.value)
             setIsLoadingDesign(false)
         }
         loadFigmaDesign()
     }, [])
 
-    const updateFigmaUrl = (figmaUrl: string, textLayers: TextLayerConfigs) => {
+    const updateFigma = (
+        figmaUrl: string,
+        figmaMetadata: FigmaMetadata,
+        textLayers: TextLayerConfigs
+    ) => {
         console.debug(`SlideDesigner[${slideConfig.id}]::updateFigma()`)
-        onUpdate({ ...slideConfig, figmaUrl, textLayers })
+        onUpdate({ ...slideConfig, figmaUrl, figmaMetadata, textLayers })
     }
 
     const updateAspectRatio = (aspectRatio: AspectRatio) => {
@@ -92,7 +96,7 @@ const SlideDesigner = ({
         onUpdate({ ...slideConfig, buttons: updatedButtons })
     }
 
-    const updateTextLayer = (updatedTextLayer: TextLayerConfig) => {
+    const updateTextLayer = (updatedTextLayer: FigmaTextLayer) => {
         console.debug(`SlideDesigner[${slideConfig.id}]::updateTextLayer(${updatedTextLayer.id})`)
         const updatedTextLayers = {
             ...slideConfig.textLayers,
@@ -105,9 +109,9 @@ const SlideDesigner = ({
         <Card className="w-full">
             <CardHeader className="grid grid-cols-[100px_1fr] items-center gap-4">
                 <div className="overflow-hidden w-[100px] h-[100px] border-[1px] border-dashed border-white rounded-md">
-                    {!isLoadingDesign && figmaDesign && (
+                    {!isLoadingDesign && figmaSvgImage && (
                         <img
-                            src={figmaDesign?.base64}
+                            src={figmaSvgImage?.base64}
                             alt="Preview"
                             className="justify-self-center"
                         />
@@ -143,21 +147,20 @@ const SlideDesigner = ({
                     <TabsContent value="figma">
                         <FigmaDesigner
                             slideConfigId={slideConfig.id}
-                            textLayers={slideConfig.textLayers}
                             aspectRatio={slideConfig.aspectRatio}
                             figmaPAT={figmaPAT}
                             figmaUrl={slideConfig.figmaUrl}
-                            figmaDesign={figmaDesign}
-                            onUpdateUrl={updateFigmaUrl}
+                            figmaMetadata={slideConfig.figmaMetadata}
+                            onUpdate={updateFigma}
                             onUpdateAspectRatio={updateAspectRatio}
                         />
                     </TabsContent>
                     <TabsContent value="text">
                         <div className="grid grid-cols-1 gap-2">
-                            {Object.values(slideConfig.textLayers).map((textLayerConfig) => (
+                            {Object.values(slideConfig.textLayers).map((textLayer) => (
                                 <TextLayerDesigner
-                                    key={textLayerConfig.id}
-                                    config={textLayerConfig}
+                                    key={textLayer.id}
+                                    config={textLayer}
                                     onChange={updateTextLayer}
                                 />
                             ))}

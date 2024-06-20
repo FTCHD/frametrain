@@ -1,6 +1,5 @@
-import type { FC, ReactNode } from 'react'
-import type { FigmaDesign } from '../utils/FigmaApi'
-import type { SlideConfig } from '../Config'
+import type { FigmaSvgImage } from '../utils/FigmaApi'
+import type { HorizontalAlignment, SlideConfig, VerticalAlignment } from '../Config'
 import he from 'he'
 
 /*
@@ -18,11 +17,11 @@ it produces a parent <div> containing an <img> for all non-text SVG nodes,
 and then a <div> containing transformed versions of the SVG text nodes.
 
 */
-export default function FigmaView(slideConfig: SlideConfig, figmaDesign: FigmaDesign) {
+export default function FigmaView(slideConfig: SlideConfig, figmaDesign: FigmaSvgImage) {
     const parseCSS = (cssString: string): Record<string, string> => {
         if (!cssString) return {}
 
-        return cssString.split(';').reduce(
+        return cssString.split('\n').reduce(
             (acc, style) => {
                 if (style.trim()) {
                     const [property, value] = style.split(':')
@@ -32,6 +31,32 @@ export default function FigmaView(slideConfig: SlideConfig, figmaDesign: FigmaDe
             },
             {} as Record<string, string>
         )
+    }
+
+    const horzAlignmentToCss = (alignment: HorizontalAlignment): string => {
+        switch (alignment) {
+            case 'left':
+                return 'flex-start'
+            case 'center':
+                return 'center'
+            case 'right':
+                return 'flex-end'
+            default:
+                return 'flex-start'
+        }
+    }
+
+    const vertAlignmentToCss = (alignment: VerticalAlignment): string => {
+        switch (alignment) {
+            case 'top':
+                return 'flex-start'
+            case 'middle':
+                return 'center'
+            case 'bottom':
+                return 'flex-end'
+            default:
+                return 'flex-start'
+        }
     }
 
     return (
@@ -50,22 +75,27 @@ export default function FigmaView(slideConfig: SlideConfig, figmaDesign: FigmaDe
                     width: '100%',
                 }}
             >
-                {figmaDesign.textLayers.map((textLayer) => {
+                {figmaDesign.textNodes.map((textLayer) => {
                     // If the figma design was modified after configuration,
                     // we will not find a layer config. We could give an error,
                     // but that seems unfriendly, instead we fallback to the layer.
                     const textLayerConfig = slideConfig.textLayers[textLayer.id]
-                    const color = textLayerConfig?.fill || textLayer.fill
-                    const WebkitTextStroke = textLayerConfig?.stroke || textLayer.stroke
-                    const x = textLayerConfig?.x || textLayer.x
-                    const y = textLayerConfig?.y || textLayer.y
+                    const fill = textLayerConfig?.fill || textLayer.fill
+                    const stroke = textLayerConfig?.stroke || textLayer.stroke
+                    const fontFamily = textLayerConfig?.fontFamily || textLayer.fontFamily
                     const fontSize = textLayerConfig?.fontSize || textLayer.fontSize
                     const fontWeight = textLayerConfig?.fontWeight || textLayer.fontWeight
-                    const fontFamily = textLayerConfig?.fontFamily || textLayer.fontFamily
                     const fontStyle = textLayerConfig?.fontStyle || textLayer.fontStyle
                     const letterSpacing = textLayerConfig?.letterSpacing || textLayer.letterSpacing
-                    const style = parseCSS(textLayerConfig?.style || textLayer.style)
+                    const css = parseCSS(textLayerConfig?.css || textLayer.style)
+                    const horzAlignment = horzAlignmentToCss(textLayerConfig?.horzAlignment || '')
+                    const vertAlignment = vertAlignmentToCss(textLayerConfig?.vertAlignment || '')
+                    const x = textLayerConfig.boundsX
+                    const y = textLayerConfig.boundsY
+                    const width = textLayerConfig.boundsWidth
+                    const height = textLayerConfig.boundsHeight
 
+                    // Allow the user to backout of the override by saving empty content
                     const content =
                         textLayerConfig?.contentOverride &&
                         textLayerConfig.contentOverride.length > 0
@@ -78,17 +108,23 @@ export default function FigmaView(slideConfig: SlideConfig, figmaDesign: FigmaDe
                             key={textLayer.id}
                             style={{
                                 position: 'absolute',
-                                color,
-                                // Not currently supported by satori: https://github.com/vercel/satori/issues/578
-                                WebkitTextStroke,
+                                display: 'flex',
+                                justifyContent: horzAlignment,
+                                alignItems: vertAlignment,
                                 left: `${x}px`,
-                                top: `${y - fontSize}px`,
+                                top: `${y}px`,
+                                width: `${width}px`,
+                                height: `${height}px`,
+
+                                color: fill,
+                                // Not currently supported by satori: https://github.com/vercel/satori/issues/578
+                                WebkitTextStroke: stroke,
                                 fontSize: fontSize,
                                 fontWeight: fontWeight || '400',
                                 fontFamily: fontFamily,
                                 fontStyle: fontStyle,
                                 letterSpacing: letterSpacing,
-                                ...style,
+                                ...css,
                             }}
                         >
                             {he.decode(content)}

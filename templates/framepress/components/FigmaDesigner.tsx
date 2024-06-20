@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { LoaderIcon, RectangleHorizontalIcon, SquareIcon } from 'lucide-react'
-import type { AspectRatio, TextLayerConfig, TextLayerConfigs } from '../Config'
-import { type FigmaDesign, getFigmaDesign } from '../utils/FigmaApi'
+import { CloudDownload, Loader2, RectangleHorizontal, Square } from 'lucide-react'
+import type { AspectRatio, FigmaMetadata, TextLayerConfigs } from '../Config'
+import { getFigmaDesign, type FigmaTextLayer } from '../utils/FigmaApi'
 import { Input } from '@/components/shadcn/Input'
 import { Button } from '@/components/shadcn/Button'
 import {
@@ -18,23 +18,21 @@ import { Badge } from '@/components/shadcn/Badge'
 
 type FigmaDesignerProps = {
     slideConfigId: string
-    textLayers: TextLayerConfigs
     aspectRatio: AspectRatio
     figmaPAT: string
     figmaUrl?: string
-    figmaDesign?: FigmaDesign
-    onUpdateUrl: (figmaUrl: string, textLayers: TextLayerConfigs) => void
+    figmaMetadata?: FigmaMetadata
+    onUpdate: (figmaUrl: string, figmaMetadata: FigmaMetadata, textLayers: TextLayerConfigs) => void
     onUpdateAspectRatio: (aspectRatio: AspectRatio) => void
 }
 
 export const FigmaDesigner = ({
     slideConfigId,
-    textLayers,
     aspectRatio,
     figmaPAT,
     figmaUrl,
-    figmaDesign,
-    onUpdateUrl,
+    figmaMetadata,
+    onUpdate,
     onUpdateAspectRatio,
 }: FigmaDesignerProps) => {
     const [newUrl, setNewUrl] = useState(figmaUrl)
@@ -45,45 +43,40 @@ export const FigmaDesigner = ({
 
         setIsUpdating(true)
 
-        const figmaDesign = await getFigmaDesign(figmaPAT, newUrl)
-        if (!figmaDesign.success) {
-            toast.error(figmaDesign.error)
+        const figmaDesignResult = await getFigmaDesign(figmaPAT, newUrl)
+        if (!figmaDesignResult.success) {
+            toast.error(figmaDesignResult.error)
             setIsUpdating(false)
             return
         }
 
-        const updatedTextLayers = figmaDesign.value.textLayers
-            .map((textLayer) => {
-                // Don't overwrite an existing config!
-                const existingConfig = textLayers[textLayer.id]
+        const figmaDesign = figmaDesignResult.value
 
-                return (
-                    existingConfig ?? {
-                        id: textLayer.id,
-                        enabled: false,
-                        fill: textLayer.fill || 'black',
-                        stroke: textLayer.stroke || '',
-                        fontFamily: textLayer.fontFamily || 'Roboto',
-                        fontSize: textLayer.fontSize || 12,
-                        fontWeight: textLayer.fontWeight || '400',
-                        fontStyle: textLayer.fontStyle || 'normal',
-                        letterSpacing: textLayer.letterSpacing || '',
-                        style: textLayer.style || '',
-                        x: textLayer.x,
-                        y: textLayer.y,
-                    }
-                )
+        const figmaMetadata = {
+            name: figmaDesign.name,
+            lastModified: figmaDesign.lastModified,
+            width: figmaDesign.width,
+            height: figmaDesign.height,
+            aspectRatio: figmaDesign.aspectRatio,
+        }
+
+        const updatedTextLayers = figmaDesignResult.value.textLayers
+            .map((discoveredTextLayer) => {
+                // Don't overwrite an existing config!
+                //const existingTextLayer = textLayers[discoveredTextLayer.id]
+                //return existingTextLayer ?? discoveredTextLayer
+                return discoveredTextLayer
             })
             .reduce(
                 (acc, textLayer) => {
                     acc[textLayer.id] = textLayer
                     return acc
                 },
-                {} as Record<string, TextLayerConfig>
+                {} as Record<string, FigmaTextLayer>
             )
 
         // At this point, url is guaranteed valid
-        onUpdateUrl(newUrl!, updatedTextLayers)
+        onUpdate(newUrl!, figmaMetadata, updatedTextLayers)
 
         setIsUpdating(false)
     }
@@ -102,29 +95,44 @@ export const FigmaDesigner = ({
                     value={newUrl}
                     onChange={(e) => setNewUrl(e.target.value)}
                 />
-                <Button disabled={!figmaPAT} onClick={updateUrl}>
-                    {isUpdating && <LoaderIcon className="animate-spin" />}
-                    {!(isUpdating || figmaUrl) && 'Load'}
-                    {!isUpdating && figmaUrl && 'Update'}
+                <Button disabled={isUpdating || !figmaPAT} onClick={updateUrl}>
+                    {isUpdating && (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Please wait
+                        </>
+                    )}
+                    {!isUpdating && (
+                        <>
+                            <CloudDownload className="mr-2 h-4 w-4" />
+                            {figmaUrl ? 'Update' : 'Load'}
+                        </>
+                    )}
                 </Button>
             </div>
-            {!isUpdating && figmaDesign && (
+            {!isUpdating && figmaMetadata && (
                 <div className="grid grid-cols-[1fr_1fr] gap-4 mt-4">
+                    <div className="flex items-center">Name</div>
+                    <div className="flex items-center">{figmaMetadata?.name}</div>
+
+                    <div className="flex items-center">Last Modified</div>
+                    <div className="flex items-center">{figmaMetadata?.lastModified}</div>
+
                     <div className="flex items-center">Width</div>
                     <div className="flex items-center">
-                        <Badge>{figmaDesign?.width}</Badge>
-                        <div className="text-sm ml-4 opacity-80">(1200 or 630 is recommended)</div>
+                        <Badge>{figmaMetadata?.width}</Badge>
+                        <div className="text-xs ml-4 opacity-80">(recommendation: 1200 or 630)</div>
                     </div>
 
                     <div className="flex items-center">Height</div>
                     <div className="flex items-center">
-                        <Badge>{figmaDesign?.height}</Badge>
-                        <div className="text-sm ml-4 opacity-80">(630 is recommended)</div>
+                        <Badge>{figmaMetadata?.height}</Badge>
+                        <div className="text-xs ml-4 opacity-80">(recommendation: 630)</div>
                     </div>
 
                     <div className="flex items-center">True Aspect Ratio</div>
                     <div className="flex items-center">
-                        <Badge>{figmaDesign?.aspectRatio?.toFixed(2)}</Badge>
+                        <Badge>{figmaMetadata?.aspectRatio?.toFixed(2)}</Badge>
                     </div>
 
                     <div className="flex items-center">Frame Aspect Ratio</div>
@@ -138,11 +146,11 @@ export const FigmaDesigner = ({
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="1:1">
-                                    <SquareIcon className="h-4 w-4 mr-2" />
+                                    <Square className="h-4 w-4 mr-2" />
                                     1:1 (Square)
                                 </SelectItem>
                                 <SelectItem value="1.91:1">
-                                    <RectangleHorizontalIcon className="h-4 w-4 mr-2" />
+                                    <RectangleHorizontal className="h-4 w-4 mr-2" />
                                     1.91:1 (Widescreen)
                                 </SelectItem>
                             </SelectContent>

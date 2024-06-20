@@ -1,41 +1,27 @@
-interface FramePressConfig {
+import type { FigmaTextLayer } from './utils/FigmaApi'
+
+export interface FramePressConfig {
     figmaPAT: string
     slides: SlideConfig[]
     nextSlideId: number
 }
 
-type AspectRatio = '1.91:1' | '1:1'
+export type AspectRatio = '1.91:1' | '1:1'
 
-type SlideConfig = {
+export type SlideConfig = {
     id: string
     aspectRatio: AspectRatio
     title?: string
-    figmaUrl?: string
     description?: string
+    figmaUrl?: string
+    figmaMetadata: FigmaMetadata
     textLayers: TextLayerConfigs
     buttons: ButtonConfig[]
 }
 
-type TextLayerConfigs = Record<string, TextLayerConfig>
+export type TextLayerConfigs = Record<string, FigmaTextLayer>
 
-type TextLayerConfig = {
-    id: string
-    enabled: boolean
-    fill: string
-    stroke: string
-    fontFamily: string
-    fontSize: number
-    fontWeight: string
-    fontStyle: string
-    letterSpacing: string
-    style: string
-    centerHorizontally?: boolean
-    x: number
-    y: number
-    contentOverride?: string
-}
-
-type ButtonConfig = {
+export type ButtonConfig = {
     id: string
     enabled: boolean
     caption: string
@@ -43,11 +29,14 @@ type ButtonConfig = {
     link?: string
 }
 
-export type {
-    FramePressConfig,
-    TextLayerConfigs,
-    TextLayerConfig,
-    ButtonConfig,
-    AspectRatio,
-    SlideConfig,
+/**
+ * Keeps track of the Figma metadata as of the last time
+ * the Figma file was retrieved.
+ */
+export type FigmaMetadata = {
+    name: string
+    lastModified: string
+    width: number
+    height: number
+    aspectRatio: number
 }
