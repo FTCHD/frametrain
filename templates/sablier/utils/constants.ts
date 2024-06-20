@@ -54,7 +54,7 @@ export const typeToAddressScroll: TypeToAddressType = {
 
 export const typeToAddressBase: TypeToAddressType = {
     LL: '0x6b9a46c8377f21517e65fa3899b3a9fab19d17f5'.toLowerCase(),
-    LL2: '0x50c5725949a6f0c72e6c4a641f24049a917db0cb'.toLowerCase(),
+    LL2: '0xFCF737582d167c7D20A336532eb8BCcA8CF8e350'.toLowerCase(),
     LD: '0x645b00960dc352e699f89a81fc845c0c645231cf'.toLowerCase(),
     LD2: '0x461e13056a3a3265cef4c593f01b2e960755de91'.toLowerCase(),
 }
