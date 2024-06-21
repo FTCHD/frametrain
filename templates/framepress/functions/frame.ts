@@ -1,8 +1,8 @@
 'use server'
-import type { BuildFrameData } from '@/lib/farcaster'
+import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import FigmaView from '../views/FigmaView'
 import type { FramePressConfig, SlideConfig } from '../Config'
-import { getFigmaDesign, getFigmaSvgImage } from '../utils/FigmaApi'
+import { getFigmaSvgImage } from '../utils/FigmaApi'
 import type { FontStyle, FontWeight } from 'satori'
 import type { FrameActionPayload } from 'frames.js'
 import { FrameError } from '@/sdk/handlers'
@@ -63,9 +63,19 @@ export default async function buildFrame(
 
     const buttons = slideConfig?.buttons
         .filter((button) => button.enabled)
-        .map((button) => ({
-            label: button.caption,
-        }))
+        .map((button) => {
+            if (button.target == 'URL') {
+                return {
+                    label: button.caption,
+                    action: 'link',
+                    target: button.link,
+                } as FrameButtonMetadata
+            }
+
+            return {
+                label: button.caption,
+            } as FrameButtonMetadata
+        })
 
     return {
         buttons: buttons || [],
