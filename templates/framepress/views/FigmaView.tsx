@@ -33,7 +33,7 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
         )
     }
 
-    const horzAlignmentToCss = (alignment: TextAlignHorizontal): string => {
+    const textAlignHorizontalToCss = (alignment: TextAlignHorizontal): string | undefined => {
         switch (alignment) {
             case 'LEFT':
                 return 'flex-start'
@@ -42,11 +42,11 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
             case 'RIGHT':
                 return 'flex-end'
             default:
-                return 'flex-start'
+                return undefined
         }
     }
 
-    const vertAlignmentToCss = (alignment: TextAlignVertical): string => {
+    const textAlignVerticalToCss = (alignment: TextAlignVertical): string | undefined => {
         switch (alignment) {
             case 'TOP':
                 return 'flex-start'
@@ -55,7 +55,7 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
             case 'BOTTOM':
                 return 'flex-end'
             default:
-                return 'flex-start'
+                return undefined
         }
     }
 
@@ -89,10 +89,22 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
                     const fontStyle = config?.fontStyle || svg.fontStyle
                     const letterSpacing = config?.letterSpacing || svg.letterSpacing
                     const css = parseCSS(config?.cssStyle || svg.style)
-                    const horzAlignment = horzAlignmentToCss(config?.textAlignHorizontal)
-                    const vertAlignment = vertAlignmentToCss(config?.textAlignVertical)
-                    const x = config.boundsX
-                    const y = config.boundsY
+
+                    // When no alignment is specified, we use the exact co-ordinates specified
+                    // in the SVG. This is a failsafe mode. In general, an alignment will be
+                    // provided, and we use CSS to align within the rendering bounds extacted
+                    // from the Figma file.
+                    const horizontalAlignment = textAlignHorizontalToCss(
+                        config?.textAlignHorizontal
+                    )
+                    const verticalAlignment = textAlignVerticalToCss(config?.textAlignVertical)
+
+                    const x = horizontalAlignment ? config.boundsX : config.x
+                    // y is the text _baseline_ when no vert alignment is specified, but we
+                    // want the top y co-ordinate of the text block
+                    const y = verticalAlignment ? config.boundsY : config.y - fontSize
+
+                    // Width and height are actually only used when the corresponding alignment is specified
                     const width = config.boundsWidth
                     const height = config.boundsHeight
 
@@ -100,19 +112,20 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
                     const content =
                         config?.content && config.content.length > 0 ? config.content : svg.content
 
-                    // TODO support centered text
                     return (
                         <div
                             key={svg.id}
                             style={{
                                 position: 'absolute',
                                 display: 'flex',
-                                justifyContent: horzAlignment,
-                                alignItems: vertAlignment,
+                                ...(horizontalAlignment
+                                    ? { justifyContent: horizontalAlignment }
+                                    : {}),
+                                ...(verticalAlignment ? { alignItems: verticalAlignment } : {}),
                                 left: `${x}px`,
                                 top: `${y}px`,
-                                width: `${width}px`,
-                                height: `${height}px`,
+                                ...(horizontalAlignment ? { width: `${width}px` } : {}),
+                                ...(verticalAlignment ? { height: `${height}px` } : {}),
 
                                 color: fill,
                                 // Not currently supported by satori: https://github.com/vercel/satori/issues/578
