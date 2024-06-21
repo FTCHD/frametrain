@@ -15,6 +15,7 @@ import type {
     ButtonConfig,
     FigmaMetadata,
     SlideConfig,
+    TextLayerConfig,
     TextLayerConfigs,
 } from '../Config'
 import { type ButtonTarget, ButtonDesigner } from './ButtonDesigner'
@@ -96,7 +97,7 @@ const SlideDesigner = ({
         onUpdate({ ...slideConfig, buttons: updatedButtons })
     }
 
-    const updateTextLayer = (updatedTextLayer: FigmaTextLayer) => {
+    const updateTextLayer = (updatedTextLayer: TextLayerConfig) => {
         console.debug(`SlideDesigner[${slideConfig.id}]::updateTextLayer(${updatedTextLayer.id})`)
         const updatedTextLayers = {
             ...slideConfig.textLayers,
@@ -147,6 +148,7 @@ const SlideDesigner = ({
                     <TabsContent value="figma">
                         <FigmaDesigner
                             slideConfigId={slideConfig.id}
+                            textLayers={slideConfig.textLayers}
                             aspectRatio={slideConfig.aspectRatio}
                             figmaPAT={figmaPAT}
                             figmaUrl={slideConfig.figmaUrl}

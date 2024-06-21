@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { CloudDownload, Loader2, RectangleHorizontal, Square } from 'lucide-react'
-import type { AspectRatio, FigmaMetadata, TextLayerConfigs } from '../Config'
+import type { AspectRatio, FigmaMetadata, TextLayerConfig, TextLayerConfigs } from '../Config'
 import { getFigmaDesign, type FigmaTextLayer } from '../utils/FigmaApi'
 import { Input } from '@/components/shadcn/Input'
 import { Button } from '@/components/shadcn/Button'
@@ -18,6 +18,7 @@ import { Badge } from '@/components/shadcn/Badge'
 
 type FigmaDesignerProps = {
     slideConfigId: string
+    textLayers: TextLayerConfigs
     aspectRatio: AspectRatio
     figmaPAT: string
     figmaUrl?: string
@@ -28,6 +29,7 @@ type FigmaDesignerProps = {
 
 export const FigmaDesigner = ({
     slideConfigId,
+    textLayers,
     aspectRatio,
     figmaPAT,
     figmaUrl,
@@ -60,19 +62,27 @@ export const FigmaDesigner = ({
             aspectRatio: figmaDesign.aspectRatio,
         }
 
-        const updatedTextLayers = figmaDesignResult.value.textLayers
+        const updatedTextLayers = figmaDesign.textLayers
             .map((discoveredTextLayer) => {
-                // Don't overwrite an existing config!
-                //const existingTextLayer = textLayers[discoveredTextLayer.id]
-                //return existingTextLayer ?? discoveredTextLayer
-                return discoveredTextLayer
+                // Insert the text layer if it's a new one,
+                // othewrise replace the text layer if updates are allowed
+                const existingTextLayer = textLayers[discoveredTextLayer.id]
+                if (!existingTextLayer || existingTextLayer.allowFigmaUpdates) {
+                    return {
+                        ...discoveredTextLayer,
+                        allowFigmaUpdates: existingTextLayer?.allowFigmaUpdates,
+                        enabled: true,
+                    }
+                }
+
+                return existingTextLayer
             })
             .reduce(
                 (acc, textLayer) => {
                     acc[textLayer.id] = textLayer
                     return acc
                 },
-                {} as Record<string, FigmaTextLayer>
+                {} as Record<string, TextLayerConfig>
             )
 
         // At this point, url is guaranteed valid

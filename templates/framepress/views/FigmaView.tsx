@@ -80,6 +80,7 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
                     // we will not find a layer config. We could give an error,
                     // but that seems unfriendly, instead we fallback to the layer.
                     const config = slideConfig.textLayers[svg.figmaNodeId]
+                    if (config && !config.enabled) return <></>
 
                     const fill = config?.fill || svg.fill
                     const stroke = config?.stroke || svg.stroke

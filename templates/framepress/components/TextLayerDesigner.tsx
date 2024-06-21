@@ -9,16 +9,20 @@ import {
     AlignRightIcon,
     ArrowDownFromLineIcon,
     ArrowUpFromLineIcon,
+    CirclePower,
     FoldVerticalIcon,
-    TypeIcon,
+    Type,
+    CloudDownload,
 } from 'lucide-react'
 import { FontStylePicker, FontWeightPicker } from '@/sdk/components'
 import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
-import type { FigmaTextLayer, TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
+import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
+import { Toggle } from '@/components/shadcn/Toggle'
+import type { TextLayerConfig } from '../Config'
 
 type TextLayerDesignerProps = {
-    config: FigmaTextLayer
-    onChange: (textLayer: FigmaTextLayer) => void
+    config: TextLayerConfig
+    onChange: (textLayer: TextLayerConfig) => void
 }
 
 const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
@@ -26,12 +30,32 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
 
     return (
         <React.Fragment key={config.id}>
-            <div className="border-b pb-4 mb-2 border-slate-500 ">
-                <div className="flex items-center mb-2">
-                    <TypeIcon className="border-2" />
-                    <p className="ml-2 font-bold">{config.name}</p>
+            <div className="pb-4 mb-2">
+                <div className="flex items-center mb-2 gap-x-2">
+                    <Type className="border-2" />
+                    <p className="font-bold border-b border-slate-500 flex-grow">{config.name}</p>
+                    <Toggle
+                        variant="outline"
+                        className="p-1 h-8 w-8"
+                        defaultPressed={config.allowFigmaUpdates}
+                        onPressedChange={(pressed) => {
+                            onChange({ ...config, allowFigmaUpdates: pressed })
+                        }}
+                    >
+                        <CloudDownload className="h-6 w-6" />
+                    </Toggle>
+                    <Toggle
+                        variant="outline"
+                        className="p-1 h-8 w-8"
+                        defaultPressed={config.enabled}
+                        onPressedChange={(pressed) => {
+                            onChange({ ...config, enabled: pressed })
+                        }}
+                    >
+                        <CirclePower className="h-6 w-6" />
+                    </Toggle>
                 </div>
-                <div className="grid grid-cols-[1fr_1fr_1fr_1fr] gap-4 ml-4">
+                <div className="grid grid-cols-[1fr_1fr_1fr_1fr] gap-4">
                     <label className="text-sm font-semibold self-center">Font</label>
                     <FontFamilyPicker
                         defaultValue={config.fontFamily}
@@ -128,7 +152,7 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                         placeholder="Text content"
                         defaultValue={config.content}
                         className="col-span-2 row-span-3"
-                        onChange={(e) => {
+                        onBlur={(e) => {
                             onChange({ ...config, content: e.target.value })
                         }}
                     />
@@ -136,7 +160,7 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                         placeholder="Additional CSS properties"
                         defaultValue={config.cssStyle}
                         className="col-span-2 row-span-3"
-                        onChange={(e) => {
+                        onBlur={(e) => {
                             onChange({ ...config, cssStyle: e.target.value })
                         }}
                     />

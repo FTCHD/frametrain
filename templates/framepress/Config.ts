@@ -19,7 +19,12 @@ export type SlideConfig = {
     buttons: ButtonConfig[]
 }
 
-export type TextLayerConfigs = Record<string, FigmaTextLayer>
+export type TextLayerConfigs = Record<string, TextLayerConfig>
+
+export type TextLayerConfig = FigmaTextLayer & {
+    allowFigmaUpdates: boolean
+    enabled: boolean
+}
 
 export type ButtonConfig = {
     id: string
