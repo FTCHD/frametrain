@@ -1,19 +1,24 @@
 import type { Config } from '..'
 
-export default function CoverView(config: Config) {
-    const { background, textColor } = config
-
+export default function CoverView({
+    text,
+    configuration,
+}: {
+    text?: string
+    configuration?: Config['cover']['configuration']
+}) {
     const backgroundProp: Record<string, string> = {}
 
-    if (background) {
-        if (background.startsWith('#')) {
-            backgroundProp['backgroundColor'] = background
+    if (configuration?.backgroundColor) {
+        if (configuration.backgroundColor.startsWith('#')) {
+            backgroundProp['backgroundColor'] = configuration.backgroundColor
         } else {
-            backgroundProp['backgroundImage'] = background
+            backgroundProp['backgroundImage'] = configuration.backgroundColor
         }
     } else {
-        backgroundProp['backgroundColor'] = '#09203f'
+        backgroundProp['backgroundColor'] = 'black'
     }
+    const description = (text ?? 'Description').split('\n')
 
     return (
         <div
@@ -24,30 +29,37 @@ export default function CoverView(config: Config) {
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
-                fontFamily: 'Roboto',
-                fontSize: '50px',
-                color: '#ffffff',
+                fontSize: configuration?.fontSize || '50px',
                 ...backgroundProp,
             }}
         >
-            <div
+            <span
                 style={{
                     display: 'flex',
-                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    gap: '5px',
+                    width: '100%',
                     alignItems: 'center',
-                    padding: '30px',
-                    borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.22)',
-                    color: textColor || 'white',
-                    fontSize: '100px',
-                    textAlign: 'center',
-                    fontWeight: '900',
-                    lineHeight: '1.4',
-                    textWrap: 'balance',
+                    justifyContent: 'center',
+                    color: configuration?.textColor || 'white',
+                    fontFamily: configuration?.fontFamily || 'Roboto',
+                    opacity: '0.8',
+                    fontStyle: configuration?.fontStyle || 'normal',
                 }}
             >
-                🎉 Welcome to Quizzlet! Press "START" to being your journey
-            </div>
+                {description.map((d, i) => (
+                    <span
+                        key={i}
+                        style={{
+                            textAlign: 'center',
+                            opacity: '0.8',
+                            textWrap: 'balance',
+                        }}
+                    >
+                        {d}
+                    </span>
+                ))}
+            </span>
         </div>
     )
 }

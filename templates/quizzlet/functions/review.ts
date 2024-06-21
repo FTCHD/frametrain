@@ -3,7 +3,6 @@
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import type { Config, State } from '..'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import { choicesRepresentation } from '../utils'
 import ReviewAnswersView from '../views/Review'
 
 export default async function review(
@@ -16,31 +15,23 @@ export default async function review(
     const pastAnswers = state.answers?.[student] ?? []
 
     const newState = state
-    const nextPage = params?.currentPage !== undefined ? Number(params?.currentPage) + 1 : 1
-    const qnaCount = config.qna.length
-    const currentPage = nextPage - 1
-    const lastPage = nextPage === qnaCount
-    const currentQnaIndex = params?.currentPage ? currentPage : 0
+    const currentPage = params?.currentPage === undefined ? 0 : Number.parseInt(params?.currentPage)
+    const nextPage = currentPage > 0 ? currentPage + 1 : 1
+    const lastPage = currentPage === config.qna.length
 
     const buttons: FrameButtonMetadata[] = []
 
-    const qna = config.qna[currentQnaIndex]
+    const qna = config.qna[currentPage - 1]
 
-    const { qna: qnas, ...rest } = config
+    const { qna: qnas } = config
 
-    const choiceType = qna.isNumeric ? 'numeric' : 'alpha'
     const foundChoice = pastAnswers.find((a) => a.questionIndex === qna.index)
-    const userChoice = foundChoice?.answerIndex ? foundChoice.answerIndex - 1 : 0
-    const userAnswer = choicesRepresentation[choiceType][userChoice]
+    const userAnswer = foundChoice!.answer
 
-    const correctAnswers = pastAnswers.reduce((acc, answer) => {
-        const qna = config.qna[answer.questionIndex - 1]
-        const choice =
-            choicesRepresentation[qna.isNumeric ? 'numeric' : 'alpha'][answer.answerIndex - 1]
-        if (qna.answer === choice) {
-            return acc + 1
-        }
-        return acc
+    const correctAnswers = pastAnswers.reduce((acc, past) => {
+        const qna = config.qna[past.questionIndex]
+
+        return qna.answer === past.answer ? acc + 1 : acc
     }, 0)
 
     const showImage = correctAnswers === config.qna.length
@@ -52,34 +43,26 @@ export default async function review(
         if (showImage) {
             if (config.success.image) {
                 buttons.push({
-                    label: 'A Gift For you',
+                    label: 'Rewards',
                 })
             }
-        } else {
-            buttons.push({
-                label: 'Create Your Own',
-                action: 'link',
-                target: 'https://frametra.in',
-            })
         }
+        buttons.push({
+            label: 'Create Your Own',
+            action: 'link',
+            target: 'https://frametra.in',
+        })
     } else {
         buttons.push({ label: '→' })
     }
 
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-
-    const colors = {
-        background: config?.background,
-        textColor: config?.textColor,
-        barColor: config?.barColor,
-    }
+    const fonts = await loadGoogleFontAllVariants(qna.design?.qnaFont ?? 'Roboto')
 
     return {
         buttons,
         state: newState,
-        fonts: roboto,
-        aspectRatio: '1.91:1',
-        component: ReviewAnswersView({ qnas, qna, colors, userAnswer, ...rest }),
+        fonts,
+        component: ReviewAnswersView({ total: qnas.length, qna, userAnswer }),
         functionName: lastPage ? 'success' : 'review',
         params: !lastPage ? { currentPage: nextPage } : undefined,
     }

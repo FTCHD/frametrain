@@ -1,123 +1,128 @@
 import type { Config as BaseConfig } from '..'
 
-type Config = Omit<BaseConfig, 'qna'> & {
+type Config = {
     qna: BaseConfig['qna'][number]
-    qnas: BaseConfig['qna']
+    total: number
 }
 
-export default function QuestionView(config: Config) {
-    const { qna, background, textColor, qnas } = config
-
+export default function QuestionView({ qna, total }: Config) {
     const backgroundProp: Record<string, string> = {}
 
-    if (background) {
-        if (background.startsWith('#')) {
-            backgroundProp['backgroundColor'] = background
+    if (qna.design?.backgroundColor) {
+        if (qna.design.backgroundColor.startsWith('#')) {
+            backgroundProp['backgroundColor'] = qna.design.backgroundColor
         } else {
-            backgroundProp['backgroundImage'] = background
+            backgroundProp['backgroundImage'] = qna.design.backgroundColor
         }
     } else {
         backgroundProp['backgroundColor'] = '#09203f'
     }
+
     const question = qna.question.toUpperCase()
-    const paragraphs = question.split('\n')
-    const percentage = (qna.index / qnas.length) * 100
+    const answers = qna.answers.toUpperCase().split('\n')
+    const percentage = (qna.index + 1 / total) * 100
 
     return (
         <div
             style={{
-                width: '100%',
-                height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between',
+                position: 'relative',
                 alignItems: 'center',
-                // textAlign: 'center',
-                // fontFamily: 'Roboto',
-                // fontSize: '50px',
-                color: '#ffffff',
-                padding: '30px',
-                paddingBottom: '0px',
+                width: '100%',
+                height: '100%',
+                fontFamily: qna.design?.qnaFont ?? 'Roboto',
+                fontStyle: qna.design?.qnaStyle ?? 'normal',
                 ...backgroundProp,
             }}
         >
             <div
                 style={{
                     width: '100%',
+                    height: '100%',
                     display: 'flex',
+                    gap: '20px',
+                    padding: '30px',
                     flexDirection: 'column',
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    borderRadius: '10px',
-                    padding: '20px',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'relative',
                 }}
             >
-                {paragraphs.map((p) => (
-                    <p
-                        key={p}
-                        style={{
-                            width: '100%',
-                            fontFamily: 'Roboto',
-                            color: textColor || 'white',
-                            fontSize: '25px',
-                            fontWeight: 500,
-                            lineHeight: '1.4',
-                            textWrap: 'balance',
-                            overflowWrap: 'break-word',
-                            wordWrap: 'break-word',
-                            // height: '200px',
-                            // this is needed as it doesn't break on the "@" character
-                            // https://css-tricks.com/when-a-line-doesnt-break
-                            // wordBreak: 'break-all',
-                        }}
-                    >
-                        {p}
-                    </p>
-                ))}
+                <span
+                    style={{
+                        fontSize: qna.design?.questionSize ?? '20px',
+                        color: qna.design?.questionColor ?? 'white',
+                        textAlign: 'center',
+                        textWrap: 'balance',
+                    }}
+                >
+                    {question}
+                </span>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '5px',
+                        // padding: '20px',
+                        width: '100%',
+                        fontSize: qna.design?.answersSize ?? '20px',
+                        color: qna.design?.answersColor ?? 'white',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    {answers.map((answer) => (
+                        <span
+                            key={answer}
+                            style={{
+                                textAlign: 'center',
+                                opacity: '0.8',
+                                textWrap: 'balance',
+                            }}
+                        >
+                            {answer}
+                        </span>
+                    ))}
+                </div>
             </div>
 
             <div
                 style={{
-                    // minHeight: '15%',
                     display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '20px',
-                    fontWeight: 600,
-                    gap: '20px',
-                    color: 'white',
-                    width: '56px',
-                    height: '56px',
+                    width: '100%',
+                    top: 0,
+                    position: 'absolute',
+                    left: 0,
                     borderRadius: '50%',
                 }}
             >
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span>
-                        {qna.index}/{qnas.length}
-                    </span>
-                    <svg width="300" height="30">
-                        <rect
-                            x="0"
-                            y="0"
-                            width="300"
-                            height="30"
-                            rx="15"
-                            ry="15"
-                            fill="#e0e0e070" // 70% opacity
-                        />
-                        <rect
-                            id="progressBar"
-                            x="0"
-                            y="0"
-                            width={(300 * percentage) / 100}
-                            height="30"
-                            rx="15"
-                            ry="15"
-                            // fill={colors?.barColor || 'yellow'}
-                            fill={'yellow'}
-                        />
-                    </svg>
-                </div>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="none"
+                    width="100%"
+                    height="10"
+                >
+                    <rect
+                        x="0"
+                        y="0"
+                        width="300"
+                        height="10"
+                        rx="15"
+                        ry="15"
+                        fill="#e0e0e070" // 70% opacity
+                    />
+                    <rect
+                        id="progressBar"
+                        x="0"
+                        y="0"
+                        width={(300 * percentage) / 100}
+                        height="10"
+                        rx="15"
+                        ry="15"
+                        fill={qna.design?.barColor || 'yellow'}
+                    />
+                </svg>
             </div>
         </div>
     )

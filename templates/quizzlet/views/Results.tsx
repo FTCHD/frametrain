@@ -1,31 +1,51 @@
+import type { Config } from '..'
+
 export default function ResultsView(
     questions: number,
-    percentageForEachOption: Record<string, number>,
-    choicesForOption: Record<string, number>,
-    colors: Record<string, string | undefined>
+    scores: Record<string, number>,
+    config: Config
 ) {
     const backgroundProp: Record<string, string> = {}
+    const labelBackgroundProp: Record<string, string> = {}
+
     const options: { key: string; displayLabel: string; color: string }[] = [
         {
-            key: 'correct_answers',
-            displayLabel: 'Correct Answers',
-            color: 'green',
+            key: 'yes',
+            displayLabel: config.results.yesLabel,
+            color: config.results.yesBarColor,
         },
         {
-            key: 'wrong_answers',
-            displayLabel: 'Wrong Answers',
-            color: 'red',
+            key: 'no',
+            displayLabel: config.results.noLabel,
+            color: config.results.noBarColor,
         },
     ]
 
-    if (colors?.background) {
-        if (colors.background.startsWith('#')) {
-            backgroundProp['backgroundColor'] = colors.background
+    const percentages = Object.fromEntries(
+        Object.entries(scores).map(([key, value]) => [key, (value / questions) * 100]) as [
+            string,
+            number,
+        ][]
+    ) as Record<string, number>
+
+    if (config.results.background) {
+        if (config.results.background.startsWith('#')) {
+            backgroundProp['backgroundColor'] = config.results.background
         } else {
-            backgroundProp['backgroundImage'] = colors.background
+            backgroundProp['backgroundImage'] = config.results.background
         }
     } else {
         backgroundProp['backgroundColor'] = '#09203f'
+    }
+
+    if (config.results.labelBackground) {
+        if (config.results.labelBackground.startsWith('#')) {
+            labelBackgroundProp['backgroundColor'] = config.results.labelBackground
+        } else {
+            labelBackgroundProp['backgroundImage'] = config.results.labelBackground
+        }
+    } else {
+        labelBackgroundProp['backgroundColor'] = 'rgba(255, 255, 255, 0.22)'
     }
 
     return (
@@ -47,10 +67,13 @@ export default function ResultsView(
                     display: 'flex',
                     fontSize: '50px',
                     fontWeight: 500,
-                    color: colors?.textColor || 'white',
+                    textAlign: 'center',
+                    alignItems: 'center',
+                    color: 'white',
                 }}
             >
-                Your overall results for {questions} questions
+                Your grade for this quiz is {Math.round(percentages.yes).toFixed(0)}% out of{' '}
+                {questions} questions.
             </div>
             <div
                 style={{
@@ -58,9 +81,9 @@ export default function ResultsView(
                     flexDirection: 'column',
                     padding: '30px',
                     borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.22)',
-                    color: colors?.textColor || 'white',
+                    color: 'white',
                     gap: '20px',
+                    ...labelBackgroundProp,
                 }}
             >
                 {options.map((option) => (
@@ -91,7 +114,7 @@ export default function ResultsView(
                                     paddingLeft: '5px',
                                 }}
                             >
-                                ({choicesForOption[option.key] ?? 0})
+                                ({scores[option.key] ?? 0})
                             </span>
                         </span>
 
@@ -109,7 +132,7 @@ export default function ResultsView(
                                 id="progressBar"
                                 x="0"
                                 y="0"
-                                width={(300 * percentageForEachOption?.[option.key]) / 100}
+                                width={(300 * percentages[option.key]) / 100}
                                 height="30"
                                 rx="15"
                                 ry="15"

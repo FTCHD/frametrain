@@ -3,30 +3,71 @@ import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import functions from './functions'
 
+export type StyleConfig = {
+    textColor: string
+    backgroundColor: string
+    fontSize: string
+    fontWeight: string
+    fontFamily: string
+    fontStyle:
+        | 'italic'
+        | 'normal'
+        | 'oblique'
+        | '-moz-initial'
+        | 'inherit'
+        | 'initial'
+        | 'revert'
+        | 'revert-layer'
+        | 'unset'
+}
+
 export interface Config extends BaseConfig {
     qna: {
         question: string
+        answers: string
         answer: string
-        choices: number
-        isNumeric: boolean
+        choices: string[]
         index: number
+        design: {
+            questionSize: string
+            questionColor: string
+            answersSize: string
+            answersColor: string
+            qnaFont: string
+            qnaStyle: string
+            barColor: string
+            backgroundColor?: string
+            reviewColor?: string
+            reviewBackgroundColor?: string
+            reviewSize?: string
+        } | null
     }[]
-    beforeReview?: {
-        screen: string
-        label: string
+    results: {
+        background: string
+        yesLabel: string
+        yesBarColor: string
+        noLabel: string
+        noBarColor: string
+        labelBackground: string
+        labelColor: string
     }
     background?: string
     textColor?: string
     barColor?: string
     cover: {
-        image: string | null
-        label: string | null
+        label: string
+        image?: string
+        text?: string
+        subtitle?: string
+        configuration?: StyleConfig
     }
     success: {
-        image: string | null
-        label: string | null
-        href: string | null
+        image?: string
+        url?: string
+        label?: string
     }
+    fids: string[]
+    answerOnce: boolean
 }
 
 export interface State extends BaseState {
@@ -37,7 +78,7 @@ export interface State extends BaseState {
     answers: {
         [fid: string]: {
             questionIndex: number
-            answerIndex: number
+            answer: string
         }[]
     }
 }
@@ -53,19 +94,35 @@ export default {
     cover,
     initialConfig: {
         qna: [],
-        beforeReview: {
-            screen: `Next, let's review your answers.`,
-            label: 'Review your answers',
-        },
         cover: {
-            image: null,
-            label: null,
+            label: 'START',
+            type: 'text',
+            text: `🎉 Welcome to Quizzlet!
+      Press "START" to being your journey`,
+            configuration: {
+                textColor: '#ffffff',
+                backgroundColor: '#09203f',
+                fontSize: '50px',
+                fontWeight: '900',
+                fontFamily: 'Roboto',
+            },
         },
         success: {
             image: null,
             label: null,
             href: null,
         },
+        fids: [],
+        answerOnce: false,
+        results: {
+            yesLabel: 'Correct Answers',
+            yesBarColor: 'green',
+            noLabel: 'Wrong Answers',
+            noBarColor: 'red',
+            background: '#09203f',
+            labelBackground: 'rgba(255, 255, 255, 0.22)',
+            labelColor: 'white',
+        },
     },
-    requiresValidation: false,
+    requiresValidation: true,
 } satisfies BaseTemplate

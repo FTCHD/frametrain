@@ -2,43 +2,61 @@
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import type { Config, State } from '..'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import AnswerView from '../views/Answer'
-import { choicesRepresentation } from '../utils'
+import QuestionView from '../views/Question'
+import ResultsView from '../views/Results'
 
 export default async function page(
     body: FrameActionPayload,
-    { qna: qnas, ...config }: Config,
+    config: Config,
     state: State,
     _params: any
 ): Promise<BuildFrameData> {
     const user = body.untrustedData.fid.toString()
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const qna = qnas[0]
-    const choiceType = qna.isNumeric ? 'numeric' : 'alpha'
+    const qna = config.qna[0]
+    const fonts = await loadGoogleFontAllVariants(qna.design?.qnaFont ?? 'Roboto')
     const buttons: FrameButtonMetadata[] = []
+    const pastAnswers = state.answers?.[user] ?? []
+    const scores = { yes: 0, no: 0 }
 
-    // reset user state
-    const newState = {
-        ...state,
-        answers: {
-            ...state.answers,
-            [user]: [],
-        },
+    if (config.answerOnce) {
+        scores.yes = pastAnswers.reduce((acc, past) => {
+            const qna = config.qna[past.questionIndex]
+            return qna.answer === past.answer ? acc + 1 : acc
+        }, 0)
+
+        scores.no = pastAnswers.reduce((acc, past) => {
+            const qna = config.qna[past.questionIndex]
+
+            return qna.answer !== past.answer ? acc + 1 : acc
+        }, 0)
+
+        buttons.push(
+            {
+                label: '← Home',
+            },
+            {
+                label: 'My Answers',
+            },
+            {
+                label: 'Create Your Own',
+                action: 'link',
+                target: 'https://frametra.in',
+            }
+        )
+    } else {
+        for (const label of qna.choices) {
+            buttons.push({ label })
+        }
     }
 
-    const choices = Array.from({ length: qna.choices })
-
-    // loop through each choices and use their index to get the label representation
-    choices.forEach((_, choice) => {
-        buttons.push({ label: choicesRepresentation[choiceType][choice] })
-    })
-
     return {
-        state: newState,
+        state,
         buttons,
-        fonts: roboto,
-        aspectRatio: '1.91:1',
-        component: AnswerView({ qna, qnas, ...config }),
-        functionName: 'answer',
+        fonts,
+        component: config.answerOnce
+            ? ResultsView(config.qna.length, scores, config)
+            : QuestionView({ qna, total: config.qna.length }),
+        functionName: config.answerOnce ? 'results' : 'answer',
+        params: config.answerOnce ? { currentPage: 1 } : undefined,
     }
 }
