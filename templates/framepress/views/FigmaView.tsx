@@ -95,15 +95,13 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
                     // in the SVG. This is a failsafe mode. In general, an alignment will be
                     // provided, and we use CSS to align within the rendering bounds extacted
                     // from the Figma file.
-                    const horizontalAlignment = textAlignHorizontalToCss(
-                        config?.textAlignHorizontal
-                    )
-                    const verticalAlignment = textAlignVerticalToCss(config?.textAlignVertical)
+                    const horizontalAlign = textAlignHorizontalToCss(config?.textAlignHorizontal)
+                    const verticalAlign = textAlignVerticalToCss(config?.textAlignVertical)
 
-                    const x = horizontalAlignment ? config.boundsX : config.x
+                    const x = horizontalAlign ? config.boundsX : config.x
                     // y is the text _baseline_ when no vert alignment is specified, but we
                     // want the top y co-ordinate of the text block
-                    const y = verticalAlignment ? config.boundsY : config.y - fontSize
+                    const y = verticalAlign ? config.boundsY : config.y - fontSize
 
                     // Width and height are actually only used when the corresponding alignment is specified
                     const width = config.boundsWidth
@@ -119,14 +117,13 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
                             style={{
                                 position: 'absolute',
                                 display: 'flex',
-                                ...(horizontalAlignment
-                                    ? { justifyContent: horizontalAlignment }
-                                    : {}),
-                                ...(verticalAlignment ? { alignItems: verticalAlignment } : {}),
+                                flexDirection: 'column',
+                                ...(horizontalAlign ? { justifyContent: verticalAlign } : {}),
+                                ...(verticalAlign ? { alignItems: horizontalAlign } : {}),
                                 left: `${x}px`,
                                 top: `${y}px`,
-                                ...(horizontalAlignment ? { width: `${width}px` } : {}),
-                                ...(verticalAlignment ? { height: `${height}px` } : {}),
+                                ...(horizontalAlign ? { width: `${width}px` } : {}),
+                                ...(verticalAlign ? { height: `${height}px` } : {}),
 
                                 color: fill,
                                 // Not currently supported by satori: https://github.com/vercel/satori/issues/578
@@ -139,7 +136,12 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
                                 ...css,
                             }}
                         >
-                            {he.decode(content)}
+                            {he
+                                .decode(content)
+                                .split('\n')
+                                .map((line, index) => (
+                                    <div key={index}>{line}</div>
+                                ))}
                         </div>
                     )
                 })}
