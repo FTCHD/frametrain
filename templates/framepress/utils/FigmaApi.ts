@@ -17,7 +17,8 @@ export type FigmaDesign = {
     height: number
     aspectRatio: number
     textLayers: FigmaTextLayer[]
-    svgBase64: string
+    svgXml: string
+    svgDataUrl: string
 }
 
 export type TextAlignHorizontal = undefined | 'LEFT' | 'CENTER' | 'RIGHT'
@@ -52,7 +53,8 @@ export type FigmaSvgImage = {
     height: number
     aspectRatio: number
     textNodes: FigmaSvgText[]
-    base64: string
+    xml: string
+    dataUrl: string
 }
 
 export type FigmaSvgText = {
@@ -165,7 +167,8 @@ export async function getFigmaDesign(
             height: svg.height,
             aspectRatio: svg.aspectRatio,
             textLayers: textLayers,
-            svgBase64: svg.base64,
+            svgXml: svg.xml,
+            svgDataUrl: svg.dataUrl,
         }
 
         return {
@@ -318,19 +321,19 @@ export async function getFigmaSvgImage(
             return { success: false, error: `Failed to download SVG: ${svgResponse.statusText}` }
         }
 
-        const svg = await svgResponse.text()
+        const xml = await svgResponse.text()
         console.timeEnd('framepress: download exported SVG from Figma')
 
         console.time('framepress: process SVG')
-        const { width, height } = getSvgDimensions(svg)
+        const { width, height } = getSvgDimensions(xml)
 
         if (width === 0 || height === 0) {
             return { success: false, error: 'Failed to extract dimensions from SVG' }
         }
 
-        const svgTextNodes = getSvgTextNodes(svg)
+        const svgTextNodes = getSvgTextNodes(xml)
         const textNodes = svgTextNodes.map(parseSvgText)
-        const base64 = svgToBase64(svg)
+        const dataUrl = svgToDataUrl(xml)
         console.timeEnd('framepress: process SVG')
 
         return {
@@ -340,17 +343,13 @@ export async function getFigmaSvgImage(
                 height: height,
                 aspectRatio: width / height,
                 textNodes: textNodes,
-                base64: base64,
+                xml: xml,
+                dataUrl: dataUrl,
             },
         }
     } catch (error) {
         const message = error instanceof Error ? error.message : `${error}`
         return { success: false, error: `Network or unknown error: ${message}` }
-    }
-
-    function svgToBase64(svg: any) {
-        const base64 = Buffer.from(svg).toString('base64')
-        return 'data:image/svg+xml;base64,' + base64
     }
 
     function getSvgDimensions(svg: any) {
@@ -405,6 +404,16 @@ export async function getFigmaSvgImage(
             content,
         }
     }
+}
+
+/**
+ * Converts an SVG to a data URL
+ * @param svg
+ * @returns Data URL
+ */
+export function svgToDataUrl(svg: any) {
+    const base64 = Buffer.from(svg).toString('base64')
+    return 'data:image/svg+xml;base64,' + base64
 }
 
 /**

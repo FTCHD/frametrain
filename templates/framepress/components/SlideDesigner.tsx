@@ -12,6 +12,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
 import type {
     AspectRatio,
+    BaseImagePaths,
     ButtonConfig,
     FigmaMetadata,
     SlideConfig,
@@ -21,7 +22,7 @@ import type {
 import { type ButtonTarget, ButtonDesigner } from './ButtonDesigner'
 import { FigmaDesigner } from './FigmaDesigner'
 import { TextLayerDesigner } from './TextLayerDesigner'
-import { type FigmaSvgImage, getFigmaSvgImage, type FigmaTextLayer } from '../utils/FigmaApi'
+import { type FigmaSvgImage, getFigmaSvgImage } from '../utils/FigmaApi'
 import { useEffect, useState } from 'react'
 import {
     FileDownIcon,
@@ -78,10 +79,11 @@ const SlideDesigner = ({
     const updateFigma = (
         figmaUrl: string,
         figmaMetadata: FigmaMetadata,
+        baseImagePaths: BaseImagePaths,
         textLayers: TextLayerConfigs
     ) => {
         console.debug(`SlideDesigner[${slideConfig.id}]::updateFigma()`)
-        onUpdate({ ...slideConfig, figmaUrl, figmaMetadata, textLayers })
+        onUpdate({ ...slideConfig, figmaUrl, figmaMetadata, baseImagePaths, textLayers })
     }
 
     const updateAspectRatio = (aspectRatio: AspectRatio) => {
@@ -112,7 +114,7 @@ const SlideDesigner = ({
                 <div className="overflow-hidden w-[100px] h-[100px] border-[1px] border-dashed border-white rounded-md">
                     {!isLoadingDesign && figmaSvgImage && (
                         <img
-                            src={figmaSvgImage?.base64}
+                            src={figmaSvgImage?.dataUrl}
                             alt="Preview"
                             className="justify-self-center"
                         />

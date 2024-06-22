@@ -23,29 +23,15 @@ export default async function buildFrame(
     if (!slideConfig.figmaUrl) {
         throw new FrameError('Please configure the Figma URL for this slide')
     }
-
-    console.time('framepress: getFigmaSvgImage()')
-    const svgImage = await getFigmaSvgImage(config.figmaPAT, slideConfig.figmaUrl)
-    console.timeEnd('framepress: getFigmaSvgImage()')
-
-    if (!svgImage.success) {
-        throw new FrameError(svgImage.error)
-    }
-
     console.time('framepress: FigmaView()')
-    const view = FigmaView(slideConfig, svgImage.value)
+    const view = FigmaView(slideConfig)
     console.timeEnd('framepress: FigmaView()')
 
     // We need to merge the fonts in the design with the fonts in the config
     // (fonts in the design may be missing from the config if the Figma was
     // updated without updating the config in the Inspector)
     console.time('framepress: fonts')
-    const fontsInDesign = Object.values(svgImage.value.textNodes).map(
-        (textLayer) =>
-            new FontConfig(textLayer.fontFamily, textLayer.fontWeight, textLayer.fontStyle)
-    )
-
-    const fontsInConfig = Object.values(slideConfig.textLayers).map(
+    const fontsUsed = Object.values(slideConfig.textLayers).map(
         (textLayerConfig) =>
             new FontConfig(
                 textLayerConfig.fontFamily,
@@ -54,10 +40,9 @@ export default async function buildFrame(
             )
     )
 
-    const combinedFonts = [...fontsInDesign, ...fontsInConfig]
-    const distinctFontKeys = Array.from(new Set(combinedFonts.map((font) => font.key)))
+    const distinctFontKeys = Array.from(new Set(fontsUsed.map((font) => font.key)))
     const distinctFonts = distinctFontKeys
-        .map((key) => combinedFonts.find((font) => font.key === key))
+        .map((key) => fontsUsed.find((font) => font.key === key))
         .filter((font): font is FontConfig => font !== undefined)
     const fontPromises = distinctFonts.map(async ({ fontFamily, fontWeight, fontStyle }) => {
         const timer = `framepress: loading font ${fontFamily} ${fontWeight} ${fontStyle}`

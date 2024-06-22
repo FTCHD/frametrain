@@ -1,6 +1,8 @@
-import type { FigmaSvgImage, TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
-import type { SlideConfig } from '../Config'
+import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
+import type { SlideConfig, TextLayerConfig } from '../Config'
 import he from 'he'
+import { dimensionsForRatio } from '@/sdk/constants'
+import { FrameError } from '@/sdk/handlers'
 
 /*
 
@@ -17,7 +19,7 @@ it produces a parent <div> containing an <img> for all non-text SVG nodes,
 and then a <div> containing transformed versions of the SVG text nodes.
 
 */
-export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgImage) {
+export default function FigmaView(slideConfig: SlideConfig) {
     const parseCSS = (cssString: string): Record<string, string> => {
         if (!cssString) return {}
 
@@ -59,14 +61,32 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
         }
     }
 
+    const baseImagePath = slideConfig.baseImagePaths[slideConfig.aspectRatio]
+    const dimensions =
+        slideConfig.aspectRatio == '1.91:1'
+            ? dimensionsForRatio['1.91/1']
+            : slideConfig.aspectRatio == '1:1'
+              ? dimensionsForRatio['1/1']
+              : undefined
+
+    if (!dimensions) throw new FrameError('Unsupported aspect ratio')
+
+    const baseImageUrl = process.env.NEXT_PUBLIC_CDN_HOST + '/frames/' + baseImagePath
+
     return (
-        <div style={{ display: 'flex' }}>
+        <div
+            style={{
+                display: 'flex',
+                width: dimensions.width,
+                height: dimensions.height,
+            }}
+        >
             <img
                 style={{ position: 'absolute' }}
                 alt={slideConfig.title}
-                width={svgImage.width}
-                height={svgImage.height}
-                src={svgImage.base64}
+                width={dimensions.width}
+                height={dimensions.height}
+                src={baseImageUrl}
             />
             <div
                 style={{
@@ -75,77 +95,71 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
                     width: '100%',
                 }}
             >
-                {svgImage.textNodes.map((svg) => {
-                    // If the figma design was modified after configuration,
-                    // we will not find a layer config. We could give an error,
-                    // but that seems unfriendly, instead we fallback to the layer.
-                    const config = slideConfig.textLayers[svg.figmaNodeId]
-                    if (config && !config.enabled) return <></>
-
-                    const fill = config?.fill || svg.fill
-                    const stroke = config?.stroke || svg.stroke
-                    const fontFamily = config?.fontFamily || svg.fontFamily
-                    const fontSize = config?.fontSize || svg.fontSize
-                    const fontWeight = config?.fontWeight || svg.fontWeight
-                    const fontStyle = config?.fontStyle || svg.fontStyle
-                    const letterSpacing = config?.letterSpacing || svg.letterSpacing
-                    const css = parseCSS(config?.cssStyle || svg.style)
-
-                    // When no alignment is specified, we use the exact co-ordinates specified
-                    // in the SVG. This is a failsafe mode. In general, an alignment will be
-                    // provided, and we use CSS to align within the rendering bounds extacted
-                    // from the Figma file.
-                    const horizontalAlign = textAlignHorizontalToCss(config?.textAlignHorizontal)
-                    const verticalAlign = textAlignVerticalToCss(config?.textAlignVertical)
-
-                    const x = horizontalAlign ? config.boundsX : config.x
-                    // y is the text _baseline_ when no vert alignment is specified, but we
-                    // want the top y co-ordinate of the text block
-                    const y = verticalAlign ? config.boundsY : config.y - fontSize
-
-                    // Width and height are actually only used when the corresponding alignment is specified
-                    const width = config.boundsWidth
-                    const height = config.boundsHeight
-
-                    // Allow the user to backout of the override by saving empty content
-                    const encodedContent =
-                        config?.content && config.content.length > 0 ? config.content : svg.content
-
-                    const content = he.decode(encodedContent)
-                    const contentLines = content.split('\n')
-
-                    return (
-                        <div
-                            key={svg.id}
-                            style={{
-                                position: 'absolute',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                ...(horizontalAlign ? { justifyContent: verticalAlign } : {}),
-                                ...(verticalAlign ? { alignItems: horizontalAlign } : {}),
-                                left: `${x}px`,
-                                top: `${y}px`,
-                                ...(horizontalAlign ? { width: `${width}px` } : {}),
-                                ...(verticalAlign ? { height: `${height}px` } : {}),
-
-                                color: fill,
-                                // Not currently supported by satori: https://github.com/vercel/satori/issues/578
-                                WebkitTextStroke: stroke,
-                                fontSize: fontSize,
-                                fontWeight: fontWeight || '400',
-                                fontFamily: fontFamily,
-                                fontStyle: fontStyle,
-                                letterSpacing: letterSpacing,
-                                ...css,
-                            }}
-                        >
-                            {contentLines.map((line, index) => (
-                                <div key={index}>{line == '' ? '\u00a0' : line}</div>
-                            ))}
-                        </div>
-                    )
-                })}
+                {Object.values(slideConfig.textLayers).map(renderTextLayer)}
             </div>
         </div>
     )
+
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: invalid
+    function renderTextLayer(textLayer: TextLayerConfig) {
+        if (!textLayer.enabled) return <></>
+
+        const css = parseCSS(textLayer.cssStyle)
+
+        // When no alignment is specified, we use the exact co-ordinates specified
+        // in the SVG. This is a failsafe mode. In general, an alignment will be
+        // provided, and we use CSS to align within the rendering bounds extacted
+        // from the Figma file.
+        const horizontalAlign = textAlignHorizontalToCss(textLayer?.textAlignHorizontal)
+        const verticalAlign = textAlignVerticalToCss(textLayer?.textAlignVertical)
+
+        const x = horizontalAlign ? textLayer.boundsX : textLayer.x
+        // y is the text _baseline_ when no vert alignment is specified, but we
+        // want the top y co-ordinate of the text block
+        const y = verticalAlign ? textLayer.boundsY : textLayer.y - textLayer.fontSize
+
+        // Width and height are actually only used when the corresponding alignment is specified
+        const width = textLayer.boundsWidth
+        const height = textLayer.boundsHeight
+
+        // Allow the user to backout of the override by saving empty content
+        const encodedContent =
+            textLayer?.content && textLayer.content.length > 0
+                ? textLayer.content
+                : textLayer.content
+
+        const content = he.decode(encodedContent)
+        const contentLines = content.split('\n')
+
+        return (
+            <div
+                key={textLayer.id}
+                style={{
+                    position: 'absolute',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    ...(horizontalAlign ? { justifyContent: verticalAlign } : {}),
+                    ...(verticalAlign ? { alignItems: horizontalAlign } : {}),
+                    left: `${x}px`,
+                    top: `${y}px`,
+                    ...(horizontalAlign ? { width: `${width}px` } : {}),
+                    ...(verticalAlign ? { height: `${height}px` } : {}),
+
+                    color: textLayer.fill,
+                    // Not currently supported by satori: https://github.com/vercel/satori/issues/578
+                    WebkitTextStroke: textLayer.stroke,
+                    fontSize: textLayer.fontSize,
+                    fontWeight: textLayer.fontWeight || '400',
+                    fontFamily: textLayer.fontFamily,
+                    fontStyle: textLayer.fontStyle,
+                    letterSpacing: textLayer.letterSpacing,
+                    ...css,
+                }}
+            >
+                {contentLines.map((line, index) => (
+                    <div key={index}>{line == '' ? '\u00a0' : line}</div>
+                ))}
+            </div>
+        )
+    }
 }

@@ -3,8 +3,14 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { CloudDownload, Loader2, RectangleHorizontal, Square } from 'lucide-react'
-import type { AspectRatio, FigmaMetadata, TextLayerConfig, TextLayerConfigs } from '../Config'
-import { getFigmaDesign, type FigmaTextLayer } from '../utils/FigmaApi'
+import type {
+    AspectRatio,
+    BaseImagePaths,
+    FigmaMetadata,
+    TextLayerConfig,
+    TextLayerConfigs,
+} from '../Config'
+import { getFigmaDesign, svgToDataUrl } from '../utils/FigmaApi'
 import { Input } from '@/components/shadcn/Input'
 import { Button } from '@/components/shadcn/Button'
 import {
@@ -15,6 +21,10 @@ import {
     SelectValue,
 } from '@/components/shadcn/Select'
 import { Badge } from '@/components/shadcn/Badge'
+import { dimensionsForRatio } from '@/sdk/constants'
+import { useFrameId, useUploadImage } from '@/sdk/hooks'
+
+const SVG_TEXT_DEBUG_ENABLED = false
 
 type FigmaDesignerProps = {
     slideConfigId: string
@@ -23,7 +33,12 @@ type FigmaDesignerProps = {
     figmaPAT: string
     figmaUrl?: string
     figmaMetadata?: FigmaMetadata
-    onUpdate: (figmaUrl: string, figmaMetadata: FigmaMetadata, textLayers: TextLayerConfigs) => void
+    onUpdate: (
+        figmaUrl: string,
+        figmaMetadata: FigmaMetadata,
+        baseImagePaths: BaseImagePaths,
+        textLayers: TextLayerConfigs
+    ) => void
     onUpdateAspectRatio: (aspectRatio: AspectRatio) => void
 }
 
@@ -37,6 +52,8 @@ export const FigmaDesigner = ({
     onUpdate,
     onUpdateAspectRatio,
 }: FigmaDesignerProps) => {
+    const frameId = useFrameId()
+    const uploadImage = useUploadImage()
     const [newUrl, setNewUrl] = useState(figmaUrl)
     const [isUpdating, setIsUpdating] = useState(false)
 
@@ -45,6 +62,7 @@ export const FigmaDesigner = ({
 
         setIsUpdating(true)
 
+        // Fetch the Figma design
         const figmaDesignResult = await getFigmaDesign(figmaPAT, newUrl)
         if (!figmaDesignResult.success) {
             toast.error(figmaDesignResult.error)
@@ -54,6 +72,7 @@ export const FigmaDesigner = ({
 
         const figmaDesign = figmaDesignResult.value
 
+        // Extract metadata for the slide config
         const figmaMetadata = {
             name: figmaDesign.name,
             lastModified: figmaDesign.lastModified,
@@ -62,22 +81,35 @@ export const FigmaDesigner = ({
             aspectRatio: figmaDesign.aspectRatio,
         }
 
+        // Update the text layers where configured to do so
         const updatedTextLayers = figmaDesign.textLayers
             .map((discoveredTextLayer) => {
                 // Insert the text layer if it's a new one,
                 // othewrise replace the text layer if updates are allowed
                 const existingTextLayer = textLayers[discoveredTextLayer.id]
-                if (!existingTextLayer || existingTextLayer.allowFigmaUpdates) {
+
+                // Create a new layer
+                if (!existingTextLayer)
                     return {
                         ...discoveredTextLayer,
-                        allowFigmaUpdates: existingTextLayer?.allowFigmaUpdates,
+                        allowFigmaUpdates: false,
                         enabled: true,
+                    }
+
+                // Update the existing layer
+                if (existingTextLayer.allowFigmaUpdates) {
+                    return {
+                        ...discoveredTextLayer,
+                        allowFigmaUpdates: existingTextLayer.allowFigmaUpdates,
+                        enabled: existingTextLayer.enabled,
                     }
                 }
 
+                // Return unaltered existing layer
                 return existingTextLayer
             })
             .reduce(
+                // Produce a map
                 (acc, textLayer) => {
                     acc[textLayer.id] = textLayer
                     return acc
@@ -85,10 +117,70 @@ export const FigmaDesigner = ({
                 {} as Record<string, TextLayerConfig>
             )
 
-        // At this point, url is guaranteed valid
-        onUpdate(newUrl!, figmaMetadata, updatedTextLayers)
+        // Render the SVG without text elements as a performance optimization
+        // We render to both target aspect ratios for simplicity
+        const baseImagePaths = {
+            '1:1': await renderSvg(dimensionsForRatio['1/1']),
+            '1.91:1': await renderSvg(dimensionsForRatio['1.91/1']),
+        }
+
+        // At this point, newUrl is guaranteed valid
+        onUpdate(newUrl!, figmaMetadata, baseImagePaths, updatedTextLayers)
 
         setIsUpdating(false)
+
+        async function renderSvg({ width, height }: { width: number; height: number }) {
+            const rendered = await new Promise<string>((resolve, reject) => {
+                const svg = new Image()
+                svg.onload = () => {
+                    const canvas = document.createElement('canvas')
+                    canvas.width = width
+                    canvas.height = height
+                    const ctx = canvas.getContext('2d')
+                    ctx!.drawImage(svg, 0, 0, width, height)
+                    const renderedData = canvas.toDataURL('image/png')
+                    resolve(renderedData)
+                }
+                // TODO strip out text elements
+
+                const svgXml = SVG_TEXT_DEBUG_ENABLED
+                    ? figmaDesign.svgXml
+                    : removeTextNodesFromSVG(figmaDesign.svgXml)
+
+                svg.src = svgToDataUrl(svgXml)
+            })
+
+            // Upload the images to the CDN
+            // TODO cleanup old uploads
+            const data = rendered.slice('data:image/png;base64,'.length)
+            const { fileName } = await uploadImage({
+                base64String: data,
+                contentType: 'image/png',
+            })
+
+            const path = frameId + '/' + fileName
+            console.debug(`Uploaded ${width}x${height} to ${path}`)
+            return path
+        }
+
+        function removeTextNodesFromSVG(svgString: string): string {
+            // Create a DOM parser to parse the SVG string
+            const parser = new DOMParser()
+            const svgDoc = parser.parseFromString(svgString, 'image/svg+xml')
+
+            // Get all text elements
+            const textElements = svgDoc.getElementsByTagName('text')
+
+            // Remove each text element
+            while (textElements.length > 0) {
+                const textElement = textElements[0]
+                textElement.parentNode?.removeChild(textElement)
+            }
+
+            // Serialize the modified SVG document back to a string
+            const serializer = new XMLSerializer()
+            return serializer.serializeToString(svgDoc)
+        }
     }
 
     return (

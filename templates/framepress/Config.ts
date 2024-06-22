@@ -14,10 +14,13 @@ export type SlideConfig = {
     title?: string
     description?: string
     figmaUrl?: string
-    figmaMetadata: FigmaMetadata
+    figmaMetadata?: FigmaMetadata
+    baseImagePaths: BaseImagePaths
     textLayers: TextLayerConfigs
     buttons: ButtonConfig[]
 }
+
+export type BaseImagePaths = Record<AspectRatio, string>
 
 export type TextLayerConfigs = Record<string, TextLayerConfig>
 

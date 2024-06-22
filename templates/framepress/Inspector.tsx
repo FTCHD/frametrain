@@ -1,6 +1,6 @@
 'use client'
 
-import { useFrameConfig } from '@/sdk/hooks'
+import { useFrameConfig, useFrameId } from '@/sdk/hooks'
 import type { FramePressConfig, SlideConfig } from './Config'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './Constants'
 import SlideDesigner from './components/SlideDesigner'
@@ -47,9 +47,7 @@ export default function Inspector() {
         })
     }
 
-    type AddedSlidePosition = 'above' | 'below'
-
-    const addSlide = (index: number, position: AddedSlidePosition) => {
+    const addSlide = (index: number, position: 'above' | 'below') => {
         console.debug(`Inspector::addSlide(${index}, ${position})`)
 
         const newSlide: SlideConfig = {
@@ -152,11 +150,11 @@ export default function Inspector() {
             {config.slides?.map((slideConfig, index) => (
                 <SlideDesigner
                     key={slideConfig.id}
+                    slideConfig={slideConfig}
                     figmaPAT={config.figmaPAT}
                     isFirstSlide={index == 0}
                     isSecondSlide={index == 1}
                     isLastSlide={index == config.slides.length - 1}
-                    slideConfig={slideConfig}
                     buttonTargets={buttonTargets}
                     onUpdate={(updatedSlideConfig) => updateSlide(updatedSlideConfig)}
                     onMoveUp={() => moveSlide(index, 'up')}
