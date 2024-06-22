@@ -84,7 +84,7 @@ export interface State extends BaseState {
 }
 
 export default {
-    name: 'Quizzlet Template',
+    name: 'Quizlet Template',
     description: 'Create your own Multiple-Choice Questions Quiz as a Farcaster Frame.',
     creatorFid: '260812',
     creatorName: 'Steve',

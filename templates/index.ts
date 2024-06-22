@@ -2,7 +2,7 @@ import discourse from './discourse'
 // import basic from './basic'
 import pdf from './pdf'
 import poll from './poll'
-import quizzlet from './quizzlet'
+import quizlet from './quizlet'
 import sablier from './sablier'
 import twitter from './twitter'
 
@@ -13,5 +13,5 @@ export default {
     sablier,
     twitter,
     discourse,
-    quizzlet,
+    quizlet,
 }
