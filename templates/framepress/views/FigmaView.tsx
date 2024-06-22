@@ -108,8 +108,11 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
                     const height = config.boundsHeight
 
                     // Allow the user to backout of the override by saving empty content
-                    const content =
+                    const encodedContent =
                         config?.content && config.content.length > 0 ? config.content : svg.content
+
+                    const content = he.decode(encodedContent)
+                    const contentLines = content.split('\n')
 
                     return (
                         <div
@@ -136,12 +139,9 @@ export default function FigmaView(slideConfig: SlideConfig, svgImage: FigmaSvgIm
                                 ...css,
                             }}
                         >
-                            {he
-                                .decode(content)
-                                .split('\n')
-                                .map((line, index) => (
-                                    <div key={index}>{line}</div>
-                                ))}
+                            {contentLines.map((line, index) => (
+                                <div key={index}>{line == '' ? '\u00a0' : line}</div>
+                            ))}
                         </div>
                     )
                 })}
