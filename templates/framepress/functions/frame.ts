@@ -24,18 +24,22 @@ export default async function buildFrame(
         throw new FrameError('Please configure the Figma URL for this slide')
     }
 
+    console.time('framepress: getFigmaSvgImage()')
     const svgImage = await getFigmaSvgImage(config.figmaPAT, slideConfig.figmaUrl)
+    console.timeEnd('framepress: getFigmaSvgImage()')
 
     if (!svgImage.success) {
         throw new FrameError(svgImage.error)
     }
 
+    console.time('framepress: FigmaView()')
     const view = FigmaView(slideConfig, svgImage.value)
+    console.timeEnd('framepress: FigmaView()')
 
     // We need to merge the fonts in the design with the fonts in the config
     // (fonts in the design may be missing from the config if the Figma was
     // updated without updating the config in the Inspector)
-
+    console.time('framepress: fonts')
     const fontsInDesign = Object.values(svgImage.value.textNodes).map(
         (textLayer) =>
             new FontConfig(textLayer.fontFamily, textLayer.fontWeight, textLayer.fontStyle)
@@ -55,11 +59,15 @@ export default async function buildFrame(
     const distinctFonts = distinctFontKeys
         .map((key) => combinedFonts.find((font) => font.key === key))
         .filter((font): font is FontConfig => font !== undefined)
-    const fontPromises = distinctFonts.map(({ fontFamily, fontWeight, fontStyle }) => {
-        console.debug(`Loading font ${fontFamily} ${fontWeight} ${fontStyle}`)
-        return loadGoogleFontV2(fontFamily, fontWeight, fontStyle)
+    const fontPromises = distinctFonts.map(async ({ fontFamily, fontWeight, fontStyle }) => {
+        const timer = `framepress: loading font ${fontFamily} ${fontWeight} ${fontStyle}`
+        console.time(timer)
+        const result = await loadGoogleFontV2(fontFamily, fontWeight, fontStyle)
+        console.timeEnd(timer)
+        return result
     })
     const fonts = await Promise.all(fontPromises)
+    console.timeEnd('framepress: fonts')
 
     const buttons = slideConfig?.buttons
         .filter((button) => button.enabled)

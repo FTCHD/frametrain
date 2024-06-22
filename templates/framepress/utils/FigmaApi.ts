@@ -281,6 +281,7 @@ export async function getFigmaSvgImage(
             return { success: false, error: 'Not a valid Figma URL' }
         }
 
+        console.time('framepress: export SVG from Figma')
         const svgExportResponse = await fetch(
             `https://api.figma.com/v1/images/${fileId}?ids=${nodeId}&svg_outline_text=false&format=svg&svg_include_id=true&svg_include_node_id=true`,
             {
@@ -300,12 +301,14 @@ export async function getFigmaSvgImage(
         }
 
         const svgExportObject = await svgExportResponse.json()
-        const svgExportUrl = svgExportObject.images[nodeId.replace('-', ':')]
+        console.timeEnd('framepress: export SVG from Figma')
 
+        const svgExportUrl = svgExportObject.images[nodeId.replace('-', ':')]
         if (!svgExportUrl) {
             return { success: false, error: 'Figma API failed to return an SVG download path' }
         }
 
+        console.time('framepress: download exported SVG from Figma')
         const svgResponse = await fetch(
             svgExportUrl,
             { cache: 'no-store' } // PERFORMANCE: think about how we can avoid this
@@ -316,6 +319,9 @@ export async function getFigmaSvgImage(
         }
 
         const svg = await svgResponse.text()
+        console.timeEnd('framepress: download exported SVG from Figma')
+
+        console.time('framepress: process SVG')
         const { width, height } = getSvgDimensions(svg)
 
         if (width === 0 || height === 0) {
@@ -325,6 +331,7 @@ export async function getFigmaSvgImage(
         const svgTextNodes = getSvgTextNodes(svg)
         const textNodes = svgTextNodes.map(parseSvgText)
         const base64 = svgToBase64(svg)
+        console.timeEnd('framepress: process SVG')
 
         return {
             success: true,
