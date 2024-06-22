@@ -12,6 +12,7 @@ export async function getPreview(url: string) {
         const text = await response.text()
         return parseFrameHtml(text)
     } catch (error) {
+		toast.error('Whoops! Something went wrong.')
         console.error('Error fetching frame:', error)
     }
 }
