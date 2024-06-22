@@ -2,15 +2,13 @@
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import FigmaView from '../views/FigmaView'
 import type { FramePressConfig, SlideConfig } from '../Config'
-import { getFigmaSvgImage } from '../utils/FigmaApi'
 import type { FontStyle, FontWeight } from 'satori'
-import type { FrameActionPayload } from 'frames.js'
 import { FrameError } from '@/sdk/handlers'
+import { loadGoogleFont } from '@/sdk/fonts'
 
 export default async function buildFrame(
     config: FramePressConfig,
-    slideConfig?: SlideConfig,
-    body?: FrameActionPayload
+    slideConfig?: SlideConfig
 ): Promise<BuildFrameData> {
     if (!config.figmaPAT) {
         throw new FrameError('Please configure your Figma Personal Access Token')
@@ -23,14 +21,12 @@ export default async function buildFrame(
     if (!slideConfig.figmaUrl) {
         throw new FrameError('Please configure the Figma URL for this slide')
     }
-    console.time('framepress: FigmaView()')
+
     const view = FigmaView(slideConfig)
-    console.timeEnd('framepress: FigmaView()')
 
     // We need to merge the fonts in the design with the fonts in the config
     // (fonts in the design may be missing from the config if the Figma was
     // updated without updating the config in the Inspector)
-    console.time('framepress: fonts')
     const fontsUsed = Object.values(slideConfig.textLayers).map(
         (textLayerConfig) =>
             new FontConfig(
@@ -45,14 +41,10 @@ export default async function buildFrame(
         .map((key) => fontsUsed.find((font) => font.key === key))
         .filter((font): font is FontConfig => font !== undefined)
     const fontPromises = distinctFonts.map(async ({ fontFamily, fontWeight, fontStyle }) => {
-        const timer = `framepress: loading font ${fontFamily} ${fontWeight} ${fontStyle}`
-        console.time(timer)
-        const result = await loadGoogleFontV2(fontFamily, fontWeight, fontStyle)
-        console.timeEnd(timer)
+        const result = await loadGoogleFont(fontFamily, fontWeight, fontStyle)
         return result
     })
     const fonts = await Promise.all(fontPromises)
-    console.timeEnd('framepress: fonts')
 
     const buttons = slideConfig?.buttons
         .filter((button) => button.enabled)
@@ -119,40 +111,5 @@ class FontConfig {
             'heavy': 900,
         }
         return weightMap[fontWeight] || 400 // Default to 400 if not found
-    }
-}
-
-// REVIEW loadGoogleFont() in the FT SDK don't work right; this should probably replace it
-export async function loadGoogleFontV2(
-    fontName: string,
-    fontWeight: FontWeight,
-    fontStyle: FontStyle
-): Promise<{ name: string; data: ArrayBuffer; weight: FontWeight; style: FontStyle }> {
-    const requestFontName = fontName.replace(' ', '+')
-    const fontWeightValue = fontWeight as number
-    const italicValue = fontStyle === 'italic' ? '1' : '0'
-
-    const googleFontUrl = `https://fonts.googleapis.com/css2?family=${requestFontName}:ital,wght@${italicValue},${fontWeightValue}&display=swap`
-
-    const response = await fetch(googleFontUrl)
-    const cssText = await response.text()
-
-    // Extract the font URL from the CSS text
-    const fontUrlMatch = cssText.match(/url\((https:\/\/fonts\.gstatic\.com\/.*?)\)/)
-    if (!fontUrlMatch) {
-        throw new Error('Failed to extract font URL from CSS')
-    }
-
-    const fontUrl = fontUrlMatch[1]
-
-    // Download the font file
-    const fontResponse = await fetch(fontUrl)
-    const fontArrayBuffer = await fontResponse.arrayBuffer()
-
-    return {
-        name: fontName,
-        data: fontArrayBuffer,
-        weight: fontWeight,
-        style: fontStyle,
     }
 }
