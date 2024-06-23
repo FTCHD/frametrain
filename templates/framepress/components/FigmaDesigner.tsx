@@ -181,6 +181,12 @@ export const FigmaDesigner = ({
         }
     }
 
+    const aspectRatioFormatted = !figmaMetadata
+        ? ''
+        : figmaMetadata.aspectRatio % 1 === 0
+          ? figmaMetadata?.aspectRatio?.toString() + ':1'
+          : figmaMetadata?.aspectRatio?.toFixed(2) + ':1'
+
     return (
         <div>
             <div className="flex items-center gap-2">
@@ -230,9 +236,9 @@ export const FigmaDesigner = ({
                         <div className="text-xs ml-4 opacity-80">(recommendation: 630)</div>
                     </div>
 
-                    <div className="flex items-center">True Aspect Ratio</div>
+                    <div className="flex items-center">Source Aspect Ratio</div>
                     <div className="flex items-center">
-                        <Badge>{figmaMetadata?.aspectRatio?.toFixed(2)}</Badge>
+                        <Badge>{aspectRatioFormatted}</Badge>
                     </div>
 
                     <div className="flex items-center">Frame Aspect Ratio</div>
