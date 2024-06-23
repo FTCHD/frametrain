@@ -1,6 +1,6 @@
 'use client'
 
-import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { useFrameConfig } from '@/sdk/hooks'
 import type { FramePressConfig, SlideConfig } from './Config'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './Constants'
 import SlideDesigner from './components/SlideDesigner'
@@ -128,23 +128,25 @@ export default function Inspector() {
             {/* <p>{JSON.stringify(config)}</p> */}
 
             <div className="grid w-full space-y-2">
-                <Label htmlFor="token">Figma Personal Access Token (PAT)</Label>
-                <div className="flex items-center space-x-2">
-                    <div>{config.figmaPAT ? '✅' : '❌'}</div>
-                    <Input
-                        id="token"
-                        type="password"
-                        placeholder={
-                            config.figmaPAT ? 'Figma PAT is saved' : 'Enter your Figma PAT'
-                        }
-                        className="flex-1"
-                        onChange={(e) => updateFigmaPAT(e.target.value)}
-                    />
-                    <Link href={FIGMA_PAT_HELP} className="flex">
-                        <InfoIcon className="mr-2 h-4 w-4 self-center" />
-                        Learn more
-                    </Link>
-                </div>
+                <form>
+                    <Label htmlFor="token">Figma Personal Access Token (PAT)</Label>
+                    <div className="flex items-center space-x-2">
+                        <div>{config.figmaPAT ? '✅' : '❌'}</div>
+                        <Input
+                            id="token"
+                            type="password"
+                            placeholder={
+                                config.figmaPAT ? 'Figma PAT is saved' : 'Enter your Figma PAT'
+                            }
+                            className="flex-1"
+                            onChange={(e) => updateFigmaPAT(e.target.value)}
+                        />
+                        <Link href={FIGMA_PAT_HELP} className="flex">
+                            <InfoIcon className="mr-2 h-4 w-4 self-center" />
+                            Learn more
+                        </Link>
+                    </div>
+                </form>
             </div>
 
             {config.slides?.map((slideConfig, index) => (
