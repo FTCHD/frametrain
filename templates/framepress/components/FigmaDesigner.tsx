@@ -151,7 +151,6 @@ export const FigmaDesigner = ({
             })
 
             // Upload the images to the CDN
-            // TODO cleanup old uploads
             const data = rendered.slice('data:image/png;base64,'.length)
             const { fileName } = await uploadImage({
                 base64String: data,
@@ -247,14 +246,8 @@ export const FigmaDesigner = ({
                                 <SelectValue placeholder="Select aspect ratio" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="1:1">
-                                    <Square className="h-4 w-4 mr-2" />
-                                    1:1 (Square)
-                                </SelectItem>
-                                <SelectItem value="1.91:1">
-                                    <RectangleHorizontal className="h-4 w-4 mr-2" />
-                                    1.91:1 (Widescreen)
-                                </SelectItem>
+                                <SelectItem value="1:1">1:1 (Square)</SelectItem>
+                                <SelectItem value="1.91:1">1.91:1 (Widescreen)</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
