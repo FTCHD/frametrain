@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { CloudDownload, Loader2, RectangleHorizontal, Square } from 'lucide-react'
+import { CloudDownload, Loader2 } from 'lucide-react'
 import type {
     AspectRatio,
     BaseImagePaths,
@@ -130,7 +130,7 @@ export const FigmaDesigner = ({
         setIsUpdating(false)
 
         async function renderSvg({ width, height }: { width: number; height: number }) {
-            const rendered = await new Promise<string>((resolve, reject) => {
+            const rendered = await new Promise<string>((resolve) => {
                 const svg = new Image()
                 svg.onload = () => {
                     const canvas = document.createElement('canvas')
@@ -141,7 +141,6 @@ export const FigmaDesigner = ({
                     const renderedData = canvas.toDataURL('image/png')
                     resolve(renderedData)
                 }
-                // TODO strip out text elements
 
                 const svgXml = SVG_TEXT_DEBUG_ENABLED
                     ? figmaDesign.svgXml
@@ -196,7 +195,7 @@ export const FigmaDesigner = ({
                     value={newUrl}
                     onChange={(e) => setNewUrl(e.target.value)}
                 />
-                <Button disabled={isUpdating || !figmaPAT} onClick={updateUrl}>
+                <Button disabled={isUpdating || !figmaPAT || !newUrl} onClick={updateUrl}>
                     {isUpdating && (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
