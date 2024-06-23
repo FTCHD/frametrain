@@ -22,16 +22,8 @@ import type {
 import { type ButtonTarget, ButtonDesigner } from './ButtonDesigner'
 import { FigmaDesigner } from './FigmaDesigner'
 import { TextLayerDesigner } from './TextLayerDesigner'
-import { type FigmaSvgImage, getFigmaSvgImage } from '../utils/FigmaApi'
-import { useEffect, useState } from 'react'
-import {
-    FileDownIcon,
-    FileUpIcon,
-    LoaderIcon,
-    MoveDownIcon,
-    MoveUpIcon,
-    Trash2Icon,
-} from 'lucide-react'
+import { FileDownIcon, FileUpIcon, MoveDownIcon, MoveUpIcon, Trash2Icon } from 'lucide-react'
+import { FigmaView, getDimensionsForAspectRatio } from '../views/FigmaView'
 
 type SlideDesignerProps = {
     figmaPAT: string
@@ -62,20 +54,6 @@ const SlideDesigner = ({
     onAddBelow,
     onDelete,
 }: SlideDesignerProps) => {
-    const [isLoadingDesign, setIsLoadingDesign] = useState<boolean>()
-    const [figmaSvgImage, setFigmaSvgImage] = useState<FigmaSvgImage>()
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: causes infinite recursion
-    useEffect(() => {
-        const loadFigmaDesign = async () => {
-            setIsLoadingDesign(true)
-            const figmaSvgImage = await getFigmaSvgImage(figmaPAT, slideConfig.figmaUrl)
-            if (figmaSvgImage.success) setFigmaSvgImage(figmaSvgImage.value)
-            setIsLoadingDesign(false)
-        }
-        loadFigmaDesign()
-    }, [])
-
     const updateFigma = (
         figmaUrl: string,
         figmaMetadata: FigmaMetadata,
@@ -108,18 +86,31 @@ const SlideDesigner = ({
         onUpdate({ ...slideConfig, textLayers: updatedTextLayers })
     }
 
+    const slideDimensions = getDimensionsForAspectRatio(slideConfig.aspectRatio)
+    const figmaPreviewScale = Math.min(
+        100 / (slideDimensions?.width || 100),
+        100 / (slideDimensions?.height || 100)
+    )
+
+    // These numbers were handed down through generations, don't question them
+    const translateX =
+        slideConfig.aspectRatio == '1.91:1' ? -48 : slideConfig.aspectRatio == '1:1' ? -42 : -50
+
+    const bordered = slideConfig.figmaMetadata
+        ? ''
+        : 'border-[1px] border-dashed border-white rounded-md'
+
     return (
         <Card className="w-full">
             <CardHeader className="grid grid-cols-[100px_1fr] items-center gap-4">
-                <div className="overflow-hidden w-[100px] h-[100px] border-[1px] border-dashed border-white rounded-md">
-                    {!isLoadingDesign && figmaSvgImage && (
-                        <img
-                            src={figmaSvgImage?.dataUrl}
-                            alt="Preview"
-                            className="justify-self-center"
-                        />
-                    )}
-                    {isLoadingDesign && <LoaderIcon className="animate-spin" />}
+                <div className={`select-none overflow-hidden w-[100px] h-[100px] ${bordered}`}>
+                    <div
+                        style={{
+                            transform: `translate(${translateX}%,-42%) scale(${figmaPreviewScale})`,
+                        }}
+                    >
+                        <FigmaView slideConfig={slideConfig} />
+                    </div>
                 </div>
                 <div className="space-y-1">
                     <CardTitle>
@@ -144,8 +135,12 @@ const SlideDesigner = ({
                 <Tabs defaultValue="figma" className="w-full">
                     <TabsList className="grid w-full grid-cols-3">
                         <TabsTrigger value="figma">Figma</TabsTrigger>
-                        <TabsTrigger value="text">Text Layers</TabsTrigger>
-                        <TabsTrigger value="buttons">Buttons</TabsTrigger>
+                        <TabsTrigger value="text" disabled={!slideConfig.figmaUrl}>
+                            Text Layers
+                        </TabsTrigger>
+                        <TabsTrigger value="buttons" disabled={!slideConfig.figmaUrl}>
+                            Buttons
+                        </TabsTrigger>
                     </TabsList>
                     <TabsContent value="figma">
                         <FigmaDesigner

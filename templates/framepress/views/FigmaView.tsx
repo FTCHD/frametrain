@@ -1,5 +1,5 @@
 import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
-import type { SlideConfig, TextLayerConfig } from '../Config'
+import type { AspectRatio, SlideConfig, TextLayerConfig } from '../Config'
 import he from 'he'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { FrameError } from '@/sdk/handlers'
@@ -19,7 +19,20 @@ it produces a parent <div> containing an <img> for all non-text SVG nodes,
 and then a <div> containing transformed versions of the SVG text nodes.
 
 */
-export default function FigmaView(slideConfig: SlideConfig) {
+
+type FigmaViewProps = {
+    slideConfig: SlideConfig
+}
+
+export function getDimensionsForAspectRatio(aspectRatio: AspectRatio) {
+    return aspectRatio == '1.91:1'
+        ? dimensionsForRatio['1.91/1']
+        : aspectRatio == '1:1'
+          ? dimensionsForRatio['1/1']
+          : undefined
+}
+
+export function FigmaView({ slideConfig }: FigmaViewProps) {
     const parseCSS = (cssString: string): Record<string, string> => {
         if (!cssString) return {}
 
@@ -61,14 +74,10 @@ export default function FigmaView(slideConfig: SlideConfig) {
         }
     }
 
-    const baseImagePath = slideConfig.baseImagePaths[slideConfig.aspectRatio]
-    const dimensions =
-        slideConfig.aspectRatio == '1.91:1'
-            ? dimensionsForRatio['1.91/1']
-            : slideConfig.aspectRatio == '1:1'
-              ? dimensionsForRatio['1/1']
-              : undefined
+    const baseImagePath = slideConfig.baseImagePaths?.[slideConfig.aspectRatio]
+    if (!baseImagePath) return <></>
 
+    const dimensions = getDimensionsForAspectRatio(slideConfig.aspectRatio)
     if (!dimensions) throw new FrameError('Unsupported aspect ratio')
 
     const baseImageUrl = process.env.NEXT_PUBLIC_CDN_HOST + '/frames/' + baseImagePath
@@ -81,22 +90,8 @@ export default function FigmaView(slideConfig: SlideConfig) {
                 height: dimensions.height,
             }}
         >
-            <img
-                style={{ position: 'absolute' }}
-                alt={slideConfig.title}
-                width={dimensions.width}
-                height={dimensions.height}
-                src={baseImageUrl}
-            />
-            <div
-                style={{
-                    display: 'flex',
-                    position: 'relative',
-                    width: '100%',
-                }}
-            >
-                {Object.values(slideConfig.textLayers).map(renderTextLayer)}
-            </div>
+            <img src={baseImageUrl} alt={slideConfig.title} />
+            {Object.values(slideConfig.textLayers).map(renderTextLayer)}
         </div>
     )
 

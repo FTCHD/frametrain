@@ -1,6 +1,6 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
-import FigmaView from '../views/FigmaView'
+import { FigmaView } from '../views/FigmaView'
 import type { FramePressConfig, SlideConfig } from '../Config'
 import type { FontStyle, FontWeight } from 'satori'
 import { FrameError } from '@/sdk/handlers'
@@ -22,7 +22,7 @@ export default async function buildFrame(
         throw new FrameError('Please configure the Figma URL for this slide')
     }
 
-    const view = FigmaView(slideConfig)
+    const view = FigmaView({ slideConfig })
 
     // We need to merge the fonts in the design with the fonts in the config
     // (fonts in the design may be missing from the config if the Figma was

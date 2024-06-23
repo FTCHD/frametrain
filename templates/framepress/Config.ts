@@ -15,7 +15,7 @@ export type SlideConfig = {
     description?: string
     figmaUrl?: string
     figmaMetadata?: FigmaMetadata
-    baseImagePaths: BaseImagePaths
+    baseImagePaths?: BaseImagePaths
     textLayers: TextLayerConfigs
     buttons: ButtonConfig[]
 }
