@@ -25,6 +25,9 @@ export interface Config extends BaseConfig {
     nftAddress: string
     nftName: string
     fid: number
+    nftType: string
+    nftChain: string
+    tokenID: string
 }
 
 export interface State extends BaseState {}

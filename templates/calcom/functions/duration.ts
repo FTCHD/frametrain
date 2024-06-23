@@ -4,7 +4,7 @@ import type { Config, State } from '..'
 import PageView from '../views/Duration'
 import NotSatisfied from '../views/NotSatisfied'
 
-import { balances } from '../utils/balances'
+import { balances721, balancesERC1155 } from '../utils/balances'
 
 export default async function duration(
     body: FrameActionPayload,
@@ -42,11 +42,20 @@ export default async function duration(
                 functionName: 'initial',
             }
         }
-
-        nftGate = await balances(
-            body.validatedData.interactor.verified_addresses.eth_addresses,
-            config.nftAddress
-        )
+        if (config.nftType === 'ERC721') {
+            nftGate = await balances721(
+                body.validatedData.interactor.verified_addresses.eth_addresses,
+                config.nftAddress,
+                config.nftChain
+            )
+        } else {
+            nftGate = await balancesERC1155(
+                body.validatedData.interactor.verified_addresses.eth_addresses,
+                config.nftAddress,
+                config.tokenId,
+                config.nftChain
+            )
+        }
     }
 
     if (!containsUserFID) {

@@ -1,4 +1,4 @@
-import { client } from './client'
+import { client, baseClient, opClient } from './client'
 
 // ABI for the name function of ERC721 tokens
 const nameABI = [
@@ -11,9 +11,27 @@ const nameABI = [
     },
 ]
 
-async function getERC721ContractName(contractAddress: any): Promise<string> {
+async function getERC721ContractName(contractAddress: any, chain: any): Promise<string> {
+    // biome-ignore lint/correctness/noUnusedVariables: <explanation>
+    let selectedClient
+    switch (chain) {
+        case 'ETH': {
+            selectedClient = client
+            break
+        }
+        case 'BASE': {
+            selectedClient = baseClient
+            break
+        }
+        case 'OP': {
+            selectedClient = opClient
+            break
+        }
+        default:
+            throw new Error('Unsupported chain')
+    }
     try {
-        let name: any = await client.readContract({
+        let name: any = await selectedClient.readContract({
             address: contractAddress,
             abi: nameABI,
             functionName: 'name',
@@ -27,6 +45,6 @@ async function getERC721ContractName(contractAddress: any): Promise<string> {
     }
 }
 
-export async function getName(contractAddress: string) {
-    return await getERC721ContractName(contractAddress)
+export async function getName(contractAddress: string, chain: any) {
+    return await getERC721ContractName(contractAddress, chain)
 }
