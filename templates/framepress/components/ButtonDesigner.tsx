@@ -24,10 +24,7 @@ type ButtonDesignerProps = {
 }
 
 const ButtonDesigner = ({ config, targets, onChange }: ButtonDesignerProps) => {
-    const [enabled, setEnabled] = useState(config.enabled)
-    const [caption, setCaption] = useState(config.caption)
     const [target, setTarget] = useState(config.target)
-    const [link, setLink] = useState(config.link)
 
     return (
         <React.Fragment key={config.id}>
@@ -37,10 +34,9 @@ const ButtonDesigner = ({ config, targets, onChange }: ButtonDesignerProps) => {
             <div className="flex items-center">
                 <Checkbox
                     id={config.id}
-                    defaultChecked={enabled}
+                    defaultChecked={config.enabled}
                     onCheckedChange={(checked) => {
                         const newValue = checked === true
-                        setEnabled(newValue)
                         onChange({ ...config, enabled: newValue })
                     }}
                 />
@@ -49,10 +45,9 @@ const ButtonDesigner = ({ config, targets, onChange }: ButtonDesignerProps) => {
                 <Input
                     type="text"
                     placeholder="Caption"
-                    defaultValue={caption}
-                    onChange={(e) => {
+                    defaultValue={config.caption}
+                    onBlur={(e) => {
                         const newValue = e.target.value
-                        setCaption(newValue)
                         onChange({ ...config, caption: newValue })
                     }}
                 />
@@ -84,11 +79,10 @@ const ButtonDesigner = ({ config, targets, onChange }: ButtonDesignerProps) => {
                 <Input
                     type="url"
                     placeholder="URL"
-                    defaultValue={link}
+                    defaultValue={config.link}
                     disabled={target !== 'URL'}
                     onChange={(e) => {
                         const newValue = e.target.value
-                        setLink(newValue)
                         onChange({ ...config, link: newValue })
                     }}
                 />
