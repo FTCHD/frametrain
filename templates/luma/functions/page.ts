@@ -36,7 +36,7 @@ export default async function page(
                 target: `https://lu.ma/${event.id}`,
             },
             {
-                label: 'Get a Preview Frame for your Lu.ma event',
+                label: 'Get your own event frame',
                 action: 'link',
                 target: 'https://frametra.in',
             },
