@@ -30,6 +30,8 @@ export type TicketInfo = {
     } | null
     is_sold_out: boolean
     is_near_capacity: boolean
+    spots_remaining: number | null
+    require_approval: boolean
 }
 
 export type EventDetails = {
