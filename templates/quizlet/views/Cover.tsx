@@ -7,17 +7,6 @@ export default function CoverView({
     text?: string
     configuration?: Config['cover']['configuration']
 }) {
-    const backgroundProp: Record<string, string> = {}
-
-    if (configuration?.backgroundColor) {
-        if (configuration.backgroundColor.startsWith('#')) {
-            backgroundProp['backgroundColor'] = configuration.backgroundColor
-        } else {
-            backgroundProp['backgroundImage'] = configuration.backgroundColor
-        }
-    } else {
-        backgroundProp['backgroundColor'] = 'black'
-    }
     const description = (text ?? 'Description').split('\n')
 
     return (
@@ -30,7 +19,7 @@ export default function CoverView({
                 alignItems: 'center',
                 textAlign: 'center',
                 fontSize: configuration?.fontSize || '50px',
-                ...backgroundProp,
+                background: configuration?.backgroundColor || 'black',
             }}
         >
             <span

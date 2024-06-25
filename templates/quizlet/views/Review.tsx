@@ -18,28 +18,6 @@ type Config = {
 
 export default function ReviewAnswersView(config: Config) {
     const { qna, userAnswer, total } = config
-    const backgroundProp: Record<string, string> = {}
-    const reviewBackgroundProp: Record<string, string> = {}
-
-    if (qna.design?.backgroundColor) {
-        if (qna.design.backgroundColor.startsWith('#')) {
-            backgroundProp['backgroundColor'] = qna.design.backgroundColor
-        } else {
-            backgroundProp['backgroundImage'] = qna.design.backgroundColor
-        }
-    } else {
-        backgroundProp['backgroundColor'] = '#09203f'
-    }
-
-    if (qna.design?.reviewBackgroundColor) {
-        if (qna.design.reviewBackgroundColor.startsWith('#')) {
-            reviewBackgroundProp['backgroundColor'] = qna.design.reviewBackgroundColor
-        } else {
-            reviewBackgroundProp['backgroundImage'] = qna.design.reviewBackgroundColor
-        }
-    } else {
-        reviewBackgroundProp['backgroundColor'] = 'rgba(255, 255, 255, 0.2)'
-    }
 
     const question = qna.question.toUpperCase()
     const answers = qna.answers.toUpperCase().split('\n')
@@ -56,7 +34,7 @@ export default function ReviewAnswersView(config: Config) {
                 height: '100%',
                 fontFamily: qna.design?.qnaFont ?? 'Roboto',
                 fontStyle: qna.design?.qnaStyle ?? 'normal',
-                ...backgroundProp,
+                background: qna.design?.backgroundColor ?? '#09203f',
             }}
         >
             <div
@@ -119,8 +97,8 @@ export default function ReviewAnswersView(config: Config) {
                     padding: '10px',
                     bottom: 0,
                     left: 0,
-                    color: qna.design?.reviewColor ?? 'rgba(255, 255, 255, 0.6)',
-                    ...reviewBackgroundProp,
+                    color: qna.design?.reviewColor ?? 'white',
+                    background: qna.design?.reviewBackgroundColor ?? 'rgba(255, 255, 255, 0.22)',
                 }}
             >
                 <div

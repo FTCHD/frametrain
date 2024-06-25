@@ -6,18 +6,6 @@ type Config = {
 }
 
 export default function QuestionView({ qna, total }: Config) {
-    const backgroundProp: Record<string, string> = {}
-
-    if (qna.design?.backgroundColor) {
-        if (qna.design.backgroundColor.startsWith('#')) {
-            backgroundProp['backgroundColor'] = qna.design.backgroundColor
-        } else {
-            backgroundProp['backgroundImage'] = qna.design.backgroundColor
-        }
-    } else {
-        backgroundProp['backgroundColor'] = '#09203f'
-    }
-
     const question = qna.question.toUpperCase()
     const answers = qna.answers.toUpperCase().split('\n')
     const percentage = (qna.index + 1 / total) * 100
@@ -33,7 +21,7 @@ export default function QuestionView({ qna, total }: Config) {
                 height: '100%',
                 fontFamily: qna.design?.qnaFont ?? 'Roboto',
                 fontStyle: qna.design?.qnaStyle ?? 'normal',
-                ...backgroundProp,
+                background: qna.design?.backgroundColor ?? '#09203f',
             }}
         >
             <div

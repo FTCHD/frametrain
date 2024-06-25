@@ -5,9 +5,6 @@ export default function ResultsView(
     scores: Record<string, number>,
     config: Config
 ) {
-    const backgroundProp: Record<string, string> = {}
-    const labelBackgroundProp: Record<string, string> = {}
-
     const options: { key: string; displayLabel: string; color: string }[] = [
         {
             key: 'yes',
@@ -28,26 +25,6 @@ export default function ResultsView(
         ][]
     ) as Record<string, number>
 
-    if (config.results.background) {
-        if (config.results.background.startsWith('#')) {
-            backgroundProp['backgroundColor'] = config.results.background
-        } else {
-            backgroundProp['backgroundImage'] = config.results.background
-        }
-    } else {
-        backgroundProp['backgroundColor'] = '#09203f'
-    }
-
-    if (config.results.labelBackground) {
-        if (config.results.labelBackground.startsWith('#')) {
-            labelBackgroundProp['backgroundColor'] = config.results.labelBackground
-        } else {
-            labelBackgroundProp['backgroundImage'] = config.results.labelBackground
-        }
-    } else {
-        labelBackgroundProp['backgroundColor'] = 'rgba(255, 255, 255, 0.22)'
-    }
-
     return (
         <div
             style={{
@@ -59,7 +36,7 @@ export default function ResultsView(
                 color: '#ffffff',
                 padding: '40px',
                 gap: '30px',
-                ...backgroundProp,
+                background: config.results.background ?? '#09203f',
             }}
         >
             <div
@@ -83,7 +60,7 @@ export default function ResultsView(
                     borderRadius: '10px',
                     color: 'white',
                     gap: '20px',
-                    ...labelBackgroundProp,
+                    background: config.results.labelBackground ?? 'rgba(255, 255, 255, 0.22)',
                 }}
             >
                 {options.map((option) => (
