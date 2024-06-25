@@ -402,23 +402,28 @@ export default function Qna({
                     updateConfig({
                         qna: newQna,
                     })
-                    setCustomization(defaultQuestionStyles)
-                    setCustomizeQna(false)
-                    setCountChoices(2)
-                    setChoicesType('alpha')
-                    questionInputRef.current.value = ''
-                    answersInputRef.current = ''
-                    if (questionFontSizeInputRef.current) {
-                        questionFontSizeInputRef.current.value = ''
+
+                    if (!qna) {
+                        setCustomization(defaultQuestionStyles)
+                        setCustomizeQna(false)
+                        setCountChoices(2)
+                        setChoicesType('alpha')
+                        questionInputRef.current.value = ''
+
+                        answersInputRef.current = ''
+                        answerRef.current = null
+                        if (questionFontSizeInputRef.current) {
+                            questionFontSizeInputRef.current.value = ''
+                        }
+                        // reviewFontSizeInputRef
+                        if (reviewFontSizeInputRef.current) {
+                            reviewFontSizeInputRef.current.value = ''
+                        }
+                        if (answersFontSizeInputRef.current) {
+                            answersFontSizeInputRef.current.value = ''
+                        }
                     }
-                    // reviewFontSizeInputRef
-                    if (reviewFontSizeInputRef.current) {
-                        reviewFontSizeInputRef.current.value = ''
-                    }
-                    if (answersFontSizeInputRef.current) {
-                        answersFontSizeInputRef.current.value = ''
-                    }
-                    answerRef.current = null
+
                     setLoading(false)
                 }}
                 className="w-full bg-border hover:bg-secondary-border text-primary"
