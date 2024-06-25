@@ -11,14 +11,21 @@ export default async function initial(config: Config, _state: State): Promise<Bu
 
     if (event) {
         buttons.push({
-            label: 'Get Event Link',
+            label: 'Visit event page',
+            action: 'link',
+            target: `https://lu.ma/${event.id}`,
         })
     }
+
+    buttons.push({
+        label: 'Create a lu.ma Preview Frame',
+        action: 'link',
+        target: 'https://frametra.in',
+    })
 
     return {
         aspectRatio: '1:1',
         buttons,
         component: event ? EventView({ event, ...rest }) : CoverView(config),
-        functionName: 'page',
     }
 }

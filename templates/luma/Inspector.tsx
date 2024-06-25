@@ -1,10 +1,8 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { useFrameConfig } from '@/sdk/hooks'
 import type { Config } from '.'
-import { useState } from 'react'
-import { LoaderIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import type { HostData, TicketInfo } from './utils/types'
 import { formatAmount } from './utils/alphanum'
 import {
@@ -14,38 +12,19 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
-import { formatDate } from './utils/dates'
 import { ColorPicker } from '@/sdk/components'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { corsFetch } from '@/sdk/scrape'
 import { fetchCover } from './utils/fetch'
 
-/**
- * extractEventId
- * a function that extracts the event id out of a given lu.ma event url
- * @example
- * https://lu.ma/SWBHappyHour -> SWBHappyHour
- * @param url - the lu.ma event url to extract the id from
- * @returns the extracted event id
- *
- */
 function extractEventId(url: string): string {
     return url.startsWith('https://lu.ma/') ? url.split('https://lu.ma/')[1] : url
 }
 
-/**
- * A function to format a string by capitalizing the first letter of each word.
- *
- * @example capitalize('hello world') => 'Hello World'
- *
- * @param {string} str - The string to format.
- * @returns {string} The formatted string.
- */
 function capitalize(str: string): string {
     return str.replace(/\b\w/g, (l) => l.toUpperCase())
 }
 
-// base64 to blob https://stackoverflow.com/a/16245768
 const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
     const byteCharacters = atob(b64Data)
     const byteArrays: Uint8Array[] = []
@@ -72,7 +51,6 @@ export default function Inspector() {
     const [eventId, setEventId] = useState<string | undefined>(config.event?.id)
     const [timezone, setTimezone] = useState(config.event?.timezone ?? 'Africa/Accra')
 
-    // uzjhg2is
     const timezones = Intl.supportedValuesOf('timeZone')
     const timezoneOptions = timezones.map((tz) => {
         return {
@@ -80,6 +58,10 @@ export default function Inspector() {
             value: tz,
         }
     })
+
+    useEffect(() => {
+        return () => {}
+    }, [])
 
     return (
         <div className="h-full w-full flex flex-col gap-5">
@@ -93,8 +75,112 @@ export default function Inspector() {
                     <Input
                         className="py-2 text-lg "
                         defaultValue={config.event?.id}
-                        onChange={(e) => {
-                            setEventId(extractEventId(e.target.value))
+                        onChange={async (e) => {
+                            const id = extractEventId(e.target.value)
+                            if (!eventId) return
+
+                            setLoading(true)
+
+                            const url = `https://lu.ma/${eventId}`
+                            const html = await corsFetch(url)
+                            if (!html) {
+                                return null
+                            }
+
+                            const parser = new DOMParser()
+                            const parsedhtml = parser.parseFromString(html, 'text/html')
+                            if (!parsedhtml) {
+                                return null
+                            }
+                            const jsonData = parsedhtml.getElementById('__NEXT_DATA__')
+
+                            if (!jsonData?.textContent) {
+                                return null
+                            }
+
+                            const jsonObj = JSON.parse(jsonData.textContent)
+
+                            const initialData = jsonObj?.props?.pageProps?.initialData?.data
+                            const eventData = initialData?.event
+                            const hostData = initialData?.hosts as HostData[] | null
+
+                            if (!(eventData && hostData)) {
+                                return null
+                            }
+                            const startsAt = (eventData?.start_at ?? '') as string
+                            const geo = eventData?.geo_address_info as {
+                                obfuscated: boolean
+                                city_state: string
+                            } | null
+                            let address = 'N/A'
+
+                            if (eventData?.location_type === 'offline' && geo) {
+                                address = `${capitalize(geo.city_state)} (OFFLINE)`
+                            } else if (eventData?.location_type !== 'offline') {
+                                address = `${capitalize(eventData.location_type)} (ONLINE)`
+                            }
+                            const ticketInfo = initialData?.ticket_info as TicketInfo | null
+                            const title = (eventData?.name ?? '') as string
+                            const coverUrl = (eventData?.cover_url ?? '') as string
+
+                            const price = ticketInfo?.price
+                                ? ticketInfo.is_free
+                                    ? 'FREE'
+                                    : formatAmount(
+                                          ticketInfo.price.cents,
+                                          ticketInfo.price.currency
+                                      )
+                                : '$0.00'
+
+                            const endsAt = eventData?.end_at ? (eventData.end_at as string) : null
+
+                            const data = {
+                                id: eventId,
+                                hosts: hostData.map((h) => h.name),
+                                price,
+                                startsAt,
+                                title,
+                                timezone,
+                                address,
+                                approvalRequired: ticketInfo?.require_approval ?? false,
+                                endsAt,
+                                remainingSpots: ticketInfo?.spots_remaining ?? null,
+                            }
+                            const generateCoverUrl = () => {
+                                const url = new URL(coverUrl)
+                                const paths = url.pathname.split('/')
+                                return `https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,quality=75,width=100,height=100/event-covers/${paths
+                                    .slice(-2)
+                                    .join('/')}`
+                            }
+                            const cover = generateCoverUrl()
+
+                            const sizes = dimensionsForRatio['1/1']
+                            const b64 = await fetchCover(cover)
+                            const blob = b64toBlob(b64, 'image/jpeg')
+                            const compressImage = async () => {
+                                const bitmap = await createImageBitmap(blob)
+                                const canvas = document.createElement('canvas')
+                                const ctx = canvas.getContext('2d')
+                                if (!ctx) {
+                                    return null
+                                }
+
+                                canvas.width = sizes.width
+                                canvas.height = sizes.height
+
+                                ctx.drawImage(bitmap, 0, 0, sizes.width, sizes.height)
+                                const dataUrl = canvas.toDataURL('image/jpeg', 0.8)
+                                return dataUrl
+                            }
+                            const backgroundCover = await compressImage()
+
+                            updateConfig({
+                                event: {
+                                    ...data,
+                                    backgroundCover,
+                                },
+                            })
                         }}
                         placeholder="mpls6.18 or https://lu.ma/mpls6.18"
                     />
@@ -103,7 +189,18 @@ export default function Inspector() {
                     <h2 className="text-2xl tracking-tight font-semibold">
                         Choose your preferred timezone:
                     </h2>
-                    <Select defaultValue={timezone} onValueChange={setTimezone}>
+                    <Select
+                        defaultValue={config.event?.timezone ?? 'Africa/Accra'}
+                        onValueChange={(value) => {
+                            if (!config.event) return
+                            updateConfig({
+                                event: {
+                                    ...config.event,
+                                    timezone: value,
+                                },
+                            })
+                        }}
+                    >
                         <SelectTrigger>
                             <SelectValue />
                         </SelectTrigger>
@@ -161,125 +258,6 @@ export default function Inspector() {
                         setBackground={(value) => updateConfig({ priceBackgroundColor: value })}
                     />
                 </div>
-                {timezone !== '' ? (
-                    <Button
-                        disabled={loading}
-                        size="lg"
-                        // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
-                        onClick={async () => {
-                            if (!eventId) return
-
-                            setLoading(true)
-
-                            const url = `https://lu.ma/${eventId}`
-                            const html = await corsFetch(url)
-                            if (!html) {
-                                return null
-                            }
-
-                            const parser = new DOMParser()
-                            const parsedhtml = parser.parseFromString(html, 'text/html')
-                            if (!parsedhtml) {
-                                return null
-                            }
-                            const jsonData = parsedhtml.getElementById('__NEXT_DATA__')
-
-                            if (!jsonData?.textContent) {
-                                return null
-                            }
-
-                            const jsonObj = JSON.parse(jsonData.textContent)
-
-                            const initialData = jsonObj?.props?.pageProps?.initialData?.data
-                            const eventData = initialData?.event
-                            const hostData = initialData?.hosts as HostData[] | null
-
-                            if (!(eventData && hostData)) {
-                                return null
-                            }
-                            const startsAt = (eventData?.start_at ?? '') as string
-                            const geo = eventData?.geo_address_info as {
-                                obfuscated: boolean
-                                city_state: string
-                            } | null
-                            let address = 'N/A'
-
-                            if (eventData?.location_type === 'offline' && geo) {
-                                address = `${capitalize(geo.city_state)} (OFFLINE)`
-                            } else if (eventData?.location_type !== 'offline') {
-                                address = `${capitalize(eventData.location_type)} (ONLINE)`
-                            }
-                            const ticketInfo = initialData?.ticket_info as TicketInfo | null
-                            const title = (eventData?.name ?? '') as string
-                            const coverUrl = (eventData?.cover_url ?? '') as string
-
-                            const price = ticketInfo?.price
-                                ? ticketInfo.is_free
-                                    ? 'FREE'
-                                    : formatAmount(
-                                          ticketInfo.price.cents,
-                                          ticketInfo.price.currency
-                                      )
-                                : '$0.00'
-
-                            const endAt = eventData?.end_at ? (eventData.end_at as string) : null
-
-                            const [start, end] = await formatDate(timezone, startsAt, endAt)
-
-                            const data = {
-                                id: eventId,
-                                hosts: hostData.map((h) => h.name),
-                                price,
-                                startsAt: start,
-                                title,
-                                timezone,
-                                address,
-                                approvalRequired: ticketInfo?.require_approval ?? false,
-                                endsAt: end,
-                                remainingSpots: ticketInfo?.spots_remaining ?? null,
-                            }
-                            const generateCoverUrl = () => {
-                                const url = new URL(coverUrl)
-                                const paths = url.pathname.split('/')
-                                return `https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,quality=75,width=100,height=100/event-covers/${paths
-                                    .slice(-2)
-                                    .join('/')}`
-                            }
-                            const cover = generateCoverUrl()
-
-                            const sizes = dimensionsForRatio['1/1']
-                            const b64 = await fetchCover(cover)
-                            const blob = b64toBlob(b64, 'image/jpeg')
-                            //   https://stackoverflow.com/a/73744343
-                            const compressImage = async () => {
-                                const bitmap = await createImageBitmap(blob)
-                                const canvas = document.createElement('canvas')
-                                const ctx = canvas.getContext('2d')
-                                if (!ctx) {
-                                    return null
-                                }
-
-                                canvas.width = sizes.width
-                                canvas.height = sizes.height
-
-                                ctx.drawImage(bitmap, 0, 0, sizes.width, sizes.height)
-                                const dataUrl = canvas.toDataURL('image/jpeg', 0.8)
-                                return dataUrl
-                            }
-                            const backgroundCover = await compressImage()
-
-                            updateConfig({
-                                event: {
-                                    ...data,
-                                    backgroundCover,
-                                },
-                            })
-                            setLoading(false)
-                        }}
-                    >
-                        {loading ? <LoaderIcon className="mr-4 w-6 h-6 animate-spin" /> : 'Save'}
-                    </Button>
-                ) : null}
             </div>
         </div>
     )

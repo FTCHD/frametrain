@@ -1,8 +1,6 @@
-'use server'
-
 import { dayjs } from './dayjs'
 
-export async function formatDate(timezone: string, date: string, date2: string | null = null) {
+export function formatDate(timezone: string, date: string, date2: string | null = null) {
     let tz = dayjs(date).tz(timezone).format('dddd, LL @ LT (z)')
     let endsAt: string | null = null
 
@@ -22,5 +20,5 @@ export async function formatDate(timezone: string, date: string, date2: string |
         }
     }
 
-    return Promise.resolve([tz, endsAt])
+    return [tz, endsAt]
 }
