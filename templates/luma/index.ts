@@ -14,7 +14,7 @@ export interface Config extends BaseConfig {
         timezone: string
         title: string
         address?: string
-
+        image?: string
         approvalRequired?: boolean
         remainingSpots?: number | null
     }

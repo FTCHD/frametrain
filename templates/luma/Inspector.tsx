@@ -2,7 +2,6 @@
 import { Input } from '@/components/shadcn/Input'
 import { useFrameConfig } from '@/sdk/hooks'
 import type { Config } from '.'
-import { useEffect, useState } from 'react'
 import type { HostData, TicketInfo } from './utils/types'
 import { formatAmount } from './utils/alphanum'
 import {
@@ -47,9 +46,6 @@ const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
-    const [loading, setLoading] = useState(false)
-    const [eventId, setEventId] = useState<string | undefined>(config.event?.id)
-    const [timezone, setTimezone] = useState(config.event?.timezone ?? 'Africa/Accra')
 
     const timezones = Intl.supportedValuesOf('timeZone')
     const timezoneOptions = timezones.map((tz) => {
@@ -58,10 +54,6 @@ export default function Inspector() {
             value: tz,
         }
     })
-
-    useEffect(() => {
-        return () => {}
-    }, [])
 
     return (
         <div className="h-full w-full flex flex-col gap-5">
@@ -77,11 +69,9 @@ export default function Inspector() {
                         defaultValue={config.event?.id}
                         onChange={async (e) => {
                             const id = extractEventId(e.target.value)
-                            if (!eventId) return
+                            if (!id) return
 
-                            setLoading(true)
-
-                            const url = `https://lu.ma/${eventId}`
+                            const url = `https://lu.ma/${id}`
                             const html = await corsFetch(url)
                             if (!html) {
                                 return null
@@ -135,52 +125,62 @@ export default function Inspector() {
                             const endsAt = eventData?.end_at ? (eventData.end_at as string) : null
 
                             const data = {
-                                id: eventId,
+                                id,
                                 hosts: hostData.map((h) => h.name),
                                 price,
                                 startsAt,
                                 title,
-                                timezone,
+                                timezone: config.event?.timezone ?? 'Africa/Accra',
                                 address,
                                 approvalRequired: ticketInfo?.require_approval ?? false,
                                 endsAt,
                                 remainingSpots: ticketInfo?.spots_remaining ?? null,
                             }
-                            const generateCoverUrl = () => {
+                            const generateCoverUrl = (quality = 75, sizes = 100, isBg = false) => {
                                 const url = new URL(coverUrl)
                                 const paths = url.pathname.split('/')
-                                return `https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,quality=75,width=100,height=100/event-covers/${paths
+                                return `https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,${
+                                    isBg ? '' : 'dpr=2,'
+                                }quality=${quality},width=${sizes},height=${sizes}/event-covers/${paths
                                     .slice(-2)
                                     .join('/')}`
                             }
-                            const cover = generateCoverUrl()
+                            const cover = generateCoverUrl(30, 100, true) // for the top image
+                            const image = generateCoverUrl(40, 80) // for the background image
 
                             const sizes = dimensionsForRatio['1/1']
-                            const b64 = await fetchCover(cover)
-                            const blob = b64toBlob(b64, 'image/jpeg')
-                            const compressImage = async () => {
+
+                            const compressImage = async (image: string, useSizes = false) => {
+                                const b64 = await fetchCover(image)
+                                const blob = b64toBlob(b64, 'image/jpeg')
                                 const bitmap = await createImageBitmap(blob)
                                 const canvas = document.createElement('canvas')
                                 const ctx = canvas.getContext('2d')
                                 if (!ctx) {
                                     return null
                                 }
+                                const size = useSizes ? sizes : bitmap
+                                canvas.width = size.width
+                                canvas.height = size.height
+                                ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+                                const dataUrl = canvas.toDataURL('image/jpeg')
 
-                                canvas.width = sizes.width
-                                canvas.height = sizes.height
-
-                                ctx.drawImage(bitmap, 0, 0, sizes.width, sizes.height)
-                                const dataUrl = canvas.toDataURL('image/jpeg', 0.8)
                                 return dataUrl
                             }
-                            const backgroundCover = await compressImage()
+                            const backgroundCover = await compressImage(cover, true)
+                            const imageCover = await compressImage(image)
+
+                            const event = {
+                                ...data,
+                                backgroundCover,
+                                image: imageCover,
+                            }
 
                             updateConfig({
-                                event: {
-                                    ...data,
-                                    backgroundCover,
-                                },
+                                event,
                             })
+
+                            console.log('saved event data', event)
                         }}
                         placeholder="mpls6.18 or https://lu.ma/mpls6.18"
                     />

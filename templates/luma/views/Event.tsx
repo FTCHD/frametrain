@@ -57,14 +57,19 @@ export default function EventView(props: Props) {
                 style={{
                     gap: '1rem',
                     color: props.textColor ?? 'text-white',
-                    backgroundImage: `url(${event.backgroundCover})`,
-                    backgroundPosition: 'center',
-                    backgroundSize: 'cover',
-                    backgroundRepeat: 'no-repeat',
-                    filter: 'blur()',
-                    height: '100%',
                 }}
             >
+                <div
+                    tw="absolute w-full opacity-50"
+                    style={{
+                        backgroundImage: `url(${event.backgroundCover})`,
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        backgroundRepeat: 'no-repeat',
+                        filter: 'blur(10px)',
+                        height: '100%',
+                    }}
+                />
                 <div
                     tw="flex flex-col w-full h-full justify-center items-center"
                     style={{
@@ -77,7 +82,7 @@ export default function EventView(props: Props) {
                             gap: '1rem',
                         }}
                     >
-                        <img src={event.backgroundCover} alt="Event cover" tw="w-48 h-48" />
+                        <img src={event.image} alt="Event cover" tw="w-48 h-48" />
                         <div
                             tw="flex flex-col px-2 items-center justify-center"
                             style={{
