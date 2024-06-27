@@ -120,8 +120,8 @@ export default function Inspector() {
         )
             transcode()
     }, [
-        file,
-        link,
+        //file,
+        //link,
         config.timeStart,
         config.gifDuration,
         config.gifCaption,
