@@ -196,6 +196,9 @@ export default function Inspector() {
                             updateConfig({ youtubeUrl: e.target.value })
                         }}
                     />
+                    <p className="text-sm text-muted-foreground">
+                    The recommended video duration is less 15 min.
+                    </p>
                 </div>
 
                 <h2 className="font-bold">Start Time</h2>
