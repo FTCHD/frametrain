@@ -29,7 +29,7 @@ export async function simulateCall(frameData: FrameRequest, options?: string[] |
         const isFollower = options?.includes('follower')
         const isFollowing = options?.includes('following')
 
-        debugPayload.verifiedData = {
+        debugPayload.validatedData = {
             object: 'validated_frame_action',
             url: frameData.untrustedData.url,
             interactor: {
