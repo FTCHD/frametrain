@@ -70,7 +70,7 @@ export default function Inspector() {
                 '-r',
                 '8',
                 '-vf',
-                `scale=-1:210,drawtext=fontfile=font.woff:text='${config.gifCaption || ' '}':fontcolor=${config.fontColor}:bordercolor=black:borderw=1:fontsize=${config.fontSize || '0'}:x=(w-text_w)/2:y=(h-text_h)-${config.captionY || '0'}`,
+                `scale=-1:210,drawtext=fontfile=font.woff:text='${config.gifCaption}':fontcolor=${config.fontColor}:bordercolor=black:borderw=1:fontsize=${config.fontSize}:x=(w-text_w)/2:y=(h-text_h)-${config.captionY}`,
                 'output.gif',
             ])
 
@@ -114,14 +114,12 @@ export default function Inspector() {
             ((source == 'link' && link) || (source == 'file' && file)) &&
             config.timeStart &&
             config.gifDuration &&
-            config.fontStyle &&
-            config.fontColor &&
-            ((config.gifCaption && config.fontSize && config.captionY) || !config.gifCaption)
+            config.gifCaption &&
+            config.captionY &&
+            config.fontSize
         )
             transcode()
     }, [
-        //file,
-        //link,
         config.timeStart,
         config.gifDuration,
         config.gifCaption,
@@ -251,6 +249,7 @@ export default function Inspector() {
                 />
                 <h2 className="font-bold">Button Link</h2>
                 <Input
+                    placeholder="https:// . . . "
                     defaultValue={config.buttonLink}
                     onChange={(e) => updateConfig({ buttonLink: e.target.value })}
                 />
