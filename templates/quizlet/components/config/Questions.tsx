@@ -1,7 +1,9 @@
+'use client'
+
 import { useFrameConfig } from '@/sdk/hooks'
 import type { Config } from '../..'
 import { useState } from 'react'
-import Qna from './Qna'
+import QnaForm from './QnaForm'
 import { Button } from '@/components/shadcn/Button'
 import { Trash } from 'lucide-react'
 import { Drawer, DrawerContent } from '@/components/shadcn/Drawer'
@@ -64,7 +66,8 @@ export default function Questions() {
                     <Drawer open={open} onOpenChange={setOpen}>
                         <DrawerContent>
                             <div className="flex-1 h-full">
-                                <Qna
+                                <QnaForm
+                                    mode="update"
                                     qna={currentQna}
                                     className="overflow-y-scroll overflow-x-hidden h-screen px-2 pt-4"
                                 />

@@ -1,3 +1,5 @@
+'use client'
+
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import type { Config } from '../..'
 import {

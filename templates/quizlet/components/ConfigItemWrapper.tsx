@@ -1,3 +1,5 @@
+'use client'
+
 import type { MenuItem } from '../types'
 import BasicConfig from './config/Basic'
 import Qna from './config/Qna'

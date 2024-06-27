@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/shadcn/Button'
 import type { MenuItem } from '../types'
 

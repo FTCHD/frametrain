@@ -40,7 +40,7 @@ export interface Config extends BaseConfig {
             reviewColor?: string
             reviewBackgroundColor?: string
             reviewSize?: string
-        } | null
+        }
     }[]
     results: {
         background: string
@@ -68,6 +68,7 @@ export interface Config extends BaseConfig {
     }
     fids: string[]
     answerOnce: boolean
+    currentQnaIndex: number
 }
 
 export interface State extends BaseState {
@@ -114,6 +115,7 @@ export default {
         },
         fids: [],
         answerOnce: false,
+        currentQnaIndex: 0,
         results: {
             yesLabel: 'Correct Answers',
             yesBarColor: 'green',
