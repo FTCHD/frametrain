@@ -261,7 +261,7 @@ export default function Inspector() {
                             onCheckedChange={(checked) => {
                                 if (checked) {
                                     updateConfig({
-                                        followinf: true,
+                                        following: true,
                                     })
                                 } else {
                                     updateConfig({
