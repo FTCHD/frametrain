@@ -1,9 +1,10 @@
 import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
-import type { FrameActionPayload, FrameActionPayloadValidated } from '@/lib/farcaster'
+import type { FrameActionPayload, FrameActionPayloadValidated, FrameData } from '@/lib/farcaster'
 import { updateFrameCalls, updateFrameState } from '@/lib/frame'
 import { buildFramePage, validatePayload } from '@/lib/serve'
 import type { BaseConfig, BaseState } from '@/lib/types'
+import { FrameError } from '@/sdk/handlers'
 import templates from '@/templates'
 import { eq } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
@@ -56,18 +57,38 @@ export async function POST(
         })
     }
 	
-    const buildParameters = await handler(
-        body,
-        frame.config as BaseConfig,
-        frame.state as BaseState,
-        searchParams
-    )
+    let buildParameters = {} as BuildFrameData
+
+    try {
+        buildParameters = await handler(
+            body,
+            frame.config as BaseConfig,
+            frame.state as BaseState,
+            searchParams
+        )
+    } catch (error) {
+        if (error instanceof FrameError) {
+            return Response.json(
+                { message: error.message },
+                {
+                    status: 400,
+                }
+            )
+        }
+
+        return Response.json(
+            { message: 'Unknown error' },
+            {
+                status: 500,
+            }
+        )
+    }
 
     // state can be taken directly from the handler
     // no need to pass it back and forth in the future
     const { frame: renderedFrame, state: newState } = await buildFramePage({
         id: frame.id,
-        ...buildParameters,
+        ...(buildParameters as FrameData),
     })
 
     if (newState) {

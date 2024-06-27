@@ -17,48 +17,66 @@ export default async function post(
         return initial(config, state)
     }
 
-    const nextPage =
-        params?.currentPage !== undefined
-            ? body.untrustedData.buttonIndex === 2
-                ? Number(params?.currentPage) - 1
-                : Number(params?.currentPage) + 1
-            : 1
+    let nextPage: number
 
-    const discourseUrl = config.discourseLink + '.json'
-
-    const postsIds = await fetch(discourseUrl)
+    const postsIds = await fetch(config.discourseJson)
         .then((res) => res.json())
         .then((res) => res.post_stream.stream)
         .catch(console.error)
 
+    if (buttonIndex === 2 && !params?.currentPage) {
+        nextPage = postsIds.length
+    } else {
+        nextPage =
+            params?.currentPage !== undefined
+                ? body.untrustedData.buttonIndex === 2
+                    ? Math.max(1, Number(params?.currentPage) - 1)
+                    : Math.min(postsIds.length, Number(params?.currentPage) + 1)
+                : 1
+    }
+
     const postId = postsIds[nextPage - 1]
 
-    const post = await fetch(`${config.discourseDomain}/posts/${postId}.json`).then((res) =>
-        res.json()
-    )
+    const post = await fetch(`${config.discourseDomain}/posts/${postId}.json`)
+        .then((r) => r.json())
+        .catch(console.error)
 
     if (!post?.raw) {
         return initial(config, state)
     }
 
-    const urbanist = await loadGoogleFontAllVariants('Urbanist')
-    const lato = await loadGoogleFontAllVariants('Lato')
+    const textFont = await loadGoogleFontAllVariants(config.textFont || 'Lato')
+    const highlightFont = await loadGoogleFontAllVariants(config.highlightFont || 'Urbanist')
 
     return {
         buttons: [
             {
-                label: '&#x2302;',
+                label: '🏠',
             },
             {
-                label: '&larr;',
+                label: '⬅️',
             },
             {
-                label: '&rarr;',
+                label: '➡️',
+            },
+            {
+                label: 'View',
+                action: 'link',
+                target: config.discourseLink + '/' + post.post_number,
             },
         ],
         aspectRatio: '1:1',
-        fonts: [...urbanist, ...lato],
-        component: PostView(post),
+        fonts: [...textFont, ...highlightFont],
+        component: PostView({
+            post,
+            postCount: postsIds.length,
+            postNumber: nextPage,
+            backgroundColor: config.backgroundColor,
+            textFont: config.textFont,
+            textColor: config.textColor,
+            highlightFont: config.highlightFont,
+            highlightColor: config.highlightColor,
+        }),
         functionName: 'post',
         params: { currentPage: nextPage },
     }
