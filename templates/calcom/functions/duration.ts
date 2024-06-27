@@ -14,6 +14,51 @@ export default async function duration(
 ): Promise<BuildFrameData> {
     let containsUserFID = true
     let nftGate = true
+
+    if (config.follower && !body.validatedData.interactor.viewer_context.followed_by) {
+        return {
+            buttons: [],
+            component: NotSatisfied(
+                config,
+                'You havent satisfied the requirements to meet the call. Only profile followed by the creator can schedule a call.'
+            ),
+            functionName: 'initial',
+        }
+    }
+
+    if (config.following && !body.validatedData.interactor.viewer_context.following) {
+        return {
+            buttons: [],
+            component: NotSatisfied(
+                config,
+                'You havent satisfied the requirements to meet the call. Please follow the creator to schedule the call.'
+            ),
+            functionName: 'initial',
+        }
+    }
+
+    if (config.recasted && !body.validatedData.cast.viewer_context.recasted) {
+        return {
+            buttons: [],
+            component: NotSatisfied(
+                config,
+                'You havent satisfied the requirements to meet the call. Please recast this frame and try again to schedule the call.'
+            ),
+            functionName: 'initial',
+        }
+    }
+
+    if (config.liked && !body.validatedData.cast.viewer_context.liked) {
+        return {
+            buttons: [],
+            component: NotSatisfied(
+                config,
+                'You havent satisfied the requirements to meet the call. Please like this frame and try again to schedule the call.'
+            ),
+            functionName: 'initial',
+        }
+    }
+
     if (config.karmaGating) {
         const url = 'https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=1&limit=1000'
         const options = {

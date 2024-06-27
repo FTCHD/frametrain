@@ -1,13 +1,15 @@
 'use client'
 import { Input } from '@/components/shadcn/Input'
 import { useFarcasterId, useFrameConfig, useFrameId } from '@/sdk/hooks'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { Config } from '.'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
 import { uploadImage } from '@/sdk/upload'
 import { ToggleGroup } from '@/components/shadcn/ToggleGroup'
 import { ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
 import { getName } from './utils/metadata'
+import { mockOptionsAtom } from '@/lib/store'
+import { useAtom } from 'jotai'
 
 import {
     Select,
@@ -17,10 +19,30 @@ import {
     SelectValue,
 } from '@/components/shadcn/Select'
 
+type SimulateConfig = {
+    recasted: boolean
+    liked: boolean
+    following: boolean
+    follower: boolean
+}
+
 export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const fid = useFarcasterId()
+    const [mockOptions, setMockOptions] = useAtom(mockOptionsAtom)
+
+    useEffect(() => {
+        const options = ['recasted', 'liked', 'following', 'follower']
+        const newConfig: Partial<SimulateConfig> = {}
+
+        // biome-ignore lint/complexity/noForEach: <explanation>
+        options.forEach((option) => {
+            newConfig[option as keyof SimulateConfig] = mockOptions?.includes(option)
+        })
+
+        updateConfig(newConfig)
+    }, [mockOptions, updateConfig])
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
     const displayLabelDaysRef = useRef<HTMLInputElement>(null)

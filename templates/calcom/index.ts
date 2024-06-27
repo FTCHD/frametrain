@@ -28,6 +28,10 @@ export interface Config extends BaseConfig {
     nftType: string
     nftChain: string
     tokenID: string
+    recasted: boolean
+    liked: boolean
+    follower: boolean
+    following: boolean
 }
 
 export interface State extends BaseState {}
@@ -44,6 +48,10 @@ export default {
     initialConfig: {
         karmaGating: false,
         nftGating: false,
+        recasted: false,
+        liked: false,
+        follower: false,
+        following: false,
     },
     requiresValidation: true,
 } satisfies BaseTemplate
