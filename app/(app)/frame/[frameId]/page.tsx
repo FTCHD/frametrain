@@ -26,5 +26,5 @@ export default async function FrameTemplatePage({ params }: { params: { frameId:
 
     const currentTemplate = templates[frame.template]
 
-    return <FrameEditor frame={frame} template={currentTemplate} />
+    return <FrameEditor frame={frame} template={currentTemplate} fid={sesh.user.id} />
 }

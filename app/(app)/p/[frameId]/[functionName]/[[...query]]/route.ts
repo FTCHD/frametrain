@@ -1,9 +1,14 @@
 import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
-import type { FrameActionPayload, FrameActionPayloadValidated } from '@/lib/farcaster'
+import type {
+    BuildFrameData,
+    FrameActionPayload,
+    FrameActionPayloadValidated,
+} from '@/lib/farcaster'
 import { updateFramePreview } from '@/lib/frame'
 import { buildPreviewFramePage } from '@/lib/serve'
 import type { BaseConfig, BaseState } from '@/lib/types'
+import { FrameError } from '@/sdk/handlers'
 import templates from '@/templates'
 import { eq } from 'drizzle-orm'
 import ms from 'ms'
@@ -48,13 +53,34 @@ export async function POST(
     if (!handler) {
         notFound()
     }
+	
+	let buildParameters = {} as BuildFrameData
 
-    const buildParameters = await handler(
-        body,
-        frame.draftConfig as BaseConfig,
-        frame.state as BaseState,
-        searchParams
-    )
+    try {
+        buildParameters = await handler(
+            body,
+            frame.draftConfig as BaseConfig,
+            frame.state as BaseState,
+            searchParams
+        )
+    } catch (error) {
+        if (error instanceof FrameError) {
+            return Response.json(
+                { message: error.message },
+                {
+                    status: 400,
+                }
+            )
+        }
+
+        return Response.json(
+            { message: 'Unknown error' },
+            {
+                status: 500,
+            }
+        )
+    }
+
 
     const { frame: renderedFrame } = await buildPreviewFramePage({
         id: frame.id,

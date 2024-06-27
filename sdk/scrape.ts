@@ -45,10 +45,11 @@ export async function scrape({
     return res
 }
 
-export async function corsFetch(url: string) {
-    console.log('got here')
-
-    const res = await fetch(url)
+export async function corsFetch(url: string, { method = 'GET', headers = {} }: any = {}) {
+    const res = await fetch(url, {
+        method,
+        headers,
+    })
         .then((res) => res.text())
         .catch(console.error)
 

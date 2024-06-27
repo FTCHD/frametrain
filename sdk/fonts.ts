@@ -4,17 +4,18 @@ export async function loadGoogleFont(
     fontName: string,
     fontWeight: FontWeight,
     fontStyle: FontStyle
-): Promise<ArrayBuffer> {
-    const googleFontUrl = `https://fonts.googleapis.com/css2?family=${fontName.replace(
-        ' ',
-        '+'
-    )}:wght@${fontWeight}&display=swap`
+): Promise<{ name: string; data: ArrayBuffer; weight: FontWeight; style: FontStyle }> {
+    const requestFontName = fontName.replace(' ', '+')
+    const fontWeightValue = fontWeight as number
+    const italicValue = fontStyle === 'italic' ? '1' : '0'
+
+    const googleFontUrl = `https://fonts.googleapis.com/css2?family=${requestFontName}:ital,wght@${italicValue},${fontWeightValue}&display=swap`
 
     const response = await fetch(googleFontUrl)
     const cssText = await response.text()
 
     // Extract the font URL from the CSS text
-    const fontUrlMatch = cssText.match(/src: url\((.*?)\)/)
+    const fontUrlMatch = cssText.match(/url\((https:\/\/fonts\.gstatic\.com\/.*?)\)/)
     if (!fontUrlMatch) {
         throw new Error('Failed to extract font URL from CSS')
     }
@@ -25,7 +26,12 @@ export async function loadGoogleFont(
     const fontResponse = await fetch(fontUrl)
     const fontArrayBuffer = await fontResponse.arrayBuffer()
 
-    return fontArrayBuffer
+    return {
+        name: fontName,
+        data: fontArrayBuffer,
+        weight: fontWeight,
+        style: fontStyle,
+    }
 }
 
 export async function loadGoogleFontAllVariants(
