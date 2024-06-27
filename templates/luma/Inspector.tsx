@@ -167,7 +167,7 @@ export default function Inspector() {
 
                                 return dataUrl
                             }
-                            const backgroundCover = await compressImage(cover, true)
+                            const backgroundCover = cover //await compressImage(cover, true)
                             const imageCover = await compressImage(image)
 
                             const event = {
@@ -213,7 +213,7 @@ export default function Inspector() {
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="flex flex-col gap-2 w-full">
+                {/* <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg font-semibold">Background color</h2>
                     <ColorPicker
                         className="w-full"
@@ -221,7 +221,7 @@ export default function Inspector() {
                         background={config.backgroundColor || '#202224'}
                         setBackground={(value) => updateConfig({ backgroundColor: value })}
                     />
-                </div>
+                </div> */}
                 <div className="flex flex-col gap-2">
                     <h2 className="text-lg font-semibold">Title Color</h2>
                     <ColorPicker
