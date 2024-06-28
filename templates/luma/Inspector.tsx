@@ -143,7 +143,8 @@ export default function Inspector() {
                                     .slice(-2)
                                     .join('/')}`
                             }
-                            const cover = generateCoverUrl(75, 120) // for the top image
+                            const cover = generateCoverUrl(60, 80) // for the top image
+                            const bg = generateCoverUrl(10, 40) // for the top image
 
                             const sizes = dimensionsForRatio['1.91/1']
 
@@ -164,7 +165,7 @@ export default function Inspector() {
 
                                 return dataUrl
                             }
-                            const backgroundCover = await compressImage(cover, true)
+                            const backgroundCover = await compressImage(bg, true)
                             const image = await compressImage(cover)
 
                             const event = {
