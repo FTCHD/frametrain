@@ -71,7 +71,7 @@ export default async function duration(
             const response = await fetch(url, options)
             const data = await response.json()
 
-            containsUserFID = data.result.some((item: any) => item.fid === body.untrustedData.fid)
+            containsUserFID = data.result.some((item: any) => item.fid === body.validatedData.interactor.fid)
         } catch (error) {
             console.log(error)
         }
