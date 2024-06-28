@@ -15,7 +15,7 @@ export default async function duration(
     let containsUserFID = true
     let nftGate = true
 
-    if (config.follower && !body.validatedData.interactor.viewer_context.followed_by) {
+    if (config.gatingOptions.follower && !body.validatedData.interactor.viewer_context.followed_by) {
         return {
             buttons: [],
             component: NotSatisfied(
@@ -26,7 +26,7 @@ export default async function duration(
         }
     }
 
-    if (config.following && !body.validatedData.interactor.viewer_context.following) {
+    if (config.gatingOptions.following && !body.validatedData.interactor.viewer_context.following) {
         return {
             buttons: [],
             component: NotSatisfied(
@@ -37,7 +37,7 @@ export default async function duration(
         }
     }
 
-    if (config.recasted && !body.validatedData.cast.viewer_context.recasted) {
+    if (config.gatingOptions.recasted && !body.validatedData.cast.viewer_context.recasted) {
         return {
             buttons: [],
             component: NotSatisfied(
@@ -48,7 +48,7 @@ export default async function duration(
         }
     }
 
-    if (config.liked && !body.validatedData.cast.viewer_context.liked) {
+    if (config.gatingOptions.liked && !body.validatedData.cast.viewer_context.liked) {
         return {
             buttons: [],
             component: NotSatisfied(
@@ -59,7 +59,7 @@ export default async function duration(
         }
     }
 
-    if (config.karmaGating) {
+    if (config.gatingOptions.karmaGating) {
         const url = 'https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=1&limit=1000'
         const options = {
             method: 'POST',
@@ -76,7 +76,7 @@ export default async function duration(
             console.log(error)
         }
     }
-    if (config.nftGating) {
+    if (config.gatingOptions.nftGating) {
         if (body.validatedData.interactor.verified_addresses.eth_addresses.length === 0) {
             return {
                 buttons: [],
@@ -87,18 +87,18 @@ export default async function duration(
                 functionName: 'initial',
             }
         }
-        if (config.nftType === 'ERC721') {
+        if (config.nftOptions.nftType === 'ERC721') {
             nftGate = await balances721(
                 body.validatedData.interactor.verified_addresses.eth_addresses,
-                config.nftAddress,
-                config.nftChain
+                config.nftOptions.nftAddress,
+                config.nftOptions.nftChain
             )
         } else {
             nftGate = await balancesERC1155(
                 body.validatedData.interactor.verified_addresses.eth_addresses,
-                config.nftAddress,
-                config.tokenId,
-                config.nftChain
+                config.nftOptions.nftAddress,
+                config.nftOptions.tokenID,
+                config.nftOptions.nftChain
             )
         }
     }
@@ -118,7 +118,7 @@ export default async function duration(
             buttons: [],
             component: NotSatisfied(
                 config,
-                `You havent satisfied the requirements to meet the call. You need to hold the NFT - ${config.nftName} to schedule the call.`
+                `You havent satisfied the requirements to meet the call. You need to hold the NFT - ${config.nftOptions.nftName} to schedule the call.`
             ),
             functionName: 'initial',
         }

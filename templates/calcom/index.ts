@@ -4,14 +4,7 @@ import cover from './cover.jpeg'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
-    name: string
-    id: number
-    bio: string
-    timeZone: string
     username: string
-    apiKey: string
-    dates: string[][]
-    slots: string[]
     fontFamily?: string
     primaryColor?: string
     secondaryColor?: string
@@ -19,19 +12,23 @@ export interface Config extends BaseConfig {
     titleStyle?: string
     background?: string
     bodyColor?: string
-    maxBookingDays: number
-    karmaGating: boolean
-    nftGating: boolean
-    nftAddress: string
-    nftName: string
     fid: number
-    nftType: string
-    nftChain: string
-    tokenID: string
-    recasted: boolean
-    liked: boolean
-    follower: boolean
-    following: boolean
+
+    gatingOptions : {
+        karmaGating: boolean
+        nftGating: boolean
+        recasted: boolean
+        liked: boolean
+        follower: boolean
+        following: boolean
+    }
+    nftOptions : {
+        nftAddress: string
+        nftName: string 
+        nftType: string
+        nftChain: string
+        tokenID: string
+    }
 }
 
 export interface State extends BaseState {}
@@ -46,12 +43,18 @@ export default {
     Inspector,
     functions,
     initialConfig: {
-        karmaGating: false,
-        nftGating: false,
-        recasted: false,
-        liked: false,
-        follower: false,
-        following: false,
+        gatingOptions:{
+            karmaGating: false,
+            nftGating: false,
+            recasted: false,
+            liked: false,
+            follower: false,
+            following: false,
+        },
+        nftOptions :{
+            nftType  : 'ERC721',
+        }
+        
     },
     requiresValidation: true,
 } satisfies BaseTemplate

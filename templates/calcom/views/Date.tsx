@@ -18,6 +18,16 @@ export default function CoverView(
     } else {
         backgroundProp['backgroundColor'] = '#black'
     }
+
+    const visibleIndex = Math.floor(Number.parseInt(dateParam.toString()) / 12)
+    const startIndex = visibleIndex * 12
+    const endIndex = Math.min(startIndex + 12, dates.length)
+    const visibleDates = dates.slice(startIndex, endIndex)
+
+    const firstRowDates = visibleDates.slice(0, 6)
+    const secondRowDates = visibleDates.slice(6, 12)
+
+
     return (
         <div
             style={{
@@ -90,6 +100,14 @@ export default function CoverView(
                 >
                     Choose a date
                 </div>
+                    <div
+                    style={{
+                        display: 'flex',
+                        alignSelf: 'center',
+                    }}
+                >
+                    {months[Number.parseInt(dates[dateParam].split('-')[1])]}
+                </div>
                 <div
                     style={{
                         display: 'flex',
@@ -103,48 +121,73 @@ export default function CoverView(
                     gap: 20,
                 }}
             >
-                <div
-                    style={{
-                        display: 'flex',
-                        alignSelf: 'center',
-                    }}
-                >
-                    {months[Number.parseInt(dates[dateParam].split('-')[1])]}
-                </div>
+            
 
-                <div
+               <div
                     style={{
-                        color: config.primaryColor || 'white',
                         display: 'flex',
-                        gap: 20,
-                        alignItems: 'center',
                         justifyContent: 'space-between',
-                        marginTop: 20,
+                        width: '100%',
                     }}
                 >
-                    {dates.map((date, index) => (
-                        <div
-                            key={index}
-                            style={{
-                                padding: 20,
-                                border:
-                                    index.toString() === dateParam.toString()
-                                        ? 'none'
-                                        : '1px solid gray',
-                                borderRadius: 15,
-                                backgroundColor:
-                                    index.toString() === dateParam.toString()
-                                        ? config.primaryColor || 'white'
-                                        : 'none',
-                                color:
-                                    index.toString() === dateParam.toString()
-                                        ? config.secondaryColor || 'black'
-                                        : config.primaryColor || 'white',
-                            }}
-                        >
-                            {`${date.split('-')[2]}`}
-                        </div>
-                    ))}
+                    {firstRowDates.length !== 0 &&
+                        firstRowDates.map((timeSlot, index) => (
+                            <div
+                                key={index}
+                                style={{
+                                    fontSize: 44,
+                                    padding: 20,
+                                    paddingLeft: 25,
+                                    backgroundColor:
+                                        index === dateParam % 6 && dateParam % 12 < 6
+                                            ? config.primaryColor || 'white'
+                                            : 'none',
+                                    color:
+                                        index === dateParam % 6 && dateParam % 12 < 6
+                                            ? config.secondaryColor || 'black'
+                                            : config.primaryColor || 'white',
+                                    border:
+                                        index === dateParam % 6 && dateParam % 12 < 6
+                                            ? 'none'
+                                            : '1px solid gray',
+                                    borderRadius: 15,
+                                }}
+                            >
+                                {`${timeSlot.split('-')[2]}`}
+                            </div>
+                        ))}
+                </div>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                    }}
+                >
+                    {secondRowDates.length !== 0 &&
+                        secondRowDates.map((timeSlot, index) => (
+                            <div
+                                key={index}
+                                style={{
+                                 fontSize: 44,
+                                    padding: 20,
+                                    paddingLeft: 25,
+                                    backgroundColor:
+                                        index + 6 === dateParam % 12
+                                            ? config.primaryColor || 'white'
+                                            : 'none',
+                                    color:
+                                        index + 6 === dateParam % 12
+                                            ? config.secondaryColor || 'black'
+                                            : config.primaryColor || 'white',
+                                    border:
+                                        index + 6 === dateParam % 12 ? 'none' : '1px solid gray',
+                                    borderRadius: 15,
+                                }}
+                            >
+                                 {`${timeSlot.split('-')[2]}`}
+                            </div>
+                        ))}
                 </div>
             </div>
         </div>

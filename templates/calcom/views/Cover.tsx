@@ -67,7 +67,7 @@ export default function CoverView(config: Config) {
                     {`@${config.username}`}
                 </div>
             </div>
-            {config.nftGating ? (
+            {config.gatingOptions.nftGating ? (
                 <div
                     style={{
                         fontSize: '30px',
@@ -76,12 +76,12 @@ export default function CoverView(config: Config) {
                         alignSelf: 'flex-end',
                     }}
                 >
-                    {`NFT - ${config.nftName} is needed to book the Call`}
+                    {`NFT - ${config.nftOptions.nftName} is needed to book the Call`}
                 </div>
             ) : (
                 <></>
             )}
-            {config.karmaGating ? (
+            {config.gatingOptions.karmaGating ? (
                 <div
                     style={{
                         fontSize: '30px',

@@ -20,7 +20,7 @@ export default async function slot(
                 Number.parseInt(params.slot) == 0
                     ? params.slotLength - 1
                     : Number.parseInt(params.slot) - 1
-            const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+            const dates = getCurrentAndFutureDate(30)
             const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                 JSON.stringify({
                     json: {
@@ -74,7 +74,7 @@ export default async function slot(
             }
         }
         case 2: {
-            const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+            const dates = getCurrentAndFutureDate(30)
             const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                 JSON.stringify({
                     json: {
@@ -134,7 +134,7 @@ export default async function slot(
                 Number.parseInt(params.slot) == params.slotLength - 1
                     ? 0
                     : Number.parseInt(params.slot) + 1
-            const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+            const dates = getCurrentAndFutureDate(30)
             const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                 JSON.stringify({
                     json: {

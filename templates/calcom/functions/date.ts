@@ -37,7 +37,7 @@ export default async function duration(
                 duration = params.duration
                 durationTime = params.durationTime
             }
-            const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+            const dates = getCurrentAndFutureDate(30)
             const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                 JSON.stringify({
                     json: {
@@ -98,7 +98,7 @@ export default async function duration(
                 duration = '30min'
                 durationTime = '30'
 
-                const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+                const dates = getCurrentAndFutureDate(30)
                 const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                     JSON.stringify({
                         json: {
@@ -158,7 +158,7 @@ export default async function duration(
                 duration = params.duration
                 durationTime = params.durationTime
 
-                const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+                const dates = getCurrentAndFutureDate(30)
                 const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                     JSON.stringify({
                         json: {
@@ -219,7 +219,7 @@ export default async function duration(
             durationTime = params.durationTime
         }
     }
-    const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+    const dates = getCurrentAndFutureDate(30)
     const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
         JSON.stringify({
             json: {

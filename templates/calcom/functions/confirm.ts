@@ -15,7 +15,7 @@ export default async function confirm(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    const dates = getCurrentAndFutureDate(config.maxBookingDays || 9)
+    const dates = getCurrentAndFutureDate(30)
     const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
         JSON.stringify({
             json: {
