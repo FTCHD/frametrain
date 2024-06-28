@@ -74,18 +74,18 @@ export default function Inspector() {
                             const url = `https://lu.ma/${id}`
                             const html = await corsFetch(url)
                             if (!html) {
-                                return null
+                                return
                             }
 
                             const parser = new DOMParser()
                             const parsedhtml = parser.parseFromString(html, 'text/html')
                             if (!parsedhtml) {
-                                return null
+                                return
                             }
                             const jsonData = parsedhtml.getElementById('__NEXT_DATA__')
 
                             if (!jsonData?.textContent) {
-                                return null
+                                return
                             }
 
                             const jsonObj = JSON.parse(jsonData.textContent)
@@ -95,7 +95,7 @@ export default function Inspector() {
                             const hostData = initialData?.hosts as HostData[] | null
 
                             if (!(eventData && hostData)) {
-                                return null
+                                return
                             }
                             const startsAt = (eventData?.start_at ?? '') as string
                             const geo = eventData?.geo_address_info as {
@@ -136,19 +136,16 @@ export default function Inspector() {
                                 endsAt,
                                 remainingSpots: ticketInfo?.spots_remaining ?? null,
                             }
-                            const generateCoverUrl = (quality = 75, sizes = 100, isBg = false) => {
+                            const generateCoverUrl = (quality = 75, sizes = 180) => {
                                 const url = new URL(coverUrl)
                                 const paths = url.pathname.split('/')
-                                return `https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,${
-                                    isBg ? '' : 'dpr=2,'
-                                }quality=${quality},width=${sizes},height=${sizes}/event-covers/${paths
+                                return `https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,quality=${quality},width=${sizes},height=${sizes}/event-covers/${paths
                                     .slice(-2)
                                     .join('/')}`
                             }
-                            const cover = generateCoverUrl(30, 100, true) // for the top image
-                            const image = generateCoverUrl(40, 80) // for the background image
+                            const cover = generateCoverUrl(75, 120) // for the top image
 
-                            const sizes = dimensionsForRatio['1/1']
+                            const sizes = dimensionsForRatio['1.91/1']
 
                             const compressImage = async (image: string, useSizes = false) => {
                                 const b64 = await fetchCover(image)
@@ -157,7 +154,7 @@ export default function Inspector() {
                                 const canvas = document.createElement('canvas')
                                 const ctx = canvas.getContext('2d')
                                 if (!ctx) {
-                                    return null
+                                    return
                                 }
                                 const size = useSizes ? sizes : bitmap
                                 canvas.width = size.width
@@ -167,13 +164,13 @@ export default function Inspector() {
 
                                 return dataUrl
                             }
-                            const backgroundCover = cover //await compressImage(cover, true)
-                            const imageCover = await compressImage(image)
+                            const backgroundCover = await compressImage(cover, true)
+                            const image = await compressImage(cover)
 
                             const event = {
                                 ...data,
                                 backgroundCover,
-                                image: imageCover,
+                                image,
                             }
 
                             updateConfig({
@@ -213,15 +210,6 @@ export default function Inspector() {
                         </SelectContent>
                     </Select>
                 </div>
-                {/* <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg font-semibold">Background color</h2>
-                    <ColorPicker
-                        className="w-full"
-                        enabledPickers={['solid', 'gradient', 'image']}
-                        background={config.backgroundColor || '#202224'}
-                        setBackground={(value) => updateConfig({ backgroundColor: value })}
-                    />
-                </div> */}
                 <div className="flex flex-col gap-2">
                     <h2 className="text-lg font-semibold">Title Color</h2>
                     <ColorPicker

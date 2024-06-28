@@ -24,7 +24,6 @@ export default async function initial(config: Config, _state: State): Promise<Bu
     })
 
     return {
-        aspectRatio: '1:1',
         buttons,
         component: event ? EventView({ event, ...rest }) : CoverView(config),
     }

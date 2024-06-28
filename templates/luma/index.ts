@@ -23,7 +23,6 @@ export interface Config extends BaseConfig {
     priceColor?: string
     priceBackgroundColor?: string
     infoColor?: string
-    fids: string[]
 }
 
 export interface State extends BaseState {}
@@ -40,6 +39,5 @@ export default {
     requiresValidation: false,
     initialConfig: {
         event: undefined,
-        fids: [],
     },
 } satisfies BaseTemplate

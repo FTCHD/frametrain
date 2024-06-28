@@ -53,67 +53,69 @@ export default function EventView(props: Props) {
     return (
         <>
             <div
-                tw={'flex flex-col min-h-screen w-full items-center justify-center'}
+                tw={'flex flex-col min-h-screen w-full'}
                 style={{
                     gap: '1rem',
-                    color: props.textColor ?? 'text-white',
                     backgroundColor: '#202224',
                 }}
             >
-                {/* <div
+                <div
                     tw="absolute w-full opacity-50"
                     style={{
                         backgroundImage: `url(${event.backgroundCover})`,
-                        backgroundPosition: 'center',
+                        backgroundPosition: 'center center',
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
                         filter: 'blur(10px)',
                         height: '100%',
                     }}
-                /> */}
+                />
                 <div
-                    tw="flex flex-col w-full h-full justify-center items-center"
+                    tw="flex flex-col w-full h-full"
                     style={{
                         gap: '1rem',
                     }}
                 >
                     <div
-                        tw="flex flex-col items-center justify-center"
+                        tw="flex"
                         style={{
                             gap: '1rem',
+                            flexDirection: 'row-reverse',
                         }}
                     >
-                        <img src={event.image} alt="Event cover" tw="w-48 h-48" />
+                        <img
+                            src={event.image}
+                            alt="Event cover"
+                            tw="w-80 h-72 rounded-xl"
+                            style={{ top: 0, left: '1rem' }}
+                        />
                         <div
-                            tw="flex flex-col px-2 items-center justify-center"
+                            tw="flex flex-col"
                             style={{
                                 gap: '0.25rem',
                                 textAlign: 'center',
+                                right: '0',
                             }}
                         >
                             <h3
-                                tw="text-xl font-medium inline"
+                                tw="text-5xl font-medium inline"
                                 style={{
+                                    color: props.textColor ?? 'text-white',
                                     wordBreak: 'break-word',
                                 }}
                             >
                                 {event.title}
                             </h3>
                             <div
-                                tw={`flex flex-col justify-center  items-center ${
-                                    !props.infoColor ? 'text-[#ffffff80]' : ''
-                                }`}
+                                tw={'flex flex-col'}
                                 style={{
                                     gap: '1.25rem',
-                                    color: props.infoColor,
+                                    color: props.infoColor ?? 'text-[#ffffff80]',
                                 }}
                             >
-                                <div
-                                    tw="flex flex-col justify-center items-center"
-                                    style={{ gap: '.25rem' }}
-                                >
+                                <div tw="flex flex-col" style={{ gap: '.25rem' }}>
                                     <div
-                                        tw="flex flex-row items-center min-w-0"
+                                        tw="flex flex-row min-w-0"
                                         style={{ fontSize: '1rem', gap: '.5rem' }}
                                     >
                                         {event.hosts.length > 1 ? (
@@ -209,7 +211,7 @@ export default function EventView(props: Props) {
                                         )}
                                     </div>
                                     <div
-                                        tw="flex flex-row justify-center items-center font-medium"
+                                        tw="flex flex-row font-medium"
                                         style={{
                                             gap: '0.25rem',
                                         }}
@@ -245,14 +247,14 @@ export default function EventView(props: Props) {
                                 </div>
                                 {event.remainingSpots || event.approvalRequired ? (
                                     <div
-                                        tw="flex flex-col items-center justify-center"
+                                        tw="flex flex-col"
                                         style={{
                                             gap: '.25rem',
                                         }}
                                     >
                                         {event.remainingSpots ? (
                                             <div
-                                                tw="flex flex-row items-center font-medium"
+                                                tw="flex flex-row font-medium"
                                                 style={{
                                                     gap: '0.25rem',
                                                 }}
@@ -268,7 +270,7 @@ export default function EventView(props: Props) {
                                         )}
                                         {event.approvalRequired ? (
                                             <div
-                                                tw="flex flex-row justify-center items-center font-medium"
+                                                tw="flex flex-row font-medium"
                                                 style={{
                                                     gap: '0.25rem',
                                                 }}
@@ -287,15 +289,14 @@ export default function EventView(props: Props) {
                         </div>
                     </div>
                     <div
-                        tw={`flex items-center justify-center bg-[${
-                            props.priceBackgroundColor ?? '#414142'
-                        }] text-${
+                        tw={`flex text-${
                             props.priceColor ? `[${props.priceColor}]` : 'gray-600'
                         } h-8 max-w-full text-3xl rounded-[100px] p-5`}
                         style={{
                             fontSize: '1.125rem',
                             lineHeight: '1.75rem',
                             gap: '.5rem',
+                            backgroundColor: props.priceBackgroundColor ?? '#414142',
                         }}
                     >
                         {event.price}
