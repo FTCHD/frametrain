@@ -176,8 +176,6 @@ export default function Inspector() {
                             updateConfig({
                                 event,
                             })
-
-                            console.log('saved event data', event)
                         }}
                         placeholder="mpls6.18 or https://lu.ma/mpls6.18"
                     />

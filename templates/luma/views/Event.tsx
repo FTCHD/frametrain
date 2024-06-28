@@ -9,7 +9,14 @@ type Props = Config & {
 function SpotsIcon() {
     return (
         <>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                style={{
+                    width: '1.5rem',
+                    height: '1.5rem',
+                }}
+            >
                 <path
                     fill="currentColor"
                     fill-rule="evenodd"
@@ -32,8 +39,8 @@ function UserRoundCheck() {
             stroke-linecap="round"
             stroke-linejoin="round"
             style={{
-                width: '1rem',
-                height: '1rem',
+                width: '1.5rem',
+                height: '1.5rem',
             }}
         >
             <path d="M2 21a8 8 0 0 1 13.292-6" />
@@ -53,20 +60,20 @@ export default function EventView(props: Props) {
     return (
         <>
             <div
-                tw={'flex flex-col min-h-screen w-full'}
+                tw={'flex relative flex-col min-h-screen w-full'}
                 style={{
                     gap: '1rem',
                     backgroundColor: '#202224',
                 }}
             >
                 <div
-                    tw="absolute w-full opacity-50"
+                    tw="absolute w-full"
                     style={{
                         backgroundImage: `url(${event.backgroundCover})`,
                         backgroundPosition: 'center center',
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
-                        filter: 'blur(10px)',
+                        filter: 'blur(40px)',
                         height: '100%',
                     }}
                 />
@@ -74,13 +81,15 @@ export default function EventView(props: Props) {
                     tw="flex flex-col w-full h-full"
                     style={{
                         gap: '1rem',
+                        overflow: 'hidden',
                     }}
                 >
                     <div
-                        tw="flex"
+                        tw="flex my-10"
                         style={{
-                            gap: '1rem',
+                            gap: '2rem',
                             flexDirection: 'row-reverse',
+                            justifyContent: 'space-between',
                         }}
                     >
                         <img
@@ -90,33 +99,31 @@ export default function EventView(props: Props) {
                             style={{ top: 0, left: '1rem' }}
                         />
                         <div
-                            tw="flex flex-col"
+                            tw="flex flex-col min-w-0 ml-8"
                             style={{
-                                gap: '0.25rem',
-                                textAlign: 'center',
-                                right: '0',
+                                gap: '2.25rem',
                             }}
                         >
                             <h3
-                                tw="text-5xl font-medium inline"
+                                tw="text-4xl font-medium"
                                 style={{
-                                    color: props.textColor ?? 'text-white',
+                                    color: props.textColor ?? 'white',
                                     wordBreak: 'break-word',
                                 }}
                             >
                                 {event.title}
                             </h3>
                             <div
-                                tw={'flex flex-col'}
+                                tw={'flex flex-col text-3xl'}
                                 style={{
                                     gap: '1.25rem',
-                                    color: props.infoColor ?? 'text-[#ffffff80]',
+                                    color: props.infoColor ?? '#ffffff80',
                                 }}
                             >
-                                <div tw="flex flex-col" style={{ gap: '.25rem' }}>
+                                <div tw="flex flex-col" style={{ gap: '.75rem' }}>
                                     <div
-                                        tw="flex flex-row min-w-0"
-                                        style={{ fontSize: '1rem', gap: '.5rem' }}
+                                        tw="flex flex-row min-w-0 items-center"
+                                        style={{ gap: '.5rem' }}
                                     >
                                         {event.hosts.length > 1 ? (
                                             <svg
@@ -130,8 +137,8 @@ export default function EventView(props: Props) {
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 style={{
-                                                    width: '1rem',
-                                                    height: '1rem',
+                                                    width: '1.5rem',
+                                                    height: '1.5rem',
                                                 }}
                                             >
                                                 <path d="M18 21a8 8 0 0 0-16 0" />
@@ -141,8 +148,8 @@ export default function EventView(props: Props) {
                                         ) : (
                                             <svg
                                                 style={{
-                                                    width: '1rem',
-                                                    height: '1rem',
+                                                    width: '1.5rem',
+                                                    height: '1.5rem',
                                                 }}
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 width="24"
@@ -159,11 +166,10 @@ export default function EventView(props: Props) {
                                             </svg>
                                         )}
                                         <div
-                                            tw="flex flex-inline overflow-hidden"
+                                            tw="flex overflow-hidden"
                                             style={{
                                                 textOverflow: 'ellipsis',
                                                 whiteSpace: 'nowrap',
-                                                fontSize: '1rem',
                                             }}
                                         >
                                             By {host}
@@ -171,9 +177,8 @@ export default function EventView(props: Props) {
                                     </div>
                                     <div tw="flex flex-col">
                                         <div
-                                            tw="flex flex-row min-w-0 font-medium"
+                                            tw="flex flex-row min-w-0 font-medium items-center"
                                             style={{
-                                                fontSize: '1rem',
                                                 gap: '.5rem',
                                             }}
                                         >
@@ -188,8 +193,8 @@ export default function EventView(props: Props) {
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 style={{
-                                                    width: '1rem',
-                                                    height: '1rem',
+                                                    width: '1.5rem',
+                                                    height: '1.5rem',
                                                 }}
                                             >
                                                 <path d="M8 2v4" />
@@ -200,18 +205,13 @@ export default function EventView(props: Props) {
                                             <span>{start}</span>
                                         </div>
                                         {end && (
-                                            <div
-                                                tw="flex flex-row min-w-0 ml-6 font-medium"
-                                                style={{
-                                                    fontSize: '1rem',
-                                                }}
-                                            >
+                                            <div tw="flex flex-row min-w-0 ml-6 font-medium">
                                                 <span>{end}</span>
                                             </div>
                                         )}
                                     </div>
                                     <div
-                                        tw="flex flex-row font-medium"
+                                        tw="flex flex-row font-medium items-center"
                                         style={{
                                             gap: '0.25rem',
                                         }}
@@ -227,8 +227,8 @@ export default function EventView(props: Props) {
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                             style={{
-                                                width: '1rem',
-                                                height: '1rem',
+                                                width: '1.5rem',
+                                                height: '1.5rem',
                                             }}
                                         >
                                             <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
@@ -254,7 +254,7 @@ export default function EventView(props: Props) {
                                     >
                                         {event.remainingSpots ? (
                                             <div
-                                                tw="flex flex-row font-medium"
+                                                tw="flex flex-row font-medium items-center"
                                                 style={{
                                                     gap: '0.25rem',
                                                 }}
@@ -270,7 +270,7 @@ export default function EventView(props: Props) {
                                         )}
                                         {event.approvalRequired ? (
                                             <div
-                                                tw="flex flex-row font-medium"
+                                                tw="flex flex-row font-medium items-center"
                                                 style={{
                                                     gap: '0.25rem',
                                                 }}
@@ -288,18 +288,23 @@ export default function EventView(props: Props) {
                             </div>
                         </div>
                     </div>
-                    <div
-                        tw={`flex text-${
-                            props.priceColor ? `[${props.priceColor}]` : 'gray-600'
-                        } h-8 max-w-full text-3xl rounded-[100px] p-5`}
-                        style={{
-                            fontSize: '1.125rem',
-                            lineHeight: '1.75rem',
-                            gap: '.5rem',
-                            backgroundColor: props.priceBackgroundColor ?? '#414142',
-                        }}
-                    >
-                        {event.price}
+                    <div tw="flex ml-8">
+                        <div
+                            tw="flex items-center"
+                            style={{
+                                gap: '.5rem',
+                            }}
+                        >
+                            <div
+                                tw={'flex items-center py-1 px-2 h-8  text-2xl rounded-[100px]'}
+                                style={{
+                                    backgroundColor: props.priceBackgroundColor ?? '#414142',
+                                    color: props.priceColor ?? '#4b5563',
+                                }}
+                            >
+                                {event.price}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
