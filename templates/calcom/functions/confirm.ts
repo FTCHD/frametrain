@@ -15,6 +15,14 @@ export default async function confirm(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
+    const buttonIndex = body.untrustedData.buttonIndex;
+    if(buttonIndex === 1) {
+        return {
+            buttons: [],
+            component: FailView(config),
+            functionName: 'initial',
+        }
+    }
     const dates = getCurrentAndFutureDate(30)
     const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
         JSON.stringify({
