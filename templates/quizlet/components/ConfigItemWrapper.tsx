@@ -2,9 +2,10 @@
 
 import type { MenuItem } from '../types'
 import BasicConfig from './config/Basic'
+import EndingScreen from './config/EndingScreen'
 import Qna from './config/Qna'
 import Questions from './config/Questions'
-import ScreensConfig from './config/Screens'
+import CoverScreen from './config/CoverScreen'
 
 type Props = {
     item: MenuItem
@@ -19,10 +20,10 @@ export default function ConfigItemWrapper({ item }: Props) {
                 return <Questions />
 
             case 'cover':
-                return <ScreensConfig screen="cover" />
+                return <CoverScreen />
 
             case 'ending':
-                return <ScreensConfig screen="success" />
+                return <EndingScreen />
 
             default:
                 return <BasicConfig />

@@ -1,66 +1,53 @@
 'use client'
 
-import { Button } from '@/components/shadcn/Button'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import type { Config } from '../..'
 import { Input } from '@/components/shadcn/Input'
-import { Label } from '@/components/shadcn/InputLabel'
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
+import { Label } from '@/components/shadcn/InputLabel'
+import UploadSlide from './UploadSlide'
+import { Button } from '@/components/shadcn/Button'
 import { Switch } from '@/components/shadcn/Switch'
 import { Textarea } from '@/components/shadcn/Textarea'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useState } from 'react'
-import type { Config } from '../..'
-import UploadSlide from './UploadSlide'
 
-type Props = {
-    screen: 'cover' | 'success'
-}
-
-export default function ScreensConfig({ screen }: Props) {
+export default function EndingScreen() {
     const [config, updateConfig] = useFrameConfig<Config>()
 
-    const name = screen === 'cover' ? 'Cover' : 'Ending'
-    const data = screen === 'cover' ? config.cover : config.success
-
     const [descriptionType, setDescriptionType] = useState<'text' | 'image'>(
-        data.image ? 'image' : 'text'
+        config.success.image ? 'image' : 'text'
     )
-    const [customizeStyles, setCustomizeStyles] = useState<Record<string, boolean>>({
-        [screen]: !!data.configuration,
-    })
+    const [customizeStyles, setCustomizeStyles] = useState(!!config.success.configuration)
 
     const uploadImage = useUploadImage()
 
     return (
         <>
             <div className="flex flex-col gap-4 w-full">
-                {screen === 'success' && (
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">External Link</h2>
-                        <Input
-                            className="py-2 text-lg "
-                            type="url"
-                            defaultValue={config.success.url}
-                            onChange={(e) => {
-                                updateConfig({
-                                    success: { ...config.success, url: e.target.value },
-                                })
-                            }}
-                            placeholder="https://warpcast.com/~/channel/frametrain"
-                        />
-                    </div>
-                )}
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg font-semibold">
-                        {screen === 'success' ? 'Link Label' : 'Button Label'}
-                    </h2>
+                    <h2 className="text-lg font-semibold">External Link</h2>
                     <Input
-                        placeholder={`${name} Label`}
-                        defaultValue={data.label}
+                        className="py-2 text-lg "
+                        type="url"
+                        defaultValue={config.success.url}
+                        onChange={(e) => {
+                            updateConfig({
+                                success: { ...config.success, url: e.target.value },
+                            })
+                        }}
+                        placeholder="https://warpcast.com/~/channel/frametrain"
+                    />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg font-semibold">Link Label</h2>
+                    <Input
+                        placeholder={'Ending Label'}
+                        defaultValue={config.success.label}
                         onChange={(e) =>
                             updateConfig({
-                                [screen]: {
-                                    ...data,
+                                success: {
+                                    ...config.success,
                                     label: e.target.value,
                                 },
                             })
@@ -92,15 +79,17 @@ export default function ScreensConfig({ screen }: Props) {
                         {descriptionType === 'image' ? (
                             <div className="flex flex-col gap-2 w-full">
                                 <label
-                                    htmlFor="cover"
+                                    htmlFor="image"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >
-                                    {data?.image ? 'Update' : 'Upload'} Image
+                                    {config.success?.image ? 'Update' : 'Upload'} Image
                                 </label>
                                 <UploadSlide
-                                    htmlFor="cover"
+                                    htmlFor="image"
                                     setSlide={(image) => {
-                                        updateConfig({ [screen]: { ...data, image, text: null } })
+                                        updateConfig({
+                                            success: { ...config.success, image, text: null },
+                                        })
                                     }}
                                     uploadSlide={async (base64String, contentType) => {
                                         const { filePath } = await uploadImage({
@@ -110,12 +99,12 @@ export default function ScreensConfig({ screen }: Props) {
                                         return filePath
                                     }}
                                 />
-                                {config.cover.image ? (
+                                {config.success.image ? (
                                     <Button
                                         variant="destructive"
                                         onClick={() => {
                                             updateConfig({
-                                                [screen]: { ...data, image: null },
+                                                success: { ...config.success, image: null },
                                             })
                                         }}
                                         className="w-full"
@@ -132,25 +121,25 @@ export default function ScreensConfig({ screen }: Props) {
                                         <div className="flex flex-row items-center justify-between gap-2 px-4">
                                             <Label
                                                 className="font-md"
-                                                htmlFor="cover-text-customization"
+                                                htmlFor="image-text-customization"
                                             >
                                                 Customize
                                             </Label>
                                             <Switch
-                                                checked={customizeStyles[screen]}
+                                                checked={customizeStyles}
                                                 onCheckedChange={(checked) => {
-                                                    setCustomizeStyles({ [screen]: checked })
+                                                    setCustomizeStyles(checked)
                                                 }}
                                             />
                                         </div>
                                     </div>
                                     <Textarea
-                                        defaultValue={data?.text}
-                                        placeholder={`Your ${name} description`}
+                                        defaultValue={config.success?.text}
+                                        placeholder={'Your Ending description'}
                                         onChange={(e) => {
                                             updateConfig({
-                                                [screen]: {
-                                                    ...data,
+                                                success: {
+                                                    ...config.success,
                                                     text: e.target.value,
                                                     image: null,
                                                 },
@@ -159,18 +148,20 @@ export default function ScreensConfig({ screen }: Props) {
                                     />
                                 </div>
                                 {/* Font start */}
-                                {customizeStyles[screen] ? (
+                                {customizeStyles ? (
                                     <>
                                         <div className="flex flex-col gap-2 w-full">
-                                            <h2 className="text-lg font-semibold">{name} Font</h2>
+                                            <h2 className="text-lg font-semibold">Ending Font</h2>
                                             <FontFamilyPicker
-                                                defaultValue={data.configuration?.fontFamily}
+                                                defaultValue={
+                                                    config.success.configuration?.fontFamily
+                                                }
                                                 onSelect={(font) => {
                                                     updateConfig({
-                                                        [screen]: {
-                                                            ...data,
+                                                        success: {
+                                                            ...config.success,
                                                             configuration: {
-                                                                ...data.configuration,
+                                                                ...config.success.configuration,
                                                                 fontFamily: font,
                                                             },
                                                         },
@@ -179,16 +170,18 @@ export default function ScreensConfig({ screen }: Props) {
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2 w-full">
-                                            <h2 className="text-lg font-semibold">{name} Size</h2>
+                                            <h2 className="text-lg font-semibold">Ending Size</h2>
                                             <Input
-                                                defaultValue={data.configuration?.fontSize}
+                                                defaultValue={
+                                                    config.success.configuration?.fontSize
+                                                }
                                                 placeholder="10px"
                                                 onChange={(e) =>
                                                     updateConfig({
-                                                        [screen]: {
-                                                            ...data,
+                                                        success: {
+                                                            ...config.success,
                                                             configuration: {
-                                                                ...data.configuration,
+                                                                ...config.success.configuration,
                                                                 fontSize: e.target.value,
                                                             },
                                                         },
@@ -198,19 +191,20 @@ export default function ScreensConfig({ screen }: Props) {
                                         </div>
                                         <div className="flex flex-col gap-2 w-full">
                                             <h2 className="text-lg font-semibold">
-                                                {name} Text Color
+                                                Ending Text Color
                                             </h2>
                                             <ColorPicker
                                                 className="w-full"
                                                 background={
-                                                    data.configuration?.textColor || 'white'
+                                                    config.success.configuration?.textColor ||
+                                                    'white'
                                                 }
                                                 setBackground={(color: string) =>
                                                     updateConfig({
-                                                        [screen]: {
-                                                            ...data,
+                                                        success: {
+                                                            ...config.success,
                                                             configuration: {
-                                                                ...data.configuration,
+                                                                ...config.success.configuration,
                                                                 textColor: color,
                                                             },
                                                         },
@@ -220,21 +214,21 @@ export default function ScreensConfig({ screen }: Props) {
                                         </div>
                                         <div className="flex flex-col gap-2 w-full">
                                             <h2 className="text-lg font-semibold">
-                                                {name} Background Color
+                                                Ending Background Color
                                             </h2>
                                             <ColorPicker
                                                 enabledPickers={['solid', 'gradient', 'image']}
                                                 className="w-full"
                                                 background={
-                                                    data.configuration?.backgroundColor ||
+                                                    config.success.configuration?.backgroundColor ||
                                                     'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
                                                 }
                                                 setBackground={(color: string) =>
                                                     updateConfig({
-                                                        [screen]: {
-                                                            ...data,
+                                                        success: {
+                                                            ...config.success,
                                                             configuration: {
-                                                                ...data.configuration,
+                                                                ...config.success.configuration,
                                                                 backgroundColor: color,
                                                             },
                                                         },
@@ -243,18 +237,21 @@ export default function ScreensConfig({ screen }: Props) {
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2 w-full">
-                                            <h2 className="text-lg font-semibold">{name} Weight</h2>
+                                            <h2 className="text-lg font-semibold">Ending Weight</h2>
                                             <FontWeightPicker
                                                 currentFont={
-                                                    data.configuration?.fontFamily || 'Roboto'
+                                                    config.success.configuration?.fontFamily ||
+                                                    'Roboto'
                                                 }
-                                                defaultValue={data.configuration?.fontFamily}
+                                                defaultValue={
+                                                    config.success.configuration?.fontFamily
+                                                }
                                                 onSelect={(weight) =>
                                                     updateConfig({
-                                                        [screen]: {
-                                                            ...data,
+                                                        success: {
+                                                            ...config.success,
                                                             configuration: {
-                                                                ...data.configuration,
+                                                                ...config.success.configuration,
                                                                 fontWeight: weight,
                                                             },
                                                         },
@@ -263,20 +260,22 @@ export default function ScreensConfig({ screen }: Props) {
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2 w-full">
-                                            <h2 className="text-lg font-semibold">{name} Style</h2>
+                                            <h2 className="text-lg font-semibold">Ending Style</h2>
                                             <FontStylePicker
                                                 currentFont={
-                                                    data.configuration?.fontFamily || 'Roboto'
+                                                    config.success.configuration?.fontFamily ||
+                                                    'Roboto'
                                                 }
                                                 defaultValue={
-                                                    data.configuration?.fontStyle || 'normal'
+                                                    config.success.configuration?.fontStyle ||
+                                                    'normal'
                                                 }
                                                 onSelect={(style) =>
                                                     updateConfig({
-                                                        [screen]: {
-                                                            ...data,
+                                                        success: {
+                                                            ...config.success,
                                                             configuration: {
-                                                                ...data.configuration,
+                                                                ...config.success.configuration,
                                                                 fontStyle: style,
                                                             },
                                                         },
@@ -286,8 +285,6 @@ export default function ScreensConfig({ screen }: Props) {
                                         </div>
                                     </>
                                 ) : null}
-
-                                {/* Font end */}
                             </>
                         )}
                     </div>

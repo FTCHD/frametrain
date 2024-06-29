@@ -1,11 +1,11 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
-import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
 import { useFrameConfig } from '@/sdk/hooks'
-import { Trash } from 'lucide-react'
+import { Trash, X } from 'lucide-react'
 import { useState } from 'react'
 import type { Config } from '../..'
 import QnaForm from './QnaForm'
+import { Drawer, DrawerClose, DrawerContent } from '@/components/shadcn/Drawer'
 
 export default function Questions() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -62,8 +62,8 @@ export default function Questions() {
             ))}
             {currentQna && (
                 <>
-                    <Dialog open={open} onOpenChange={setOpen}>
-                        <DialogContent className="p-1 max-w-2xl">
+                    <Drawer open={open} onOpenChange={setOpen}>
+                        <DrawerContent>
                             <div className="flex-1 h-full">
                                 <QnaForm
                                     mode="update"
@@ -71,8 +71,12 @@ export default function Questions() {
                                     className="overflow-y-scroll overflow-x-hidden h-screen px-2 pt-4"
                                 />
                             </div>
-                        </DialogContent>
-                    </Dialog>
+                            <DrawerClose className="absolute right-8 top-8 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                                <X className="h-5 w-5" />
+                                <span className="sr-only">Close</span>
+                            </DrawerClose>
+                        </DrawerContent>
+                    </Drawer>
                 </>
             )}
         </div>
