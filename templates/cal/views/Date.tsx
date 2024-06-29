@@ -79,7 +79,7 @@ export default function CoverView(
                             fontStyle: config.titleStyle || 'normal',
                         }}
                     >
-                        {`${config.name}`}
+                        {config.name}
                     </div>
                     <div
                         style={{

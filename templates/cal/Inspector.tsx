@@ -1,12 +1,11 @@
 'use client'
 import { Input } from '@/components/shadcn/Input'
-import { useFarcasterId, useFrameConfig, useFrameId } from '@/sdk/hooks'
-import { useEffect, useRef } from 'react'
-import type { Config } from '.'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { uploadImage } from '@/sdk/upload'
 import { ToggleGroup } from '@/components/shadcn/ToggleGroup'
 import { ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
+import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import { useFarcasterId, useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { uploadImage } from '@/sdk/upload'
+import type { Config } from '.'
 import { getName } from './utils/metadata'
 
 import {
@@ -18,6 +17,7 @@ import {
 } from '@/components/shadcn/Select'
 import { Switch } from '@/components/shadcn/Switch'
 import { corsFetch } from '@/sdk/scrape'
+import Link from 'next/link'
 import { useDebouncedCallback } from 'use-debounce'
 
 export default function Inspector() {
@@ -25,9 +25,17 @@ export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
     const fid = useFarcasterId()
 
-    const displayLabelInputRef = useRef<HTMLInputElement>(null)
-
     const handleSubmit = async (username: string) => {
+        if (!username) {
+            updateConfig({
+                image: undefined,
+                name: undefined,
+                username: undefined,
+                fid: undefined,
+            })
+            return
+        }
+
         corsFetch(
             `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${username}","eventSlug":"15min","isTeamEvent":false,"org":null}}}`,
             {
@@ -52,6 +60,7 @@ export default function Inspector() {
             })
             .catch((error) => console.error('Error:', error))
     }
+	
     const debouncedHandle = useDebouncedCallback((username: any) => {
         handleSubmit(username)
     }, 1000)
@@ -94,23 +103,28 @@ export default function Inspector() {
     }
 
     return (
-        <div className="w-full h-full space-y-4">
-            <h1 className="text-2xl font-semibold">Cal username</h1>
-
+        <div className="w-full h-full flex flex-col gap-5">
             <div className="flex flex-col gap-2 ">
+                <h2 className="text-2xl font-semibold">Username</h2>
                 <Input
                     className="text-lg"
                     placeholder="Enter your cal.com username"
-                    ref={displayLabelInputRef}
-                    onChange={() => {
-                        debouncedHandle(displayLabelInputRef.current!.value)
+                    defaultValue={config.username}
+                    onChange={(e) => {
+                        debouncedHandle(e.target.value)
                     }}
                 />
-                <h1 className="text-2xl font-semibold">Gating Options</h1>
+            </div>
+            <div className="flex flex-col gap-2 ">
+                <h2 className="text-2xl font-semibold">Gating Options</h2>
                 <div className="flex flex-col gap-2 w-full md:w-auto">
-                    <h2 className="text-lg">Karma gating</h2>
+                    <h2 className="text-lg font-semibold">Karma gating</h2>
 
-                    <ToggleGroup type="single" className="flex justify-start gap-2">
+                    <ToggleGroup
+                        type="single"
+                        className="flex justify-start gap-2"
+                        defaultValue={config.gatingOptions.karmaGating ? 'true' : 'false'}
+                    >
                         <ToggleGroupItem
                             value="true"
                             className="border-2 border-zinc-600"
@@ -141,13 +155,22 @@ export default function Inspector() {
                         </ToggleGroupItem>
                     </ToggleGroup>
                     <p className="text-sm text-muted-foreground">
-                        Enable users within your second-degree connections to book a call.
+                        Only allow Farcaster users within your second-degree to book a call. To
+                        learn more check out{' '}
+                        <Link className="underline" href="https://openrank.com/" target="_blank">
+                            OpenRank
+                        </Link>
+                        .
                     </p>
                 </div>
                 <div className="flex flex-col gap-2 w-full md:w-auto">
-                    <h2 className="text-lg">NFT Gating</h2>
+                    <h2 className="text-lg font-semibold">NFT Gating</h2>
 
-                    <ToggleGroup type="single" className="flex justify-start gap-2">
+                    <ToggleGroup
+                        type="single"
+                        className="flex justify-start gap-2"
+                        defaultValue={config.gatingOptions.nftGating ? 'true' : 'false'}
+                    >
                         <ToggleGroupItem
                             value="true"
                             className="border-2 border-zinc-600"
@@ -178,13 +201,13 @@ export default function Inspector() {
                         </ToggleGroupItem>
                     </ToggleGroup>
                     <p className="text-sm text-muted-foreground">
-                        Allow specific users holding an NFT to book a call.
+                        Only only users users holding a specific NFT to book a call.
                     </p>
                 </div>
                 {config.gatingOptions.nftGating && (
-                    <div className="flex-col gap-2">
+                    <>
                         <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg">Choose Chain</h2>
+                            <h2 className="text-lg font-semibold">Choose Chain</h2>
                             <Select
                                 onValueChange={handleChainChange}
                                 defaultValue={config.nftOptions.nftChain}
@@ -200,7 +223,7 @@ export default function Inspector() {
                             </Select>
                         </div>
                         <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg">Choose NFT Type</h2>
+                            <h2 className="text-lg font-semibold">Choose NFT Type</h2>
                             <Select
                                 defaultValue={config.nftOptions.nftType}
                                 onValueChange={handleNftTypeChange}
@@ -216,7 +239,7 @@ export default function Inspector() {
                         </div>
 
                         <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg">NFT address</h2>
+                            <h2 className="text-lg font-semibold">NFT address</h2>
                             <Input
                                 className="text-lg"
                                 placeholder="Enter your NFT address"
@@ -227,7 +250,7 @@ export default function Inspector() {
                         </div>
                         {config.nftOptions.nftType === 'ERC1155' && (
                             <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg">Token ID</h2>
+                                <h2 className="text-lg font-semibold">Token ID</h2>
                                 <Input
                                     className="text-lg"
                                     placeholder="Enter your NFT token ID"
@@ -235,10 +258,10 @@ export default function Inspector() {
                                 />
                             </div>
                         )}
-                    </div>
+                    </>
                 )}
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Recasted</h2>
+                    <h2 className="text-lg font-semibold">Recasted</h2>
 
                     <Switch
                         checked={config.gatingOptions.recasted}
@@ -265,7 +288,7 @@ export default function Inspector() {
                     </p>
                 </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Liked</h2>
+                    <h2 className="text-lg font-semibold">Liked</h2>
 
                     <Switch
                         checked={config.gatingOptions.liked}
@@ -292,7 +315,7 @@ export default function Inspector() {
                     </p>
                 </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Follower</h2>
+                    <h2 className="text-lg font-semibold">Follower</h2>
 
                     <Switch
                         checked={config.gatingOptions.follower}
@@ -317,9 +340,9 @@ export default function Inspector() {
                     <p className="text-sm text-muted-foreground">
                         Only allow users who you follow to book a call.
                     </p>
-                </div>{' '}
+                </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Following</h2>
+                    <h2 className="text-lg font-semibold">Following</h2>
 
                     <Switch
                         checked={config.gatingOptions.following}
@@ -345,8 +368,11 @@ export default function Inspector() {
                         Only allow users who follow you to book a call.
                     </p>
                 </div>
+            </div>
+            <div className="flex flex-col gap-2 ">
+                <h2 className="text-2xl font-semibold">Customization</h2>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Font</h2>
+                    <h2 className="text-lg font-semibold">Font</h2>
                     <FontFamilyPicker
                         defaultValue={config.fontFamily || 'Roboto'}
                         onSelect={(font) => {
@@ -357,7 +383,7 @@ export default function Inspector() {
                     />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Primary Color</h2>
+                    <h2 className="text-lg font-semibold">Primary Color</h2>
                     <ColorPicker
                         className="w-full"
                         background={config.primaryColor || '#ffffff'}
@@ -369,7 +395,7 @@ export default function Inspector() {
                     />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Secondary Color</h2>
+                    <h2 className="text-lg font-semibold">Secondary Color</h2>
                     <ColorPicker
                         className="w-full"
                         background={config.secondaryColor || '#000000'}
@@ -381,7 +407,7 @@ export default function Inspector() {
                     />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Title Style</h2>
+                    <h2 className="text-lg font-semibold">Title Style</h2>
                     <FontStylePicker
                         currentFont={config?.fontFamily || 'Roboto'}
                         defaultValue={config?.titleStyle || 'normal'}
@@ -393,7 +419,7 @@ export default function Inspector() {
                     />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Title Weight</h2>
+                    <h2 className="text-lg font-semibold">Title Weight</h2>
                     <FontWeightPicker
                         currentFont={config.fontFamily || 'Roboto'}
                         defaultValue={config.titleWeight}
@@ -405,7 +431,7 @@ export default function Inspector() {
                     />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Background</h2>
+                    <h2 className="text-lg font-semibold">Background</h2>
                     <ColorPicker
                         className="w-full"
                         enabledPickers={['solid', 'gradient', 'image']}

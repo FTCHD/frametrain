@@ -67,7 +67,7 @@ export default function CoverView(config: Config) {
                             display: 'flex',
                         }}
                     >
-                        {`${config.name}`}
+                        {config.name}
                     </div>
                     <div
                         style={{
@@ -91,7 +91,7 @@ export default function CoverView(config: Config) {
                     textAlign: 'left',
                 }}
             >
-                Choose the duration of your call
+                Choose the duration of your call.
             </div>
         </div>
     )

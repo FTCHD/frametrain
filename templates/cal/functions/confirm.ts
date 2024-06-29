@@ -4,11 +4,11 @@ import type { Config, State } from '..'
 import PageView from '../views/AfterConfirm'
 import FailView from '../views/Failed'
 
-import { getCurrentAndFutureDate } from '../utils/getDays'
-import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
-import { getEventSlug } from '../utils/getEventSlug'
-import { bookCall } from '../utils/bookCall'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { bookCall } from '../utils/bookCall'
+import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
+import { getCurrentAndFutureDate } from '../utils/getDays'
+import { getEventSlug } from '../utils/getEventSlug'
 
 export default async function confirm(
     body: FrameActionPayload,
@@ -16,10 +16,8 @@ export default async function confirm(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    const fonts = []
-
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    fonts.push(...roboto)
+    const fonts = [...roboto]
 
     if (config?.fontFamily) {
         const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
@@ -83,7 +81,7 @@ export default async function confirm(
             {
                 label: 'Create your own',
                 action: 'link',
-                target: 'https://frametrain-hack.vercel.app',
+                target: 'https://frametra.in',
             },
         ],
         fonts: fonts,

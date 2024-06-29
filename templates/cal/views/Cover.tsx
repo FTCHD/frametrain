@@ -33,7 +33,6 @@ export default function CoverView(config: Config) {
             <div
                 style={{
                     display: 'flex',
-                    // justifyContent: 'space-between',
                     alignItems: 'center',
                     gap: 30,
                 }}
@@ -68,7 +67,7 @@ export default function CoverView(config: Config) {
                             display: 'flex',
                         }}
                     >
-                        {`${config.name}`}
+                        {config.name || 'Your Name'}
                     </div>
                     <div
                         style={{
@@ -80,7 +79,7 @@ export default function CoverView(config: Config) {
                             display: 'flex',
                         }}
                     >
-                        {`@${config.username}`}
+                        {`@${config.username || 'your-username'}`}
                     </div>
                 </div>
             </div>
@@ -94,11 +93,9 @@ export default function CoverView(config: Config) {
                         alignSelf: 'flex-start',
                     }}
                 >
-                    {`• NFT - ${config.nftOptions.nftName} is needed to book the Call`}
+                    {`ℹ️ Only ${config.nftOptions.nftName || 'NFT'} holders can book.`}
                 </div>
-            ) : (
-                <></>
-            )}
+            ) : undefined}
             {config.gatingOptions.karmaGating ? (
                 <div
                     style={{
@@ -108,18 +105,17 @@ export default function CoverView(config: Config) {
                         alignSelf: 'flex-start',
                     }}
                 >
-                    {'• Karma Gating - people within 2nd degree connnections can book the call'}
+                    {'ℹ️ Only 2nd degree connections can book.'}
                 </div>
-            ) : (
-                <></>
-            )}
+            ) : undefined}
             <div
                 style={{
                     color: config.primaryColor || 'white',
                     fontSize: '45px',
+                    textAlign: 'left',
                 }}
             >
-                Schedule a Call with me
+                Schedule a call with me right from this Frame!
             </div>
         </div>
     )

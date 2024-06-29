@@ -72,7 +72,7 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
                             fontStyle: config.titleStyle || 'normal',
                         }}
                     >
-                        {`${config.name}`}
+                        {config.name}
                     </div>
                     <div
                         style={{
@@ -109,7 +109,7 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
                         fontSize: 28,
                     }}
                 >
-                    {`Timezone : ${'UTC'}`}
+                    Timezone: UTC
                 </div>
             </div>
 

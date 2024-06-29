@@ -67,7 +67,7 @@ export default function CoverView(config: Config) {
                             display: 'flex',
                         }}
                     >
-                        {`${config.name}`}
+                        {config.name}
                     </div>
                     <div
                         style={{

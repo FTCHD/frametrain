@@ -4,9 +4,9 @@ import type { Config, State } from '..'
 import PageView from '../views/Date'
 import NextView from '../views/Slot'
 
-import { getCurrentAndFutureDate } from '../utils/getDays'
-import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
+import { getCurrentAndFutureDate } from '../utils/getDays'
 
 export default async function duration(
     body: FrameActionPayload,
@@ -14,10 +14,8 @@ export default async function duration(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    const fonts = []
-
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    fonts.push(...roboto)
+    const fonts = [...roboto]
 
     if (config?.fontFamily) {
         const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
@@ -84,7 +82,7 @@ export default async function duration(
                         label: '⬅️',
                     },
                     {
-                        label: 'select',
+                        label: 'Select',
                     },
                     {
                         label: '➡️',
@@ -146,7 +144,7 @@ export default async function duration(
                             label: '⬅️',
                         },
                         {
-                            label: 'select',
+                            label: 'Select',
                         },
                         {
                             label: '➡️',
@@ -206,7 +204,7 @@ export default async function duration(
                             label: '⬅️',
                         },
                         {
-                            label: 'select',
+                            label: 'Select',
                         },
                         {
                             label: '➡️',
@@ -267,7 +265,7 @@ export default async function duration(
                 label: '⬅️',
             },
             {
-                label: 'select',
+                label: 'Select',
             },
             {
                 label: '➡️',

@@ -1,23 +1,21 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
 import type { Config, State } from '..'
-import PageView from '../views/Slot'
 import NextView from '../views/Confirm'
+import PageView from '../views/Slot'
 
-import { getCurrentAndFutureDate } from '../utils/getDays'
-import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
+import { getCurrentAndFutureDate } from '../utils/getDays'
 
 export default async function slot(
-    body: FrameActionPayload,
+    body: FrameActionPayloadValidated,
     config: Config,
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    const fonts = []
-
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    fonts.push(...roboto)
+    const fonts = [...roboto]
 
     if (config?.fontFamily) {
         const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
@@ -66,7 +64,7 @@ export default async function slot(
                         label: '⬅️',
                     },
                     {
-                        label: 'select',
+                        label: 'Select',
                     },
                     {
                         label: '➡️',
@@ -183,7 +181,7 @@ export default async function slot(
                         label: '⬅️',
                     },
                     {
-                        label: 'select',
+                        label: 'Select',
                     },
                     {
                         label: '➡️',
@@ -209,7 +207,7 @@ export default async function slot(
                 label: '⬅️',
             },
             {
-                label: 'select',
+                label: 'Select',
             },
             {
                 label: '➡️',

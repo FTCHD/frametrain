@@ -5,10 +5,8 @@ import type { Config, State } from '..'
 import CoverView from '../views/Cover'
 
 export default async function initial(config: Config, state: State): Promise<BuildFrameData> {
-    const fonts = []
-
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    fonts.push(...roboto)
+    const fonts = [...roboto]
 
     if (config?.fontFamily) {
         const titleFont = await loadGoogleFontAllVariants(config.fontFamily)

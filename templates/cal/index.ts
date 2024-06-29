@@ -1,6 +1,6 @@
 import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.jpeg'
+import cover from './cover.jpg'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
@@ -36,17 +36,15 @@ export interface Config extends BaseConfig {
 export interface State extends BaseState {}
 
 export default {
-    name: 'Cal.com',
-    description: 'Integrate cal.com into your frame',
+    name: 'Cal Template',
+    description: 'Let people book calls with you straight from a Frame. Gating options included.',
     creatorFid: '389273',
-    creatorName: 'leofrank',
+    creatorName: 'LeoFrank',
     cover,
     enabled: true,
     Inspector,
     functions,
     initialConfig: {
-        image: 'https://cal.com/avatar.svg',
-        name: 'null',
         gatingOptions: {
             karmaGating: false,
             nftGating: false,

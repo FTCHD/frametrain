@@ -1,4 +1,4 @@
-import { client, baseClient, opClient } from './client'
+import { baseClient, client, opClient } from './client'
 
 // ABI for the name function of ERC721 tokens
 const nameABI = [
@@ -12,8 +12,8 @@ const nameABI = [
 ]
 
 async function getERC721ContractName(contractAddress: any, chain: any): Promise<string> {
-    // biome-ignore lint/correctness/noUnusedVariables: <explanation>
     let selectedClient
+
     switch (chain) {
         case 'ETH': {
             selectedClient = client

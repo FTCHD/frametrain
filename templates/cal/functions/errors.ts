@@ -1,22 +1,18 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
 import type { Config, State } from '..'
-
-import FailView from '../views/Failed'
 import CoverView from '../views/Cover'
 
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function errors(
-    body: FrameActionPayload,
+    body: FrameActionPayloadValidated,
     config: Config,
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    const fonts = []
-
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    fonts.push(...roboto)
+    const fonts = [...roboto]
 
     if (config?.fontFamily) {
         const titleFont = await loadGoogleFontAllVariants(config.fontFamily)

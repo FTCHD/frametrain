@@ -1,22 +1,19 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
+import { balances721, balancesERC1155 } from '../utils/balances'
 import PageView from '../views/Duration'
 import NotSatisfied from '../views/NotSatisfied'
 
-import { balances721, balancesERC1155 } from '../utils/balances'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-
 export default async function duration(
-    body: FrameActionPayload,
+    body: FrameActionPayloadValidated,
     config: Config,
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    const fonts = []
-
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    fonts.push(...roboto)
+    const fonts = [...roboto]
 
     if (config?.fontFamily) {
         const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
@@ -40,7 +37,7 @@ export default async function duration(
 
             component: NotSatisfied(
                 config,
-                'You have not satisfied the requirements to meet the call. Only profile followed by the creator can schedule a call.'
+                'You have not satisfied the requirements. Only profiles followed by the creator can schedule a call.'
             ),
             functionName: 'errors',
         }
@@ -57,7 +54,7 @@ export default async function duration(
 
             component: NotSatisfied(
                 config,
-                'You have not satisfied the requirements to meet the call. Please follow the creator to schedule the call.'
+                'You have not satisfied the requirements. Please follow the creator and try again.'
             ),
             functionName: 'errors',
         }
@@ -71,10 +68,9 @@ export default async function duration(
                 },
             ],
             fonts: fonts,
-
             component: NotSatisfied(
                 config,
-                'You have not satisfied the requirements to meet the call. Please recast this frame and try again to schedule the call.'
+                'You have not satisfied the requirements. Please recast this frame and try again.'
             ),
             functionName: 'errors',
         }
@@ -91,7 +87,7 @@ export default async function duration(
 
             component: NotSatisfied(
                 config,
-                'You have not satisfied the requirements to meet the call. Please like this frame and try again to schedule the call.'
+                'You have not satisfied the requirements. Please like this frame and try again.'
             ),
             functionName: 'errors',
         }
@@ -116,6 +112,7 @@ export default async function duration(
             console.log(error)
         }
     }
+
     if (config.gatingOptions.nftGating) {
         if (body.validatedData.interactor.verified_addresses.eth_addresses.length === 0) {
             return {
@@ -128,7 +125,7 @@ export default async function duration(
 
                 component: NotSatisfied(
                     config,
-                    'Please Connect wallet to your farcaster account and hold the NFT to schedule the call.'
+                    'Please connect a wallet to your profile that holds the NFT required to schedule a call.'
                 ),
                 functionName: 'errors',
             }
@@ -159,11 +156,12 @@ export default async function duration(
             fonts: fonts,
             component: NotSatisfied(
                 config,
-                'You have not satisfied the requirements to meet the call. Only people within 2nd degree of connection can schedule the call.'
+                'You have not satisfied the requirements. Only people within 2nd degree of connection can schedule a call.'
             ),
             functionName: 'errors',
         }
     }
+
     if (!nftGate) {
         return {
             buttons: [
@@ -174,11 +172,12 @@ export default async function duration(
             fonts: fonts,
             component: NotSatisfied(
                 config,
-                `You have not satisfied the requirements to meet the call. You need to hold the NFT - ${config.nftOptions.nftName} to schedule the call.`
+                `You have not satisfied the requirements. You need to hold ${config.nftOptions.nftName} to schedule a call.`
             ),
             functionName: 'errors',
         }
     }
+
     return {
         buttons: [
             {
