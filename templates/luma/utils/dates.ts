@@ -1,15 +1,16 @@
-import { dayjs } from './dayjs'
+import Dayjs from 'dayjs'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+import timezone from 'dayjs/plugin/timezone'
+import toObject from 'dayjs/plugin/toObject'
+import utc from 'dayjs/plugin/utc'
 
-export function formatDate(timezone: string, date: string, date2: string | null = null) {
-    const tz = dayjs(date).tz(timezone).format('dddd, LL @ LT (z)')
-    let endsAt: string | null = null
+Dayjs.extend(localizedFormat)
+Dayjs.extend(timezone)
+Dayjs.extend(utc)
+Dayjs.extend(advancedFormat)
+Dayjs.extend(toObject)
 
-    if (date2) {
-        const past = dayjs().isAfter(dayjs(date2), 'day')
-
-        endsAt = `${dayjs(date2).tz(timezone).format('dddd, LL @ LT (z)')}`
-        if (past) endsAt += ' [Past Event]'
-    }
-
-    return [tz, endsAt]
+export function formatDate(timezone: string, date: string) {
+    return Dayjs(date).tz(timezone).format('dddd, MMMM D @ LT')
 }

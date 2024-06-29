@@ -7,7 +7,7 @@ export interface Config extends BaseConfig {
     event?: {
         id: string
         price: string
-        backgroundCover: string
+        backgroundImage: string
         hosts: string[]
         startsAt: string
         endsAt?: string | null
