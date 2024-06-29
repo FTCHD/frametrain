@@ -18,6 +18,7 @@ import {
 } from '@/components/shadcn/Select'
 import { Switch } from '@/components/shadcn/Switch'
 import { corsFetch } from '@/sdk/scrape'
+import { useDebouncedCallback } from 'use-debounce'
 
 export default function Inspector() {
     const frameId = useFrameId()
@@ -25,14 +26,35 @@ export default function Inspector() {
     const fid = useFarcasterId()
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
-    const displayLabelDaysRef = useRef<HTMLInputElement>(null)
 
     const handleSubmit = async (username: string) => {
-        updateConfig({
-            username: username,
-            fid: fid,
-        })
+        corsFetch(
+            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${username}","eventSlug":"15min","isTeamEvent":false,"org":null}}}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        )
+            .then((text) => {
+                const data = JSON.parse(text as string)
+                const img = data[0].result.data.json.profile.image
+                const name = data[0].result.data.json.profile.name
+                console.log(img, name)
+
+                updateConfig({
+                    image: img,
+                    name: name,
+                    username: username,
+                    fid: fid,
+                })
+            })
+            .catch((error) => console.error('Error:', error))
     }
+    const debouncedHandle = useDebouncedCallback((username: any) => {
+        handleSubmit(username)
+    }, 1000)
 
     const handleNFT = async (nftAddress: string) => {
         const nftName = await getName(nftAddress, config.nftOptions.nftChain)
@@ -71,30 +93,6 @@ export default function Inspector() {
         })
     }
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    useEffect(() => {
-        corsFetch(
-            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"15min","isTeamEvent":false,"org":null}}}`,
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-        )
-            .then((text) => {
-                const data = JSON.parse(text as string)
-                const img = data[0].result.data.json.profile.image
-                const name = data[0].result.data.json.profile.name
-
-                updateConfig({
-                    image: img,
-                    name: name,
-                })
-            })
-            .catch((error) => console.error('Error:', error))
-    }, [config.username])
-
     return (
         <div className="w-full h-full space-y-4">
             <h1 className="text-2xl font-semibold">Cal username</h1>
@@ -105,7 +103,7 @@ export default function Inspector() {
                     placeholder="Enter your cal.com username"
                     ref={displayLabelInputRef}
                     onChange={() => {
-                        handleSubmit(displayLabelInputRef.current!.value)
+                        debouncedHandle(displayLabelInputRef.current!.value)
                     }}
                 />
                 <h1 className="text-2xl font-semibold">Gating Options</h1>
@@ -187,7 +185,10 @@ export default function Inspector() {
                     <div className="flex-col gap-2">
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg">Choose Chain</h2>
-                            <Select onValueChange={handleChainChange}>
+                            <Select
+                                onValueChange={handleChainChange}
+                                defaultValue={config.nftOptions.nftChain}
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select Chain" />
                                 </SelectTrigger>
@@ -201,7 +202,7 @@ export default function Inspector() {
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg">Choose NFT Type</h2>
                             <Select
-                                // defaultValue={config.nftOptions.nftType}
+                                defaultValue={config.nftOptions.nftType}
                                 onValueChange={handleNftTypeChange}
                             >
                                 <SelectTrigger>

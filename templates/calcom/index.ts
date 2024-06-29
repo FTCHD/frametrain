@@ -45,6 +45,8 @@ export default {
     Inspector,
     functions,
     initialConfig: {
+        image: 'https://cal.com/avatar.svg',
+        name: 'null',
         gatingOptions: {
             karmaGating: false,
             nftGating: false,
@@ -54,6 +56,7 @@ export default {
             following: false,
         },
         nftOptions: {
+            nftChain: 'ETH',
             nftType: 'ERC721',
         },
     },

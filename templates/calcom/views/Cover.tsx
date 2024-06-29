@@ -39,7 +39,7 @@ export default function CoverView(config: Config) {
                 }}
             >
                 <img
-                    src={config.image}
+                    src={config.image || 'https://cal.com/avatar.svg'}
                     alt="image-profile"
                     width={250}
                     height={250}
