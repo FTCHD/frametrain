@@ -1,4 +1,5 @@
 import discourse from './discourse'
+import figma from './figma'
 import medium from './medium'
 // import basic from './basic'
 import pdf from './pdf'
@@ -12,6 +13,7 @@ export default {
     // basic,
     pdf,
     poll,
+    figma,
     sablier,
     twitter,
     discourse,

@@ -61,6 +61,7 @@
         "drizzle-orm": "^0.30.10",
         "framer-motion": "^11.2.6",
         "frames.js": "^0.11.0",
+        "he": "^1.2.0",
         "jotai": "^2.8.2",
         "js-abbreviation-number": "^1.4.0",
         "lucide-react": "^0.379.0",
@@ -90,6 +91,7 @@
     },
     "devDependencies": {
         "@biomejs/biome": "1.7.3",
+        "@types/he": "^1.2.3",
         "@types/ms": "^0.7.34",
         "@types/node": "^20",
         "@types/react": "^18",
