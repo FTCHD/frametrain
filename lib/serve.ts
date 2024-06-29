@@ -42,7 +42,12 @@ export async function buildFramePage({
         const bufferData = await renderedImage.arrayBuffer()
 
         // compress using sharp
-        const compressedData = await sharp(bufferData).png().timeout({ seconds: 1 }).toBuffer()
+        const compressedData = await sharp(bufferData)
+            .png({
+                quality: 40,
+            })
+            .timeout({ seconds: 1 })
+            .toBuffer()
 
         imageData = 'data:image/png;base64,' + compressedData.toString('base64')
     } else {
