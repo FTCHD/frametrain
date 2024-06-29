@@ -2,6 +2,7 @@
 import { dimensionsForRatio } from '@/sdk/constants'
 import { ImageResponse } from '@vercel/og'
 import type { ReactElement } from 'react'
+import sharp from 'sharp'
 import type {
     BuildFrameData,
     FrameActionPayload,
@@ -38,8 +39,12 @@ export async function buildFramePage({
         })
 
         // get image data from vercel/og ImageResponse
-        const bufferData = Buffer.from(await renderedImage.arrayBuffer())
-        imageData = 'data:image/png;base64,' + bufferData.toString('base64')
+        const bufferData = await renderedImage.arrayBuffer()
+
+        // compress using sharp
+        const compressedData = await sharp(bufferData).png().timeout({ seconds: 1 }).toBuffer()
+
+        imageData = 'data:image/png;base64,' + compressedData.toString('base64')
     } else {
         imageData = image!
     }
@@ -205,7 +210,7 @@ function buildFrame({
             }
             metadata[`fc:frame:button:${index + 1}`] = button.label
             if (button.action) {
-                if (!['post', 'post_redirect', 'mint', 'link'].includes(button.action)) {
+                if (!['post', 'post_redirect', 'mint', 'link', 'tx'].includes(button.action)) {
                     throw new Error('Invalid button action.')
                 }
                 metadata[`fc:frame:button:${index + 1}:action`] = button.action
