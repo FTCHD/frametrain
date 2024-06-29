@@ -62,9 +62,12 @@ export interface Config extends BaseConfig {
         configuration?: StyleConfig
     }
     success: {
+        label?: string
         image?: string
         url?: string
-        label?: string
+        text?: string
+        subtitle?: string
+        configuration?: StyleConfig
     }
     fids: string[]
     answerOnce: boolean

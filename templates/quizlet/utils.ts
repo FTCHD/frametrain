@@ -31,9 +31,14 @@ export function sidebarNavItems(obj: {
             description: 'Configure the basic settings of your quiz.',
         },
         {
-            title: 'Screens',
-            key: 'screens',
-            description: 'Configure what shows up on both your start and end screens.',
+            title: 'Cover Screen',
+            key: 'cover',
+            description: 'Configure what shows up on your cover screen',
+        },
+        {
+            title: 'Ending Screen',
+            key: 'ending',
+            description: 'Configure what shows up on your ending screen',
         },
         {
             title: 'Question & Answer',

@@ -18,8 +18,11 @@ export default function ConfigItemWrapper({ item }: Props) {
             case 'questions':
                 return <Questions />
 
-            case 'screens':
-                return <ScreensConfig />
+            case 'cover':
+                return <ScreensConfig screen="cover" />
+
+            case 'ending':
+                return <ScreensConfig screen="success" />
 
             default:
                 return <BasicConfig />

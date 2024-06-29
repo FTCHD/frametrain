@@ -6,7 +6,7 @@ import { useState } from 'react'
 import QnaForm from './QnaForm'
 import { Button } from '@/components/shadcn/Button'
 import { Trash } from 'lucide-react'
-import { Drawer, DrawerContent } from '@/components/shadcn/Drawer'
+import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
 
 export default function Questions() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -63,8 +63,8 @@ export default function Questions() {
             ))}
             {currentQna && (
                 <>
-                    <Drawer open={open} onOpenChange={setOpen}>
-                        <DrawerContent>
+                    <Dialog open={open} onOpenChange={setOpen}>
+                        <DialogContent className="p-1 max-w-2xl">
                             <div className="flex-1 h-full">
                                 <QnaForm
                                     mode="update"
@@ -72,8 +72,8 @@ export default function Questions() {
                                     className="overflow-y-scroll overflow-x-hidden h-screen px-2 pt-4"
                                 />
                             </div>
-                        </DrawerContent>
-                    </Drawer>
+                        </DialogContent>
+                    </Dialog>
                 </>
             )}
         </div>
