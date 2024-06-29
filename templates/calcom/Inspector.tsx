@@ -97,8 +97,6 @@ export default function Inspector() {
 
     return (
         <div className="w-full h-full space-y-4">
-            <p>{JSON.stringify(config)}</p>
-
             <h1 className="text-2xl font-semibold">Cal username</h1>
 
             <div className="flex flex-col gap-2 ">
@@ -349,6 +347,7 @@ export default function Inspector() {
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg">Font</h2>
                     <FontFamilyPicker
+                        defaultValue={config.fontFamily || 'Roboto'}
                         onSelect={(font) => {
                             updateConfig({
                                 fontFamily: font,
@@ -383,8 +382,8 @@ export default function Inspector() {
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg">Title Style</h2>
                     <FontStylePicker
-                        currentFont={config?.title?.fontFamily || 'Roboto'}
-                        defaultValue={config?.title?.fontStyle || 'normal'}
+                        currentFont={config?.fontFamily || 'Roboto'}
+                        defaultValue={config?.titleStyle || 'normal'}
                         onSelect={(style) =>
                             updateConfig({
                                 titleStyle: style,
@@ -396,7 +395,7 @@ export default function Inspector() {
                     <h2 className="text-lg">Title Weight</h2>
                     <FontWeightPicker
                         currentFont={config.fontFamily || 'Roboto'}
-                        defaultValue={config.fontFamily}
+                        defaultValue={config.titleWeight}
                         onSelect={(weight) =>
                             updateConfig({
                                 titleWeight: weight,
