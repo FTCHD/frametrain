@@ -1,8 +1,11 @@
 'use client'
 
+import { Button } from '@/components/shadcn/Button'
+import { Drawer, DrawerContent } from '@/components/shadcn/Drawer'
 import { useFrameConfig } from '@/sdk/hooks'
-import type { Config } from '../..'
+import { Trash } from 'lucide-react'
 import { useState } from 'react'
+import type { Config } from '../..'
 import QnaForm from './QnaForm'
 import { Button } from '@/components/shadcn/Button'
 import { Trash } from 'lucide-react'

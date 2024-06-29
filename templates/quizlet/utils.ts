@@ -41,7 +41,7 @@ export function sidebarNavItems(obj: {
             description: 'Configure what shows up on your ending screen',
         },
         {
-            title: 'Question & Answer',
+            title: 'Add Question',
             key: 'qna',
             description: 'Configure the questions and answers that will be displayed on your quiz.',
         },

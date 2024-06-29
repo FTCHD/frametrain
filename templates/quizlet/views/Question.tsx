@@ -77,41 +77,14 @@ export default function QuestionView({ qna, total }: Config) {
 
             <div
                 style={{
-                    display: 'flex',
-                    width: '100%',
+                    height: '10',
+                    width: `${percentage}%`,
                     top: 0,
                     position: 'absolute',
                     left: 0,
-                    borderRadius: '50%',
+                    backgroundColor: qna.design?.barColor || 'yellow',
                 }}
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    preserveAspectRatio="none"
-                    width="100%"
-                    height="10"
-                >
-                    <rect
-                        x="0"
-                        y="0"
-                        width="300"
-                        height="10"
-                        rx="15"
-                        ry="15"
-                        fill="#e0e0e070" // 70% opacity
-                    />
-                    <rect
-                        id="progressBar"
-                        x="0"
-                        y="0"
-                        width={(300 * percentage) / 100}
-                        height="10"
-                        rx="15"
-                        ry="15"
-                        fill={qna.design?.barColor || 'yellow'}
-                    />
-                </svg>
-            </div>
+            />
         </div>
     )
 }

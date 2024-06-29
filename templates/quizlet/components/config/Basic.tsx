@@ -1,7 +1,5 @@
 'use client'
-
-import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import type { Config } from '../..'
+import { Input } from '@/components/shadcn/Input'
 import {
     Select,
     SelectContent,
@@ -11,6 +9,9 @@ import {
 } from '@/components/shadcn/Select'
 import { Input } from '@/components/shadcn/Input'
 import { ColorPicker } from '@/sdk/components'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { useEffect, useRef } from 'react'
+import type { Config } from '../..'
 import defaultConfig from '../..'
 
 export default function BasicConfig() {
@@ -40,7 +41,6 @@ export default function BasicConfig() {
                 </Select>
             </div>
             <div className="flex flex-col gap-2 ">
-                <h2 className="text-lg font-semibold text-center">Results Options (Optional)</h2>
                 <div className="flex flex-col gap-2 ">
                     <h2 className="text-lg font-medium">Text for Correct answers</h2>
                     <Input
