@@ -7,6 +7,7 @@ export const InspectorContext = createContext<
           config: BaseConfig
           state: BaseState
           update: (props: any) => void
+          fid: string
       }
     | undefined
 >(undefined)
