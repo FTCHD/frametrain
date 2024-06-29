@@ -1,10 +1,18 @@
 'use server'
-import type { BuildFrameData } from '@/lib/farcaster'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import type { Config, State } from '..'
+
+import FailView from '../views/Failed'
 import CoverView from '../views/Cover'
 
-export default async function initial(config: Config, state: State): Promise<BuildFrameData> {
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+
+export default async function errors(
+    body: FrameActionPayload,
+    config: Config,
+    state: State,
+    params: any
+): Promise<BuildFrameData> {
     const fonts = []
 
     const roboto = await loadGoogleFontAllVariants('Roboto')

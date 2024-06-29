@@ -13,7 +13,16 @@ export default async function duration(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
+    const fonts = []
+
     const roboto = await loadGoogleFontAllVariants('Roboto')
+    fonts.push(...roboto)
+
+    if (config?.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
+        fonts.push(...titleFont)
+    }
+
     let containsUserFID = true
     let nftGate = true
 
@@ -22,53 +31,69 @@ export default async function duration(
         !body.validatedData.interactor.viewer_context.followed_by
     ) {
         return {
-            buttons: [],
-            fonts: roboto,
+            buttons: [
+                {
+                    label: 'back',
+                },
+            ],
+            fonts: fonts,
 
             component: NotSatisfied(
                 config,
                 'You have not satisfied the requirements to meet the call. Only profile followed by the creator can schedule a call.'
             ),
-            functionName: 'initial',
+            functionName: 'errors',
         }
     }
 
     if (config.gatingOptions.following && !body.validatedData.interactor.viewer_context.following) {
         return {
-            buttons: [],
-            fonts: roboto,
+            buttons: [
+                {
+                    label: 'back',
+                },
+            ],
+            fonts: fonts,
 
             component: NotSatisfied(
                 config,
                 'You have not satisfied the requirements to meet the call. Please follow the creator to schedule the call.'
             ),
-            functionName: 'initial',
+            functionName: 'errors',
         }
     }
 
     if (config.gatingOptions.recasted && !body.validatedData.cast.viewer_context.recasted) {
         return {
-            buttons: [],
-            fonts: roboto,
+            buttons: [
+                {
+                    label: 'back',
+                },
+            ],
+            fonts: fonts,
 
             component: NotSatisfied(
                 config,
                 'You have not satisfied the requirements to meet the call. Please recast this frame and try again to schedule the call.'
             ),
-            functionName: 'initial',
+            functionName: 'errors',
         }
     }
 
     if (config.gatingOptions.liked && !body.validatedData.cast.viewer_context.liked) {
         return {
-            buttons: [],
-            fonts: roboto,
+            buttons: [
+                {
+                    label: 'back',
+                },
+            ],
+            fonts: fonts,
 
             component: NotSatisfied(
                 config,
                 'You have not satisfied the requirements to meet the call. Please like this frame and try again to schedule the call.'
             ),
-            functionName: 'initial',
+            functionName: 'errors',
         }
     }
 
@@ -94,14 +119,18 @@ export default async function duration(
     if (config.gatingOptions.nftGating) {
         if (body.validatedData.interactor.verified_addresses.eth_addresses.length === 0) {
             return {
-                buttons: [],
-                fonts: roboto,
+                buttons: [
+                    {
+                        label: 'back',
+                    },
+                ],
+                fonts: fonts,
 
                 component: NotSatisfied(
                     config,
                     'Please Connect wallet to your farcaster account and hold the NFT to schedule the call.'
                 ),
-                functionName: 'initial',
+                functionName: 'errors',
             }
         }
         if (config.nftOptions.nftType === 'ERC721') {
@@ -122,24 +151,32 @@ export default async function duration(
 
     if (!containsUserFID) {
         return {
-            buttons: [],
-            fonts: roboto,
+            buttons: [
+                {
+                    label: 'back',
+                },
+            ],
+            fonts: fonts,
             component: NotSatisfied(
                 config,
                 'You have not satisfied the requirements to meet the call. Only people within 2nd degree of connection can schedule the call.'
             ),
-            functionName: 'initial',
+            functionName: 'errors',
         }
     }
     if (!nftGate) {
         return {
-            buttons: [],
-            fonts: roboto,
+            buttons: [
+                {
+                    label: 'back',
+                },
+            ],
+            fonts: fonts,
             component: NotSatisfied(
                 config,
                 `You have not satisfied the requirements to meet the call. You need to hold the NFT - ${config.nftOptions.nftName} to schedule the call.`
             ),
-            functionName: 'initial',
+            functionName: 'errors',
         }
     }
     return {
@@ -151,7 +188,7 @@ export default async function duration(
                 label: '30min',
             },
         ],
-        fonts: roboto,
+        fonts: fonts,
 
         component: PageView(config),
         functionName: 'date',

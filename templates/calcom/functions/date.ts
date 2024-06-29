@@ -14,7 +14,15 @@ export default async function duration(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
+    const fonts = []
+
     const roboto = await loadGoogleFontAllVariants('Roboto')
+    fonts.push(...roboto)
+
+    if (config?.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
+        fonts.push(...titleFont)
+    }
 
     let date = params?.date === undefined || params?.date === 'NaN' ? 0 : Number(params?.date)
 
@@ -82,7 +90,7 @@ export default async function duration(
                         label: '➡️',
                     },
                 ],
-                fonts: roboto,
+                fonts: fonts,
 
                 component: PageView(config, duration, datesArray, date, durationTime),
                 functionName: 'date',
@@ -144,7 +152,7 @@ export default async function duration(
                             label: '➡️',
                         },
                     ],
-                    fonts: roboto,
+                    fonts: fonts,
 
                     component: PageView(config, duration, datesArray, date, durationTime),
                     functionName: 'date',
@@ -204,7 +212,7 @@ export default async function duration(
                             label: '➡️',
                         },
                     ],
-                    fonts: roboto,
+                    fonts: fonts,
 
                     component: NextView(config, slotsArray[date], 0),
                     functionName: 'slot',
@@ -265,7 +273,7 @@ export default async function duration(
                 label: '➡️',
             },
         ],
-        fonts: roboto,
+        fonts: fonts,
 
         component: PageView(config, duration, datesArray, date, durationTime),
         functionName: 'date',

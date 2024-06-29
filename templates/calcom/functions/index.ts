@@ -3,6 +3,7 @@ import duration from './duration'
 import date from './date'
 import slot from './slot'
 import confirm from './confirm'
+import errors from './errors'
 
 export default {
     initial,
@@ -10,4 +11,5 @@ export default {
     date,
     slot,
     confirm,
+    errors,
 }

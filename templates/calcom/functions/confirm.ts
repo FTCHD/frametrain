@@ -16,15 +16,27 @@ export default async function confirm(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
+    const fonts = []
+
     const roboto = await loadGoogleFontAllVariants('Roboto')
+    fonts.push(...roboto)
+
+    if (config?.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
+        fonts.push(...titleFont)
+    }
 
     const buttonIndex = body.untrustedData.buttonIndex
     if (buttonIndex === 1) {
         return {
-            buttons: [],
+            buttons: [
+                {
+                    label: 'back',
+                },
+            ],
             component: FailView(config),
-            functionName: 'initial',
-            fonts: roboto,
+            functionName: 'errors',
+            fonts: fonts,
         }
     }
     const dates = getCurrentAndFutureDate(30)
@@ -74,7 +86,7 @@ export default async function confirm(
                 target: 'https://frametrain-hack.vercel.app',
             },
         ],
-        fonts: roboto,
+        fonts: fonts,
         component: PageView(config),
         functionName: 'initial',
     }

@@ -14,7 +14,15 @@ export default async function slot(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
+    const fonts = []
+
     const roboto = await loadGoogleFontAllVariants('Roboto')
+    fonts.push(...roboto)
+
+    if (config?.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
+        fonts.push(...titleFont)
+    }
 
     const buttonIndex = body.untrustedData.buttonIndex
     switch (buttonIndex) {
@@ -64,7 +72,7 @@ export default async function slot(
                         label: '➡️',
                     },
                 ],
-                fonts: roboto,
+                fonts: fonts,
 
                 component: PageView(config, slotsArray[params.date], slot),
                 functionName: 'slot',
@@ -116,7 +124,7 @@ export default async function slot(
                         label: 'Confirm ✅',
                     },
                 ],
-                fonts: roboto,
+                fonts: fonts,
 
                 inputText: 'Enter your email address',
 
@@ -181,7 +189,7 @@ export default async function slot(
                         label: '➡️',
                     },
                 ],
-                fonts: roboto,
+                fonts: fonts,
 
                 component: PageView(config, slotsArray[params.date], slot),
                 functionName: 'slot',
@@ -207,7 +215,7 @@ export default async function slot(
                 label: '➡️',
             },
         ],
-        fonts: roboto,
+        fonts: fonts,
 
         component: PageView(config, [], 0),
         functionName: 'slot',

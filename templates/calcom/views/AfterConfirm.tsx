@@ -92,7 +92,7 @@ export default function CoverView(config: Config) {
                     textAlign: 'left',
                 }}
             >
-                You have successfull booked the slot.Check your email for more info.
+                You have successfull booked the slot. Check your email for more info.
             </div>
         </div>
     )
