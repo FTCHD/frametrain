@@ -29,7 +29,7 @@ export interface Config extends BaseConfig {
         nftName: string
         nftType: string
         nftChain: string
-        tokenID: string
+        tokenId: string
     }
 }
 

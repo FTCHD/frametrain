@@ -114,7 +114,7 @@ export default async function duration(
             nftGate = await balancesERC1155(
                 body.validatedData.interactor.verified_addresses.eth_addresses,
                 config.nftOptions.nftAddress,
-                config.nftOptions.tokenID,
+                config.nftOptions.tokenId,
                 config.nftOptions.nftChain
             )
         }

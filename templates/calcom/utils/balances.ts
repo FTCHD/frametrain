@@ -104,7 +104,6 @@ export const balancesERC1155 = async (
     // biome-ignore lint/style/useConst: <explanation>
     let calls = []
     let hasNFT = false
-    console.log(tokenId)
 
     // biome-ignore lint/correctness/noUnusedVariables: <explanation>
     let selectedClient
