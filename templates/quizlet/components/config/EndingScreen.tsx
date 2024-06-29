@@ -1,8 +1,7 @@
 'use client'
 
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import React, { useState } from 'react'
-import { Config } from '../..'
+import type { Config } from '../..'
 import { Input } from '@/components/shadcn/Input'
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
 import { Label } from '@/components/shadcn/InputLabel'
@@ -11,6 +10,7 @@ import { Button } from '@/components/shadcn/Button'
 import { Switch } from '@/components/shadcn/Switch'
 import { Textarea } from '@/components/shadcn/Textarea'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import { useState } from 'react'
 
 export default function EndingScreen() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -18,34 +18,31 @@ export default function EndingScreen() {
     const [descriptionType, setDescriptionType] = useState<'text' | 'image'>(
         config.success.image ? 'image' : 'text'
     )
-    const [customizeStyles, setCustomizeStyles] = useState( !!config.success.configuration,
-    )
+    const [customizeStyles, setCustomizeStyles] = useState(!!config.success.configuration)
 
     const uploadImage = useUploadImage()
 
     return (
         <>
             <div className="flex flex-col gap-4 w-full">
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">External Link</h2>
-                        <Input
-                            className="py-2 text-lg "
-                            type="url"
-                            defaultValue={config.success.url}
-                            onChange={(e) => {
-                                updateConfig({
-                                    success: { ...config.success, url: e.target.value },
-                                })
-                            }}
-                            placeholder="https://warpcast.com/~/channel/frametrain"
-                        />
-                    </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg font-semibold">
-                        Link Label
-                    </h2>
+                    <h2 className="text-lg font-semibold">External Link</h2>
                     <Input
-                        placeholder={`Ending Label`}
+                        className="py-2 text-lg "
+                        type="url"
+                        defaultValue={config.success.url}
+                        onChange={(e) => {
+                            updateConfig({
+                                success: { ...config.success, url: e.target.value },
+                            })
+                        }}
+                        placeholder="https://warpcast.com/~/channel/frametrain"
+                    />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg font-semibold">Link Label</h2>
+                    <Input
+                        placeholder={'Ending Label'}
                         defaultValue={config.success.label}
                         onChange={(e) =>
                             updateConfig({
@@ -90,7 +87,9 @@ export default function EndingScreen() {
                                 <UploadSlide
                                     htmlFor="image"
                                     setSlide={(image) => {
-                                        updateConfig({ success: { ...config.success, image, text: null } })
+                                        updateConfig({
+                                            success: { ...config.success, image, text: null },
+                                        })
                                     }}
                                     uploadSlide={async (base64String, contentType) => {
                                         const { filePath } = await uploadImage({
@@ -129,14 +128,14 @@ export default function EndingScreen() {
                                             <Switch
                                                 checked={customizeStyles}
                                                 onCheckedChange={(checked) => {
-                                                    setCustomizeStyles(checked )
+                                                    setCustomizeStyles(checked)
                                                 }}
                                             />
                                         </div>
                                     </div>
                                     <Textarea
                                         defaultValue={config.success?.text}
-                                        placeholder={`Your $Ending description`}
+                                        placeholder={'Your Ending description'}
                                         onChange={(e) => {
                                             updateConfig({
                                                 success: {
@@ -154,7 +153,9 @@ export default function EndingScreen() {
                                         <div className="flex flex-col gap-2 w-full">
                                             <h2 className="text-lg font-semibold">Ending Font</h2>
                                             <FontFamilyPicker
-                                                defaultValue={config.success.configuration?.fontFamily}
+                                                defaultValue={
+                                                    config.success.configuration?.fontFamily
+                                                }
                                                 onSelect={(font) => {
                                                     updateConfig({
                                                         success: {
@@ -171,7 +172,9 @@ export default function EndingScreen() {
                                         <div className="flex flex-col gap-2 w-full">
                                             <h2 className="text-lg font-semibold">Ending Size</h2>
                                             <Input
-                                                defaultValue={config.success.configuration?.fontSize}
+                                                defaultValue={
+                                                    config.success.configuration?.fontSize
+                                                }
                                                 placeholder="10px"
                                                 onChange={(e) =>
                                                     updateConfig({
@@ -193,7 +196,8 @@ export default function EndingScreen() {
                                             <ColorPicker
                                                 className="w-full"
                                                 background={
-                                                    config.success.configuration?.textColor || 'white'
+                                                    config.success.configuration?.textColor ||
+                                                    'white'
                                                 }
                                                 setBackground={(color: string) =>
                                                     updateConfig({
@@ -236,9 +240,12 @@ export default function EndingScreen() {
                                             <h2 className="text-lg font-semibold">Ending Weight</h2>
                                             <FontWeightPicker
                                                 currentFont={
-                                                    config.success.configuration?.fontFamily || 'Roboto'
+                                                    config.success.configuration?.fontFamily ||
+                                                    'Roboto'
                                                 }
-                                                defaultValue={config.success.configuration?.fontFamily}
+                                                defaultValue={
+                                                    config.success.configuration?.fontFamily
+                                                }
                                                 onSelect={(weight) =>
                                                     updateConfig({
                                                         success: {
@@ -256,10 +263,12 @@ export default function EndingScreen() {
                                             <h2 className="text-lg font-semibold">Ending Style</h2>
                                             <FontStylePicker
                                                 currentFont={
-                                                    config.success.configuration?.fontFamily || 'Roboto'
+                                                    config.success.configuration?.fontFamily ||
+                                                    'Roboto'
                                                 }
                                                 defaultValue={
-                                                    config.success.configuration?.fontStyle || 'normal'
+                                                    config.success.configuration?.fontStyle ||
+                                                    'normal'
                                                 }
                                                 onSelect={(style) =>
                                                     updateConfig({

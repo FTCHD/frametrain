@@ -12,29 +12,23 @@ import { useState } from 'react'
 import type { Config } from '../..'
 import UploadSlide from './UploadSlide'
 
-
 export default function CoverScreen() {
     const [config, updateConfig] = useFrameConfig<Config>()
 
-   
     const [descriptionType, setDescriptionType] = useState<'text' | 'image'>(
         config.cover.image ? 'image' : 'text'
     )
-    const [customizeStyles, setCustomizeStyles] = useState(
-        !!config.cover.configuration,
-    )
+    const [customizeStyles, setCustomizeStyles] = useState(!!config.cover.configuration)
 
     const uploadImage = useUploadImage()
 
     return (
         <>
             <div className="flex flex-col gap-4 w-full">
-               <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg font-semibold">
-                       Button Label
-                    </h2>
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg font-semibold">Button Label</h2>
                     <Input
-                        placeholder={`Cover Label`}
+                        placeholder={'Cover Label'}
                         defaultValue={config.cover.label}
                         onChange={(e) =>
                             updateConfig({
@@ -79,7 +73,9 @@ export default function CoverScreen() {
                                 <UploadSlide
                                     htmlFor="cover"
                                     setSlide={(image) => {
-                                        updateConfig({ cover: { ...config.cover, image, text: null } })
+                                        updateConfig({
+                                            cover: { ...config.cover, image, text: null },
+                                        })
                                     }}
                                     uploadSlide={async (base64String, contentType) => {
                                         const { filePath } = await uploadImage({
@@ -125,7 +121,7 @@ export default function CoverScreen() {
                                     </div>
                                     <Textarea
                                         defaultValue={config.cover?.text}
-                                        placeholder={`Your $Cover description`}
+                                        placeholder={'Your Cover description'}
                                         onChange={(e) => {
                                             updateConfig({
                                                 cover: {
@@ -143,7 +139,9 @@ export default function CoverScreen() {
                                         <div className="flex flex-col gap-2 w-full">
                                             <h2 className="text-lg font-semibold">Cover Font</h2>
                                             <FontFamilyPicker
-                                                defaultValue={config.cover.configuration?.fontFamily}
+                                                defaultValue={
+                                                    config.cover.configuration?.fontFamily
+                                                }
                                                 onSelect={(font) => {
                                                     updateConfig({
                                                         cover: {
@@ -225,9 +223,12 @@ export default function CoverScreen() {
                                             <h2 className="text-lg font-semibold">Cover Weight</h2>
                                             <FontWeightPicker
                                                 currentFont={
-                                                    config.cover.configuration?.fontFamily || 'Roboto'
+                                                    config.cover.configuration?.fontFamily ||
+                                                    'Roboto'
                                                 }
-                                                defaultValue={config.cover.configuration?.fontFamily}
+                                                defaultValue={
+                                                    config.cover.configuration?.fontFamily
+                                                }
                                                 onSelect={(weight) =>
                                                     updateConfig({
                                                         cover: {
@@ -245,10 +246,12 @@ export default function CoverScreen() {
                                             <h2 className="text-lg font-semibold">Cover Style</h2>
                                             <FontStylePicker
                                                 currentFont={
-                                                    config.cover.configuration?.fontFamily || 'Roboto'
+                                                    config.cover.configuration?.fontFamily ||
+                                                    'Roboto'
                                                 }
                                                 defaultValue={
-                                                    config.cover.configuration?.fontStyle || 'normal'
+                                                    config.cover.configuration?.fontStyle ||
+                                                    'normal'
                                                 }
                                                 onSelect={(style) =>
                                                     updateConfig({

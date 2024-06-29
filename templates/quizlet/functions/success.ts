@@ -32,7 +32,7 @@ export default async function success(
         buttons,
         image: config.success.image,
         aspectRatio:
-            config.success.aspectRatio !== undefined
+            config.success.image && config.success.aspectRatio !== undefined
                 ? config.success.aspectRatio === '1.91/1'
                     ? '1.91:1'
                     : '1:1'
