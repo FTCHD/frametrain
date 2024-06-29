@@ -4,7 +4,6 @@ import pdf from './pdf'
 import poll from './poll'
 import sablier from './sablier'
 import twitter from './twitter'
-import gifmaker from '/gifmaker'
 
 export default {
     // basic,
@@ -13,5 +12,4 @@ export default {
     sablier,
     twitter,
     discourse,
-    gifmaker,
 }
