@@ -79,7 +79,7 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
                             fontSize: '30px',
                             fontWeight: config.titleWeight || 'normal',
                             fontFamily: config.fontFamily || 'Roboto',
-                            color: config.primaryColor || 'grey',
+                            color: config.secondaryColor || 'grey',
                             fontStyle: config.titleStyle || 'normal',
                         }}
                     >

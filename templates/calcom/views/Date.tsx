@@ -86,7 +86,7 @@ export default function CoverView(
                             fontSize: '30px',
                             fontWeight: config.titleWeight || 'normal',
                             fontFamily: config.fontFamily || 'Roboto',
-                            color: config.primaryColor || 'grey',
+                            color: config.secondaryColor || 'grey',
                             fontStyle: config.titleStyle || 'normal',
                         }}
                     >
