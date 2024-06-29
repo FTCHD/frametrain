@@ -1,13 +1,12 @@
 'use client'
 
+import { Input } from '@/components/shadcn/Input'
 import { useFrameConfig } from '@/sdk/hooks'
+import { InfoIcon } from 'lucide-react'
+import Link from 'next/link'
 import type { FramePressConfig, SlideConfig } from './Config'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './Constants'
 import SlideDesigner from './components/SlideDesigner'
-import { Label } from '@/components/shadcn/InputLabel'
-import { Input } from '@/components/shadcn/Input'
-import { InfoIcon } from 'lucide-react'
-import Link from 'next/link'
 
 const FIGMA_PAT_HELP =
     'https://help.figma.com/hc/en-us/articles/8085703771159-Manage-personal-access-tokens'
@@ -125,28 +124,27 @@ export default function Inspector() {
 
     return (
         <div className="w-full h-full space-y-4 pr-2">
-            {/* <p>{JSON.stringify(config)}</p> */}
-
-            <div className="grid w-full space-y-2">
-                <form>
-                    <Label htmlFor="token">Figma Personal Access Token (PAT)</Label>
-                    <div className="flex items-center space-x-2">
-                        <div>{config.figmaPAT ? '✅' : '❌'}</div>
-                        <Input
-                            id="token"
-                            type="password"
-                            placeholder={
-                                config.figmaPAT ? 'Figma PAT is saved' : 'Enter your Figma PAT'
-                            }
-                            className="flex-1"
-                            onChange={(e) => updateFigmaPAT(e.target.value)}
-                        />
-                        <Link href={FIGMA_PAT_HELP} className="flex">
-                            <InfoIcon className="mr-2 h-4 w-4 self-center" />
-                            Learn more
-                        </Link>
-                    </div>
-                </form>
+            <div className="flex flex-col gap-2">
+                <h2 className="text-lg font-semibold">Figma Personal Access Token (PAT)</h2>
+                <p className="text-sm text-muted-foreground">
+                    A token is required to display your Figma designs.
+                </p>
+                <div className="flex items-center space-x-2">
+                    <div>{config.figmaPAT ? '✅' : '❌'}</div>
+                    <Input
+                        id="token"
+                        type="password"
+                        placeholder={
+                            config.figmaPAT ? 'Figma PAT is saved' : 'Enter your Figma PAT'
+                        }
+                        className="flex-1"
+                        onChange={(e) => updateFigmaPAT(e.target.value)}
+                    />
+                    <Link href={FIGMA_PAT_HELP} className="flex" target="_blank">
+                        <InfoIcon className="mr-2 h-4 w-4 self-center" />
+                        Learn more
+                    </Link>
+                </div>
             </div>
 
             {config.slides?.map((slideConfig, index) => (
@@ -166,10 +164,6 @@ export default function Inspector() {
                     onDelete={() => removeSlide(index)}
                 />
             ))}
-
-            <div>
-                FramePress was made with 💜 by <a href="https://warpcast.com/rjs">rjs</a>
-            </div>
         </div>
     )
 }

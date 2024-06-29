@@ -1,6 +1,5 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
 import {
     Card,
     CardContent,
@@ -9,7 +8,9 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/shadcn/Card'
+import { Input } from '@/components/shadcn/Input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
+import { MoveDownIcon, MoveUpIcon, Trash2Icon } from 'lucide-react'
 import type {
     AspectRatio,
     BaseImagePaths,
@@ -19,11 +20,10 @@ import type {
     TextLayerConfig,
     TextLayerConfigs,
 } from '../Config'
-import { type ButtonTarget, ButtonDesigner } from './ButtonDesigner'
+import { FigmaView, getDimensionsForAspectRatio } from '../views/FigmaView'
+import { ButtonDesigner, type ButtonTarget } from './ButtonDesigner'
 import { FigmaDesigner } from './FigmaDesigner'
 import { TextLayerDesigner } from './TextLayerDesigner'
-import { FileDownIcon, FileUpIcon, MoveDownIcon, MoveUpIcon, Trash2Icon } from 'lucide-react'
-import { FigmaView, getDimensionsForAspectRatio } from '../views/FigmaView'
 
 type SlideDesignerProps = {
     figmaPAT: string
@@ -224,7 +224,6 @@ const SlideDesigner = ({
                             onAddAbove()
                         }}
                     >
-                        <FileUpIcon />
                         Add Above
                     </Button>
                 </div>
@@ -237,7 +236,6 @@ const SlideDesigner = ({
                             onAddBelow()
                         }}
                     >
-                        <FileDownIcon />
                         Add Below
                     </Button>
                 </div>

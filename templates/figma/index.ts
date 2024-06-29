@@ -1,6 +1,6 @@
 import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.jpeg'
+import cover from './cover.jpg'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
@@ -10,8 +10,8 @@ export interface Config extends BaseConfig {
 export interface State extends BaseState {}
 
 export default {
-    name: 'FramePress',
-    description: 'Transform your Figma designs into interactive experiences!',
+    name: 'Figma',
+    description: 'Transform your Figma designs into interactive Frame experiences!',
     creatorFid: '426045',
     creatorName: 'rjs',
     cover,

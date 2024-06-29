@@ -1,5 +1,5 @@
 import discourse from './discourse'
-import framepress from './framepress'
+import figma from './figma'
 // import basic from './basic'
 import pdf from './pdf'
 import poll from './poll'
@@ -10,8 +10,8 @@ export default {
     // basic,
     pdf,
     poll,
+    figma,
     sablier,
     twitter,
     discourse,
-    framepress
 }
