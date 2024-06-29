@@ -1,3 +1,4 @@
+import cal from './cal'
 import discourse from './discourse'
 import figma from './figma'
 import medium from './medium'
@@ -17,6 +18,7 @@ export default {
     sablier,
     twitter,
     discourse,
+    cal,
     medium,
     quizlet,
     luma,
