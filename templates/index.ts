@@ -5,6 +5,7 @@ import poll from './poll'
 import quizlet from './quizlet'
 import sablier from './sablier'
 import twitter from './twitter'
+import luma from './luma'
 
 export default {
     // basic,
@@ -14,4 +15,5 @@ export default {
     twitter,
     discourse,
     quizlet,
+    luma,
 }
