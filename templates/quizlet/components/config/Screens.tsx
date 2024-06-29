@@ -5,12 +5,12 @@ import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/InputLabel'
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
 import { Switch } from '@/components/shadcn/Switch'
+import { Textarea } from '@/components/shadcn/Textarea'
+import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useEffect, useRef, useState } from 'react'
-import UploadSlide from './UploadSlide'
 import type { Config } from '../..'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { Textarea } from '@/components/shadcn/Textarea'
+import UploadSlide from './UploadSlide'
 
 export default function ScreensConfig() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -61,7 +61,7 @@ export default function ScreensConfig() {
     return (
         <>
             <div className="flex flex-col gap-4 w-full">
-                <h2 className="text-lg text-center font-bold">Cover Screen</h2>
+                <h2 className="text-lg font-bold">Cover Screen</h2>
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg">Cover Button Label</h2>
                     <Input ref={coverLabelInputref} placeholder="Cover Label" />
@@ -304,9 +304,9 @@ export default function ScreensConfig() {
             </div>
             {/* end cover screen */}
             <div className="flex flex-col gap-4 w-full">
-                <h3 className="mb-4 text-lg text-center font-medium">Thank You Screen</h3>
+                <h3 className="text-lg font-medium">Thank You Screen</h3>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">Add an external link(optional)</h2>
+                    <h2 className="text-lg">External Link</h2>
                     <Input
                         className="py-2 text-lg "
                         type="url"
@@ -320,7 +320,7 @@ export default function ScreensConfig() {
                     />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">External link Label</h2>
+                    <h2 className="text-lg">Link Label</h2>
                     <Input
                         ref={successLabelInputref}
                         placeholder="Join Channel"
@@ -333,12 +333,7 @@ export default function ScreensConfig() {
                     />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <label
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                        htmlFor="success"
-                    >
-                        {config.success?.image ? 'Update' : 'Upload'} your Thank You screen image
-                    </label>
+                    <h2 className="text-lg">{config.success?.image ? 'Update' : 'Upload'} Image</h2>
 
                     <UploadSlide
                         htmlFor="success"

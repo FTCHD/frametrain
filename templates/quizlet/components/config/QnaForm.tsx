@@ -49,7 +49,7 @@ export default function QnaForm({ qna, className, ...props }: Props) {
         <div className={cn('w-full h-full flex flex-col gap-5', className)}>
             <div className="flex flex-col gap-2">
                 <div className="flex flex-row items-center justify-between">
-                    <div className="flex flex-row items-center justify-between gap-2 px-4">
+                    <div className="flex flex-row items-center justify-between gap-2 ">
                         <Label className="font-md" htmlFor="qna-customization">
                             Customize styles?
                         </Label>

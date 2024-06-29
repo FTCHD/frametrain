@@ -1,7 +1,5 @@
 'use client'
-
-import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import type { Config } from '../..'
+import { Input } from '@/components/shadcn/Input'
 import {
     Select,
     SelectContent,
@@ -9,10 +7,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
-import { Input } from '@/components/shadcn/Input'
-import { Button } from '@/components/shadcn/Button'
-import { useEffect, useRef } from 'react'
 import { ColorPicker } from '@/sdk/components'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { useEffect, useRef } from 'react'
+import type { Config } from '../..'
 import defaultConfig from '../..'
 
 export default function BasicConfig() {
@@ -60,39 +58,43 @@ export default function BasicConfig() {
                 </Select>
             </div>
             <div className="flex flex-col gap-2 ">
-                <h2 className="text-lg font-semibold text-center">Results Options (Optional)</h2>
                 <div className="flex flex-col gap-2 ">
                     <h2 className="text-lg font-medium">Text for Correct answers</h2>
                     <Input
                         className="text-lg"
-                        placeholder="Correct answers"
+                        placeholder="Optional"
                         ref={yesLabelInputRef}
+                        onChange={(e) => {
+                            const value = e.target.value
+
+                            updateConfig({
+                                results: {
+                                    ...config.results,
+                                    yesLabel: value || undefined,
+                                },
+                            })
+                        }}
                     />
                 </div>
                 <div className="flex flex-col gap-2 ">
                     <h2 className="text-lg font-medium">Text for Wrong answers</h2>
-                    <Input className="text-lg" placeholder="Wrong answers" ref={noLabelInputRef} />
+                    <Input
+                        className="text-lg"
+                        placeholder="Optional"
+                        ref={noLabelInputRef}
+                        onChange={(e) => {
+                            const value = e.target.value
+
+                            updateConfig({
+                                results: {
+                                    ...config.results,
+                                    noLabel: value || undefined,
+                                },
+                            })
+                        }}
+                    />
                 </div>
-                <Button
-                    onClick={() => {
-                        if (!yesLabelInputRef.current?.value) return
-                        if (!noLabelInputRef.current?.value) return
 
-                        updateConfig({
-                            results: {
-                                ...config.results,
-                                yesLabel: yesLabelInputRef.current.value,
-                                noLabel: noLabelInputRef.current.value,
-                            },
-                        })
-
-                        yesLabelInputRef.current.value = ''
-                        noLabelInputRef.current.value = ''
-                    }}
-                    className="w-full bg-border hover:bg-secondary-border text-primary"
-                >
-                    Save Labels
-                </Button>
                 <div className="flex flex-col gap-2 ">
                     <h2 className="text-lg font-semibold">Slide Background</h2>
                     <ColorPicker

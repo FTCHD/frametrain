@@ -1,11 +1,11 @@
 'use client'
 
+import { Separator } from '@/components/shadcn/Separator'
 import { useState } from 'react'
+import ConfigItemWrapper from './components/ConfigItemWrapper'
 import NavBar from './components/Navbar'
 import type { NavBarItem } from './types'
 import { sidebarNavItems } from './utils'
-import ConfigItemWrapper from './components/ConfigItemWrapper'
-import { Separator } from '@/components/shadcn/Separator'
 
 export default function Inspector() {
     const [activeTab, setActiveTab] = useState<NavBarItem['key']>('basic')
@@ -19,7 +19,7 @@ export default function Inspector() {
                     <NavBar items={sidebarNavItems({ tab: activeTab })} setActive={setActiveTab} />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <h3 className="text-lg font-medium">{tab.title}</h3>
+                    <h2 className="text-2xl font-medium">{tab.title}</h2>
                     <p className="text-sm text-muted-foreground">{tab.description}</p>
                     <Separator />
                 </div>
