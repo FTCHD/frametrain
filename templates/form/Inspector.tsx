@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Config, fieldTypes, State } from '.'
 import { ColorPicker } from '@/sdk/components'
 
+
 export default function Inspector() {
     const [showModal, setShowModal] = useState(false)
     const state = useFrameState() as State
@@ -20,6 +21,7 @@ export default function Inspector() {
     const successInputRef = useRef<HTMLInputElement>(null)
     const duplicateInputRef = useRef<HTMLInputElement>(null)
 
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
     useEffect(() => {
         if (coverInputRef.current) {
             coverInputRef.current.value = config.coverText ?? ''
@@ -33,6 +35,12 @@ export default function Inspector() {
         if (duplicateInputRef.current) {
             duplicateInputRef.current.checked = config.allowDuplicates
         }
+        if (shareTextInputRef.current) {
+            shareTextInputRef.current.value = config.shareText ?? ''
+        }
+        if (frameURLInputRef.current) {
+            frameURLInputRef.current.value = config.frameURL ?? ''
+        }
     }, [config])
 
     const itemNameInputRef = useRef<HTMLInputElement>(null)
@@ -40,11 +48,10 @@ export default function Inspector() {
     const itemExampleInputRef = useRef<HTMLInputElement>(null)
     const itemRequiredInputRef = useRef<HTMLInputElement>(null)
     const itemTypeInputRef = useRef<HTMLSelectElement>(null)
-    console.log(config)
 
     return (
         <div className="w-full h-full space-y-4">
-            <div className="w-full px-6">
+            <div className="w-full">
                 <Button
                     className="bg-rose-500 hover:bg-rose-700 text-white py-3 mr-1 rounded"
                     type="button"
@@ -62,82 +69,44 @@ export default function Inspector() {
                 >
                     Download as .CSV
                 </Button>
-                
-                {!state.data ? (<p className="italic mt-1 text-s">No Form Has Been Submitted Yet!</p>): null}
 
-                <p className="italic mt-1">* refresh to download the latest results</p>
-                
+                {!state.data ? (<p className="italic mt-1 text-s">No Form Has Been Submitted Yet!</p>) : null}
+
             </div>
 
             <div className="w-full">
-                <h2 className="text-2xl font-bold">Template Texts</h2>
-                <form className="w-full px-6">
-                    <div className="flex items-center border-b border-teal-500 py-2">
-                        <input
-                            className="appearance-none bg-transparent border-none w-full text-slate-50 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                            type="text"
-                            placeholder="Form Title (Text For The Cover)"
-                            aria-label="Title"
-                            ref={coverInputRef}
-                        />
-                        <button
-                            className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
-                            type="button"
-                            onClick={() => {
-                                if (!coverInputRef.current?.value) return
-                                updateConfig({
-                                    coverText: coverInputRef.current.value,
-                                })
-                            }}
-                        >
-                            Save
-                        </button>
-                    </div>
-                    <div className="flex items-center border-b border-teal-500 py-2">
-                        <input
-                            className="appearance-none bg-transparent border-none w-full text-slate-50 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                            type="text"
-                            placeholder="About Text (Text For The About Section)"
-                            aria-label="About"
-                            ref={aboutInputRef}
-                        />
-                        <button
-                            className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
-                            type="button"
-                            onClick={() => {
-                                if (!aboutInputRef.current?.value) return
-                                updateConfig({
-                                    aboutText: aboutInputRef.current.value,
-                                    // successText: successInputRef.current.value,
-                                    // allowDuplicates: duplicateInputRef.current?.checked ?? false,
-                                })
-                            }}
-                        >
-                            Save
-                        </button>
-                    </div>
-                    <div className="flex items-center border-b border-teal-500 py-2">
-                        <input
-                            className="appearance-none bg-transparent border-none w-full text-slate-50 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                            type="text"
-                            placeholder="Success Message (After Entry Successfully Submitted)"
-                            aria-label="Success Message"
-                            ref={successInputRef}
-                        />
-                        <button
-                            className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
-                            type="button"
-                            onClick={() => {
-                                if (!successInputRef.current?.value) return
-                                updateConfig({
-                                    successText: successInputRef.current.value,
-                                    // allowDuplicates: duplicateInputRef.current?.checked ?? false,
-                                })
-                            }}
-                        >
-                            Save
-                        </button>
-                    </div>
+                <h2 className="text-2xl font-bold mb-3">Template Texts</h2>
+                <form className="w-full">
+                    <Input
+                        className="text-lg mb-1"
+                        placeholder="Form Title (Text For The Cover)"
+                        ref={coverInputRef}
+                        onChange={() => {
+                            updateConfig({
+                                coverText: coverInputRef.current?.value,
+                            })
+                        }}
+                    />
+                    <Input
+                        className="text-lg mb-1"
+                        placeholder="About Text (Text For The About Section)"
+                        ref={aboutInputRef}
+                        onChange={() => {
+                            updateConfig({
+                                aboutText: aboutInputRef.current?.value
+                            })
+                        }}
+                    />
+                    <Input
+                        className="text-lg mb-1"
+                        placeholder="Success Message (After Entry Successfully Submitted)"
+                        ref={successInputRef}
+                        onChange={() => {
+                            updateConfig({
+                                successText: successInputRef.current?.value,
+                            })
+                        }}
+                    />
                     <div className="mt-6 inline-flex items-center">
                         <label
                             className="relative flex items-center p-3 -mt-3 rounded-full cursor-pointer"
@@ -145,7 +114,6 @@ export default function Inspector() {
                         >
                             <input
                                 type="checkbox"
-                                className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-10"
                                 id="description"
                                 ref={duplicateInputRef}
                                 onChange={() => {
@@ -155,22 +123,6 @@ export default function Inspector() {
                                     })
                                 }}
                             />
-                            <span className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-3.5 w-3.5"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                    stroke="currentColor"
-                                    strokeWidth={1}
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
-                            </span>
                         </label>
                         <label
                             className="mt-px font-light text-gray-500 cursor-pointer select-none"
@@ -189,22 +141,21 @@ export default function Inspector() {
                 </form>
             </div>
 
-            <div className="w-full border-y-2 border-gray-500 py-2">
+            <div className="w-full">
                 <div className="w-full">
                     <h2 className="text-lg font-bold mb-3">Add Input Fields</h2>
-                    <form className="w-full px-6">
+                    <form className="w-full">
                         <div className="flex flex-wrap -mx-3 mb-4">
                             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                                 <label
                                     className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
-                                    htmlFor="grid-first-name"
+                                    htmlFor="grid-inp-name"
                                 >
                                     Input Name
                                 </label>
-                                <input
-                                    className="appearance-none block w-full bg-gray-200 text-gray-800 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    id="grid-first-name"
-                                    type="text"
+                                <Input
+                                    className="text-lg"
+                                    id="grid-inp-name"
                                     placeholder="Drink"
                                     ref={itemNameInputRef}
                                 />
@@ -212,14 +163,13 @@ export default function Inspector() {
                             <div className="w-full md:w-1/2 px-3">
                                 <label
                                     className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
-                                    htmlFor="grid-last-name"
+                                    htmlFor="grid-example"
                                 >
                                     Example Input
                                 </label>
-                                <input
-                                    className="appearance-none block w-full bg-gray-200 text-gray-800 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    id="grid-last-name"
-                                    type="text"
+                                <Input
+                                    className="text-lg"
+                                    id="grid-example"
                                     placeholder="Lemonade"
                                     ref={itemExampleInputRef}
                                 />
@@ -233,16 +183,11 @@ export default function Inspector() {
                                 >
                                     Input Description
                                 </label>
-                                <input
-                                    className="appearance-none block w-full bg-gray-200 text-gray-800 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    id="grid-desc"
-                                    type="text"
+                                <Input
+                                    className="text-lg mb-3"
                                     placeholder="What is your favorite drink?"
                                     ref={itemDescriptionInputRef}
                                 />
-                                {/* <p className="text-gray-600 text-xs italic">
-                            Make it as long and as crazy as you'd like
-                        </p> */}
                             </div>
                             <div className="w-full md:w-1/3 px-3">
                                 <label
@@ -271,28 +216,7 @@ export default function Inspector() {
                                         className="relative flex items-center p-3 -mt-3 rounded-full cursor-pointer"
                                         htmlFor="req-desc"
                                     >
-                                        <input
-                                            type="checkbox"
-                                            className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-10"
-                                            id="req-desc"
-                                            ref={itemRequiredInputRef}
-                                        />
-                                        <span className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="h-3.5 w-3.5"
-                                                viewBox="0 0 20 20"
-                                                fill="currentColor"
-                                                stroke="currentColor"
-                                                strokeWidth={1}
-                                            >
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                    clipRule="evenodd"
-                                                />
-                                            </svg>
-                                        </span>
+                                        <input type='checkbox' ref={itemRequiredInputRef} id="req-desc" />
                                     </label>
                                     <label
                                         className="mt-px font-light text-gray-500 cursor-pointer select-none"
@@ -311,39 +235,37 @@ export default function Inspector() {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex flex-wrap -mx-6 mb-6">
-                            <div className="w-full px-3">
-                                <Button
-                                    type="button"
-                                    onClick={() => {
-                                        if (!itemNameInputRef.current?.value) return
+                        <div className="flex flex-wrap mb-6">
+                            <Button
+                                type="button"
+                                onClick={() => {
+                                    if (!itemNameInputRef.current?.value) return
 
-                                        const newFields = [
-                                            ...(fields || []),
-                                            {
-                                                fieldName: itemNameInputRef.current.value,
-                                                fieldDescription:
-                                                    itemDescriptionInputRef.current?.value ?? '',
-                                                fieldExample:
-                                                    itemExampleInputRef.current?.value ?? '',
-                                                required: itemRequiredInputRef.current?.checked,
-                                                fieldType: itemTypeInputRef.current?.value,
-                                            },
-                                        ]
-                                        updateConfig({
-                                            fields: newFields,
-                                        })
-                                        itemNameInputRef.current.value = ''
-                                        if (!itemExampleInputRef.current?.value) return
-                                        if (!itemDescriptionInputRef.current) return
-                                        itemDescriptionInputRef.current.value = ''
-                                        itemExampleInputRef.current.value = ''
-                                    }}
-                                    className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded"
-                                >
-                                    Add Input Field
-                                </Button>
-                            </div>
+                                    const newFields = [
+                                        ...(fields || []),
+                                        {
+                                            fieldName: itemNameInputRef.current.value,
+                                            fieldDescription:
+                                                itemDescriptionInputRef.current?.value ?? '',
+                                            fieldExample:
+                                                itemExampleInputRef.current?.value ?? '',
+                                            required: itemRequiredInputRef.current?.checked,
+                                            fieldType: itemTypeInputRef.current?.value,
+                                        },
+                                    ]
+                                    updateConfig({
+                                        fields: newFields,
+                                    })
+                                    itemNameInputRef.current.value = ''
+                                    if (!itemExampleInputRef.current?.value) return
+                                    if (!itemDescriptionInputRef.current) return
+                                    itemDescriptionInputRef.current.value = ''
+                                    itemExampleInputRef.current.value = ''
+                                }}
+                                className="w-full bg-border hover:bg-secondary-border text-primary"
+                            >
+                                Add Input Field
+                            </Button>
                         </div>
                     </form>
                 </div>
@@ -386,93 +308,6 @@ export default function Inspector() {
                 </div>
             </div>
 
-            {/* <div className="w-full">
-                <h2 className="text-lg font-bold mb-3">Add Input Field</h2>
-                <div className="w-full px-6">
-                    <div className="flex flex-col gap-2">
-                        <Input
-                            className="text-lg border rounded p-2"
-                            placeholder="Input Field Name"
-                            ref={itemNameInputRef}
-                        />
-                        <Input
-                            className="text-lg border rounded p-2"
-                            placeholder="Input Description"
-                            ref={itemDescriptionInputRef}
-                        />
-                        <Input
-                            className="text-lg border rounded p-2"
-                            placeholder="An Example Of The Data (Shown to the user)"
-                            ref={itemExampleInputRef}
-                        />
-                        <div className="flex items-center space-x-2">
-                            <Input
-                                id="required"
-                                type="checkbox"
-                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                ref={itemRequiredInputRef}
-                            />
-                            <label htmlFor="required" className="text-lg ml-2">
-                                Required
-                            </label>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                            <label htmlFor="dropdown" className="text-lg">
-                                Data Type
-                            </label>
-                            <select
-                                id="dropdown"
-                                ref={itemTypeInputRef}
-                                className="border rounded p-2"
-                            >
-                                <option value="text">Text</option>
-                                <option value="number">Number</option>
-                                <option value="email">Email</option>
-                                <option value="phone">Phone</option>
-                                <option value="address">Address</option>
-                            </select>
-                        </div>
-                        <Button
-                            onClick={() => {
-                                if (!itemNameInputRef.current?.value) return
-
-                                const newFields = [
-                                    ...(fields || []),
-                                    {
-                                        fieldName: itemNameInputRef.current.value,
-                                        fieldDescription:
-                                            itemDescriptionInputRef.current?.value ?? '',
-                                        fieldExample: itemExampleInputRef.current?.value ?? '',
-                                        required: itemRequiredInputRef.current?.checked,
-                                        fieldType: itemTypeInputRef.current?.value,
-                                    },
-                                ]
-                                updateConfig({
-                                    fields: newFields,
-                                })
-                                itemNameInputRef.current.value = ''
-                                if (!itemExampleInputRef.current?.value) return
-                                if (!itemDescriptionInputRef.current) return
-                                itemDescriptionInputRef.current.value = ''
-                                itemExampleInputRef.current.value = ''
-                            }}
-                            className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded"
-                        >
-                            Add Input Field
-                        </Button>
-                    </div>
-                </div>
-            </div> */}
-
-            {/* <Button
-                variant="destructive"
-                className="w-full bg-red-500 hover:bg-red-700 text-white py-2 rounded"
-                onClick={() => updateConfig({ fields: [] })}
-            >
-                RESET FORM
-            </Button> */}
-
             <div className="flex flex-col gap-2 ">
                 <h2 className="text-lg font-semibold">Background Color</h2>
                 <ColorPicker
@@ -501,6 +336,11 @@ export default function Inspector() {
                     className="text-lg border rounded p-2"
                     placeholder="Enter Share Text"
                     ref={shareTextInputRef}
+                    onChange={() => {
+                        updateConfig({
+                            shareText: shareTextInputRef.current?.value,
+                        })
+                    }}
                 />
             </div>
 
@@ -510,23 +350,13 @@ export default function Inspector() {
                     className="text-lg border rounded p-2"
                     placeholder="Click on &quot;URL&quot; from top right and paste here"
                     ref={frameURLInputRef}
+                    onChange={() => {
+                        updateConfig({
+                            frameURL: frameURLInputRef.current?.value,
+                        })
+                    }}
                 />
             </div>
-
-            <Button
-                onClick={() => {
-                    if (!shareTextInputRef.current?.value) return
-                    if (!frameURLInputRef.current?.value) return
-
-                    updateConfig({
-                        shareText: shareTextInputRef.current.value,
-                        frameURL: frameURLInputRef.current.value,
-                    })
-                }}
-                className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded"
-            >
-                Save
-            </Button>
         </div>
     )
 }
@@ -623,7 +453,9 @@ const Modal = ({
                                     </button>
                                 </div>
                                 {/*body*/}
-                                <div className="relative p-6 flex-auto">{generateTable(state)}</div>
+                                <div className="relative p-6 flex-auto">
+                                    {!state.data ? (<p className="italic mt-1 text-s">No Form Has Been Submitted Yet!</p>) : generateTable(state)}
+                                </div>
                                 {/*footer*/}
                                 <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
                                     <button
