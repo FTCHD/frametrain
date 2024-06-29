@@ -1,10 +1,9 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import PageView from '../views/Page'
 import initial from './initial'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import { pages } from 'next/dist/build/templates/app-page'
 
 export default async function page(
     body: FrameActionPayload,

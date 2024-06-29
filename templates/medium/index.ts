@@ -1,6 +1,6 @@
 import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.png'
+import cover from './cover.jpg'
 import functions from './functions'
 import type { Article } from './utils'
 
@@ -21,7 +21,7 @@ export interface State extends BaseState {}
 
 export default {
     name: 'Medium Template',
-    description: 'Share medium articles that can be read within a Frame with multiple slides.',
+    description: 'Convert any Medium article into a Farcaster Frame.',
     creatorFid: '20417',
     creatorName: 'Q',
     enabled: true,

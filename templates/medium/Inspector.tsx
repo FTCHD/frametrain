@@ -1,12 +1,12 @@
 'use client'
 import { Input } from '@/components/shadcn/Input'
+import { ColorPicker } from '@/sdk/components'
 import { useFrameConfig } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'react-hot-toast'
 import type { Config } from '.'
 import getMediumArticle from './utils'
-import { ColorPicker } from '@/sdk/components'
-import { toast } from 'react-hot-toast'
 
 export default function Inspector() {
 
