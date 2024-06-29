@@ -1,4 +1,5 @@
 import discourse from './discourse'
+import medium from './medium'
 // import basic from './basic'
 import pdf from './pdf'
 import poll from './poll'
@@ -14,6 +15,7 @@ export default {
     sablier,
     twitter,
     discourse,
+    medium,
     quizlet,
     luma,
 }
