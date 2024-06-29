@@ -1,16 +1,16 @@
 'use client'
 import { Input } from '@/components/shadcn/Input'
 import { ColorPicker, FontFamilyPicker } from '@/sdk/components'
-import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
-import { useRef, useState, useEffect } from 'react'
-import type { Config } from '.'
-import { LoaderPinwheel } from 'lucide-react'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
-import { getVideo, getInfo } from './lib/ytdl'
+import { LoaderPinwheel } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
+import type { Config } from '.'
+import { getInfo, getVideo } from './lib/ytdl'
 
 export default function Inspector() {
-    const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const uploadImage = useUploadImage()
     const videoRef = useRef<HTMLVideoElement | null>(null)
@@ -35,25 +35,25 @@ export default function Inspector() {
 
     // CREATE GIF FROM PARAMETERS AND SHOW A PREVIEW
     const transcode = async () => {
-    
         try {
-            let ty = 'mp4'
-            let video = null
             setLoading(true)
+
+            let type = 'mp4'
+            let video = null
 
             if (source == 'link') {
                 const videoBase64 = await getVideo(link)
-                video = `data:video/${ty};base64,${videoBase64}`
+                video = `data:video/${type};base64,${videoBase64}`
             }
 
             if (source == 'file') {
-                ty = file?.type.substring(file.type.indexOf('/') + 1)
+                type = file?.type.substring(file.type.indexOf('/') + 1) as string
                 video = file
             }
 
             const font = config.fontStyle.replace(/\s/g, '-').toLowerCase()
             const ffmpeg = ffmpegRef.current
-            await ffmpeg.writeFile(`input.${ty}`, await fetchFile(video))
+            await ffmpeg.writeFile(`input.${type}`, await fetchFile(video))
             await ffmpeg.writeFile(
                 'font.woff',
                 await fetchFile(
@@ -64,7 +64,7 @@ export default function Inspector() {
                 '-ss',
                 config.timeStart,
                 '-i',
-                `input.${ty}`,
+                `input.${type}`,
                 '-t',
                 config.gifDuration,
                 '-r',
@@ -83,24 +83,29 @@ export default function Inspector() {
             const gifUrl = process.env.NEXT_PUBLIC_CDN_HOST + '/' + filePath
             updateConfig({ gifUrl: gifUrl })
         } catch (e) {
-            console.log(e)
+            console.error(e)
+            toast.error('Error creating GIF')
         } finally {
-            setTimeout(setLoading, 3000, false)
+            setLoading(false)
         }
     }
 
     useEffect(() => {
-        if (source == 'file') videoRef.current.src = file ? URL.createObjectURL(file) : ''
+        if (source == 'file') {
+            videoRef.current.src = file ? URL.createObjectURL(file) : ''
+        }
     }, [file, source])
 
     useEffect(() => {
-        if (source == 'link') videoRef.current.src = link
+        if (source == 'link') {
+            videoRef.current.src = link
+        }
     }, [link, source])
 
     useEffect(() => {
         async function info() {
             try {
-                let data = await getInfo(config.youtubeUrl)
+                const data = await getInfo(config.youtubeUrl)
                 setLink(JSON.parse(data).url)
             } catch {
                 setLink('')
@@ -134,7 +139,7 @@ export default function Inspector() {
             gifUrl: config?.gifUrl || 'https://iili.io/d9WJ44I.gif',
             fontColor: config?.fontColor || 'white',
             fontStyle: config?.fontStyle || 'ABeeZee',
-            buttonLabel: config?.buttonLabel || 'LINK',
+            buttonLabel: config?.buttonLabel || 'Tap right here',
             buttonLink: config?.buttonLink || 'https://frametra.in',
         })
         load()
@@ -142,12 +147,13 @@ export default function Inspector() {
 
     return (
         <div className="w-full h-full space-y-4">
+            {/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
             <video
                 className="border-solid border-2 rounded-lg border-gray-500"
                 ref={videoRef}
                 width="100%"
-                controls
-            ></video>
+                controls={true}
+            />
 
             <div className="flex items-center justify-center h-5">
                 {loading && <LoaderPinwheel className="animate-spin" />}
@@ -190,7 +196,7 @@ export default function Inspector() {
                     <h2 className="font-bold">YouTube video URL</h2>
                     <Input
                         className="bg-red-800"
-                        placeholder="https://www.youtube.com/watch?v= . . ."
+                        placeholder="https://www.youtube.com/watch?v=..."
                         defaultValue={config.youtubeUrl}
                         onChange={(e) => {
                             updateConfig({ youtubeUrl: e.target.value })
@@ -224,7 +230,7 @@ export default function Inspector() {
                 />
                 <h2 className="font-bold">Caption Positioning</h2>
                 <Input
-                    placeholder="Bottom indent of the сaption in pixel values"
+                    placeholder="Bottom indent of the caption in pixel values"
                     defaultValue={config.captionY}
                     onChange={(e) => updateConfig({ captionY: e.target.value })}
                 />
@@ -252,7 +258,7 @@ export default function Inspector() {
                 />
                 <h2 className="font-bold">Button Link</h2>
                 <Input
-                    placeholder="https:// . . . "
+                    placeholder="https://..."
                     defaultValue={config.buttonLink}
                     onChange={(e) => updateConfig({ buttonLink: e.target.value })}
                 />
