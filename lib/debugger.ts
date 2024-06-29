@@ -3,6 +3,7 @@ import type {
     FrameMetadataType,
     FrameRequest,
 } from '@coinbase/onchainkit/frame'
+import toast from 'react-hot-toast'
 import { z } from 'zod'
 
 export async function getPreview(url: string) {
@@ -11,6 +12,7 @@ export async function getPreview(url: string) {
         const text = await response.text()
         return parseFrameHtml(text)
     } catch (error) {
+		toast.error('Whoops! Something went wrong.')
         console.error('Error fetching frame:', error)
     }
 }
@@ -29,7 +31,7 @@ export async function simulateCall(frameData: FrameRequest, options?: string[] |
         const isFollower = options?.includes('follower')
         const isFollowing = options?.includes('following')
 
-        debugPayload.verifiedData = {
+        debugPayload.validatedData = {
             object: 'validated_frame_action',
             url: frameData.untrustedData.url,
             interactor: {
@@ -114,6 +116,17 @@ export async function simulateCall(frameData: FrameRequest, options?: string[] |
         body: JSON.stringify(debugPayload),
         redirect: 'manual',
     })
+
+    if (res.status !== 200) {
+        try {
+            const message = await res.json().then((json) => json.message)
+            toast.error(message)
+        } catch {
+            toast.error('An error occurred, please turn it off and on again')
+        }
+
+        return
+    }
 
     // if (res.status === 302) {
     //     const redirectUrl = res.headers.get('Location')
