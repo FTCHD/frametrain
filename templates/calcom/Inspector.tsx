@@ -86,6 +86,7 @@ export default function Inspector() {
                 const data = JSON.parse(text as string)
                 const img = data[0].result.data.json.profile.image
                 const name = data[0].result.data.json.profile.name
+
                 updateConfig({
                     image: img,
                     name: name,

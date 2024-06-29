@@ -46,54 +46,52 @@ export default function CoverView(
             <div
                 style={{
                     display: 'flex',
-                    justifyContent: 'space-between',
                     width: '100%',
                     padding: 20,
                     alignItems: 'center',
+                    gap: 30,
                 }}
             >
-                <div
+                <img
+                    src={config.image}
+                    alt=""
                     style={{
-                        fontSize: '100px',
-                        fontWeight: config.titleWeight || 'bold',
-                        fontFamily: config.fontFamily || 'Roboto',
-                        color: config.primaryColor || 'white',
-                        fontStyle: config.titleStyle || 'normal',
+                        width: 150,
+                        height: 150,
+                        borderRadius: '50%',
+                        border: '5px solid ',
+                        borderColor: config.primaryColor || 'white',
                     }}
-                >
-                    {`${config.name}`}
-                </div>
+                />
                 <div
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
                         gap: 10,
-                        alignItems: 'flex-end',
                     }}
                 >
-                    <img
-                        src={config.image}
-                        alt=""
+                    <div
                         style={{
-                            width: 150,
-                            height: 150,
-                            borderRadius: '50%',
-                            border: '5px solid ',
-                            borderColor: config.primaryColor || 'white',
-                        }}
-                    />
-                    {/* <div
-                        style={{
-                            fontSize: '32px',
-                            color: config.primaryColor || 'white',
+                            fontSize: '70px',
+                            fontWeight: config.titleWeight || 'bold',
                             fontFamily: config.fontFamily || 'Roboto',
-                            fontWeight: 'normal',
-                            display: 'flex',
-                            alignItems: 'center',
+                            color: config.primaryColor || 'white',
+                            fontStyle: config.titleStyle || 'normal',
+                        }}
+                    >
+                        {`${config.name}`}
+                    </div>
+                    <div
+                        style={{
+                            fontSize: '30px',
+                            fontWeight: config.titleWeight || 'normal',
+                            fontFamily: config.fontFamily || 'Roboto',
+                            color: config.primaryColor || 'grey',
+                            fontStyle: config.titleStyle || 'normal',
                         }}
                     >
                         {`@${config.username}`}
-                    </div> */}
+                    </div>
                 </div>
             </div>
             <div
