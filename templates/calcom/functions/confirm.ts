@@ -8,6 +8,7 @@ import { getCurrentAndFutureDate } from '../utils/getDays'
 import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
 import { getEventSlug } from '../utils/getEventSlug'
 import { bookCall } from '../utils/bookCall'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function confirm(
     body: FrameActionPayload,
@@ -15,12 +16,15 @@ export default async function confirm(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    const buttonIndex = body.untrustedData.buttonIndex;
-    if(buttonIndex === 1) {
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+
+    const buttonIndex = body.untrustedData.buttonIndex
+    if (buttonIndex === 1) {
         return {
             buttons: [],
             component: FailView(config),
             functionName: 'initial',
+            fonts: roboto,
         }
     }
     const dates = getCurrentAndFutureDate(30)
@@ -70,7 +74,7 @@ export default async function confirm(
                 target: 'https://frametrain-hack.vercel.app',
             },
         ],
-
+        fonts: roboto,
         component: PageView(config),
         functionName: 'initial',
     }

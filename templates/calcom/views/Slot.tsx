@@ -25,14 +25,13 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
             style={{
                 width: '100%',
                 height: '100%',
-
                 display: 'flex',
                 flexDirection: 'column',
                 textAlign: 'center',
                 fontFamily: config.fontFamily || 'Roboto',
                 fontSize: '50px',
                 color: config.primaryColor || 'white',
-                padding: 70,
+                padding: 50,
                 gap: 30,
                 ...backgroundProp,
             }}
@@ -43,6 +42,7 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
                     justifyContent: 'space-between',
                     width: '100%',
                     padding: 20,
+                    alignItems: 'center',
                 }}
             >
                 <div
@@ -54,26 +54,39 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
                         fontStyle: config.titleStyle || 'normal',
                     }}
                 >
-                    Cal.com
+                    {`${config.name}`}
                 </div>
                 <div
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
                         gap: 10,
-                        alignSelf: 'flex-end',
+                        alignItems: 'flex-end',
                     }}
                 >
-                    <div
+                    <img
+                        src={config.image}
+                        alt=""
                         style={{
-                            fontSize: '60px',
+                            width: 150,
+                            height: 150,
+                            borderRadius: '50%',
+                            border: '5px solid ',
+                            borderColor: config.primaryColor || 'white',
+                        }}
+                    />
+                    {/* <div
+                        style={{
+                            fontSize: '32px',
                             color: config.primaryColor || 'white',
                             fontFamily: config.fontFamily || 'Roboto',
-                            fontWeight: 'bold',
+                            fontWeight: 'normal',
+                            display: 'flex',
+                            alignItems: 'center',
                         }}
                     >
                         {`@${config.username}`}
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div

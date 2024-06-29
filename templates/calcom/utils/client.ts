@@ -1,5 +1,5 @@
 import { createPublicClient, http } from 'viem'
-import { mainnet, base, optimism } from 'viem/chains'
+import { mainnet, base, optimism, zora } from 'viem/chains'
 
 export const client = createPublicClient({
     chain: mainnet,

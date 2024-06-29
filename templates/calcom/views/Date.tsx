@@ -27,7 +27,6 @@ export default function CoverView(
     const firstRowDates = visibleDates.slice(0, 6)
     const secondRowDates = visibleDates.slice(6, 12)
 
-
     return (
         <div
             style={{
@@ -39,7 +38,7 @@ export default function CoverView(
                 fontFamily: config.fontFamily || 'Roboto',
                 fontSize: '50px',
                 color: config.primaryColor || 'white',
-                padding: 70,
+                padding: 50,
                 gap: 30,
                 ...backgroundProp,
             }}
@@ -50,6 +49,7 @@ export default function CoverView(
                     justifyContent: 'space-between',
                     width: '100%',
                     padding: 20,
+                    alignItems: 'center',
                 }}
             >
                 <div
@@ -61,27 +61,39 @@ export default function CoverView(
                         fontStyle: config.titleStyle || 'normal',
                     }}
                 >
-                    Cal.com
+                    {`${config.name}`}
                 </div>
                 <div
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
                         gap: 10,
-                        alignSelf: 'flex-end',
+                        alignItems: 'flex-end',
                     }}
                 >
-                    <div
+                    <img
+                        src={config.image}
+                        alt=""
                         style={{
-                            fontSize: '60px',
+                            width: 150,
+                            height: 150,
+                            borderRadius: '50%',
+                            border: '5px solid ',
+                            borderColor: config.primaryColor || 'white',
+                        }}
+                    />
+                    {/* <div
+                        style={{
+                            fontSize: '32px',
                             color: config.primaryColor || 'white',
                             fontFamily: config.fontFamily || 'Roboto',
-                            alignSelf: 'flex-end',
-                            fontWeight: 'bold',
+                            fontWeight: 'normal',
+                            display: 'flex',
+                            alignItems: 'center',
                         }}
                     >
                         {`@${config.username}`}
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div
@@ -100,7 +112,7 @@ export default function CoverView(
                 >
                     Choose a date
                 </div>
-                    <div
+                <div
                     style={{
                         display: 'flex',
                         alignSelf: 'center',
@@ -121,9 +133,7 @@ export default function CoverView(
                     gap: 20,
                 }}
             >
-            
-
-               <div
+                <div
                     style={{
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -169,7 +179,7 @@ export default function CoverView(
                             <div
                                 key={index}
                                 style={{
-                                 fontSize: 44,
+                                    fontSize: 44,
                                     padding: 20,
                                     paddingLeft: 25,
                                     backgroundColor:
@@ -185,7 +195,7 @@ export default function CoverView(
                                     borderRadius: 15,
                                 }}
                             >
-                                 {`${timeSlot.split('-')[2]}`}
+                                {`${timeSlot.split('-')[2]}`}
                             </div>
                         ))}
                 </div>

@@ -6,6 +6,7 @@ import NextView from '../views/Slot'
 
 import { getCurrentAndFutureDate } from '../utils/getDays'
 import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function duration(
     body: FrameActionPayload,
@@ -13,6 +14,8 @@ export default async function duration(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+
     let date = params?.date === undefined || params?.date === 'NaN' ? 0 : Number(params?.date)
 
     const buttonIndex = body.untrustedData.buttonIndex
@@ -79,6 +82,7 @@ export default async function duration(
                         label: '➡️',
                     },
                 ],
+                fonts: roboto,
 
                 component: PageView(config, duration, datesArray, date, durationTime),
                 functionName: 'date',
@@ -140,6 +144,7 @@ export default async function duration(
                             label: '➡️',
                         },
                     ],
+                    fonts: roboto,
 
                     component: PageView(config, duration, datesArray, date, durationTime),
                     functionName: 'date',
@@ -199,6 +204,7 @@ export default async function duration(
                             label: '➡️',
                         },
                     ],
+                    fonts: roboto,
 
                     component: NextView(config, slotsArray[date], 0),
                     functionName: 'slot',
@@ -259,6 +265,7 @@ export default async function duration(
                 label: '➡️',
             },
         ],
+        fonts: roboto,
 
         component: PageView(config, duration, datesArray, date, durationTime),
         functionName: 'date',

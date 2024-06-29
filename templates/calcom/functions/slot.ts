@@ -6,6 +6,7 @@ import NextView from '../views/Confirm'
 
 import { getCurrentAndFutureDate } from '../utils/getDays'
 import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function slot(
     body: FrameActionPayload,
@@ -13,6 +14,8 @@ export default async function slot(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+
     const buttonIndex = body.untrustedData.buttonIndex
     switch (buttonIndex) {
         case 1: {
@@ -61,6 +64,7 @@ export default async function slot(
                         label: '➡️',
                     },
                 ],
+                fonts: roboto,
 
                 component: PageView(config, slotsArray[params.date], slot),
                 functionName: 'slot',
@@ -112,6 +116,8 @@ export default async function slot(
                         label: 'Confirm ✅',
                     },
                 ],
+                fonts: roboto,
+
                 inputText: 'Enter your email address',
 
                 component: NextView(
@@ -175,6 +181,7 @@ export default async function slot(
                         label: '➡️',
                     },
                 ],
+                fonts: roboto,
 
                 component: PageView(config, slotsArray[params.date], slot),
                 functionName: 'slot',
@@ -200,6 +207,7 @@ export default async function slot(
                 label: '➡️',
             },
         ],
+        fonts: roboto,
 
         component: PageView(config, [], 0),
         functionName: 'slot',

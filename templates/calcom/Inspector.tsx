@@ -1,14 +1,13 @@
 'use client'
 import { Input } from '@/components/shadcn/Input'
 import { useFarcasterId, useFrameConfig, useFrameId } from '@/sdk/hooks'
-import { use, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { Config } from '.'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
 import { uploadImage } from '@/sdk/upload'
 import { ToggleGroup } from '@/components/shadcn/ToggleGroup'
 import { ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
 import { getName } from './utils/metadata'
-
 
 import {
     Select,
@@ -18,7 +17,7 @@ import {
     SelectValue,
 } from '@/components/shadcn/Select'
 import { Switch } from '@/components/shadcn/Switch'
-
+import { corsFetch } from '@/sdk/scrape'
 
 export default function Inspector() {
     const frameId = useFrameId()
@@ -29,7 +28,7 @@ export default function Inspector() {
     const displayLabelDaysRef = useRef<HTMLInputElement>(null)
 
     const handleSubmit = async (username: string) => {
-    updateConfig({
+        updateConfig({
             username: username,
             fid: fid,
         })
@@ -38,40 +37,62 @@ export default function Inspector() {
     const handleNFT = async (nftAddress: string) => {
         const nftName = await getName(nftAddress, config.nftOptions.nftChain)
         updateConfig({
-            nftOptions :{
+            nftOptions: {
                 ...config.nftOptions,
                 nftAddress: nftAddress,
                 nftName: nftName,
-            }
+            },
         })
     }
     const handleChainChange = (value: any) => {
         console.log(value)
         updateConfig({
-            nftOptions : {
+            nftOptions: {
                 ...config.nftOptions,
                 nftChain: value,
-            }
+            },
         })
     }
     const handleNftTypeChange = (value: any) => {
         console.log(value)
         updateConfig({
-             nftOptions : {
+            nftOptions: {
                 ...config.nftOptions,
                 nftType: value,
-             }
-
+            },
         })
     }
     const handleTokenIdChange = async (e: any) => {
         updateConfig({
-             nftOptions : {
+            nftOptions: {
                 ...config.nftOptions,
                 tokenId: e.target.value,
-             }
+            },
         })
     }
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        corsFetch(
+            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"15min","isTeamEvent":false,"org":null}}}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        )
+            .then((text) => {
+                const data = JSON.parse(text as string)
+                const img = data[0].result.data.json.profile.image
+                const name = data[0].result.data.json.profile.name
+                updateConfig({
+                    image: img,
+                    name: name,
+                })
+            })
+            .catch((error) => console.error('Error:', error))
+    }, [config.username])
 
     return (
         <div className="w-full h-full space-y-4">
@@ -88,88 +109,86 @@ export default function Inspector() {
                         handleSubmit(displayLabelInputRef.current!.value)
                     }}
                 />
+                <h1 className="text-2xl font-semibold">Gating Options</h1>
+                <div className="flex flex-col gap-2 w-full md:w-auto">
+                    <h2 className="text-lg">Karma gating</h2>
 
-        <h1 className="text-2xl font-semibold">Gating Options</h1>
+                    <ToggleGroup type="single" className="flex justify-start gap-2">
+                        <ToggleGroupItem
+                            value="true"
+                            className="border-2 border-zinc-600"
+                            onClick={() => {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        karmaGating: true,
+                                    },
+                                })
+                            }}
+                        >
+                            Enabled
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                            value="false"
+                            className="border-2 border-zinc-600"
+                            onClick={() => {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        karmaGating: false,
+                                    },
+                                })
+                            }}
+                        >
+                            Disabled
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                    <p className="text-sm text-muted-foreground">
+                        Enable users within your second-degree connections to book a call.
+                    </p>
+                </div>
+                <div className="flex flex-col gap-2 w-full md:w-auto">
+                    <h2 className="text-lg">NFT Gating</h2>
 
-  <div className="flex flex-col gap-2 w-full md:w-auto">
-    <h2 className="text-lg">Karma gating</h2>
-     
-    <ToggleGroup type="single" className="flex justify-start gap-2">
-      <ToggleGroupItem
-        value="true"
-        className="border-2 border-zinc-600"
-        onClick={() => {
-          updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                karmaGating: true,
-            }
-          });
-        }}
-      >
-        Enabled
-      </ToggleGroupItem>
-      <ToggleGroupItem
-        value="false"
-        className="border-2 border-zinc-600"
-        onClick={() => {
-          updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                karmaGating: false,
-            }
-          });
-        }}
-      >
-        Disabled
-      </ToggleGroupItem>
-    </ToggleGroup>
-    <p className="text-sm text-muted-foreground">Enable users within your second-degree connections to book a call.</p>
-  </div>
-  <div className="flex flex-col gap-2 w-full md:w-auto">
-    <h2 className="text-lg">NFT Gating</h2>
-   
-    <ToggleGroup type="single" className="flex justify-start gap-2">
-      <ToggleGroupItem
-        value="true"
-        className="border-2 border-zinc-600"
-        onClick={() => {
-          updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                nftGating: true,
-            }
-          });
-        }}
-      >
-        Enabled
-      </ToggleGroupItem>
-      <ToggleGroupItem
-        value="false"
-        className="border-2 border-zinc-600"
-        onClick={() => {
-           updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                nftGating: false,
-            }
-          });
-        }}
-      >
-        Disabled
-      </ToggleGroupItem>
-    </ToggleGroup>
-      <p className="text-sm text-muted-foreground">Allow specific users holding an NFT to book a call.</p>
-  </div>
-
-
+                    <ToggleGroup type="single" className="flex justify-start gap-2">
+                        <ToggleGroupItem
+                            value="true"
+                            className="border-2 border-zinc-600"
+                            onClick={() => {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        nftGating: true,
+                                    },
+                                })
+                            }}
+                        >
+                            Enabled
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                            value="false"
+                            className="border-2 border-zinc-600"
+                            onClick={() => {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        nftGating: false,
+                                    },
+                                })
+                            }}
+                        >
+                            Disabled
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                    <p className="text-sm text-muted-foreground">
+                        Allow specific users holding an NFT to book a call.
+                    </p>
+                </div>
                 {config.gatingOptions.nftGating && (
                     <div className="flex-col gap-2">
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg">Choose Chain</h2>
-                            <Select
-                                onValueChange={handleChainChange}
-                            >
+                            <Select onValueChange={handleChainChange}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select Chain" />
                                 </SelectTrigger>
@@ -218,116 +237,114 @@ export default function Inspector() {
                         )}
                     </div>
                 )}
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg">Recasted</h2>
 
-                    <div className="flex flex-col gap-2 w-full">
+                    <Switch
+                        checked={config.gatingOptions.recasted}
+                        onCheckedChange={(checked) => {
+                            if (checked) {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        recasted: true,
+                                    },
+                                })
+                            } else {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        recasted: false,
+                                    },
+                                })
+                            }
+                        }}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                        Only allow users who recasted this cast to book a call.
+                    </p>
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg">Liked</h2>
 
-                        <h2 className="text-lg">Recasted</h2>
-                   
-                        <Switch
-                            checked={config.gatingOptions.recasted}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                recasted: true,
-            }
-          });
-                                } else {
-                                   updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                recasted: false,
-            }
-          });
-                                }
-                            }}
-                        />
-                         <p className="text-sm text-muted-foreground">Only allow users who recasted this cast to book a call.</p>
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                                
-                        <h2 className="text-lg">Liked</h2>
-                       
-                        <Switch
-                            checked={config.gatingOptions.liked}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                liked: true,
-            }
-          });
-                                } else {
-                                    updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                liked: false,
-            }
-          });
-                                }
-                            }}
-                        />
-                         <p className="text-sm text-muted-foreground">Only allow users who liked this cast to book a call.</p>
-                    </div>
+                    <Switch
+                        checked={config.gatingOptions.liked}
+                        onCheckedChange={(checked) => {
+                            if (checked) {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        liked: true,
+                                    },
+                                })
+                            } else {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        liked: false,
+                                    },
+                                })
+                            }
+                        }}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                        Only allow users who liked this cast to book a call.
+                    </p>
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg">Follower</h2>
 
+                    <Switch
+                        checked={config.gatingOptions.follower}
+                        onCheckedChange={(checked) => {
+                            if (checked) {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        follower: true,
+                                    },
+                                })
+                            } else {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        follower: false,
+                                    },
+                                })
+                            }
+                        }}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                        Only allow users who you follow to book a call.
+                    </p>
+                </div>{' '}
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg">Following</h2>
 
-<div className="flex flex-col gap-2 w-full">
-                                   
-                        <h2 className="text-lg">Follower</h2>
-                      
-                        <Switch
-                            checked={config.gatingOptions.follower}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                follower: true,
-            }
-          });
-                                } else {
-                                    updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                follower: false,
-            }
-          });
-                                }
-                            }}
-                        />
-                         <p className="text-sm text-muted-foreground">Only allow users who you follow to book a call.</p>
-                    </div>{' '}
-                    <div className="flex flex-col gap-2 w-full">
-
-                        <h2 className="text-lg">Following</h2>
-
-
-                        <Switch
-                            checked={config.gatingOptions.following}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                following: true,
-            }
-          });
-                                } else {
-                                    updateConfig({
-            gatingOptions : {
-                ...config.gatingOptions,
-                following: false,
-            }
-          });
-                                }
-                            }}
-                        />
-                        <p className="text-sm text-muted-foreground">Only allow users who follow you to book a call.</p>
-                    </div>
-
-
+                    <Switch
+                        checked={config.gatingOptions.following}
+                        onCheckedChange={(checked) => {
+                            if (checked) {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        following: true,
+                                    },
+                                })
+                            } else {
+                                updateConfig({
+                                    gatingOptions: {
+                                        ...config.gatingOptions,
+                                        following: false,
+                                    },
+                                })
+                            }
+                        }}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                        Only allow users who follow you to book a call.
+                    </p>
+                </div>
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg">Font</h2>
                     <FontFamilyPicker
@@ -362,7 +379,6 @@ export default function Inspector() {
                         }
                     />
                 </div>
-
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg">Title Style</h2>
                     <FontStylePicker
@@ -375,7 +391,6 @@ export default function Inspector() {
                         }
                     />
                 </div>
-
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg">Title Weight</h2>
                     <FontWeightPicker
@@ -388,7 +403,6 @@ export default function Inspector() {
                         }
                     />
                 </div>
-
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg">Background</h2>
                     <ColorPicker

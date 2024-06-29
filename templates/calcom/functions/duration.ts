@@ -5,6 +5,7 @@ import PageView from '../views/Duration'
 import NotSatisfied from '../views/NotSatisfied'
 
 import { balances721, balancesERC1155 } from '../utils/balances'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function duration(
     body: FrameActionPayload,
@@ -12,12 +13,18 @@ export default async function duration(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
+    const roboto = await loadGoogleFontAllVariants('Roboto')
     let containsUserFID = true
     let nftGate = true
 
-    if (config.gatingOptions.follower && !body.validatedData.interactor.viewer_context.followed_by) {
+    if (
+        config.gatingOptions.follower &&
+        !body.validatedData.interactor.viewer_context.followed_by
+    ) {
         return {
             buttons: [],
+            fonts: roboto,
+
             component: NotSatisfied(
                 config,
                 'You havent satisfied the requirements to meet the call. Only profile followed by the creator can schedule a call.'
@@ -29,6 +36,8 @@ export default async function duration(
     if (config.gatingOptions.following && !body.validatedData.interactor.viewer_context.following) {
         return {
             buttons: [],
+            fonts: roboto,
+
             component: NotSatisfied(
                 config,
                 'You havent satisfied the requirements to meet the call. Please follow the creator to schedule the call.'
@@ -40,6 +49,8 @@ export default async function duration(
     if (config.gatingOptions.recasted && !body.validatedData.cast.viewer_context.recasted) {
         return {
             buttons: [],
+            fonts: roboto,
+
             component: NotSatisfied(
                 config,
                 'You havent satisfied the requirements to meet the call. Please recast this frame and try again to schedule the call.'
@@ -51,6 +62,8 @@ export default async function duration(
     if (config.gatingOptions.liked && !body.validatedData.cast.viewer_context.liked) {
         return {
             buttons: [],
+            fonts: roboto,
+
             component: NotSatisfied(
                 config,
                 'You havent satisfied the requirements to meet the call. Please like this frame and try again to schedule the call.'
@@ -71,7 +84,9 @@ export default async function duration(
             const response = await fetch(url, options)
             const data = await response.json()
 
-            containsUserFID = data.result.some((item: any) => item.fid === body.validatedData.interactor.fid)
+            containsUserFID = data.result.some(
+                (item: any) => item.fid === body.validatedData.interactor.fid
+            )
         } catch (error) {
             console.log(error)
         }
@@ -80,6 +95,8 @@ export default async function duration(
         if (body.validatedData.interactor.verified_addresses.eth_addresses.length === 0) {
             return {
                 buttons: [],
+                fonts: roboto,
+
                 component: NotSatisfied(
                     config,
                     'Please Connect wallet to your farcaster account and hold the NFT to schedule the call.'
@@ -106,6 +123,7 @@ export default async function duration(
     if (!containsUserFID) {
         return {
             buttons: [],
+            fonts: roboto,
             component: NotSatisfied(
                 config,
                 'You havent satisfied the requirements to meet the call. Only people within 2nd degree of connection can schedule the call.'
@@ -116,6 +134,7 @@ export default async function duration(
     if (!nftGate) {
         return {
             buttons: [],
+            fonts: roboto,
             component: NotSatisfied(
                 config,
                 `You havent satisfied the requirements to meet the call. You need to hold the NFT - ${config.nftOptions.nftName} to schedule the call.`
@@ -132,6 +151,7 @@ export default async function duration(
                 label: '30min',
             },
         ],
+        fonts: roboto,
 
         component: PageView(config),
         functionName: 'date',

@@ -22,61 +22,79 @@ export default function CoverView(config: Config) {
                 flexDirection: 'column',
                 textAlign: 'center',
                 fontFamily: config.fontFamily || 'Roboto',
+                justifyContent: 'space-between',
                 fontSize: '50px',
                 color: config.primaryColor || 'white',
-                padding: 70,
-                gap: 50,
+                padding: 50,
+                gap: 40,
                 ...backgroundProp,
             }}
         >
             <div
                 style={{
-                    fontSize: '100px',
-                    fontWeight: config.titleWeight || 'bold',
-                    fontFamily: config.fontFamily || 'Roboto',
-                    color: config.primaryColor || 'white',
-                    fontStyle: config.titleStyle || 'normal',
-                }}
-            >
-                Cal.com
-            </div>
-            <div
-                style={{
-                    fontSize: '40px',
-                    color: config.primaryColor || 'white',
-                }}
-            >
-                Scheduling Infrastructure for everyone
-            </div>
-            <div
-                style={{
                     display: 'flex',
-                    flexDirection: 'column',
-                    gap: 10,
-                    alignSelf: 'flex-end',
+                    // justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 30,
                 }}
             >
+                <img
+                    src={config.image}
+                    alt="image-profile"
+                    width={250}
+                    height={250}
+                    style={{
+                        width: 250,
+                        height: 250,
+                        borderRadius: '50%',
+                        border: '5px solid ',
+                        borderColor: config.primaryColor || 'white',
+                    }}
+                />
                 <div
                     style={{
-                        fontSize: '60px',
-                        color: config.primaryColor || 'white',
-                        fontFamily: config.fontFamily || 'Roboto',
-                        alignSelf: 'flex-end',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 10,
                     }}
                 >
-                    {`@${config.username}`}
+                    <div
+                        style={{
+                            fontSize: '100px',
+                            fontWeight: config.titleWeight || 'bold',
+                            fontFamily: config.fontFamily || 'Roboto',
+                            color: config.primaryColor || 'white',
+                            fontStyle: config.titleStyle || 'normal',
+                            display: 'flex',
+                        }}
+                    >
+                        {`${config.name}`}
+                    </div>
+                    <div
+                        style={{
+                            fontSize: '40px',
+                            fontWeight: config.titleWeight || 'normal',
+                            fontFamily: config.fontFamily || 'Roboto',
+                            color: config.secondaryColor || 'grey',
+                            fontStyle: config.titleStyle || 'normal',
+                            display: 'flex',
+                        }}
+                    >
+                        {`@${config.username}`}
+                    </div>
                 </div>
             </div>
+
             {config.gatingOptions.nftGating ? (
                 <div
                     style={{
                         fontSize: '30px',
                         color: config.primaryColor || 'white',
                         fontFamily: config.fontFamily || 'Roboto',
-                        alignSelf: 'flex-end',
+                        alignSelf: 'flex-start',
                     }}
                 >
-                    {`NFT - ${config.nftOptions.nftName} is needed to book the Call`}
+                    {`• NFT - ${config.nftOptions.nftName} is needed to book the Call`}
                 </div>
             ) : (
                 <></>
@@ -87,12 +105,10 @@ export default function CoverView(config: Config) {
                         fontSize: '30px',
                         color: config.primaryColor || 'white',
                         fontFamily: config.fontFamily || 'Roboto',
-                        alignSelf: 'flex-end',
+                        alignSelf: 'flex-start',
                     }}
                 >
-                    {
-                        'Karma Gating is enabled only people within 2nd degree connnections can book the call'
-                    }
+                    {'• Karma Gating - people within 2nd degree connnections can book the call'}
                 </div>
             ) : (
                 <></>

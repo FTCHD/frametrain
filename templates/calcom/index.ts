@@ -13,8 +13,10 @@ export interface Config extends BaseConfig {
     background?: string
     bodyColor?: string
     fid: number
+    image: string
+    name: string
 
-    gatingOptions : {
+    gatingOptions: {
         karmaGating: boolean
         nftGating: boolean
         recasted: boolean
@@ -22,9 +24,9 @@ export interface Config extends BaseConfig {
         follower: boolean
         following: boolean
     }
-    nftOptions : {
+    nftOptions: {
         nftAddress: string
-        nftName: string 
+        nftName: string
         nftType: string
         nftChain: string
         tokenID: string
@@ -43,7 +45,7 @@ export default {
     Inspector,
     functions,
     initialConfig: {
-        gatingOptions:{
+        gatingOptions: {
             karmaGating: false,
             nftGating: false,
             recasted: false,
@@ -51,10 +53,9 @@ export default {
             follower: false,
             following: false,
         },
-        nftOptions :{
-            nftType  : 'ERC721',
-        }
-        
+        nftOptions: {
+            nftType: 'ERC721',
+        },
     },
     requiresValidation: true,
 } satisfies BaseTemplate
