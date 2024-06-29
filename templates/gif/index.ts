@@ -1,6 +1,6 @@
 import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.jpeg'
+import cover from './cover.webp'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
@@ -12,8 +12,8 @@ export interface Config extends BaseConfig {
 export interface State extends BaseState {}
 
 export default {
-    name: 'GIF Maker',
-    description: 'Create a GIF/Trailer Frame from video.',
+    name: 'GIF Template',
+    description: 'Create a GIF Frame from any local or Youtube video. Add a link too!',
     creatorFid: '416810',
     creatorName: 'alekcangp',
     cover,
