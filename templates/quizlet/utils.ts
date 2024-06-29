@@ -33,12 +33,12 @@ export function sidebarNavItems(obj: {
         {
             title: 'Cover Screen',
             key: 'cover',
-            description: 'Configure what shows up on your cover screen',
+            description: 'Configure what shows up on your Cover screen.',
         },
         {
             title: 'Ending Screen',
             key: 'ending',
-            description: 'Configure what shows up on your ending screen',
+            description: 'Configure what shows up on your Ending screen.',
         },
         {
             title: 'Add Question',

@@ -1,15 +1,11 @@
 'use client'
-
 import { Button } from '@/components/shadcn/Button'
-import { Drawer, DrawerContent } from '@/components/shadcn/Drawer'
+import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
 import { useFrameConfig } from '@/sdk/hooks'
 import { Trash } from 'lucide-react'
 import { useState } from 'react'
 import type { Config } from '../..'
 import QnaForm from './QnaForm'
-import { Button } from '@/components/shadcn/Button'
-import { Trash } from 'lucide-react'
-import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
 
 export default function Questions() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -21,7 +17,7 @@ export default function Questions() {
             {config.qna.length === 0 && (
                 <div className="flex flex-row gap-2 w-full">
                     <h1 className="text-2xl font-semibold">
-                        No questions added. Check the "Question & Answer" tab to add a new one
+                        Tap the "Add Question" tab to add a Question!
                     </h1>
                 </div>
             )}

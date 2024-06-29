@@ -7,10 +7,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
-import { Input } from '@/components/shadcn/Input'
 import { ColorPicker } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { useEffect, useRef } from 'react'
 import type { Config } from '../..'
 import defaultConfig from '../..'
 
@@ -20,7 +18,7 @@ export default function BasicConfig() {
     const uploadImage = useUploadImage()
 
     return (
-        <div className="flex flex-col gap-4 w-full mb-4">
+        <div className="flex flex-col gap-4 w-full">
             <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold">Allow quiz to be answered only once?</h2>
                 <Select
@@ -45,34 +43,39 @@ export default function BasicConfig() {
                     <h2 className="text-lg font-medium">Text for Correct answers</h2>
                     <Input
                         className="text-lg"
-                        placeholder="Correct answers"
+                        placeholder="Optional"
                         defaultValue={config.results.yesLabel}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                            const value = e.target.value
+
                             updateConfig({
                                 results: {
                                     ...config.results,
-                                    yesLabel: e.target.value,
+                                    yesLabel: value || undefined,
                                 },
                             })
-                        }
+                        }}
                     />
                 </div>
                 <div className="flex flex-col gap-2 ">
                     <h2 className="text-lg font-medium">Text for Wrong answers</h2>
                     <Input
                         className="text-lg"
-                        placeholder="Wrong answers"
+                        placeholder="Optional"
                         defaultValue={config.results.noLabel}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                            const value = e.target.value
+
                             updateConfig({
                                 results: {
                                     ...config.results,
-                                    noLabel: e.target.value,
+                                    noLabel: value || undefined,
                                 },
                             })
-                        }
+                        }}
                     />
                 </div>
+
                 <div className="flex flex-col gap-2 ">
                     <h2 className="text-lg font-semibold">Slide Background</h2>
                     <ColorPicker

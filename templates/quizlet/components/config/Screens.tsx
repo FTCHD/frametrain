@@ -9,10 +9,8 @@ import { Textarea } from '@/components/shadcn/Textarea'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useState } from 'react'
-import UploadSlide from './UploadSlide'
 import type { Config } from '../..'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { Textarea } from '@/components/shadcn/Textarea'
+import UploadSlide from './UploadSlide'
 
 type Props = {
     screen: 'cover' | 'success'
@@ -38,7 +36,7 @@ export default function ScreensConfig({ screen }: Props) {
             <div className="flex flex-col gap-4 w-full">
                 {screen === 'success' && (
                     <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg">Add an external link(optional)</h2>
+                        <h2 className="text-lg font-semibold">External Link</h2>
                         <Input
                             className="py-2 text-lg "
                             type="url"
@@ -53,10 +51,8 @@ export default function ScreensConfig({ screen }: Props) {
                     </div>
                 )}
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg">
-                        {screen === 'success'
-                            ? 'External link Label(optional)'
-                            : 'Cover Button Label'}
+                    <h2 className="text-lg font-semibold">
+                        {screen === 'success' ? 'Link Label' : 'Button Label'}
                     </h2>
                     <Input
                         placeholder={`${name} Label`}
@@ -73,7 +69,7 @@ export default function ScreensConfig({ screen }: Props) {
                 </div>
                 <div className="flex flex-col gap-4 w-full">
                     <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg">{name} Screen description type</h2>
+                        <h2 className="text-lg font-semibold">Screen Type</h2>
                         <RadioGroup
                             defaultValue={descriptionType}
                             className="flex flex-row"
@@ -99,7 +95,7 @@ export default function ScreensConfig({ screen }: Props) {
                                     htmlFor="cover"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >
-                                    {data?.image ? 'Update' : 'Upload'} your {name} Screen Image
+                                    {data?.image ? 'Update' : 'Upload'} Image
                                 </label>
                                 <UploadSlide
                                     htmlFor="cover"
@@ -132,7 +128,7 @@ export default function ScreensConfig({ screen }: Props) {
                             <>
                                 <div className="flex flex-col gap-2 w-full">
                                     <div className="flex flex-row items-center justify-between">
-                                        <h2 className="text-lg">{name} Screen description</h2>
+                                        <h2 className="text-lg font-semibold">Description</h2>
                                         <div className="flex flex-row items-center justify-between gap-2 px-4">
                                             <Label
                                                 className="font-md"
@@ -166,7 +162,7 @@ export default function ScreensConfig({ screen }: Props) {
                                 {customizeStyles[screen] ? (
                                     <>
                                         <div className="flex flex-col gap-2 w-full">
-                                            <h2 className="text-lg">{name} Font</h2>
+                                            <h2 className="text-lg font-semibold">{name} Font</h2>
                                             <FontFamilyPicker
                                                 defaultValue={data.configuration?.fontFamily}
                                                 onSelect={(font) => {
@@ -183,7 +179,7 @@ export default function ScreensConfig({ screen }: Props) {
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2 w-full">
-                                            <h2 className="text-lg">{name} Size</h2>
+                                            <h2 className="text-lg font-semibold">{name} Size</h2>
                                             <Input
                                                 defaultValue={data.configuration?.fontSize}
                                                 placeholder="10px"
@@ -201,7 +197,9 @@ export default function ScreensConfig({ screen }: Props) {
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2 w-full">
-                                            <h2 className="text-lg">{name} Text Color</h2>
+                                            <h2 className="text-lg font-semibold">
+                                                {name} Text Color
+                                            </h2>
                                             <ColorPicker
                                                 className="w-full"
                                                 background={
@@ -221,7 +219,9 @@ export default function ScreensConfig({ screen }: Props) {
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2 w-full">
-                                            <h2 className="text-lg">{name} Background Color</h2>
+                                            <h2 className="text-lg font-semibold">
+                                                {name} Background Color
+                                            </h2>
                                             <ColorPicker
                                                 enabledPickers={['solid', 'gradient', 'image']}
                                                 className="w-full"
@@ -243,7 +243,7 @@ export default function ScreensConfig({ screen }: Props) {
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2 w-full">
-                                            <h2 className="text-lg">{name} Weight</h2>
+                                            <h2 className="text-lg font-semibold">{name} Weight</h2>
                                             <FontWeightPicker
                                                 currentFont={
                                                     data.configuration?.fontFamily || 'Roboto'
@@ -263,7 +263,7 @@ export default function ScreensConfig({ screen }: Props) {
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2 w-full">
-                                            <h2 className="text-lg">{name} Style</h2>
+                                            <h2 className="text-lg font-semibold">{name} Style</h2>
                                             <FontStylePicker
                                                 currentFont={
                                                     data.configuration?.fontFamily || 'Roboto'
