@@ -1,47 +1,23 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { useFrameConfig, useFrameState } from '@/sdk/hooks'
-import { useEffect, useRef, useState } from 'react'
-import type { Config, fieldTypes, State } from '.'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/shadcn/Select'
 import { ColorPicker } from '@/sdk/components'
-
+import { useFrameConfig, useFrameState } from '@/sdk/hooks'
+import { useRef, useState } from 'react'
+import type { Config, State, fieldTypes } from '.'
 
 export default function Inspector() {
     const [showModal, setShowModal] = useState(false)
     const state = useFrameState() as State
     const [config, updateConfig] = useFrameConfig<Config>()
     const fields: fieldTypes[] = config.fields
-
-    const shareTextInputRef = useRef<HTMLInputElement>(null)
-    const frameURLInputRef = useRef<HTMLInputElement>(null)
-
-    const coverInputRef = useRef<HTMLInputElement>(null)
-    const aboutInputRef = useRef<HTMLInputElement>(null)
-    const successInputRef = useRef<HTMLInputElement>(null)
-    const duplicateInputRef = useRef<HTMLInputElement>(null)
-
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
-    useEffect(() => {
-        if (coverInputRef.current) {
-            coverInputRef.current.value = config.coverText ?? ''
-        }
-        if (aboutInputRef.current) {
-            aboutInputRef.current.value = config.aboutText ?? ''
-        }
-        if (successInputRef.current) {
-            successInputRef.current.value = config.successText ?? ''
-        }
-        if (duplicateInputRef.current) {
-            duplicateInputRef.current.checked = config.allowDuplicates
-        }
-        if (shareTextInputRef.current) {
-            shareTextInputRef.current.value = config.shareText ?? ''
-        }
-        if (frameURLInputRef.current) {
-            frameURLInputRef.current.value = config.frameURL ?? ''
-        }
-    }, [config])
 
     const itemNameInputRef = useRef<HTMLInputElement>(null)
     const itemDescriptionInputRef = useRef<HTMLInputElement>(null)
@@ -55,7 +31,8 @@ export default function Inspector() {
                 <Button
                     className="bg-rose-500 hover:bg-rose-700 text-white py-3 mr-1 rounded"
                     type="button"
-                    onClick={() => state.data && state.data.length !== 0 ? setShowModal(true) : null}
+                    // onClick={() => state.data && state.data.length !== 0 ? setShowModal(true) : null}
+                    onClick={() => setShowModal(true)}
                 >
                     Show Submissions
                 </Button>
@@ -70,292 +47,301 @@ export default function Inspector() {
                     Download as .CSV
                 </Button>
 
-                {!state.data ? (<p className="italic mt-1 text-s">No Form Has Been Submitted Yet!</p>) : null}
-
+                {/* {!state.data ? (
+                    <p className="italic mt-1 text-s">No Form Has Been Submitted Yet!</p>
+                ) : null} */}
             </div>
 
-            <div className="w-full">
-                <h2 className="text-2xl font-bold mb-3">Template Texts</h2>
-                <form className="w-full">
+            <div className="flex flex-col gap-2">
+                <h2 className="text-2xl font-semibold">Messages</h2>
+
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg font-semibold">Form Title</h2>
                     <Input
                         className="text-lg mb-1"
-                        placeholder="Form Title (Text For The Cover)"
-                        ref={coverInputRef}
-                        onChange={() => {
+                        placeholder="Text for the Cover"
+                        defaultValue={config.coverText}
+                        onChange={(e) => {
                             updateConfig({
-                                coverText: coverInputRef.current?.value,
+                                coverText: e.target.value || undefined,
                             })
                         }}
                     />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg font-semibold">About Text</h2>
                     <Input
                         className="text-lg mb-1"
-                        placeholder="About Text (Text For The About Section)"
-                        ref={aboutInputRef}
-                        onChange={() => {
+                        placeholder="Text for the About section"
+                        defaultValue={config.aboutText}
+                        onChange={(e) => {
                             updateConfig({
-                                aboutText: aboutInputRef.current?.value
+                                aboutText: e.target.value || undefined,
                             })
                         }}
                     />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg font-semibold">Success Message</h2>
                     <Input
                         className="text-lg mb-1"
-                        placeholder="Success Message (After Entry Successfully Submitted)"
-                        ref={successInputRef}
-                        onChange={() => {
+                        placeholder="Appears after entry is successfully submitted"
+                        defaultValue={config.successText}
+                        onChange={(e) => {
                             updateConfig({
-                                successText: successInputRef.current?.value,
+                                successText: e.target.value || undefined,
                             })
                         }}
                     />
-                    <div className="mt-6 inline-flex items-center">
+                </div>
+                <div className="inline-flex items-center">
+                    <label
+                        className="relative flex items-center p-3 -mt-3 rounded-full cursor-pointer"
+                        htmlFor="allowDuplicates"
+                    >
+                        <input
+                            type="checkbox"
+                            id="allowDuplicates"
+                            defaultChecked={config.allowDuplicates}
+                            onChange={(e) => {
+                                updateConfig({
+                                    allowDuplicates: e.target.checked,
+                                })
+                            }}
+                        />
+                    </label>
+                    <label
+                        className="font-light text-gray-500 cursor-pointer select-none"
+                        htmlFor="allowDuplicates"
+                    >
+                        <div>
+                            <p className="block font-sans text-base antialiased font-medium leading-relaxed text-gray-200">
+                                Duplicate Submissions
+                            </p>
+                            <p className="block font-sans text-sm antialiased font-normal leading-normal text-gray-500">
+                                If checked, users can submit the form more than once.
+                            </p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+                <h2 className="text-2xl font-semibold">Form Fields</h2>
+
+                <div className="flex flex-row gap-2">
+                    <div className="flex flex-col w-full gap-2">
                         <label
-                            className="relative flex items-center p-3 -mt-3 rounded-full cursor-pointer"
-                            htmlFor="description"
+                            className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
+                            htmlFor="grid-inp-name"
                         >
-                            <input
-                                type="checkbox"
-                                id="description"
-                                ref={duplicateInputRef}
-                                onChange={() => {
-                                    updateConfig({
-                                        allowDuplicates:
-                                            duplicateInputRef.current?.checked ?? false,
-                                    })
-                                }}
-                            />
+                            Input Name
+                        </label>
+                        <Input
+                            className="text-lg"
+                            id="grid-inp-name"
+                            placeholder="Drink"
+                            ref={itemNameInputRef}
+                        />
+                    </div>
+                    <div className="flex flex-col w-full gap-2">
+                        <label
+                            className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
+                            htmlFor="grid-example"
+                        >
+                            Example Input
+                        </label>
+                        <Input
+                            className="text-lg"
+                            id="grid-example"
+                            placeholder="Lemonade"
+                            ref={itemExampleInputRef}
+                        />
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <label
+                        className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
+                        htmlFor="grid-desc"
+                    >
+                        Input Description
+                    </label>
+                    <Input
+                        className="text-lg"
+                        placeholder="What is your favorite drink?"
+                        ref={itemDescriptionInputRef}
+                    />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <label
+                        htmlFor="dropdown"
+                        className="block uppercase tracking-wide text-gray-200 text-xs font-bold"
+                    >
+                        Data Type
+                    </label>
+                    <Select
+                        onValueChange={(e) => {
+                            itemTypeInputRef.current!.value = e
+                        }}
+                        defaultValue={'text'}
+                    >
+                        <SelectTrigger className="w-full h-12">
+                            <SelectValue placeholder="Select Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="text">Text</SelectItem>
+                            <SelectItem value="number">Number</SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                            <SelectItem value="phone">Phone</SelectItem>
+                            <SelectItem value="address">Address</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="w-full">
+                    <div className="inline-flex items-center">
+                        <label
+                            className="relative flex items-center p-3 rounded-full cursor-pointer"
+                            htmlFor="req-desc"
+                        >
+                            <input type="checkbox" ref={itemRequiredInputRef} id="req-desc" />
                         </label>
                         <label
                             className="mt-px font-light text-gray-500 cursor-pointer select-none"
-                            htmlFor="description"
+                            htmlFor="req-desc"
                         >
                             <div>
                                 <p className="block font-sans text-base antialiased font-medium leading-relaxed text-gray-200">
-                                    Duplicate Submissions
+                                    Required
                                 </p>
                                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-gray-500">
-                                    If checked, multiple Fids can submit the form more than once.
+                                    If checked, user must fill in a value for the input field.
                                 </p>
                             </div>
                         </label>
                     </div>
-                </form>
+                </div>
+
+                <Button
+                    type="button"
+                    onClick={() => {
+                        if (!itemNameInputRef.current?.value) return
+
+                        const newFields = [
+                            ...(fields || []),
+                            {
+                                fieldName: itemNameInputRef.current.value,
+                                fieldDescription: itemDescriptionInputRef.current?.value ?? '',
+                                fieldExample: itemExampleInputRef.current?.value ?? '',
+                                required: itemRequiredInputRef.current?.checked,
+                                fieldType: itemTypeInputRef.current?.value,
+                            },
+                        ]
+                        updateConfig({
+                            fields: newFields,
+                        })
+                        itemNameInputRef.current.value = ''
+                        if (!itemExampleInputRef.current?.value) return
+                        if (!itemDescriptionInputRef.current) return
+                        itemDescriptionInputRef.current.value = ''
+                        itemExampleInputRef.current.value = ''
+                    }}
+                    className="w-full bg-border hover:bg-secondary-border text-primary"
+                >
+                    Add Input Field
+                </Button>
             </div>
 
-            <div className="w-full">
+            <div className="flex flex-col gap-2">
+                <h2 className="text-2xl font-semibold">Manage Fields</h2>
+                {config.fields?.length == 0 ? (
+                    <p className="italic text-gray-300">No Input Field Added yet!</p>
+                ) : (
+                    ''
+                )}
                 <div className="w-full">
-                    <h2 className="text-lg font-bold mb-3">Add Input Fields</h2>
-                    <form className="w-full">
-                        <div className="flex flex-wrap -mx-3 mb-4">
-                            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                                <label
-                                    className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
-                                    htmlFor="grid-inp-name"
-                                >
-                                    Input Name
-                                </label>
-                                <Input
-                                    className="text-lg"
-                                    id="grid-inp-name"
-                                    placeholder="Drink"
-                                    ref={itemNameInputRef}
-                                />
-                            </div>
-                            <div className="w-full md:w-1/2 px-3">
-                                <label
-                                    className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
-                                    htmlFor="grid-example"
-                                >
-                                    Example Input
-                                </label>
-                                <Input
-                                    className="text-lg"
-                                    id="grid-example"
-                                    placeholder="Lemonade"
-                                    ref={itemExampleInputRef}
-                                />
-                            </div>
-                        </div>
-                        <div className="flex flex-wrap -mx-3">
-                            <div className="w-full md:w-2/3 px-3">
-                                <label
-                                    className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
-                                    htmlFor="grid-desc"
-                                >
-                                    Input Description
-                                </label>
-                                <Input
-                                    className="text-lg mb-3"
-                                    placeholder="What is your favorite drink?"
-                                    ref={itemDescriptionInputRef}
-                                />
-                            </div>
-                            <div className="w-full md:w-1/3 px-3">
-                                <label
-                                    htmlFor="dropdown"
-                                    className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
-                                >
-                                    Data Type
-                                </label>
-                                <select
-                                    id="dropdown"
-                                    ref={itemTypeInputRef}
-                                    className="border rounded p-2"
-                                >
-                                    <option value="text">Text</option>
-                                    <option value="number">Number</option>
-                                    <option value="email">Email</option>
-                                    <option value="phone">Phone</option>
-                                    <option value="address">Address</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="flex flex-wrap -mx-6 mb-6">
-                            <div className="w-full px-3">
-                                <div className="inline-flex items-center">
-                                    <label
-                                        className="relative flex items-center p-3 -mt-3 rounded-full cursor-pointer"
-                                        htmlFor="req-desc"
-                                    >
-                                        <input type='checkbox' ref={itemRequiredInputRef} id="req-desc" />
-                                    </label>
-                                    <label
-                                        className="mt-px font-light text-gray-500 cursor-pointer select-none"
-                                        htmlFor="req-desc"
-                                    >
-                                        <div>
-                                            <p className="block font-sans text-base antialiased font-medium leading-relaxed text-gray-200">
-                                                Required
-                                            </p>
-                                            <p className="block font-sans text-sm antialiased font-normal leading-normal text-gray-500">
-                                                If checked, user must fill in a value for the input
-                                                field.
-                                            </p>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex flex-wrap mb-6">
-                            <Button
-                                type="button"
-                                onClick={() => {
-                                    if (!itemNameInputRef.current?.value) return
-
-                                    const newFields = [
-                                        ...(fields || []),
-                                        {
-                                            fieldName: itemNameInputRef.current.value,
-                                            fieldDescription:
-                                                itemDescriptionInputRef.current?.value ?? '',
-                                            fieldExample:
-                                                itemExampleInputRef.current?.value ?? '',
-                                            required: itemRequiredInputRef.current?.checked,
-                                            fieldType: itemTypeInputRef.current?.value,
-                                        },
-                                    ]
-                                    updateConfig({
-                                        fields: newFields,
-                                    })
-                                    itemNameInputRef.current.value = ''
-                                    if (!itemExampleInputRef.current?.value) return
-                                    if (!itemDescriptionInputRef.current) return
-                                    itemDescriptionInputRef.current.value = ''
-                                    itemExampleInputRef.current.value = ''
-                                }}
-                                className="w-full bg-border hover:bg-secondary-border text-primary"
+                    <ol className="list-decimal list-inside">
+                        {config.fields?.map((field, index) => (
+                            <li
+                                key={index}
+                                className="flex items-center justify-between bg-slate-50 bg-opacity-10 p-2 rounded"
                             >
-                                Add Input Field
-                            </Button>
-                        </div>
-                    </form>
-                </div>
-
-                <div className="w-full mb-3">
-                    <h2 className="text-lg font-bold mb-3">Current Input Fields</h2>
-                    {config.fields?.length == 0 ? (
-                        <p className="italic mt-1 px-3 text-gray-300">No Input Field Added yet!</p>
-                    ) : (
-                        ''
-                    )}
-                    <div className="w-full px-12">
-                        <ol className="list-decimal list-inside">
-                            {config.fields?.map((field, index) => (
-                                <li
-                                    key={index}
-                                    className="flex items-center justify-between bg-slate-50 bg-opacity-10 p-2 rounded mb-1"
+                                <span>
+                                    {index + 1}. {field.fieldName}
+                                </span>
+                                <button
+                                    type="button"
+                                    className="text-gray-900 bg-gray-100  border-red-500 hover:bg-red-500 hover:text-white py-1 px-2 rounded italic font-normal"
+                                    onClick={() =>
+                                        updateConfig({
+                                            fields: [
+                                                ...fields.slice(0, index),
+                                                ...fields.slice(index + 1),
+                                            ],
+                                        })
+                                    }
                                 >
-                                    <span>
-                                        {index + 1}. {field.fieldName}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        className="text-gray-900 bg-gray-100  border-red-500 hover:bg-red-500 hover:text-white py-1 px-2 rounded italic font-normal"
-                                        onClick={() =>
-                                            updateConfig({
-                                                fields: [
-                                                    ...fields.slice(0, index),
-                                                    ...fields.slice(index + 1),
-                                                ],
-                                            })
-                                        }
-                                    >
-                                        delete
-                                    </button>
-                                </li>
-                            ))}
-                        </ol>
-                    </div>
+                                    Delete
+                                </button>
+                            </li>
+                        ))}
+                    </ol>
                 </div>
             </div>
 
-            <div className="flex flex-col gap-2 ">
-                <h2 className="text-lg font-semibold">Background Color</h2>
-                <ColorPicker
-                    className="w-full"
-                    enabledPickers={['solid', 'gradient']}
-                    background={
-                        config.backgroundColor ||
-                        'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
-                    }
-                    setBackground={(value) => updateConfig({ backgroundColor: value })}
-                />
-            </div>
-
-            <div className="flex flex-col gap-2 ">
-                <h2 className="text-lg font-semibold">Text Color</h2>
-                <ColorPicker
-                    className="w-full"
-                    background={config.fontColor || '#FFFFFF'}
-                    setBackground={(value) => updateConfig({ fontColor: value })}
-                />
-            </div>
-
-            <h2 className="text-lg font-semibold">Share Button's Sentence</h2>
             <div className="flex flex-col gap-2">
-                <Input
-                    className="text-lg border rounded p-2"
-                    placeholder="Enter Share Text"
-                    ref={shareTextInputRef}
-                    onChange={() => {
-                        updateConfig({
-                            shareText: shareTextInputRef.current?.value,
-                        })
-                    }}
-                />
-            </div>
+                <h2 className="text-2xl font-semibold">Customization</h2>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg font-semibold">Background Color</h2>
+                    <ColorPicker
+                        className="w-full"
+                        enabledPickers={['solid', 'gradient']}
+                        background={
+                            config.backgroundColor ||
+                            'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
+                        }
+                        setBackground={(value) => updateConfig({ backgroundColor: value })}
+                    />
+                </div>
 
-            <h2 className="text-lg font-semibold">Frame's URL</h2>
-            <div className="flex flex-col gap-2">
-                <Input
-                    className="text-lg border rounded p-2"
-                    placeholder="Click on &quot;URL&quot; from top right and paste here"
-                    ref={frameURLInputRef}
-                    onChange={() => {
-                        updateConfig({
-                            frameURL: frameURLInputRef.current?.value,
-                        })
-                    }}
-                />
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg font-semibold">Text Color</h2>
+                    <ColorPicker
+                        className="w-full"
+                        background={config.fontColor || '#FFFFFF'}
+                        setBackground={(value) => updateConfig({ fontColor: value })}
+                    />
+                </div>
+
+                <h2 className="text-lg font-semibold">Share Message</h2>
+                <div className="flex flex-col gap-2">
+                    <Input
+                        className="text-lg border rounded p-2"
+                        placeholder="Appears as the cast message when sharing"
+                        defaultValue={config.shareText}
+                        onChange={(e) => {
+                            updateConfig({
+                                shareText: e.target.value || undefined,
+                            })
+                        }}
+                    />
+                </div>
+
+                <h2 className="text-lg font-semibold">Frame's URL</h2>
+                <div className="flex flex-col gap-2">
+                    <Input
+                        className="text-lg border rounded p-2"
+                        placeholder="Tap on &quot;URL&quot; on the top right and paste here"
+                        defaultValue={config.frameURL}
+                        onChange={(e) => {
+                            updateConfig({
+                                frameURL: e.target.value || undefined,
+                            })
+                        }}
+                    />
+                </div>
             </div>
         </div>
     )
@@ -431,48 +417,54 @@ const Modal = ({
     setShowModal,
     state,
 }: { showModal: boolean; setShowModal: any; state: State }) => {
-    return (
-        <>
-            {showModal ? (
-                <>
-                    <div className="text-black fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
-                        <div className="relative w-auto max-w-3xl mx-auto my-6">
-                            {/*content*/}
-                            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                                {/*header*/}
-                                <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
-                                    <h3 className="text-3xl font-semibold">State Data Table</h3>
-                                    <button
-                                        type="button"
-                                        className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                                        onClick={() => setShowModal(false)}
-                                    >
-                                        <span className="bg-transparent text-black h-6 w-6 text-2xl block outline-none focus:outline-none">
-                                            ×
-                                        </span>
-                                    </button>
-                                </div>
-                                {/*body*/}
-                                <div className="relative p-6 flex-auto">
-                                    {!state.data ? (<p className="italic mt-1 text-s">No Form Has Been Submitted Yet!</p>) : generateTable(state)}
-                                </div>
-                                {/*footer*/}
-                                <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
-                                    <button
-                                        className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                                        type="button"
-                                        onClick={() => setShowModal(false)}
-                                    >
-                                        Close
-                                    </button>
-                                </div>
+    if (showModal) {
+        return (
+            <>
+                <div className="text-black fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+                    <div className="relative w-auto max-w-3xl mx-auto my-6">
+                        {/*content*/}
+                        <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                            {/*header*/}
+                            <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
+                                <h3 className="text-3xl font-semibold">Submissions</h3>
+                                <button
+                                    type="button"
+                                    className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                                    onClick={() => setShowModal(false)}
+                                >
+                                    <span className="bg-transparent text-black h-6 w-6 text-2xl block outline-none focus:outline-none">
+                                        ×
+                                    </span>
+                                </button>
+                            </div>
+                            {/*body*/}
+                            <div className="relative p-6 flex-auto">
+                                {!state.data ? (
+                                    <p className="italic mt-1 text-s">
+                                        No Form Has Been Submitted Yet!
+                                    </p>
+                                ) : (
+                                    generateTable(state)
+                                )}
+                            </div>
+                            {/*footer*/}
+                            <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
+                                <button
+                                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                >
+                                    Close
+                                </button>
                             </div>
                         </div>
                     </div>
-                    {/* biome-ignore lint/style/useSelfClosingElements: <explanation> */}
-                    <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-                </>
-            ) : null}
-        </>
-    )
+                </div>
+                {/* biome-ignore lint/style/useSelfClosingElements: <explanation> */}
+                <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+            </>
+        )
+    }
+
+    return undefined
 }

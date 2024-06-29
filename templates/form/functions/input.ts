@@ -1,21 +1,20 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import { FrameError } from '@/sdk/handlers'
 import type { Config, State } from '..'
 import InputView from '../views/Input'
-import { UsersState, removeFidFromUserState, updateUserState } from './userState'
+import SubmittedView from '../views/Submitted'
+import SuccessView from '../views/Success'
+import about from './about'
 import initial from './initial'
 import review from './review'
-import about from './about'
-import SuccessView from '../views/Success'
-import SubmittedView from '../views/Submitted'
-import { FrameError } from '@/sdk/handlers'
+import { UsersState, removeFidFromUserState, updateUserState } from './userState'
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export default async function input(
     body: FrameActionPayload,
     config: Config,
     state: State,
-    // biome-ignore lint/correctness/noUnusedVariables: <explanation>
     params: any
 ): Promise<BuildFrameData> {
     let newState = state
@@ -23,6 +22,7 @@ export default async function input(
     const fid: number = body.untrustedData.fid
     const buttonIndex: number = body.untrustedData.buttonIndex
     const textInput = body.untrustedData.inputText ?? ''
+
     if (!UsersState[fid]) {
         updateUserState(fid, { pageType: 'init', inputValues: [] })
     }
@@ -34,16 +34,15 @@ export default async function input(
 
     switch (prevUserState.pageType) {
         case 'init':
-        case undefined:
+        case undefined: {
             // IF "ABOUT" BUTTON WAS PRESSED
-            // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             if (buttonIndex == 1) {
                 updateUserState(fid, { pageType: 'about' })
                 break
             }
 
-            // CHECK IF THE USER HAS SUBMITTED THE FORM BEFORE
-            if (config.allowDuplicates == false) {
+            if (!config.allowDuplicates) {
+                /* CHECK IF THE USER HAS SUBMITTED THE FORM BEFORE */
                 const index = getIndexForFid(fid, newState)
                 if (index >= 0) {
                     updateUserState(fid, {
@@ -56,8 +55,9 @@ export default async function input(
                     break
                 }
             }
-            // IF "START" BUTTON WAS PRESSED
+
             if (buttonIndex == 2) {
+                // IF "START" BUTTON WAS PRESSED
                 updateUserState(fid, {
                     inputFieldNumber: 0,
                     totalInputFieldNumber: config.fields.length,
@@ -66,17 +66,16 @@ export default async function input(
                 break
             }
             break
-        case 'about':
+        }
+        case 'about': {
             // Back Button Pressed
-            // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             if (buttonIndex == 1) {
                 updateUserState(fid, { pageType: 'init' })
-                break
             }
             break
-        case 'input':
+        }
+        case 'input': {
             //CHECK IF THE VALUE ENTERED IS VALID FOR THE TYPE
-            // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             if (buttonIndex == 1) {
                 // IF RESET WAS PRESSED
                 removeFidFromUserState(fid)
@@ -105,8 +104,7 @@ export default async function input(
                 }
             }
             if (textInput.length > 0) {
-                // biome-ignore lint/style/useConst: <explanation>
-                let _inputs = UsersState[fid].inputValues
+                const _inputs = UsersState[fid].inputValues
                 _inputs[UsersState[fid].inputFieldNumber] = textInput
                 updateUserState(fid, { inputValues: _inputs })
             }
@@ -137,9 +135,9 @@ export default async function input(
                 break
             }
             break
-        case 'review':
+        }
+        case 'review': {
             // if pressed button was submit, show the success page
-            // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             if (buttonIndex == 2) {
                 updateUserState(fid, { pageType: 'success' })
                 break
@@ -150,11 +148,11 @@ export default async function input(
                 updateUserState(fid, { pageType: 'input', inputFieldNumber: 0 })
                 break
             }
+        }
 
-        case 'submitted_before':
+        case 'submitted_before': {
             // ask if wants to submit a new one or not
             // IF BACK WAS PRESSED
-            // biome-ignore lint/style/useSingleCaseStatement: <explanation>
             if (buttonIndex == 1) {
                 updateUserState(fid, { pageType: 'init' })
                 break
@@ -165,6 +163,7 @@ export default async function input(
                 updateUserState(fid, { pageType: 'input', inputFieldNumber: 0 })
                 break
             }
+        }
 
         case 'success':
             // biome-ignore lint/style/useSingleCaseStatement: <explanation>
@@ -174,8 +173,6 @@ export default async function input(
         default:
             break
     }
-
-    // console.log('\x1b[33m%s\x1b[0m', UsersState);
 
     switch (UsersState[fid].pageType) {
         case 'init':
@@ -204,10 +201,9 @@ export default async function input(
             }
         case 'review':
             return review(config, newState, fid, null)
-        case 'success':
-            // CHECK IF USER HAS ALREADY SUBMITTED
-            // biome-ignore lint/style/useSingleCaseStatement: <explanation>
-            if (config.allowDuplicates == false) {
+        case 'success': {
+            if (!config.allowDuplicates) {
+                // CHECK IF USER HAS ALREADY SUBMITTED
                 if (UsersState[fid].isOldUser) {
                     const index = getIndexForFid(fid, newState)
                     newState.data = [
@@ -236,6 +232,7 @@ export default async function input(
                 component: SuccessView(config),
                 functionName: 'input',
             }
+        }
         case 'submitted_before':
             return {
                 buttons: [
@@ -253,10 +250,10 @@ export default async function input(
         default:
             break
     }
-    
 
     // RETURN INITIAL VIEW IF ANYTHING UNEXPECTED HAPPENS
     updateUserState(fid, { pageType: 'init', inputValues: [] })
+
     return {
         buttons: [
             {
@@ -288,20 +285,17 @@ function isValid(value: any, varType: 'text' | 'number' | 'email' | 'phone' | 'a
             return typeof value === 'string' && value.trim().length > 0
 
         case 'number':
-            // biome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
             return !isNaN(value) && !isNaN(Number.parseFloat(value))
 
-        case 'email':
-            // biome-ignore lint/style/useSingleCaseStatement: <explanation>
-            // biome-ignore lint/correctness/noSwitchDeclarations: <explanation>
+        case 'email': {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
             return typeof value === 'string' && emailRegex.test(value)
+        }
 
-        case 'phone':
-            // biome-ignore lint/style/useSingleCaseStatement: <explanation>
-            // biome-ignore lint/correctness/noSwitchDeclarations: <explanation>
+        case 'phone': {
             const phoneRegex = /^\+?[1-9]\d{1,14}$/
             return typeof value === 'string' && phoneRegex.test(value)
+        }
 
         case 'address':
             return typeof value === 'string' && value.trim().length > 0
