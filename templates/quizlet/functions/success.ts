@@ -31,5 +31,11 @@ export default async function success(
     return {
         buttons,
         image: config.success.image,
+        aspectRatio:
+            config.success.aspectRatio !== undefined
+                ? config.success.aspectRatio === '1.91/1'
+                    ? '1.91:1'
+                    : '1:1'
+                : undefined,
     }
 }

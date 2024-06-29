@@ -20,6 +20,11 @@ export default async function initial(config: Config, _: State): Promise<BuildFr
               }),
         functionName: 'page',
         image: config.cover.image,
-        aspectRatio: config.cover.image ? '1:1' : undefined,
+        aspectRatio:
+            config.cover.aspectRatio !== undefined
+                ? config.cover.aspectRatio === '1.91/1'
+                    ? '1.91:1'
+                    : '1:1'
+                : undefined,
     }
 }
