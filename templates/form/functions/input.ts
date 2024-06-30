@@ -82,32 +82,43 @@ export default async function input(
                 updateUserState(fid, { pageType: 'init', inputValues: [] })
                 break
             }
-            if (!isValid(textInput, config.fields[UsersState[fid].inputFieldNumber].fieldType)) {
+			
+			
+			const { isValid } = validateField(
+                textInput,
+                config.fields[UsersState[fid].inputFieldNumber].fieldType
+            )
+
+            if (!isValid) {
                 // IF INVALID BREAK AND SHOW THE INVALID VALUE MESSAGE
-                updateUserState(fid, { pageType: 'input', isFieldValid: false })
-                break
-                // biome-ignore lint/style/noUselessElse: <explanation>
-            } else {
-                // IF VALID CONTINUE WITH THE REST OF THE CHECKS
-                updateUserState(fid, { isFieldValid: true })
+                updateUserState(fid, { pageType: 'input' })
+                throw new FrameError('Field not valid.')
             }
-            // ADD SUBMITTED INPUT TO STATE
-            // CHECK IF THE INPUT IS A "REQUIRED" ONE
+			
+       
             if (config.fields[UsersState[fid].inputFieldNumber].required == true) {
+                // CHECK IF THE INPUT IS A "REQUIRED" ONE
                 if (
                     // biome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
                     !(textInput.trim().length > 0) &&
                     !UsersState[fid].inputValues[UsersState[fid].inputFieldNumber]
                 ) {
                     updateUserState(fid, { pageType: 'input' })
-                    throw new FrameError('You Cannot Leave A Required Field Empty!')
+                    throw new FrameError('You cannot leave a required field blank.')
                 }
             }
-            if (textInput.length > 0) {
-                const _inputs = UsersState[fid].inputValues
-                _inputs[UsersState[fid].inputFieldNumber] = textInput
-                updateUserState(fid, { inputValues: _inputs })
-            }
+			
+
+            // if (textInput.length > 0) {
+            //     const _inputs = UsersState[fid].inputValues
+            //     _inputs[UsersState[fid].inputFieldNumber] = textInput
+            //     updateUserState(fid, { inputValues: _inputs })
+            // }
+
+            const _inputs = UsersState[fid].inputValues
+            _inputs[UsersState[fid].inputFieldNumber] = textInput || ''
+            updateUserState(fid, { inputValues: _inputs })
+		
 
             if (prevUserState.inputFieldNumber + 1 == UsersState[fid].totalInputFieldNumber) {
                 // if button pressed was NEXT_PAGE, show the review page
@@ -194,9 +205,7 @@ export default async function input(
                 ],
                 inputText: 'Enter The Value',
                 state: newState,
-                component: InputView(config, UsersState[fid], {
-                    isFieldValid: UsersState[fid].isFieldValid,
-                }),
+                component: InputView(config, UsersState[fid]),
                 functionName: 'input',
             }
         case 'review':
@@ -276,31 +285,48 @@ function getIndexForFid(fid: number | string, state: State): number {
     return index
 }
 
-function isValid(value: any, varType: 'text' | 'number' | 'email' | 'phone' | 'address'): boolean {
+function validateField(
+    value: any,
+    type: 'text' | 'number' | 'email' | 'phone' | 'address'
+): { isValid: boolean; errors: string[] } {
     if (value.trim().length == 0) {
-        return true
+        return { isValid: true, errors: [] }
     }
-    switch (varType) {
-        case 'text':
-            return typeof value === 'string' && value.trim().length > 0
 
-        case 'number':
-            return !isNaN(value) && !isNaN(Number.parseFloat(value))
+    let isValid = true
+    const errors: string[] = []
+
+    switch (type) {
+        case 'text': {
+            isValid = typeof value === 'string' && value.trim().length > 0
+            break
+        }
+
+        case 'number': {
+            isValid = !isNaN(value) && !isNaN(Number.parseFloat(value))
+            break
+        }
 
         case 'email': {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            return typeof value === 'string' && emailRegex.test(value)
+            isValid = typeof value === 'string' && emailRegex.test(value)
+            break
         }
 
         case 'phone': {
             const phoneRegex = /^\+?[1-9]\d{1,14}$/
-            return typeof value === 'string' && phoneRegex.test(value)
+            isValid = typeof value === 'string' && phoneRegex.test(value)
+            break
         }
 
-        case 'address':
-            return typeof value === 'string' && value.trim().length > 0
+        case 'address': {
+            isValid = typeof value === 'string' && value.trim().length > 0
+            break
+        }
 
         default:
-            return false
+            break
     }
+
+    return { isValid, errors }
 }

@@ -23,7 +23,7 @@ export default function Inspector() {
     const itemDescriptionInputRef = useRef<HTMLInputElement>(null)
     const itemExampleInputRef = useRef<HTMLInputElement>(null)
     const itemRequiredInputRef = useRef<HTMLInputElement>(null)
-    const itemTypeInputRef = useRef<HTMLSelectElement>(null)
+    const [itemType, setItemType] = useState<string>('text')
 
     return (
         <div className="w-full h-full space-y-4">
@@ -116,7 +116,7 @@ export default function Inspector() {
                     >
                         <div>
                             <p className="block font-sans text-base antialiased font-medium leading-relaxed text-gray-200">
-                                Duplicate Submissions
+                                Multiple Submissions
                             </p>
                             <p className="block font-sans text-sm antialiased font-normal leading-normal text-gray-500">
                                 If checked, users can submit the form more than once.
@@ -183,7 +183,7 @@ export default function Inspector() {
                     </label>
                     <Select
                         onValueChange={(e) => {
-                            itemTypeInputRef.current!.value = e
+                            setItemType(e)
                         }}
                         defaultValue={'text'}
                     >
@@ -236,7 +236,7 @@ export default function Inspector() {
                                 fieldDescription: itemDescriptionInputRef.current?.value ?? '',
                                 fieldExample: itemExampleInputRef.current?.value ?? '',
                                 required: itemRequiredInputRef.current?.checked,
-                                fieldType: itemTypeInputRef.current?.value,
+                                fieldType: itemType,
                             },
                         ]
                         updateConfig({

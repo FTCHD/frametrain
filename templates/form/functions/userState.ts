@@ -1,17 +1,16 @@
 export interface SessionUserStateType {
     pageType:
-    | 'init'
-    | 'home'
-    | 'input'
-    | 'review'
-    | 'success'
-    | 'submitted_before'
-    | 'about'
-    | undefined
+        | 'init'
+        | 'home'
+        | 'input'
+        | 'review'
+        | 'success'
+        | 'submitted_before'
+        | 'about'
+        | undefined
     inputValues: string[] | []
     inputFieldNumber: number
     totalInputFieldNumber: number
-    isFieldValid?: boolean
     isOldUser?: boolean
 }
 
