@@ -25,30 +25,19 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shad
 export default function FrameEditor({
     frame,
     template,
+    fid,
 }: {
     frame: InferSelectModel<typeof frameTable>
     template: (typeof templates)[keyof typeof templates]
+    fid: string
 }) {
     const [editingName, setEditingName] = useState(false)
     const [temporaryName, setTemporaryName] = useState(frame.name)
+    const [temporaryConfig, setTemporaryConfig] = useState(frame.draftConfig)
 
     const [updating, setUpdating] = useState(false)
 
     const refreshPreview = useRefreshPreview()
-
-    async function updateConfig(props: Record<string, any>) {
-        if (!props || Object.keys(props).length === 0) {
-            return
-        }
-
-        setUpdating(true)
-
-        const newConfig = Object.assign({}, frame.draftConfig, props)
-
-        await updateFrameConfig(frame.id, newConfig)
-
-        setUpdating(false)
-    }
 
     async function publishConfig() {
         setUpdating(true)
@@ -62,9 +51,33 @@ export default function FrameEditor({
         setUpdating(false)
     }
 
-    const debouncedUpdateConfig = useDebouncedCallback((value: Record<string, any>) => {
-        updateConfig(value)
-    }, 1000)
+    const writeConfig = useDebouncedCallback(async (props: Record<string, any>) => {
+        // const props = temporaryConfig
+
+        if (!props || Object.keys(props).length === 0) {
+            return
+        }
+
+        setUpdating(true)
+
+        const newConfig = Object.assign({}, frame.draftConfig, props)
+
+        await updateFrameConfig(frame.id, newConfig)
+
+        setUpdating(false)
+    }, 1500)
+
+    function updateConfig(props: Record<string, any>) {
+        if (!props || Object.keys(props).length === 0) {
+            return
+        }
+
+        const newConfig = Object.assign({}, temporaryConfig, props)
+
+        setTemporaryConfig(newConfig)
+
+        writeConfig(newConfig)
+    }
 
     async function updateName() {
         setEditingName(false)
@@ -89,9 +102,18 @@ export default function FrameEditor({
         }
     })
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: need draftConfig to know when to refresh
     useEffect(() => {
         refreshPreview(`${process.env.NEXT_PUBLIC_HOST}/p/${frame.id}`)
     }, [frame.draftConfig, refreshPreview, frame.id])
+
+    // prevents losing a save cycle when navigating away
+    useEffect(
+        () => () => {
+            writeConfig.flush()
+        },
+        [writeConfig]
+    )
 
     const { Inspector } = template as any
 
@@ -235,9 +257,10 @@ export default function FrameEditor({
                         <InspectorContext.Provider
                             value={{
                                 frameId: frame.id,
-                                config: frame.draftConfig as typeof template.initialConfig,
+                                config: temporaryConfig as typeof template.initialConfig,
                                 state: frame.state!,
-                                update: debouncedUpdateConfig,
+                                update: updateConfig,
+                                fid: fid,
                                 // setLoading
                             }}
                         >
