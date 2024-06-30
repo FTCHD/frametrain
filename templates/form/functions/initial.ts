@@ -3,18 +3,10 @@ import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import CoverView from '../views/Cover'
-// import { updateUserState } from './userState'
 
 export default async function initial(config: Config, state: State): Promise<BuildFrameData> {
-    let newState = state
-    newState = Object.assign(state, {
-        inputNames: config.fields.map((field) => field.fieldName ?? ''),
-    })
-
-    // updateUserState({ pageType: 'init' })
-
     const SHARE_FRAME_TEXT = config.shareText
-    const SHARE_FRAME_URL = config.frameURL
+    const SHARE_FRAME_URL = `${process.env.NEXT_PUBLIC_HOST}/f/${config.frameId}`
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
@@ -30,7 +22,6 @@ export default async function initial(config: Config, state: State): Promise<Bui
                 )}&embeds[]=${encodeURIComponent(SHARE_FRAME_URL)}`,
             },
         ],
-        state: newState,
         fonts: roboto,
         component: CoverView(config),
         functionName: 'input',

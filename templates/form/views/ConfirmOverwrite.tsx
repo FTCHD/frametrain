@@ -1,6 +1,6 @@
 import type { Config } from '..'
 
-export default function SubmittedView(config: Config) {
+export default function ConfirmOverwriteView(config: Config) {
     return (
         <div
             style={{

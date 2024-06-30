@@ -55,7 +55,7 @@ export default function Qna() {
                 }}
             />
         ) : (
-            <div className="flex flex-col w-full h-full gap-4">
+            <div className="flex flex-col w-full h-full mb-4">
                 <Button
                     onClick={() => {
                         updateConfig({

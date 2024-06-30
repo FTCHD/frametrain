@@ -1,14 +1,13 @@
 'use server'
-import type { BuildFrameData } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
 import type { Config, State } from '..'
 import AboutView from '../views/About'
 
 export default async function about(
+    body: FrameActionPayloadValidated,
     config: Config,
-    // biome-ignore lint/correctness/noUnusedVariables: <explanation>
-    state?: State,
-    // biome-ignore lint/correctness/noUnusedVariables: <explanation>
-    params?: any
+    state: State,
+    params: any
 ): Promise<BuildFrameData> {
     return {
         buttons: [

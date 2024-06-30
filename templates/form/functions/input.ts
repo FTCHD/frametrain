@@ -1,27 +1,28 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/handlers'
 import type { Config, State } from '..'
+import { UsersState, removeFidFromUserState, updateUserState } from '../state'
+import { getIndexForFid, validateField } from '../utils'
+import ConfirmOverwriteView from '../views/ConfirmOverwrite'
+import ConfirmSubmitView from '../views/ConfirmSubmit'
 import InputView from '../views/Input'
-import SubmittedView from '../views/Submitted'
 import SuccessView from '../views/Success'
 import about from './about'
 import initial from './initial'
-import review from './review'
-import { UsersState, removeFidFromUserState, updateUserState } from './userState'
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export default async function input(
-    body: FrameActionPayload,
+    body: FrameActionPayloadValidated,
     config: Config,
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    let newState = state
+    const fid = body.validatedData.interactor.fid
+    const buttonIndex = body.validatedData.tapped_button.index
+    const textInput = body.validatedData?.input?.text || ''
 
-    const fid: number = body.untrustedData.fid
-    const buttonIndex: number = body.untrustedData.buttonIndex
-    const textInput = body.untrustedData.inputText ?? ''
+    let newState = state
 
     if (!UsersState[fid]) {
         updateUserState(fid, { pageType: 'init', inputValues: [] })
@@ -29,12 +30,9 @@ export default async function input(
 
     const prevUserState = structuredClone(UsersState[fid])
 
-    // console.log("BEFORE SWITCH THE STATE IS : ", state);
-    // console.log("BEFORE SWITCH THE USER STATE IS : ", UsersState);
-
     switch (prevUserState.pageType) {
-        case 'init':
-        case undefined: {
+        case undefined:
+        case 'init': {
             // IF "ABOUT" BUTTON WAS PRESSED
             if (buttonIndex == 1) {
                 updateUserState(fid, { pageType: 'about' })
@@ -42,11 +40,11 @@ export default async function input(
             }
 
             if (!config.allowDuplicates) {
-                /* CHECK IF THE USER HAS SUBMITTED THE FORM BEFORE */
+                // CHECK IF THE USER HAS SUBMITTED THE FORM BEFORE
                 const index = getIndexForFid(fid, newState)
                 if (index >= 0) {
                     updateUserState(fid, {
-                        pageType: 'submitted_before',
+                        pageType: 'confirm_overwrite',
                         inputValues: newState.data[index].inputValues,
                         inputFieldNumber: 0,
                         totalInputFieldNumber: config.fields.length,
@@ -82,40 +80,42 @@ export default async function input(
                 updateUserState(fid, { pageType: 'init', inputValues: [] })
                 break
             }
-            if (!isValid(textInput, config.fields[UsersState[fid].inputFieldNumber].fieldType)) {
+
+            const { isValid } = validateField(
+                textInput,
+                config.fields[UsersState[fid].inputFieldNumber].fieldType
+            )
+
+            if (!isValid) {
                 // IF INVALID BREAK AND SHOW THE INVALID VALUE MESSAGE
-                updateUserState(fid, { pageType: 'input', isFieldValid: false })
-                break
-                // biome-ignore lint/style/noUselessElse: <explanation>
-            } else {
-                // IF VALID CONTINUE WITH THE REST OF THE CHECKS
-                updateUserState(fid, { isFieldValid: true })
+                updateUserState(fid, { pageType: 'input' })
+                throw new FrameError('Field not valid.')
             }
-            // ADD SUBMITTED INPUT TO STATE
-            // CHECK IF THE INPUT IS A "REQUIRED" ONE
+
             if (config.fields[UsersState[fid].inputFieldNumber].required == true) {
+                // CHECK IF THE INPUT IS A "REQUIRED" ONE
                 if (
                     // biome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
                     !(textInput.trim().length > 0) &&
                     !UsersState[fid].inputValues[UsersState[fid].inputFieldNumber]
                 ) {
                     updateUserState(fid, { pageType: 'input' })
-                    throw new FrameError('You Cannot Leave A Required Field Empty!')
+                    throw new FrameError('You cannot leave a required field blank.')
                 }
             }
-            if (textInput.length > 0) {
-                const _inputs = UsersState[fid].inputValues
-                _inputs[UsersState[fid].inputFieldNumber] = textInput
-                updateUserState(fid, { inputValues: _inputs })
-            }
+
+            const _inputs = UsersState[fid].inputValues
+            _inputs[UsersState[fid].inputFieldNumber] = textInput
+            updateUserState(fid, { inputValues: _inputs })
 
             if (prevUserState.inputFieldNumber + 1 == UsersState[fid].totalInputFieldNumber) {
-                // if button pressed was NEXT_PAGE, show the review page
+                // if button pressed was NEXT_PAGE, show the confirm_submit page
                 if (buttonIndex == 3) {
-                    updateUserState(fid, { pageType: 'review' })
+                    updateUserState(fid, { pageType: 'confirm_submit' })
                     break
                 }
             }
+
             // IF ON FIRST INPUT FIELD
             if (prevUserState.inputFieldNumber == 0) {
                 // if button pressed was PREV_PAGE show initial page
@@ -124,11 +124,13 @@ export default async function input(
                     break
                 }
             }
+
             // IF PREV WAS PRESSED
             if (buttonIndex == 2) {
                 updateUserState(fid, { inputFieldNumber: prevUserState.inputFieldNumber - 1 })
                 break
             }
+
             // IF NEXT WAS PRESSED
             if (buttonIndex == 3) {
                 updateUserState(fid, { inputFieldNumber: prevUserState.inputFieldNumber + 1 })
@@ -136,7 +138,7 @@ export default async function input(
             }
             break
         }
-        case 'review': {
+        case 'confirm_submit': {
             // if pressed button was submit, show the success page
             if (buttonIndex == 2) {
                 updateUserState(fid, { pageType: 'success' })
@@ -150,7 +152,7 @@ export default async function input(
             }
         }
 
-        case 'submitted_before': {
+        case 'confirm_overwrite': {
             // ask if wants to submit a new one or not
             // IF BACK WAS PRESSED
             if (buttonIndex == 1) {
@@ -174,11 +176,12 @@ export default async function input(
             break
     }
 
+    // Display relevant page based on UserState (modified above)
     switch (UsersState[fid].pageType) {
         case 'init':
             return initial(config, newState)
         case 'about':
-            return about(config)
+            return about(body, config, newState, params)
         case 'input':
             return {
                 buttons: [
@@ -194,13 +197,23 @@ export default async function input(
                 ],
                 inputText: 'Enter The Value',
                 state: newState,
-                component: InputView(config, UsersState[fid], {
-                    isFieldValid: UsersState[fid].isFieldValid,
-                }),
+                component: InputView(config, UsersState[fid]),
                 functionName: 'input',
             }
-        case 'review':
-            return review(config, newState, fid, null)
+        case 'confirm_submit':
+            return {
+                buttons: [
+                    {
+                        label: '←',
+                    },
+                    {
+                        label: 'Submit',
+                    },
+                ],
+                state: newState,
+                component: ConfirmSubmitView(config, UsersState[fid]),
+                functionName: 'input',
+            }
         case 'success': {
             if (!config.allowDuplicates) {
                 // CHECK IF USER HAS ALREADY SUBMITTED
@@ -225,7 +238,12 @@ export default async function input(
             return {
                 buttons: [
                     {
-                        label: 'Back',
+                        label: 'Home',
+                    },
+                    {
+                        label: 'Create your own',
+                        action: 'link',
+                        target: 'https://frametra.in',
                     },
                 ],
                 state: newState,
@@ -233,7 +251,7 @@ export default async function input(
                 functionName: 'input',
             }
         }
-        case 'submitted_before':
+        case 'confirm_overwrite':
             return {
                 buttons: [
                     {
@@ -244,7 +262,7 @@ export default async function input(
                     },
                 ],
                 state: newState,
-                component: SubmittedView(config),
+                component: ConfirmOverwriteView(config),
                 functionName: 'input',
             }
         default:
@@ -263,44 +281,5 @@ export default async function input(
         state,
         component: InputView(config, UsersState[fid]),
         functionName: 'initial',
-    }
-}
-
-function getIndexForFid(fid: number | string, state: State): number {
-    let index: number = -1
-    state.data?.find((record, i) => {
-        if (record.fid === fid) {
-            index = i
-        }
-    })
-    return index
-}
-
-function isValid(value: any, varType: 'text' | 'number' | 'email' | 'phone' | 'address'): boolean {
-    if (value.trim().length == 0) {
-        return true
-    }
-    switch (varType) {
-        case 'text':
-            return typeof value === 'string' && value.trim().length > 0
-
-        case 'number':
-            return !isNaN(value) && !isNaN(Number.parseFloat(value))
-
-        case 'email': {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            return typeof value === 'string' && emailRegex.test(value)
-        }
-
-        case 'phone': {
-            const phoneRegex = /^\+?[1-9]\d{1,14}$/
-            return typeof value === 'string' && phoneRegex.test(value)
-        }
-
-        case 'address':
-            return typeof value === 'string' && value.trim().length > 0
-
-        default:
-            return false
     }
 }

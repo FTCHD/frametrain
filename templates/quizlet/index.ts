@@ -2,6 +2,7 @@ import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.webp'
 import functions from './functions'
+import type { dimensionsForRatio } from '@/sdk/constants'
 
 export type StyleConfig = {
     textColor: string
@@ -60,11 +61,16 @@ export interface Config extends BaseConfig {
         text?: string
         subtitle?: string
         configuration?: StyleConfig
+        aspectRatio?: keyof typeof dimensionsForRatio
     }
     success: {
+        label?: string
         image?: string
         url?: string
-        label?: string
+        text?: string
+        subtitle?: string
+        configuration?: StyleConfig
+        aspectRatio?: keyof typeof dimensionsForRatio
     }
     fids: string[]
     answerOnce: boolean
