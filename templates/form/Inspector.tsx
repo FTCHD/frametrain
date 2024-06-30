@@ -1,5 +1,13 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/shadcn/Dialog'
 import { Input } from '@/components/shadcn/Input'
 import {
     Select,
@@ -8,15 +16,29 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/shadcn/Table'
+  
 import { ColorPicker } from '@/sdk/components'
-import { useFrameConfig, useFrameState } from '@/sdk/hooks'
-import { useRef, useState } from 'react'
+import { useFrameConfig, useFrameId, useFrameState } from '@/sdk/hooks'
+import { useEffect, useRef, useState } from 'react'
+import { Trash } from 'react-feather'
+import toast from 'react-hot-toast'
 import type { Config, State, fieldTypes } from '.'
 
 export default function Inspector() {
-    const [showModal, setShowModal] = useState(false)
+    const frameId = useFrameId()
     const state = useFrameState() as State
     const [config, updateConfig] = useFrameConfig<Config>()
+
+    const [showModal, setShowModal] = useState(false)
     const fields: fieldTypes[] = config.fields
 
     const itemNameInputRef = useRef<HTMLInputElement>(null)
@@ -25,31 +47,82 @@ export default function Inspector() {
     const itemRequiredInputRef = useRef<HTMLInputElement>(null)
     const [itemType, setItemType] = useState<string>('text')
 
+    useEffect(() => {
+        if (!config?.frameId || config.frameId === '') {
+            updateConfig({ frameId: frameId })
+        }
+    }, [updateConfig, config.frameId, frameId])
+
     return (
         <div className="w-full h-full space-y-4">
-            <div className="w-full">
-                <Button
-                    className="bg-rose-500 hover:bg-rose-700 text-white py-3 mr-1 rounded"
-                    type="button"
-                    // onClick={() => state.data && state.data.length !== 0 ? setShowModal(true) : null}
-                    onClick={() => setShowModal(true)}
-                >
-                    Show Submissions
-                </Button>
-                <Modal showModal={showModal} setShowModal={setShowModal} state={state} />
+            <div className="w-full flex flex-row gap-2">
+                <Dialog>
+                    <DialogTrigger asChild={true}>
+                        <Button>Show Submissions</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Form Submissions</DialogTitle>
+                            {/* <DialogDescription>{JSON.stringify(state)}</DialogDescription> */}
+                            <DialogDescription>
+                                <Table>
+                                    <TableCaption>
+                                        {state.data?.length || 0} Submission(s)
+                                    </TableCaption>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Timestamp</TableHead>
+                                            <TableHead className="w-[100px]">FID</TableHead>
+                                            {[
+                                                ...config.fields.map(
+                                                    (field) => field.fieldName ?? ''
+                                                ),
+                                            ].map((name, index) => (
+                                                <TableHead key={index} className="w-[100px]">
+                                                    {name}
+                                                </TableHead>
+                                            ))}
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {state.data?.map((record, rowIndex) => (
+                                            <TableRow key={rowIndex}>
+                                                <TableCell className="font-medium">
+                                                    {record.timestamp}
+                                                </TableCell>
+                                                <TableCell className="font-medium">
+                                                    {record.fid}
+                                                </TableCell>
+                                                {record.inputValues.map((value, colIndex) => (
+                                                    <TableCell
+                                                        key={colIndex}
+                                                        className="font-medium"
+                                                    >
+                                                        {value}
+                                                    </TableCell>
+                                                ))}
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
 
                 <Button
                     onClick={() => {
-                        downloadCSV(state, 'form-results.csv')
+                        if (!state.data?.length) {
+                            toast.error('No data to download')
+                            return
+                        }
+                        downloadCSV(state, 'form-results.csv', [
+                            ...config.fields.map((field) => field.fieldName ?? ''),
+                        ])
                     }}
-                    className="bg-teal-700 hover:bg-teal-900 text-white py-3 rounded"
                 >
-                    Download as .CSV
+                    Download CSV
                 </Button>
-
-                {/* {!state.data ? (
-                    <p className="italic mt-1 text-s">No Form Has Been Submitted Yet!</p>
-                ) : null} */}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -127,7 +200,7 @@ export default function Inspector() {
             </div>
 
             <div className="flex flex-col gap-2">
-                <h2 className="text-2xl font-semibold">Form Fields</h2>
+                <h2 className="text-2xl font-semibold">New Field</h2>
 
                 <div className="flex flex-row gap-2">
                     <div className="flex flex-col w-full gap-2">
@@ -243,6 +316,8 @@ export default function Inspector() {
                             fields: newFields,
                         })
                         itemNameInputRef.current.value = ''
+                        setItemType('text')
+                        itemRequiredInputRef.current!.checked = false
                         if (!itemExampleInputRef.current?.value) return
                         if (!itemDescriptionInputRef.current) return
                         itemDescriptionInputRef.current.value = ''
@@ -250,7 +325,7 @@ export default function Inspector() {
                     }}
                     className="w-full bg-border hover:bg-secondary-border text-primary"
                 >
-                    Add Input Field
+                    ADD FIELD
                 </Button>
             </div>
 
@@ -258,36 +333,31 @@ export default function Inspector() {
                 <h2 className="text-2xl font-semibold">Manage Fields</h2>
                 {config.fields?.length == 0 ? (
                     <p className="italic text-gray-300">No Input Field Added yet!</p>
-                ) : (
-                    ''
-                )}
-                <div className="w-full">
-                    <ol className="list-decimal list-inside">
-                        {config.fields?.map((field, index) => (
-                            <li
-                                key={index}
-                                className="flex items-center justify-between bg-slate-50 bg-opacity-10 p-2 rounded"
+                ) : undefined}
+                <div className="w-full flex flex-col gap-2">
+                    {config.fields?.map((field, index) => (
+                        <div
+                            key={index}
+                            className="flex flex-row items-center justify-between bg-slate-50 bg-opacity-10 p-2 rounded"
+                        >
+                            <span>
+                                {index + 1}. {field.fieldName}
+                            </span>
+                            <Button
+                                variant={'destructive'}
+                                onClick={() =>
+                                    updateConfig({
+                                        fields: [
+                                            ...fields.slice(0, index),
+                                            ...fields.slice(index + 1),
+                                        ],
+                                    })
+                                }
                             >
-                                <span>
-                                    {index + 1}. {field.fieldName}
-                                </span>
-                                <button
-                                    type="button"
-                                    className="text-gray-900 bg-gray-100  border-red-500 hover:bg-red-500 hover:text-white py-1 px-2 rounded italic font-normal"
-                                    onClick={() =>
-                                        updateConfig({
-                                            fields: [
-                                                ...fields.slice(0, index),
-                                                ...fields.slice(index + 1),
-                                            ],
-                                        })
-                                    }
-                                >
-                                    Delete
-                                </button>
-                            </li>
-                        ))}
-                    </ol>
+                                <Trash />
+                            </Button>
+                        </div>
+                    ))}
                 </div>
             </div>
 
@@ -328,28 +398,14 @@ export default function Inspector() {
                         }}
                     />
                 </div>
-
-                <h2 className="text-lg font-semibold">Frame's URL</h2>
-                <div className="flex flex-col gap-2">
-                    <Input
-                        className="text-lg border rounded p-2"
-                        placeholder="Tap on &quot;URL&quot; on the top right and paste here"
-                        defaultValue={config.frameURL}
-                        onChange={(e) => {
-                            updateConfig({
-                                frameURL: e.target.value || undefined,
-                            })
-                        }}
-                    />
-                </div>
             </div>
         </div>
     )
 }
 
-function generateCSV(state: State): string {
+function downloadCSV(state: State, fileName: string, inputNames: string[]): void {
     // Column names
-    const columnNames = ['timestamp', 'fid', ...state.inputNames]
+    const columnNames = ['timestamp', 'fid', inputNames]
 
     // Rows
     const rows = state.data.map((record) => [record.timestamp, record.fid, ...record.inputValues])
@@ -360,11 +416,6 @@ function generateCSV(state: State): string {
         ...rows.map((row) => row.join(',')), // Data rows
     ].join('\n')
 
-    return csvContent
-}
-
-function downloadCSV(state: State, fileName: string): void {
-    const csvContent = generateCSV(state)
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
 
@@ -378,93 +429,3 @@ function downloadCSV(state: State, fileName: string): void {
     document.body.removeChild(link)
 }
 
-function generateTable(state: State) {
-    return (
-        <table className="min-w-full bg-white">
-            <thead>
-                <tr>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">Timestamp</th>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100">FID</th>
-                    {state.inputNames.map((name, index) => (
-                        <th
-                            key={index}
-                            className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100"
-                        >
-                            {name}
-                        </th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody>
-                {state.data.map((record, rowIndex) => (
-                    <tr key={rowIndex}>
-                        <td className="py-2 px-4 border-b border-gray-200">{record.timestamp}</td>
-                        <td className="py-2 px-4 border-b border-gray-200">{record.fid}</td>
-                        {record.inputValues.map((value, colIndex) => (
-                            <td key={colIndex} className="py-2 px-4 border-b border-gray-200">
-                                {value}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-    )
-}
-
-const Modal = ({
-    showModal,
-    setShowModal,
-    state,
-}: { showModal: boolean; setShowModal: any; state: State }) => {
-    if (showModal) {
-        return (
-            <>
-                <div className="text-black fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
-                    <div className="relative w-auto max-w-3xl mx-auto my-6">
-                        {/*content*/}
-                        <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                            {/*header*/}
-                            <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
-                                <h3 className="text-3xl font-semibold">Submissions</h3>
-                                <button
-                                    type="button"
-                                    className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                                    onClick={() => setShowModal(false)}
-                                >
-                                    <span className="bg-transparent text-black h-6 w-6 text-2xl block outline-none focus:outline-none">
-                                        ×
-                                    </span>
-                                </button>
-                            </div>
-                            {/*body*/}
-                            <div className="relative p-6 flex-auto">
-                                {!state.data ? (
-                                    <p className="italic mt-1 text-s">
-                                        No Form Has Been Submitted Yet!
-                                    </p>
-                                ) : (
-                                    generateTable(state)
-                                )}
-                            </div>
-                            {/*footer*/}
-                            <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
-                                <button
-                                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                                    type="button"
-                                    onClick={() => setShowModal(false)}
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/* biome-ignore lint/style/useSelfClosingElements: <explanation> */}
-                <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-            </>
-        )
-    }
-
-    return undefined
-}

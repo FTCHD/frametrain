@@ -3,9 +3,9 @@ export interface SessionUserStateType {
         | 'init'
         | 'home'
         | 'input'
-        | 'review'
         | 'success'
-        | 'submitted_before'
+        | 'confirm_submit'
+        | 'confirm_overwrite'
         | 'about'
         | undefined
     inputValues: string[] | []
@@ -14,16 +14,18 @@ export interface SessionUserStateType {
     isOldUser?: boolean
 }
 
-export type UsersStateType = {
-    [fid: number]: SessionUserStateType
-} | Record<number, never>
+export type UsersStateType =
+    | {
+          [fid: number]: SessionUserStateType
+      }
+    | Record<number, never>
 
 export let UsersState: UsersStateType = {}
 
 export function removeFidFromUserState(fid: number): void {
     if (UsersState && fid in UsersState) {
-        const { [fid]: _, ...rest } = UsersState;
-        UsersState = rest;
+        const { [fid]: _, ...rest } = UsersState
+        UsersState = rest
     }
 }
 
@@ -33,10 +35,10 @@ export function updateUserState(fid: number, userState: Partial<SessionUserState
             ...UsersState,
             [fid]: {
                 ...UsersState[fid],
-                ...userState
-            }
-        };
+                ...userState,
+            },
+        }
     } else {
-        UsersState = { [fid]: userState as SessionUserStateType };
+        UsersState = { [fid]: userState as SessionUserStateType }
     }
 }

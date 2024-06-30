@@ -1,5 +1,5 @@
 import type { Config } from '..'
-import type { SessionUserStateType } from '../functions/userState'
+import type { SessionUserStateType } from '../state'
 
 export default function InputView(config: Config, userState: SessionUserStateType) {
     return (

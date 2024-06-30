@@ -2,7 +2,6 @@ import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import functions from './functions'
-import { randomUUID } from 'node:crypto'
 
 export type fieldTypes = {
     fieldName: string
@@ -14,14 +13,13 @@ export type fieldTypes = {
 
 export interface Config extends BaseConfig {
     fields: fieldTypes[] | []
-    formId: string
     backgroundColor: string
     fontColor: string
     coverText: string
     aboutText: string
     successText: string
     shareText: string
-    frameURL: string
+    frameId: string
     allowDuplicates: boolean
 }
 
@@ -47,12 +45,11 @@ export default {
     functions,
     initialConfig: {
         fields: [],
-        formId: randomUUID(),
         backgroundColor: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)',
         fontColor: '#FFFFFF',
         shareText: 'Check This Out!',
-        frameURL: '',
-        allowDuplicates: false
+        frameId: undefined,
+        allowDuplicates: false,
     },
-    requiresValidation: false,
+    requiresValidation: true,
 } satisfies BaseTemplate

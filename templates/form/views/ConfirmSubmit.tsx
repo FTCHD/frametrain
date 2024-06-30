@@ -1,21 +1,23 @@
 import { randomUUID } from 'node:crypto'
-import type { Config } from '..'
-import type { SessionUserStateType } from '../functions/userState'
 import type { CSSProperties } from 'react'
+import type { Config } from '..'
+import type { SessionUserStateType } from '../state'
 
 function renderReviewItems(config: Config, userState: SessionUserStateType) {
-    const renderFields = (fields: any[], startIndex: number) => (
-        <div style={styles.column}>
-            {fields.map((inputField, index) => (
-                <div key={randomUUID()} style={styles.field}>
-                    <span>
-                        {startIndex + index + 1}. {inputField.fieldName}
-                    </span>
-                    <span>{userState.inputValues[startIndex + index]}</span>
-                </div>
-            ))}
-        </div>
-    )
+    function renderFields(fields: any[], startIndex: number) {
+        return (
+            <div style={styles.column}>
+                {fields.map((inputField, index) => (
+                    <div key={randomUUID()} style={styles.field}>
+                        <span>
+                            {startIndex + index + 1}. {inputField.fieldName}
+                        </span>
+                        <span>{userState.inputValues[startIndex + index]}</span>
+                    </div>
+                ))}
+            </div>
+        )
+    }
 
     const styles: Record<string, CSSProperties> = {
         container: {
@@ -56,7 +58,7 @@ function renderReviewItems(config: Config, userState: SessionUserStateType) {
     return <div style={styles.container}>{renderFields(config.fields, 0)}</div>
 }
 
-export default function ReviewView(config: Config, userState: SessionUserStateType) {
+export default function ConfirmSubmitView(config: Config, userState: SessionUserStateType) {
     return (
         <div
             style={{
