@@ -1,8 +1,8 @@
 import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
+import type { dimensionsForRatio } from '@/sdk/constants'
 import Inspector from './Inspector'
 import cover from './cover.webp'
 import functions from './functions'
-import type { dimensionsForRatio } from '@/sdk/constants'
 
 export type StyleConfig = {
     textColor: string
@@ -92,7 +92,8 @@ export interface State extends BaseState {
 
 export default {
     name: 'Quizlet Template',
-    description: 'Create your own Multiple-Choice Questions Quiz as a Farcaster Frame.',
+    description:
+        'Create your own multiple choice Quiz as a Farcaster Frame. Show a secret screen if answers are correct.',
     creatorFid: '260812',
     creatorName: 'Steve',
     enabled: true,

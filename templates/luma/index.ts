@@ -28,8 +28,8 @@ export interface Config extends BaseConfig {
 export interface State extends BaseState {}
 
 export default {
-    name: 'Lu.ma Events Preview',
-    description: 'Create a Lu.ma event preview Frame',
+    name: 'Lu.ma Template',
+    description: 'Share your Lu.ma event as a Frame.',
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,
