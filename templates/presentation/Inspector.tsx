@@ -48,6 +48,9 @@ export default function Inspector() {
     // Image States
     const [loading, setLoading] = useState(false)
 
+    // Slide states
+    const [currentSlide, setCurrentSlide] = useState(0)
+
     /* USE-EFFECTs */
     // Update config type
     useEffect(() => {
@@ -55,44 +58,19 @@ export default function Inspector() {
             if (config?.images?.length) updateConfig({ type: 'images' })
             else updateConfig({ type: 'text' })
         }
-    }, [config, updateConfig])
 
-    // Set default background properties
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <config.background.value shouldn't trigger the useState>
-    useEffect(() => {
-        updateConfig({
-            background: {
-                type: config?.background?.value.includes('url') ? 'image' : 'color',
-                value: config?.background?.value || PRESENTATION_DEFAULTS.background.value,
-            },
-        })
-    }, [updateConfig])
-
-    /* FUNCTIONs */
-    function updateContent(text: string) {
-        const editorText = text
-
-        if (editorText) {
-            const words = editorText.split(' ')
-
-            // Split text into pieces for every 'n' words, for pagination
-            const textArray: string[] = []
-            const n = 100
-
-            for (let i = 0; i < words.length / n; i++) {
-                textArray.push(words.slice(i * n, (i + 1) * n).join(' '))
-            }
-
+        // Set default background properties
+        if (!config?.background) {
             updateConfig({
-                content: {
-                    ...PRESENTATION_DEFAULTS.content,
-                    ...config.content,
-                    text: textArray,
+                background: {
+                    type: config?.background?.value.includes('url') ? 'image' : 'color',
+                    value: config?.background?.value || PRESENTATION_DEFAULTS.background.value,
                 },
             })
         }
-    }
+    }, [config, updateConfig])
 
+    /* FUNCTIONs */
     async function getUploadImageProps(
         e: ChangeEvent<HTMLInputElement>
     ): Promise<{ base64String: string; contentType: IImageTypes } | null> {
@@ -120,6 +98,11 @@ export default function Inspector() {
 
     return (
         <div className="w-full h-full space-y-4">
+            <p>
+                This template allows you to split your long content into slides and customize the
+                background, font, and title.
+            </p>
+
             {/* Slider Type */}
             <h2 className="text-2xl font-bold">Type</h2>
             <h3 className="text-lg">Select a Slider Type</h3>
@@ -320,12 +303,80 @@ export default function Inspector() {
                             }
                         />
 
+                        {/* Slides */}
+                        <h3 className="text-lg">Slides</h3>
+                        <div className="flex flex-wrap gap-3">
+                            <div
+                                onClick={() => {
+                                    setCurrentSlide((config?.content?.text || []).length)
+                                    updateConfig({
+                                        content: {
+                                            ...PRESENTATION_DEFAULTS.content,
+                                            ...config.content,
+                                            text: [...(config?.content?.text || []), ''],
+                                        },
+                                    })
+                                }}
+                                className="w-40 h-40 flex items-center justify-center p-2 border-input border-[1px] rounded-md cursor-pointer"
+                            >
+                                <span className="text-4xl">+</span>
+                            </div>
+                            {(config?.content?.text || [])?.map((t: string, i: number) => {
+                                const isCurrent = i === currentSlide
+
+                                return (
+                                    <div
+                                        key={i}
+                                        onClick={() => setCurrentSlide(i)}
+                                        className={`w-40 h-40 flex items-center justify-center text-xs p-2 border-input border-[1px] rounded-md cursor-pointer ${
+                                            isCurrent ? 'bg-[#ffffff10]' : 'bg-transparent'
+                                        }`}
+                                    >
+                                        {t ? t.slice(0, 120) + (t.length > 120 ? '...' : '') : ''}
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        {config?.content?.text?.length > 0 && (
+                            <Button
+                                className="mt-2 w-1/2"
+                                variant="destructive"
+                                onClick={() => {
+                                    const contentArr = config?.content?.text || []
+                                    contentArr.splice(currentSlide, 1)
+                                    setCurrentSlide((c) => Math.max(0, c - 1))
+                                    updateConfig({
+                                        content: {
+                                            ...PRESENTATION_DEFAULTS.content,
+                                            ...config.content,
+                                            text: contentArr,
+                                        },
+                                    })
+                                }}
+                            >
+                                Remove Slide
+                            </Button>
+                        )}
+
                         {/* Content */}
                         <h3 className="text-lg">Content</h3>
+
                         <textarea
-                            defaultValue={config?.content?.text?.join(' ')}
+                            key={currentSlide}
+                            defaultValue={config?.content?.text?.[currentSlide] || ''}
                             placeholder="Your content"
-                            onChange={(e) => updateContent(e.target.value)}
+                            onChange={(e) => {
+                                const contentArr = config?.content?.text || []
+                                contentArr[currentSlide] = e.target.value
+                                updateConfig({
+                                    content: {
+                                        ...PRESENTATION_DEFAULTS.content,
+                                        ...config.content,
+                                        text: contentArr,
+                                    },
+                                })
+                            }}
                             className="text-lg p-2 border-input border-[1px] rounded-md bg-transparent resize-y min-h-[184px]"
                         />
 
