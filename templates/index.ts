@@ -1,8 +1,8 @@
 import cal from './cal'
 import discourse from './discourse'
-// import gif from './gif'
 import figma from './figma'
 import form from './form'
+import gif from './gif'
 import luma from './luma'
 import medium from './medium'
 // import basic from './basic'
@@ -20,7 +20,7 @@ export default {
     sablier,
     twitter,
     discourse,
-    // gif,
+    gif,
     form,
     cal,
     medium,

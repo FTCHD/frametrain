@@ -180,7 +180,7 @@ export default function Inspector() {
                     Upload a video file
                     <Input
                         id="uploadFile"
-                        accept="video/*"
+                        accept="video/mp4"
                         type="file"
                         onChange={(e) => {
                             setFile(e.target.files?.[0])
