@@ -9,7 +9,6 @@ import {
 } from '@/components/shadcn/Select'
 import { ColorPicker } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { useEffect, useRef } from 'react'
 import type { Config } from '../..'
 import defaultConfig from '../..'
 
@@ -17,24 +16,6 @@ export default function BasicConfig() {
     const [config, updateConfig] = useFrameConfig<Config>()
 
     const uploadImage = useUploadImage()
-    const yesLabelInputRef = useRef<HTMLInputElement>(null)
-    const noLabelInputRef = useRef<HTMLInputElement>(null)
-
-    useEffect(() => {
-        if (!yesLabelInputRef.current) return
-        if (yesLabelInputRef.current.value) return
-        if (!config.results.yesLabel) return
-
-        yesLabelInputRef.current.value = config.results.yesLabel
-    }, [config.results.yesLabel])
-
-    useEffect(() => {
-        if (!noLabelInputRef.current) return
-        if (noLabelInputRef.current.value) return
-        if (!config.results.noLabel) return
-
-        noLabelInputRef.current.value = config.results.noLabel
-    }, [config.results.noLabel])
 
     return (
         <div className="flex flex-col gap-4 w-full">
@@ -63,7 +44,7 @@ export default function BasicConfig() {
                     <Input
                         className="text-lg"
                         placeholder="Optional"
-                        ref={yesLabelInputRef}
+                        defaultValue={config.results.yesLabel}
                         onChange={(e) => {
                             const value = e.target.value
 
@@ -81,7 +62,7 @@ export default function BasicConfig() {
                     <Input
                         className="text-lg"
                         placeholder="Optional"
-                        ref={noLabelInputRef}
+                        defaultValue={config.results.noLabel}
                         onChange={(e) => {
                             const value = e.target.value
 
