@@ -11,6 +11,7 @@ import poll from './poll'
 import quizlet from './quizlet'
 import sablier from './sablier'
 import twitter from './twitter'
+import presentation from './presentation'
 
 export default {
     // basic,
@@ -26,4 +27,5 @@ export default {
     medium,
     quizlet,
     luma,
+    presentation
 }

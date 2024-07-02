@@ -3,15 +3,15 @@ import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import functions from './functions'
 
-export type PresentationType = 'text' | 'image'
 export type BackgroundType = 'color' | 'gradient' | 'image'
 
-interface TextConfig extends BaseConfig {
-    type: PresentationType
+export interface Slide {
+    aspect: '1:1' | '1.91:1'
     background: {
         type: BackgroundType
         value: string
     }
+    image?: string
     title?: {
         text: string
         font: string
@@ -20,7 +20,7 @@ interface TextConfig extends BaseConfig {
         weight: string
     }
     content?: {
-        text: string[]
+        text: string
         font: string
         color: string
         weight: string
@@ -28,17 +28,9 @@ interface TextConfig extends BaseConfig {
     }
 }
 
-interface ImageConfig extends BaseConfig {
-    type: PresentationType
-    aspect: '1:1' | '1.91:1'
-    images: string[]
+export interface Config extends BaseConfig {
+    slides: Slide[]
 }
-
-export type Config<T extends PresentationType = 'text' | 'image'> = T extends 'text'
-    ? TextConfig
-    : T extends 'image'
-      ? ImageConfig
-      : TextConfig | ImageConfig
 
 export interface State extends BaseState {}
 

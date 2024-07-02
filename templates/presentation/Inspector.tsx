@@ -12,31 +12,35 @@ import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
 import { type ChangeEvent, useEffect, useState } from 'react'
-import type { Config, PresentationType } from '.'
 import toast from 'react-hot-toast'
+import type { Config, Slide } from '.'
 
 type IImageTypes = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
 
-export const PRESENTATION_DEFAULTS: Config<'text'> = {
-    type: 'text',
-    background: {
-        type: 'color',
-        value: 'linear-gradient(245deg, rgb(252,136,0), rgb(252,0,162))',
-    },
-    title: {
-        text: '',
-        color: '#1c1c1c',
-        weight: '700',
-        font: 'Inter',
-        style: 'normal',
-    },
-    content: {
-        text: [],
-        color: '#000000',
-        font: 'Roboto',
-        align: 'left',
-        weight: '400',
-    },
+export const PRESENTATION_DEFAULTS: Config = {
+    slides: [
+        {
+            aspect: '1:1',
+            background: {
+                type: 'color',
+                value: 'linear-gradient(245deg, rgb(252,136,0), rgb(252,0,162))',
+            },
+            title: {
+                text: '',
+                color: '#1c1c1c',
+                weight: '700',
+                font: 'Inter',
+                style: 'normal',
+            },
+            content: {
+                text: '',
+                color: '#000000',
+                font: 'Roboto',
+                align: 'left',
+                weight: '400',
+            },
+        },
+    ],
 }
 
 export default function Inspector() {
@@ -49,28 +53,61 @@ export default function Inspector() {
     const [loading, setLoading] = useState(false)
 
     // Slide states
-    const [currentSlide, setCurrentSlide] = useState(0)
+    // There's a timestampt to keep track of input keys
+    // When a slide gets deleted, we need to be sure new form element doesn't have the key of an deleted element
+    const [slide, setSlide] = useState<Slide & { ts: number }>({
+        ...PRESENTATION_DEFAULTS.slides[0],
+        ts: Date.now(),
+    })
+    const [slideIndex, setSlideIndex] = useState(0)
 
     /* USE-EFFECTs */
-    // Update config type
+    // Apply default presentation if no slide has left
     useEffect(() => {
-        if (!config?.type) {
-            if (config?.images?.length) updateConfig({ type: 'images' })
-            else updateConfig({ type: 'text' })
-        }
-
-        // Set default background properties
-        if (!config?.background) {
-            updateConfig({
-                background: {
-                    type: config?.background?.value.includes('url') ? 'image' : 'color',
-                    value: config?.background?.value || PRESENTATION_DEFAULTS.background.value,
-                },
-            })
-        }
+        if (!config?.slides?.length) updateConfig(PRESENTATION_DEFAULTS)
     }, [config, updateConfig])
 
+    // Update current slide if slide index changes
+    useEffect(() => {
+        if (config?.slides?.length) setSlide({ ...config.slides[slideIndex], ts: Date.now() })
+    }, [config, slideIndex])
+
     /* FUNCTIONs */
+    function updateSlide(data: any): void {
+        const newSlides = [
+            ...config.slides.slice(0, slideIndex),
+            {
+                ...PRESENTATION_DEFAULTS.slides[0],
+                ...config.slides[slideIndex],
+                ...data,
+            },
+            ...(config.slides.slice(slideIndex + 1, config.slides.length) || []),
+        ]
+
+        updateConfig({ slides: newSlides })
+    }
+
+    function swapSlide(direction: 'left' | 'right'): void {
+        const og = { ...slide }
+        const slides = [...config.slides]
+
+        if (direction === 'left') {
+            if (slideIndex === 0) return
+
+            slides[slideIndex] = { ...slides[slideIndex - 1] }
+            slides[slideIndex - 1] = og
+            setSlideIndex((s) => s - 1)
+        } else {
+            if (slideIndex === slides.length - 1) return
+
+            slides[slideIndex] = { ...slides[slideIndex + 1] }
+            slides[slideIndex + 1] = og
+            setSlideIndex((s) => s + 1)
+        }
+
+        updateConfig({ slides })
+    }
+
     async function getUploadImageProps(
         e: ChangeEvent<HTMLInputElement>
     ): Promise<{ base64String: string; contentType: IImageTypes } | null> {
@@ -103,366 +140,404 @@ export default function Inspector() {
                 background, font, and title.
             </p>
 
-            {/* Slider Type */}
-            <h2 className="text-2xl font-bold">Type</h2>
-            <h3 className="text-lg">Select a Slider Type</h3>
+            {/* Slides */}
+            <div className="w-full flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Slides</h2>
+
+                {/* Slide Buttons */}
+                <div className="flex items-center justify-end gap-2">
+                    <button
+                        type="button"
+                        onClick={() => swapSlide('left')}
+                        disabled={slideIndex === 0}
+                        className="text-xl flex items-center justify-center h-10 w-10 border-input border-[1px] rounded-md cursor-pointer bg-[#ffffff10] disabled:cursor-default disabled:text-gray-500"
+                    >
+                        &lt;
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => swapSlide('right')}
+                        disabled={slideIndex === config?.slides?.length - 1}
+                        className="text-xl flex items-center justify-center h-10 w-10 border-input border-[1px] rounded-md cursor-pointer bg-[#ffffff10] disabled:cursor-default disabled:text-gray-500"
+                    >
+                        &gt;
+                    </button>
+                </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+                <div
+                    onClick={() => {
+                        updateConfig({
+                            slides: [...config.slides, PRESENTATION_DEFAULTS.slides[0]],
+                        })
+                        setSlideIndex((config?.slides || []).length)
+                    }}
+                    className="w-40 h-40 flex items-center justify-center p-2 border-input border-[1px] rounded-md cursor-pointer"
+                >
+                    <span className="text-4xl">+</span>
+                </div>
+
+                {config.slides?.map((slide: Slide, i: number) => {
+                    const isCurrent = i === slideIndex
+                    const content = slide?.content?.text
+                    const title = slide?.title?.text
+
+                    const background: any = {}
+
+                    switch (slide.background?.type) {
+                        case 'color': {
+                            background['background'] = slide.background.value // Covers gradients and solid colors at the same time
+                            break
+                        }
+                        case 'image':
+                            background['backgroundImage'] = slide.background.value
+                    }
+
+                    /* Images */
+                    if (slide?.image) {
+                        background['backgroundImage'] = `url(${slide.image})`
+                        background['backgroundRepeat'] = 'no-repeat'
+                        background['backgroundSize'] = '100% 100%'
+                        background['backgroundPosition'] = 'center'
+                    }
+
+                    return (
+                        <div
+                            key={'s-' + i}
+                            onClick={() => setSlideIndex(i)}
+                            style={{ ...background }}
+                            className={`w-40 h-40 flex items-center justify-center text-xs p-2 border-input border-[1px] rounded-md cursor-pointer ${
+                                isCurrent ? 'outline outline-2 outline-blue-300' : 'outline-none'
+                            }`}
+                        >
+                            {slide?.image ? (
+                                <img
+                                    src={slide.image}
+                                    alt="Slide content"
+                                    height={10}
+                                    width={10}
+                                    className="h-full w-full rounded-md"
+                                />
+                            ) : (
+                                <div className="flex flex-col gap-2">
+                                    {title && (
+                                        <h2
+                                            className="text-lg text-center"
+                                            style={{
+                                                // fontFamily: slide.title?.font,
+                                                color: slide.title?.color,
+                                                fontWeight: slide.title?.weight,
+                                            }}
+                                        >
+                                            {title}
+                                        </h2>
+                                    )}
+
+                                    {content && (
+                                        <span
+                                            className="text-xs"
+                                            style={{
+                                                // fontFamily: slide.content?.font,
+                                                color: slide.content?.color,
+                                                textAlign: slide.content?.align,
+                                                fontWeight: slide.content?.weight,
+                                            }}
+                                        >
+                                            {content.slice(0, 120) +
+                                                (content.length > 120 ? '...' : '')}
+                                        </span>
+                                    )}
+
+                                    {!content && !title && (
+                                        <span className="block -rotate-45 font-bold text-[#ffffff50] text-4xl">
+                                            EMPTY
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )
+                })}
+            </div>
+
+            {config.slides?.length > 0 && (
+                <Button
+                    className="mt-2 w-1/2"
+                    variant="destructive"
+                    onClick={() => {
+                        const slidesArr = config.slides
+                        slidesArr.splice(slideIndex, 1)
+                        setSlideIndex((c) => Math.max(0, c - 1))
+                        updateConfig({ slides: slidesArr })
+                    }}
+                >
+                    Remove Slide
+                </Button>
+            )}
+
+            <h2 className="text-2xl font-bold">Cover</h2>
+
+            <h3 className="text-lg">Aspect Ratio</h3>
             <Select
-                defaultValue={config?.type || 'text'}
-                onValueChange={(type: PresentationType) => updateConfig({ type })}
+                key={'aspect-' + slide.ts}
+                defaultValue={slide.aspect || '1:1'}
+                onValueChange={(value: '1:1' | '1.91:1') => updateSlide({ aspect: value })}
             >
                 <SelectTrigger>
-                    <SelectValue placeholder="Text / Image" />
+                    <SelectValue placeholder="1:1" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value={'text'}>Text</SelectItem>
-                    <SelectItem value={'image'}>Image</SelectItem>
+                    <SelectItem value={'1:1'}>1:1</SelectItem>
+                    <SelectItem value={'1.91:1'}>1.91:1</SelectItem>
                 </SelectContent>
             </Select>
 
-            {/* Conditioned Form */}
-            {config.type === 'image' ? (
-                <>
-                    <h3 className="text-lg">Aspect Ratio</h3>
+            <h3 className="text-lg">Image</h3>
+            <div className="flex flex-col gap-5">
+                <label
+                    htmlFor="uploadFile"
+                    className="flex cursor-pointer items-center justify-center rounded-md py-1.5 px-2 text-md font-medium bg-border text-primary hover:bg-secondary-border"
+                >
+                    Upload a file
+                    <Input
+                        type="file"
+                        id="uploadFile"
+                        className="sr-only"
+                        accept="application/jpeg"
+                        onChange={async (e) => {
+                            const props = await getUploadImageProps(e)
+                            if (!props) toast.error('An error occured while uploading the image')
+
+                            let { filePath } = await uploadImage({
+                                base64String: props?.base64String as string,
+                                contentType: props?.contentType as IImageTypes,
+                            })
+
+                            filePath = `${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath}`
+
+                            updateSlide({ image: filePath })
+                        }}
+                    />
+                </label>
+            </div>
+            <div className="flex flex-col">
+                <div className="flex flex-row justify-between items-center">
+                    <h3 className="text-lg font-semibold">Uploaded Images</h3>
+                    {loading && <LoaderIcon className="animate-spin" />}
+                </div>
+                <div className="flex flex-row flex-wrap gap-4 mt-2">
+                    {slide?.image ? (
+                        <img
+                            key={slide.image}
+                            src={slide.image}
+                            width={200}
+                            height={200}
+                            alt="Slider item"
+                            className="rounded-md"
+                        />
+                    ) : (
+                        <p>There are no images yet</p>
+                    )}
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-2">
+                    {/* Title */}
+                    <h3 className="text-lg">Title</h3>
+                    <Input
+                        key={'t-' + slide.ts}
+                        className="text-lg"
+                        placeholder="Title"
+                        defaultValue={slide?.title?.text}
+                        onBlur={(e) => {
+                            updateSlide({
+                                title: {
+                                    ...slide?.title,
+                                    text: e.target.value,
+                                },
+                            })
+                        }}
+                    />
+
+                    <h3 className="text-lg">Title Color</h3>
+                    <ColorPicker
+                        key={'tc-' + slide.ts}
+                        className="w-full"
+                        background={
+                            slide?.title?.color || PRESENTATION_DEFAULTS.slides[0].title!.color
+                        }
+                        setBackground={(value: string) =>
+                            updateSlide({
+                                title: {
+                                    ...slide?.title,
+                                    color: value,
+                                },
+                            })
+                        }
+                    />
+
+                    <h3 className="text-lg">Title Font</h3>
+                    <FontFamilyPicker
+                        key={'tf-' + slide.ts}
+                        defaultValue={
+                            slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
+                        }
+                        onSelect={(font) => {
+                            updateSlide({
+                                title: {
+                                    ...slide?.title,
+                                    font,
+                                },
+                            })
+                        }}
+                    />
+
+                    <h3 className="text-lg">Title Weight</h3>
+                    <FontWeightPicker
+                        key={'tw-' + slide.ts}
+                        currentFont={
+                            slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
+                        }
+                        defaultValue={
+                            slide?.title?.weight || PRESENTATION_DEFAULTS.slides[0].title!.weight
+                        }
+                        onSelect={(weight: string) => {
+                            updateSlide({
+                                title: {
+                                    ...slide?.title,
+                                    weight,
+                                },
+                            })
+                        }}
+                    />
+
+                    <h3 className="text-lg">Title Style</h3>
+                    <FontStylePicker
+                        key={'ts-' + slide.ts}
+                        currentFont={
+                            slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
+                        }
+                        defaultValue={
+                            slide?.title?.style || PRESENTATION_DEFAULTS.slides[0].title!.style
+                        }
+                        onSelect={(style: string) =>
+                            updateSlide({
+                                title: {
+                                    ...slide?.title,
+                                    style,
+                                },
+                            })
+                        }
+                    />
+
+                    {/* Content */}
+                    <h3 className="text-lg">Content</h3>
+
+                    <textarea
+                        key={'c-' + slide.ts}
+                        defaultValue={slide?.content?.text || ''}
+                        placeholder="Your content"
+                        onBlur={(e) => {
+                            updateSlide({
+                                content: {
+                                    ...slide?.content,
+                                    text: e.target.value,
+                                },
+                            })
+                        }}
+                        className="text-lg p-2 border-input border-[1px] rounded-md bg-transparent resize-y min-h-[184px]"
+                    />
+
+                    <h3 className="text-lg">Content Color</h3>
+                    <ColorPicker
+                        key={'cc-' + slide.ts}
+                        className="w-full"
+                        background={
+                            slide?.content?.color || PRESENTATION_DEFAULTS.slides[0].content!.color
+                        }
+                        setBackground={(value: string) =>
+                            updateSlide({
+                                content: {
+                                    ...slide?.content,
+                                    color: value,
+                                },
+                            })
+                        }
+                    />
+
+                    <h3 className="text-lg">Content Font</h3>
+                    <FontFamilyPicker
+                        key={'cf-' + slide.ts}
+                        defaultValue={
+                            slide?.content?.font || PRESENTATION_DEFAULTS.slides[0].content!.font
+                        }
+                        onSelect={(font) => {
+                            updateSlide({
+                                content: {
+                                    ...slide?.content,
+                                    font,
+                                },
+                            })
+                        }}
+                    />
+
+                    <h3 className="text-lg">Content Weight</h3>
+                    <FontWeightPicker
+                        key={'cw-' + slide.ts}
+                        currentFont={
+                            slide?.content?.font || PRESENTATION_DEFAULTS.slides[0].content!.font
+                        }
+                        defaultValue={
+                            slide?.content?.weight ||
+                            PRESENTATION_DEFAULTS.slides[0].content!.weight
+                        }
+                        onSelect={(weight: string) => {
+                            updateSlide({
+                                content: {
+                                    ...slide?.content,
+                                    weight,
+                                },
+                            })
+                        }}
+                    />
+
+                    <h3 className="text-lg">Align Content</h3>
                     <Select
-                        defaultValue={config?.aspect || '1:1'}
-                        onValueChange={(value: '1:1' | '1.91:1') =>
-                            updateConfig({
-                                aspect: value,
+                        key={'ca-' + slide.ts}
+                        defaultValue={
+                            slide?.content?.align || PRESENTATION_DEFAULTS.slides[0].content!.align
+                        }
+                        onValueChange={(value: 'left' | 'center' | 'right') =>
+                            updateSlide({
+                                content: {
+                                    ...slide?.content,
+                                    align: value,
+                                },
                             })
                         }
                     >
                         <SelectTrigger>
-                            <SelectValue placeholder="1:1" />
+                            <SelectValue placeholder="Left" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={'1:1'}>1:1</SelectItem>
-                            <SelectItem value={'1.91:1'}>1.91:1</SelectItem>
+                            <SelectItem value={'left'}>Left</SelectItem>
+                            <SelectItem value={'center'}>Center</SelectItem>
+                            <SelectItem value={'right'}>Right</SelectItem>
                         </SelectContent>
                     </Select>
 
-                    <h2 className="text-2xl font-bold">Images</h2>
-                    <div className="flex flex-col gap-5">
-                        {!config?.images?.length ? (
-                            <label
-                                htmlFor="uploadFile"
-                                className="flex cursor-pointer items-center justify-center rounded-md py-1.5 px-2 text-md font-medium bg-border text-primary hover:bg-secondary-border"
-                            >
-                                Upload a file
-                                <Input
-                                    type="file"
-                                    id="uploadFile"
-                                    className="sr-only"
-                                    accept="application/jpeg"
-                                    onChange={async (e) => {
-                                        const props = await getUploadImageProps(e)
-                                        if (!props)
-                                            toast.error(
-                                                'An error occured while uploading the image'
-                                            )
-
-                                        let { filePath } = await uploadImage({
-                                            base64String: props?.base64String as string,
-                                            contentType: props?.contentType as IImageTypes,
-                                        })
-
-                                        filePath = `${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath}`
-
-                                        updateConfig({
-                                            images: [...(config?.images ?? []), filePath],
-                                        })
-                                    }}
-                                />
-                            </label>
-                        ) : (
-                            <div className="flex flex-row space-x-4 w-full">
-                                <label
-                                    htmlFor="uploadFile"
-                                    className="flex w-full cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border text-primary hover:bg-secondary-border"
-                                >
-                                    Upload Another file
-                                    <Input
-                                        type="file"
-                                        id="uploadFile"
-                                        className="sr-only"
-                                        accept="application/jpeg"
-                                        onChange={async (e) => {
-                                            const props = await getUploadImageProps(e)
-                                            if (!props)
-                                                toast.error(
-                                                    'An error occured while uploading the image'
-                                                )
-
-                                            let { filePath } = await uploadImage({
-                                                base64String: props?.base64String as string,
-                                                contentType: props?.contentType as IImageTypes,
-                                            })
-
-                                            filePath = `${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath}`
-
-                                            updateConfig({
-                                                images: [...(config?.images ?? []), filePath],
-                                            })
-                                        }}
-                                    />
-                                </label>
-                                <Button
-                                    variant="destructive"
-                                    onClick={() => updateConfig({ images: [] })}
-                                    className="w-full"
-                                >
-                                    Clear
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                    <div className="flex flex-col">
-                        <div className="flex flex-row justify-between items-center">
-                            <h2 className="text-lg font-semibold">Uploaded Images</h2>
-                            {loading && <LoaderIcon className="animate-spin" />}
-                        </div>
-                        <div className="flex flex-row flex-wrap gap-4 mt-2">
-                            {!config?.images?.length && <p>There are no images yet</p>}
-                            {config?.images?.map((slideUrl: string) => (
-                                <img
-                                    key={slideUrl}
-                                    src={slideUrl}
-                                    width={200}
-                                    height={200}
-                                    alt="Slider item"
-                                    className="rounded-md"
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </>
-            ) : (
-                <div className="flex flex-col gap-5">
-                    <div className="flex flex-col gap-2">
-                        <h2 className="text-2xl font-bold">Content</h2>
-
-                        {/* Title */}
-                        <h3 className="text-lg">Title</h3>
-                        <Input
-                            className="text-lg"
-                            placeholder="Title"
-                            defaultValue={config?.title?.text}
-                            onChange={(e) => {
-                                updateConfig({
-                                    title: {
-                                        ...PRESENTATION_DEFAULTS.title, // Being sure all properties are defined within title
-                                        ...config.title,
-                                        text: e.target.value,
-                                    },
-                                })
-                            }}
-                        />
-
-                        <h3 className="text-lg">Title Color</h3>
-                        <ColorPicker
-                            className="w-full"
-                            background={config?.title?.color || PRESENTATION_DEFAULTS.title?.color}
-                            setBackground={(value: string) =>
-                                updateConfig({
-                                    title: {
-                                        ...config.title,
-                                        color: value,
-                                    },
-                                })
-                            }
-                        />
-
-                        <h3 className="text-lg">Title Weight</h3>
-                        <FontWeightPicker
-                            currentFont={config?.title?.font || PRESENTATION_DEFAULTS.title?.font}
-                            defaultValue={
-                                config?.title?.weight || PRESENTATION_DEFAULTS.title?.weight
-                            }
-                            onSelect={(weight: string) => {
-                                updateConfig({
-                                    title: {
-                                        ...config.title,
-                                        weight: weight,
-                                    },
-                                })
-                            }}
-                        />
-
-                        <h3 className="text-lg">Title Style</h3>
-                        <FontStylePicker
-                            currentFont={config?.title?.font || PRESENTATION_DEFAULTS.title?.font}
-                            defaultValue={
-                                config?.title?.style || PRESENTATION_DEFAULTS.title?.style
-                            }
-                            onSelect={(style: string) =>
-                                updateConfig({
-                                    title: {
-                                        ...config.title,
-                                        style,
-                                    },
-                                })
-                            }
-                        />
-
-                        {/* Slides */}
-                        <h3 className="text-lg">Slides</h3>
-                        <div className="flex flex-wrap gap-3">
-                            <div
-                                onClick={() => {
-                                    setCurrentSlide((config?.content?.text || []).length)
-                                    updateConfig({
-                                        content: {
-                                            ...PRESENTATION_DEFAULTS.content,
-                                            ...config.content,
-                                            text: [...(config?.content?.text || []), ''],
-                                        },
-                                    })
-                                }}
-                                className="w-40 h-40 flex items-center justify-center p-2 border-input border-[1px] rounded-md cursor-pointer"
-                            >
-                                <span className="text-4xl">+</span>
-                            </div>
-                            {(config?.content?.text || [])?.map((t: string, i: number) => {
-                                const isCurrent = i === currentSlide
-
-                                return (
-                                    <div
-                                        key={i}
-                                        onClick={() => setCurrentSlide(i)}
-                                        className={`w-40 h-40 flex items-center justify-center text-xs p-2 border-input border-[1px] rounded-md cursor-pointer ${
-                                            isCurrent ? 'bg-[#ffffff10]' : 'bg-transparent'
-                                        }`}
-                                    >
-                                        {t ? t.slice(0, 120) + (t.length > 120 ? '...' : '') : ''}
-                                    </div>
-                                )
-                            })}
-                        </div>
-
-                        {config?.content?.text?.length > 0 && (
-                            <Button
-                                className="mt-2 w-1/2"
-                                variant="destructive"
-                                onClick={() => {
-                                    const contentArr = config?.content?.text || []
-                                    contentArr.splice(currentSlide, 1)
-                                    setCurrentSlide((c) => Math.max(0, c - 1))
-                                    updateConfig({
-                                        content: {
-                                            ...PRESENTATION_DEFAULTS.content,
-                                            ...config.content,
-                                            text: contentArr,
-                                        },
-                                    })
-                                }}
-                            >
-                                Remove Slide
-                            </Button>
-                        )}
-
-                        {/* Content */}
-                        <h3 className="text-lg">Content</h3>
-
-                        <textarea
-                            key={currentSlide}
-                            defaultValue={config?.content?.text?.[currentSlide] || ''}
-                            placeholder="Your content"
-                            onChange={(e) => {
-                                const contentArr = config?.content?.text || []
-                                contentArr[currentSlide] = e.target.value
-                                updateConfig({
-                                    content: {
-                                        ...PRESENTATION_DEFAULTS.content,
-                                        ...config.content,
-                                        text: contentArr,
-                                    },
-                                })
-                            }}
-                            className="text-lg p-2 border-input border-[1px] rounded-md bg-transparent resize-y min-h-[184px]"
-                        />
-
-                        <h3 className="text-lg">Content Color</h3>
-                        <ColorPicker
-                            className="w-full"
-                            background={
-                                config?.content?.color || PRESENTATION_DEFAULTS.content?.color
-                            }
-                            setBackground={(value: string) =>
-                                updateConfig({
-                                    content: {
-                                        ...config.content,
-                                        color: value,
-                                    },
-                                })
-                            }
-                        />
-
-                        <h3 className="text-lg">Content Font</h3>
-                        <FontFamilyPicker
-                            defaultValue={
-                                config?.content?.font || PRESENTATION_DEFAULTS.content?.font
-                            }
-                            onSelect={(font) => {
-                                updateConfig({
-                                    content: {
-                                        ...config.content,
-                                        font,
-                                    },
-                                })
-                            }}
-                        />
-
-                        <h3 className="text-lg">Content Weight</h3>
-                        <FontWeightPicker
-                            currentFont={
-                                config?.content?.font || PRESENTATION_DEFAULTS.content?.font
-                            }
-                            defaultValue={
-                                config?.content?.weight || PRESENTATION_DEFAULTS.content?.weight
-                            }
-                            onSelect={(weight: string) => {
-                                updateConfig({
-                                    content: {
-                                        ...config.content,
-                                        weight: weight,
-                                    },
-                                })
-                            }}
-                        />
-
-                        <h3 className="text-lg">Align Content</h3>
-                        <Select
-                            defaultValue={
-                                config?.content?.align || PRESENTATION_DEFAULTS.content?.align
-                            }
-                            onValueChange={(value: 'left' | 'center' | 'right') =>
-                                updateConfig({
-                                    content: {
-                                        ...config.content,
-                                        align: value,
-                                    },
-                                })
-                            }
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Left" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value={'left'}>Left</SelectItem>
-                                <SelectItem value={'center'}>Center</SelectItem>
-                                <SelectItem value={'right'}>Right</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <h2 className="text-2xl font-bold">Background</h2>
+                    <h3 className="text-lg">Background</h3>
                     <ColorPicker
+                        key={'bg-' + slide.ts}
                         enabledPickers={['solid', 'gradient', 'image']}
                         className="w-full"
                         background={
-                            config?.background?.value || PRESENTATION_DEFAULTS.background.value
+                            slide?.background?.value ||
+                            PRESENTATION_DEFAULTS.slides[0].background.value
                         }
                         setBackground={(value: string) =>
-                            updateConfig({
+                            updateSlide({
                                 background: {
                                     type: value.includes('url') ? 'image' : 'color',
                                     value,
@@ -474,7 +549,7 @@ export default function Inspector() {
                                 base64String: base64String,
                                 contentType: contentType,
                             })
-                            updateConfig({
+                            updateSlide({
                                 background: {
                                     type: 'image',
                                     value: filePath,
@@ -484,7 +559,7 @@ export default function Inspector() {
                         }}
                     />
                 </div>
-            )}
+            </div>
         </div>
     )
 }

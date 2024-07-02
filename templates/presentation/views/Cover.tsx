@@ -1,26 +1,25 @@
-import type { Config } from '..'
+import type { Slide } from '..'
 
-export default function CoverView(config: Config, page: number = 0) {
-    const title = config?.title?.text
-    const content = config?.content?.text
-    const showContent = (content && page !== 0) || (content && page === 0 && !title)
+export default function CoverView(slide: Slide) {
+    const title = slide?.title?.text
+    const content = slide?.content?.text
 
     /* Style Customization */
     // Background
     const background: any = {}
 
-    switch (config.background?.type) {
+    switch (slide.background?.type) {
         case 'color': {
-            background['background'] = config.background.value // Covers gradients and solid colors at the same time
+            background['background'] = slide.background.value // Covers gradients and solid colors at the same time
             break
         }
         case 'image':
-            background['backgroundImage'] = config.background.value
+            background['backgroundImage'] = slide.background.value
     }
 
     /* Images */
-    if (config?.images?.length && config?.type === 'image') {
-        background['backgroundImage'] = `url(${config.images[page]})`
+    if (slide?.image) {
+        background['backgroundImage'] = `url(${slide.image})`
         background['backgroundRepeat'] = 'no-repeat'
         background['backgroundSize'] = '100% 100%'
         background['backgroundPosition'] = 'center'
@@ -32,48 +31,58 @@ export default function CoverView(config: Config, page: number = 0) {
                 width: '100%',
                 height: '100%',
                 display: 'flex',
+                flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
-                fontFamily: 'Inter',
-                fontSize: '50px',
                 color: '#1c1c1c',
                 ...background,
             }}
         >
-            {config.type === 'text' && (
-                <>
-                    {title && page === 0 && (
+            {!slide.image && (
+                <div
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '10px',
+                    }}
+                >
+                    {title && (
                         <h1
                             style={{
-                                color: config.title.color,
-                                fontFamily: config.title.font,
-                                fontStyle: config.title.style,
-                                fontWeight: config.title.weight,
+                                color: slide?.title?.color,
+                                fontFamily: slide?.title?.font,
+                                fontStyle: slide?.title?.style,
+                                fontWeight: slide?.title?.weight,
+                                fontSize: content ? '35px' : '60px',
                             }}
                         >
-                            {config.title.text}
+                            {title}
                         </h1>
                     )}
 
-                    {showContent && (
+                    {content && (
                         <span
                             style={{
-                                color: config.content.color,
-                                fontFamily: config.content.font,
-                                textAlign: config.content.align,
-                                fontWeight: config.content.weight,
+                                color: slide?.content?.color,
+                                fontFamily: slide?.content?.font,
+                                textAlign: slide?.content?.align,
+                                fontWeight: slide?.content?.weight,
                                 display: 'block',
                                 whiteSpace: 'pre-wrap',
                                 wordBreak: 'break-word',
-                                fontSize: '20px',
+                                fontSize: slide?.aspect === '1:1' ? '20px' : '30px',
                                 padding: '20px',
                             }}
                         >
-                            {config.content.text[page - (title ? 1 : 0)]}
+                            {content}
                         </span>
                     )}
-                </>
+                </div>
             )}
         </div>
     )

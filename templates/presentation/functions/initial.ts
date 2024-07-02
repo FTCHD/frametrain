@@ -3,16 +3,16 @@ import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import CoverView from '../views/Cover'
 import type { Config } from '..'
+import { PRESENTATION_DEFAULTS } from '../Inspector'
 
 export default async function initial(config: Config): Promise<BuildFrameData> {
-    const inter = await loadGoogleFontAllVariants('Inter')
-
-    const texts: string[] = config.content?.text || []
-    const title: string = config.title?.text || ''
     const buttons: FrameButtonMetadata[] = []
+    const maxPage = Math.max(config?.slides?.length, 1)
 
-    let maxPage = texts?.length + (title ? 1 : 0)
-    if (config?.type === 'image') maxPage = config?.images?.length
+    const contentFont = await loadGoogleFontAllVariants(
+        config?.slides?.[0]?.content?.font || 'Roboto'
+    )
+    const titleFont = await loadGoogleFontAllVariants(config?.slides?.[0]?.title?.font || 'Inter')
 
     if (maxPage > 1)
         buttons.push({
@@ -21,9 +21,9 @@ export default async function initial(config: Config): Promise<BuildFrameData> {
 
     return {
         buttons,
-        fonts: inter,
-        aspectRatio: config?.type === 'image' ? config?.aspect || '1:1' : '1:1',
-        component: CoverView(config),
+        fonts: [...contentFont, ...titleFont],
+        aspectRatio: config.slides?.[0]?.aspect || '1:1',
+        component: CoverView(config.slides?.[0] || PRESENTATION_DEFAULTS.slides[0]),
         functionName: 'page',
     }
 }
