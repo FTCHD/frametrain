@@ -60,7 +60,7 @@ export default function Inspector() {
             })
             .catch((error) => console.error('Error:', error))
     }
-	
+
     const debouncedHandle = useDebouncedCallback((username: any) => {
         handleSubmit(username)
     }, 1000)
