@@ -5,6 +5,7 @@ import type {
 } from '@coinbase/onchainkit/frame'
 import toast from 'react-hot-toast'
 import { z } from 'zod'
+import type { MockOptions } from './store'
 
 export async function getPreview(url: string) {
     try {
@@ -12,31 +13,37 @@ export async function getPreview(url: string) {
         const text = await response.text()
         return parseFrameHtml(text)
     } catch (error) {
-		toast.error('Whoops! Something went wrong.')
+        toast.error('Whoops! Something went wrong.')
         console.error('Error fetching frame:', error)
     }
 }
 
-export async function simulateCall(frameData: FrameRequest, options?: string[] | undefined) {
+export async function simulateCall(frameData: FrameRequest, options: MockOptions) {
     const postUrl = frameData.untrustedData.url
 
     const debugPayload = {
         ...frameData,
     } as any
 
-    if (options) {
+    const enabledOptions = Object.keys(options).filter((k) => {
+        const key = k as keyof MockOptions
+        if (key === 'fid') return false
+        return options[key]
+    })
+
+    if (options.fid > 0 || enabledOptions.length) {
         const timestamp = new Date().toISOString()
-        const isRecasted = options?.includes('recasted')
-        const isLiked = options?.includes('liked')
-        const isFollower = options?.includes('follower')
-        const isFollowing = options?.includes('following')
+        const isRecasted = options.recasted
+        const isLiked = options.liked
+        const isFollower = options.follower
+        const isFollowing = options.following
 
         debugPayload.validatedData = {
             object: 'validated_frame_action',
             url: frameData.untrustedData.url,
             interactor: {
                 object: 'user',
-                fid: 368382,
+                fid: frameData.untrustedData.fid,
                 custody_address: null,
                 username: null,
                 display_name: null,
@@ -63,10 +70,10 @@ export async function simulateCall(frameData: FrameRequest, options?: string[] |
             cast: {
                 object: 'cast',
                 hash: '0x0000000000000000000000000000000000000001',
-                fid: 368382,
+                fid: frameData.untrustedData.fid,
                 author: {
                     object: 'user',
-                    fid: 368382,
+                    fid: frameData.untrustedData.fid,
                     custody_address: null,
                     username: null,
                     display_name: null,

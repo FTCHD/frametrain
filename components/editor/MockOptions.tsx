@@ -14,18 +14,29 @@ import { mockOptionsAtom } from '@/lib/store'
 import { useAtom } from 'jotai'
 import { User } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Input } from '../shadcn/Input'
 
-export default function MockOptions() {
+export default function MockOptions({ fid }: { fid: string }) {
     const [open, setOpen] = useState(false)
     const [mockOptions, setMockOptions] = useAtom(mockOptionsAtom)
+    const [simulatedFid, setSimulatedFid] = useState(Number.parseInt(fid))
 
     useEffect(() => {
-        // we reset the mock options
-        setMockOptions([])
+        if (mockOptions.fid > 0) return
+        if (mockOptions.fid === simulatedFid) return
+        setMockOptions((prev) => ({ ...prev, fid: simulatedFid }))
 
-        // undefined so when we visit a Frame that doesn't require validation, this doesn't stay in memory
-        return () => setMockOptions(undefined)
-    }, [setMockOptions])
+        return () => {
+            // reset fid as the only default mock option
+            setMockOptions(() => ({
+                recasted: false,
+                liked: false,
+                follower: false,
+                following: false,
+                fid: simulatedFid,
+            }))
+        }
+    }, [mockOptions, setMockOptions, simulatedFid])
 
     return (
         <DropdownMenu open={open}>
@@ -44,15 +55,9 @@ export default function MockOptions() {
                         <User className="mr-2 h-4 w-4" />
                         <span className="w-full">Recasted</span>
                         <Switch
-                            checked={mockOptions?.includes('recasted')}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    setMockOptions([...(mockOptions || []), 'recasted'])
-                                } else {
-                                    setMockOptions(
-                                        mockOptions?.filter((option) => option !== 'recasted')
-                                    )
-                                }
+                            checked={mockOptions.recasted}
+                            onCheckedChange={(recasted) => {
+                                setMockOptions((prev) => ({ ...prev, recasted }))
                             }}
                         />
                     </DropdownMenuItem>
@@ -60,15 +65,9 @@ export default function MockOptions() {
                         <User className="mr-2 h-4 w-4" />
                         <span className="w-full">Liked</span>
                         <Switch
-                            checked={mockOptions?.includes('liked')}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    setMockOptions([...(mockOptions || []), 'liked'])
-                                } else {
-                                    setMockOptions(
-                                        mockOptions?.filter((option) => option !== 'liked')
-                                    )
-                                }
+                            checked={mockOptions.liked}
+                            onCheckedChange={(liked) => {
+                                setMockOptions((prev) => ({ ...prev, liked }))
                             }}
                         />
                     </DropdownMenuItem>
@@ -76,15 +75,12 @@ export default function MockOptions() {
                         <User className="mr-2 h-4 w-4" />
                         <span className="w-full">Following</span>
                         <Switch
-                            checked={mockOptions?.includes('following')}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    setMockOptions([...(mockOptions || []), 'following'])
-                                } else {
-                                    setMockOptions(
-                                        mockOptions?.filter((option) => option !== 'following')
-                                    )
-                                }
+                            checked={mockOptions.following}
+                            onCheckedChange={(following) => {
+                                setMockOptions((prev) => ({
+                                    ...prev,
+                                    following,
+                                }))
                             }}
                         />
                     </DropdownMenuItem>
@@ -92,27 +88,35 @@ export default function MockOptions() {
                         <User className="mr-2 h-4 w-4" />
                         <span className="w-full">Follower</span>
                         <Switch
-                            checked={mockOptions?.includes('follower')}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    setMockOptions([...(mockOptions || []), 'follower'])
-                                } else {
-                                    setMockOptions(
-                                        mockOptions?.filter((option) => option !== 'follower')
-                                    )
-                                }
+                            checked={mockOptions.follower}
+                            onCheckedChange={(follower) => {
+                                setMockOptions((prev) => ({ ...prev, follower }))
                             }}
                         />
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
 
-                {/* <DropdownMenuSeparator />
+                <DropdownMenuSeparator />
 
-                <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>FID</span>
-                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                </DropdownMenuItem> */}
+                <DropdownMenuItem className="hover:bg-none">
+                    <div className="flex flex-col w-full h-full">
+                        <span>FID:</span>
+                        <Input
+                            type="number"
+                            defaultValue={simulatedFid}
+                            className="hover:border"
+                            onChange={async (e) => {
+                                e.preventDefault()
+                                const fid = Number.parseInt(e.target.value)
+
+                                setTimeout(() => {
+                                    setMockOptions((prev) => ({ ...prev, fid }))
+                                    setSimulatedFid(fid)
+                                }, 1500)
+                            }}
+                        />
+                    </div>
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )
