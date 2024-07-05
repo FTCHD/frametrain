@@ -27,6 +27,9 @@ export default function Inspector() {
     const fid = useFarcasterId()
 
     const handleSubmit = async (username: string, eventSlug: string) => {
+        if (username === '' || eventSlug === '') return
+        if (config.username === username && config.eventSlug === eventSlug) return
+
         corsFetch(
             `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
             {
@@ -38,15 +41,26 @@ export default function Inspector() {
         )
             .then((text) => {
                 const data = JSON.parse(text as string)
-                const img = data[0].result.data.json.profile.image
+                const json = data[0].result.data.json
+
+                if (json === null) {
+                    updateConfig({
+                        username: username,
+                        eventSlug: eventSlug,
+                        fid,
+                    })
+                    return
+                }
+
+                const image = data[0].result.data.json.profile.image
                 const name = data[0].result.data.json.profile.name
-                console.log(img, name)
 
                 updateConfig({
-                    image: img,
-                    name: name,
-                    username: username,
-                    fid: fid,
+                    image,
+                    name,
+                    username,
+                    eventSlug,
+                    fid,
                 })
             })
             .catch((error) => console.error('Error:', error))
@@ -89,7 +103,6 @@ export default function Inspector() {
         })
     }
     const handleChainChange = (value: any) => {
-        console.log(value)
         updateConfig({
             nftOptions: {
                 ...config.nftOptions,
@@ -98,7 +111,6 @@ export default function Inspector() {
         })
     }
     const handleNftTypeChange = (value: any) => {
-        console.log(value)
         updateConfig({
             nftOptions: {
                 ...config.nftOptions,
