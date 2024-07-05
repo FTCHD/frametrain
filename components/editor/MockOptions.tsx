@@ -19,13 +19,19 @@ import { Input } from '../shadcn/Input'
 export default function MockOptions({ fid }: { fid: string }) {
     const [open, setOpen] = useState(false)
     const [mockOptions, setMockOptions] = useAtom(mockOptionsAtom)
-    const [simulatedFid, setSimulatedFid] = useState(Number.parseInt(fid))
 
     useEffect(() => {
         if (mockOptions.fid > 0) return
-        if (mockOptions.fid === simulatedFid) return
-        setMockOptions((prev) => ({ ...prev, fid: simulatedFid }))
+        setMockOptions(() => ({
+            recasted: false,
+            liked: false,
+            follower: false,
+            following: false,
+            fid: Number.parseInt(fid),
+        }))
+    }, [fid, mockOptions.fid, setMockOptions])
 
+    useEffect(() => {
         return () => {
             // reset fid as the only default mock option
             setMockOptions(() => ({
@@ -33,10 +39,10 @@ export default function MockOptions({ fid }: { fid: string }) {
                 liked: false,
                 follower: false,
                 following: false,
-                fid: simulatedFid,
+                fid: 0,
             }))
         }
-    }, [mockOptions, setMockOptions, simulatedFid])
+    }, [setMockOptions])
 
     return (
         <DropdownMenu open={open}>
@@ -99,23 +105,17 @@ export default function MockOptions({ fid }: { fid: string }) {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem className="hover:bg-none">
-                    <div className="flex flex-col w-full h-full">
-                        <span>FID:</span>
-                        <Input
-                            type="number"
-                            defaultValue={simulatedFid}
-                            className="hover:border"
-                            onChange={async (e) => {
-                                e.preventDefault()
-                                const fid = Number.parseInt(e.target.value)
-
-                                setTimeout(() => {
-                                    setMockOptions((prev) => ({ ...prev, fid }))
-                                    setSimulatedFid(fid)
-                                }, 1500)
-                            }}
-                        />
-                    </div>
+                    <span className="w-full">FID</span>
+                    <Input
+                        type="number"
+                        defaultValue={mockOptions.fid}
+                        onChange={async (e) => {
+                            const fid = Number.parseInt(e.target.value)
+                            setTimeout(() => {
+                                setMockOptions((prev) => ({ ...prev, fid }))
+                            }, 1500)
+                        }}
+                    />
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

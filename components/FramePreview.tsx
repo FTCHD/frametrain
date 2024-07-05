@@ -198,6 +198,7 @@ function FrameButton({
 
     const confirmAction = useCallback(async () => {
         const fid = mockOptions.fid
+
         const result = await simulateCall(
             {
                 untrustedData: {
