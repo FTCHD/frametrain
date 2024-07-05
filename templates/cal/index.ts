@@ -5,6 +5,7 @@ import functions from './functions'
 
 export interface Config extends BaseConfig {
     username: string
+    eventSlug: string
     fontFamily?: string
     primaryColor?: string
     secondaryColor?: string
@@ -45,6 +46,8 @@ export default {
     Inspector,
     functions,
     initialConfig: {
+        eventSlug: '15min',
+        username: 'cal.com',
         gatingOptions: {
             karmaGating: false,
             nftGating: false,

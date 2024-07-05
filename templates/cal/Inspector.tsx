@@ -19,25 +19,16 @@ import { Switch } from '@/components/shadcn/Switch'
 import { corsFetch } from '@/sdk/scrape'
 import Link from 'next/link'
 import { useDebouncedCallback } from 'use-debounce'
+import { useEffect } from 'react'
 
 export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const fid = useFarcasterId()
 
-    const handleSubmit = async (username: string) => {
-        if (!username) {
-            updateConfig({
-                image: undefined,
-                name: undefined,
-                username: undefined,
-                fid: undefined,
-            })
-            return
-        }
-
+    const handleSubmit = async (username: string, eventSlug: string) => {
         corsFetch(
-            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${username}","eventSlug":"15min","isTeamEvent":false,"org":null}}}`,
+            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
             {
                 method: 'GET',
                 headers: {
@@ -61,8 +52,30 @@ export default function Inspector() {
             .catch((error) => console.error('Error:', error))
     }
 
-    const debouncedHandle = useDebouncedCallback((username: any) => {
-        handleSubmit(username)
+    useEffect(() => {
+        if (config.name) return
+        async function fetchData() {
+            try {
+                const text = await corsFetch(
+                    `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${config.eventSlug}","isTeamEvent":false,"org":null}}}`
+                )
+                const data = JSON.parse(text as string)
+
+                const img = data[0].result.data.json.profile.image
+                const name = data[0].result.data.json.profile.name
+
+                updateConfig({
+                    image: img,
+                    name: name,
+                    fid: fid,
+                })
+            } catch (_) {}
+        }
+        fetchData()
+    }, [config, fid, updateConfig])
+
+    const debouncedHandle = useDebouncedCallback((username: string, eventSlug: string) => {
+        handleSubmit(username, eventSlug)
     }, 1000)
 
     const handleNFT = async (nftAddress: string) => {
@@ -111,7 +124,21 @@ export default function Inspector() {
                     placeholder="Enter your cal.com username"
                     defaultValue={config.username}
                     onChange={(e) => {
-                        debouncedHandle(e.target.value)
+                        if (e.target.value === '' || config.eventSlug.length < 1) return
+                        debouncedHandle(e.target.value, config.eventSlug)
+                    }}
+                />
+            </div>
+            <div className="flex flex-col gap-2 ">
+                <h2 className="text-2xl font-semibold">Event slug</h2>
+                <Input
+                    className="text-lg"
+                    placeholder="Enter your cal.com event's slug"
+                    defaultValue={config.eventSlug}
+                    onChange={(e) => {
+                        if (e.target.value === '' || config.username.length < 1) return
+
+                        debouncedHandle(config.username, e.target.value)
                     }}
                 />
             </div>
