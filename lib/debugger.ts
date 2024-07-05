@@ -25,13 +25,9 @@ export async function simulateCall(frameData: FrameRequest, options: MockOptions
         ...frameData,
     } as any
 
-    const enabledOptions = Object.keys(options).filter((k) => {
-        const key = k as keyof MockOptions
-        if (key === 'fid') return false
-        return options[key]
-    })
+    const hasOptions = Object.values(options).some(Boolean)
 
-    if (options.fid > 0 || enabledOptions.length) {
+    if (hasOptions) {
         const timestamp = new Date().toISOString()
         const isRecasted = options.recasted
         const isLiked = options.liked
