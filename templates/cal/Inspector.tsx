@@ -174,7 +174,7 @@ export default function Inspector() {
 
                                         updateConfig({ events: newEvents })
                                     } catch (_) {
-                                        toast.error(`No Event Type found for: ${eventSlug}`)
+                                        toast.error(`No event type found for: ${eventSlug}`)
                                     } finally {
                                         setLoading(false)
 
