@@ -7,6 +7,7 @@ import { useFarcasterId, useFrameConfig, useFrameId } from '@/sdk/hooks'
 import { uploadImage } from '@/sdk/upload'
 import type { Config } from '.'
 import { getName } from './utils/metadata'
+import toast from 'react-hot-toast'
 
 import {
     Select,
@@ -142,37 +143,43 @@ export default function Inspector() {
                                         return
                                     }
 
-                                    const text = await corsFetch(
-                                        `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
-                                        {
-                                            method: 'GET',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
+                                    try {
+                                        const text = await corsFetch(
+                                            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
+                                            {
+                                                method: 'GET',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                },
+                                            }
+                                        )
+                                        const data = JSON.parse(text as string)
+                                        const json = data[0].result.data.json
+
+                                        if (json === null) {
+                                            throw new Error('error')
                                         }
-                                    )
-                                    const data = JSON.parse(text as string)
-                                    const json = data[0].result.data.json
 
-                                    if (json === null) return
+                                        const slug = data[0].result.data.json.slug as string
+                                        const duration = data[0].result.data.json.length as number
 
-                                    const slug = data[0].result.data.json.slug as string
-                                    const duration = data[0].result.data.json.length as number
+                                        const newEvents = [
+                                            ...events,
+                                            {
+                                                slug: slug,
+                                                duration: duration,
+                                                formattedDuration: getDurationFormatted(duration),
+                                            },
+                                        ]
 
-                                    const newEvents = [
-                                        ...events,
-                                        {
-                                            slug: slug,
-                                            duration: duration,
-                                            formattedDuration: getDurationFormatted(duration),
-                                        },
-                                    ]
+                                        updateConfig({ events: newEvents })
+                                    } catch (_) {
+                                        toast.error(`No Event Type found for: ${eventSlug}`)
+                                    } finally {
+                                        setLoading(false)
 
-                                    updateConfig({ events: newEvents })
-
-                                    setLoading(false)
-
-                                    slugInputRef.current.value = ''
+                                        slugInputRef.current.value = ''
+                                    }
                                 }}
                             >
                                 {loading ? <LoaderIcon className="animate-spin" /> : 'ADD'}
