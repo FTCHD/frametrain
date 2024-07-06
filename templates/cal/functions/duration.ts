@@ -150,7 +150,6 @@ export default async function duration(
             params: {
                 date: 0,
                 eventSlug: event.slug,
-                durationTime: event.formattedDuration,
                 dateLength: datesArray.length,
             },
             functionName: 'date',

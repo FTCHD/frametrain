@@ -20,14 +20,13 @@ export default async function dateHanlder(
     const buttonIndex = body.untrustedData.buttonIndex
 
     let date = params?.date === undefined || params?.date === 'NaN' ? 0 : Number(params?.date)
-    let durationTime = '0'
-    let eventSlug = ''
+    const eventIndex = params?.eventSlug
+        ? config.events.findIndex((event) => event.slug === params.eventSlug)
+        : buttonIndex - 1
+    const event = config.events[eventIndex]
 
     switch (buttonIndex) {
         case 2: {
-            eventSlug = config.events[buttonIndex - 1].slug
-            durationTime = config.events[buttonIndex - 1].formattedDuration
-
             if (params.date === undefined) {
                 break
             }
@@ -38,7 +37,7 @@ export default async function dateHanlder(
                     json: {
                         isTeamEvent: false,
                         usernameList: [`${config.username}`],
-                        eventTypeSlug: eventSlug,
+                        eventTypeSlug: event.slug,
                         startTime: dates[0],
                         endTime: dates[1],
                         timeZone: 'UTC',
@@ -76,33 +75,24 @@ export default async function dateHanlder(
                 component: NextView(config, slotsArray[date], 0),
                 functionName: 'slot',
                 params: {
-                    duration: eventSlug,
+                    duration: event.slug,
                     date,
                     slot: 0,
-                    durationTime: durationTime,
                     slotLength: slotsArray[date].length,
                 },
             }
         }
 
         default: {
-            if (!params.date) {
-                const event = config.events[buttonIndex - 1]
-                eventSlug = event.slug
-                durationTime = event.formattedDuration
-            } else {
-                if (buttonIndex === 1 || buttonIndex == 3) {
-                    date =
-                        buttonIndex === 1
-                            ? date == 0
-                                ? params.dateLength - 1
-                                : date - 1
-                            : date == params.dateLength - 1
-                              ? 0
-                              : date + 1
-                }
-                eventSlug = params.eventSlug
-                durationTime = params.durationTime
+            if (buttonIndex === 1 || buttonIndex == 3) {
+                date =
+                    buttonIndex === 1
+                        ? date == 0
+                            ? params.dateLength - 1
+                            : date - 1
+                        : date == params.dateLength - 1
+                          ? 0
+                          : date + 1
             }
         }
     }
@@ -113,7 +103,7 @@ export default async function dateHanlder(
             json: {
                 isTeamEvent: false,
                 usernameList: [`${config.username}`],
-                eventTypeSlug: eventSlug,
+                eventTypeSlug: event.slug,
                 startTime: dates[0],
                 endTime: dates[1],
                 timeZone: 'UTC',
@@ -151,12 +141,11 @@ export default async function dateHanlder(
             },
         ],
         fonts,
-        component: PageView(config, datesArray, date, durationTime),
+        component: PageView(config, datesArray, date, event.formattedDuration),
         functionName: 'date',
         params: {
             date,
-            eventSlug,
-            durationTime,
+            eventSlug: event.slug,
             dateLength: datesArray.length,
         },
     }
