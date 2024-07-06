@@ -7,52 +7,38 @@ import NextView from '../views/Slot'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
 import { getCurrentAndFutureDate } from '../utils/getDays'
+import { FrameError } from '@/sdk/handlers'
 
-export default async function duration(
+export default async function dateHanlder(
     body: FrameActionPayload,
     config: Config,
-    state: State,
+    _state: State,
     params: any
 ): Promise<BuildFrameData> {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
-
-    if (config?.fontFamily) {
-        const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
-        fonts.push(...titleFont)
-    }
-
-    let date = params?.date === undefined || params?.date === 'NaN' ? 0 : Number(params?.date)
+    const fonts = await loadGoogleFontAllVariants(config?.fontFamily ?? 'Roboto')
 
     const buttonIndex = body.untrustedData.buttonIndex
-    let duration = ''
-    let durationTime = '0'
 
-    // try {
-    //     const response = await fetch(url)
-    //     const data = await response.json()
-    //     console.log(data.result.data.json.slots)
-    // } catch (error) {
-    //     console.error('Error:', error)
-    // }
+    let date = params?.date === undefined || params?.date === 'NaN' ? 0 : Number(params?.date)
+    let durationTime = '0'
+    let eventSlug = ''
 
     switch (buttonIndex) {
-        case 1: {
+        case 2: {
+            eventSlug = config.events[buttonIndex - 1].slug
+            durationTime = config.events[buttonIndex - 1].formattedDuration
+
             if (params.date === undefined) {
-                duration = '15min'
-                durationTime = '15'
-            } else {
-                date = date == 0 ? params.dateLength - 1 : date - 1
-                duration = params.duration
-                durationTime = params.durationTime
+                break
             }
+
             const dates = getCurrentAndFutureDate(30)
             const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                 JSON.stringify({
                     json: {
                         isTeamEvent: false,
                         usernameList: [`${config.username}`],
-                        eventTypeSlug: duration,
+                        eventTypeSlug: eventSlug,
                         startTime: dates[0],
                         endTime: dates[1],
                         timeZone: 'UTC',
@@ -72,10 +58,7 @@ export default async function duration(
             const slots = await fetch(url)
             const slotsResponse = await slots.json()
 
-            const [datesArray, slotsArray] = extractDatesAndSlots(
-                slotsResponse.result.data.json.slots
-            )
-
+            const [_, slotsArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
             return {
                 buttons: [
                     {
@@ -88,156 +71,49 @@ export default async function duration(
                         label: '➡️',
                     },
                 ],
-                fonts: fonts,
+                fonts,
 
-                component: PageView(config, duration, datesArray, date, durationTime),
-                functionName: 'date',
-
+                component: NextView(config, slotsArray[date], 0),
+                functionName: 'slot',
                 params: {
-                    durationFixed: 'fixed',
-                    duration: duration,
-                    date: date,
+                    duration: eventSlug,
+                    date,
+                    slot: 0,
                     durationTime: durationTime,
-                    dateLength: datesArray.length,
+                    slotLength: slotsArray[date].length,
                 },
             }
         }
 
-        case 2: {
-            if (params.date === undefined) {
-                duration = '30min'
-                durationTime = '30'
-
-                const dates = getCurrentAndFutureDate(30)
-                const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
-                    JSON.stringify({
-                        json: {
-                            isTeamEvent: false,
-                            usernameList: [`${config.username}`],
-                            eventTypeSlug: duration,
-                            startTime: dates[0],
-                            endTime: dates[1],
-                            timeZone: 'UTC',
-                            duration: null,
-                            rescheduleUid: null,
-                            orgSlug: null,
-                        },
-                        meta: {
-                            values: {
-                                duration: ['undefined'],
-                                orgSlug: ['undefined'],
-                            },
-                        },
-                    })
-                )}`
-
-                const slots = await fetch(url)
-                const slotsResponse = await slots.json()
-
-                const [datesArray, slotsArray] = extractDatesAndSlots(
-                    slotsResponse.result.data.json.slots
-                )
-
-                return {
-                    buttons: [
-                        {
-                            label: '⬅️',
-                        },
-                        {
-                            label: 'Select',
-                        },
-                        {
-                            label: '➡️',
-                        },
-                    ],
-                    fonts: fonts,
-
-                    component: PageView(config, duration, datesArray, date, durationTime),
-                    functionName: 'date',
-                    params: {
-                        durationFixed: 'fixed',
-                        duration: duration,
-                        date: date,
-                        durationTime: durationTime,
-                        dateLength: datesArray.length,
-                    },
-                }
-                // biome-ignore lint/style/noUselessElse: <explanation>
+        default: {
+            if (!params.date) {
+                const event = config.events[buttonIndex - 1]
+                eventSlug = event.slug
+                durationTime = event.formattedDuration
             } else {
-                // biome-ignore lint/style/useConst: <explanation>
-                let slot = params.slot ? 0 : Number.parseInt(params.slot)
-                duration = params.duration
-                durationTime = params.durationTime
-
-                const dates = getCurrentAndFutureDate(30)
-                const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
-                    JSON.stringify({
-                        json: {
-                            isTeamEvent: false,
-                            usernameList: [`${config.username}`],
-                            eventTypeSlug: duration,
-                            startTime: dates[0],
-                            endTime: dates[1],
-                            timeZone: 'UTC',
-                            duration: null,
-                            rescheduleUid: null,
-                            orgSlug: null,
-                        },
-                        meta: {
-                            values: {
-                                duration: ['undefined'],
-                                orgSlug: ['undefined'],
-                            },
-                        },
-                    })
-                )}`
-
-                const slots = await fetch(url)
-                const slotsResponse = await slots.json()
-
-                const [datesArray, slotsArray] = extractDatesAndSlots(
-                    slotsResponse.result.data.json.slots
-                )
-                return {
-                    buttons: [
-                        {
-                            label: '⬅️',
-                        },
-                        {
-                            label: 'Select',
-                        },
-                        {
-                            label: '➡️',
-                        },
-                    ],
-                    fonts: fonts,
-
-                    component: NextView(config, slotsArray[date], 0),
-                    functionName: 'slot',
-                    params: {
-                        durationFixed: 'fixed',
-                        duration: duration,
-                        date: date,
-                        slot: 0,
-                        durationTime: durationTime,
-                        slotLength: slotsArray[date].length,
-                    },
+                if (buttonIndex === 1 || buttonIndex == 3) {
+                    date =
+                        buttonIndex === 1
+                            ? date == 0
+                                ? params.dateLength - 1
+                                : date - 1
+                            : date == params.dateLength - 1
+                              ? 0
+                              : date + 1
                 }
+                eventSlug = params.eventSlug
+                durationTime = params.durationTime
             }
         }
-        case 3: {
-            date = date == params.dateLength - 1 ? 0 : date + 1
-            duration = params.duration
-            durationTime = params.durationTime
-        }
     }
+
     const dates = getCurrentAndFutureDate(30)
     const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
         JSON.stringify({
             json: {
                 isTeamEvent: false,
                 usernameList: [`${config.username}`],
-                eventTypeSlug: duration,
+                eventTypeSlug: eventSlug,
                 startTime: dates[0],
                 endTime: dates[1],
                 timeZone: 'UTC',
@@ -256,8 +132,11 @@ export default async function duration(
 
     const slots = await fetch(url)
     const slotsResponse = await slots.json()
+    const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
 
-    const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
+    if (!datesArray.length) {
+        throw new FrameError('No availability found for this event.')
+    }
 
     return {
         buttons: [
@@ -271,15 +150,13 @@ export default async function duration(
                 label: '➡️',
             },
         ],
-        fonts: fonts,
-
-        component: PageView(config, duration, datesArray, date, durationTime),
+        fonts,
+        component: PageView(config, datesArray, date, durationTime),
         functionName: 'date',
         params: {
-            durationFixed: 'fixed',
-            duration: duration,
-            date: date,
-            durationTime: durationTime,
+            date,
+            eventSlug,
+            durationTime,
             dateLength: datesArray.length,
         },
     }

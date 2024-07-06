@@ -19,77 +19,55 @@ import { Switch } from '@/components/shadcn/Switch'
 import { corsFetch } from '@/sdk/scrape'
 import Link from 'next/link'
 import { useDebouncedCallback } from 'use-debounce'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Button } from '@/components/shadcn/Button'
+import { LoaderIcon, Trash } from 'lucide-react'
+import { fetchProfileData } from './utils/fetchData'
+import { getDurationFormatted } from './utils/getDays'
 
 export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const fid = useFarcasterId()
+    const slugInputRef = useRef<HTMLInputElement>(null)
+    const [loading, setLoading] = useState(false)
+    const events = config.events || []
 
-    const handleSubmit = async (username: string, eventSlug: string) => {
-        if (username === '' || eventSlug === '') return
-        if (config.username === username && config.eventSlug === eventSlug) return
+    const handleSubmit = async (username: string) => {
+        if (username === '') return
+        if (config.username === username) return
 
-        corsFetch(
-            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-        )
-            .then((text) => {
-                const data = JSON.parse(text as string)
-                const json = data[0].result.data.json
+        try {
+            const data = await fetchProfileData(username)
+            if (!data) return
 
-                if (json === null) {
-                    updateConfig({
-                        username: username,
-                        eventSlug: eventSlug,
-                        fid,
-                    })
-                    return
-                }
-
-                const image = data[0].result.data.json.profile.image
-                const name = data[0].result.data.json.profile.name
-
-                updateConfig({
-                    image,
-                    name,
-                    username,
-                    eventSlug,
-                    fid,
-                })
+            updateConfig({
+                ...data,
+                fid,
+                events: [],
             })
-            .catch((error) => console.error('Error:', error))
+        } catch (_) {}
     }
 
     useEffect(() => {
         if (config.name) return
-        async function fetchData() {
-            try {
-                const text = await corsFetch(
-                    `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${config.eventSlug}","isTeamEvent":false,"org":null}}}`
-                )
-                const data = JSON.parse(text as string)
 
-                const img = data[0].result.data.json.profile.image
-                const name = data[0].result.data.json.profile.name
+        async function fetchUser() {
+            try {
+                const data = await fetchProfileData(config.username)
+                if (!data) return
 
                 updateConfig({
-                    image: img,
-                    name: name,
-                    fid: fid,
+                    ...data,
+                    fid,
                 })
             } catch (_) {}
         }
-        fetchData()
-    }, [config, fid, updateConfig])
+        fetchUser()
+    }, [config.username, config.name, fid, updateConfig])
 
-    const debouncedHandle = useDebouncedCallback((username: string, eventSlug: string) => {
-        handleSubmit(username, eventSlug)
+    const debouncedHandle = useDebouncedCallback((username: string) => {
+        handleSubmit(username)
     }, 1000)
 
     const handleNFT = async (nftAddress: string) => {
@@ -136,24 +114,104 @@ export default function Inspector() {
                     placeholder="Enter your cal.com username"
                     defaultValue={config.username}
                     onChange={(e) => {
-                        if (e.target.value === '' || config.eventSlug.length < 1) return
-                        debouncedHandle(e.target.value, config.eventSlug)
+                        if (e.target.value === '') return
+                        debouncedHandle(e.target.value)
                     }}
                 />
             </div>
-            <div className="flex flex-col gap-2 ">
-                <h2 className="text-2xl font-semibold">Event slug</h2>
-                <Input
-                    className="text-lg"
-                    placeholder="Enter your cal.com event's slug"
-                    defaultValue={config.eventSlug}
-                    onChange={(e) => {
-                        if (e.target.value === '' || config.username.length < 1) return
+            <div className="flex flex-col gap-4 w-full">
+                <h2 className="text-2xl font-bold">Event Slugs</h2>
 
-                        debouncedHandle(config.username, e.target.value)
-                    }}
-                />
+                {events.length < 4 && (
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg">Add Event Type Identifier (Slug)</h2>
+                        <div className="flex gap-5 items-center">
+                            <Input ref={slugInputRef} placeholder="30min" />
+                            <Button
+                                size={'lg'}
+                                disabled={loading}
+                                onClick={async () => {
+                                    if (!slugInputRef.current?.value) return
+
+                                    setLoading(true)
+
+                                    const eventSlug = slugInputRef.current.value.trim()
+
+                                    if (!eventSlug.length) {
+                                        setLoading(false)
+                                        return
+                                    }
+
+                                    const text = await corsFetch(
+                                        `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
+                                        {
+                                            method: 'GET',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                        }
+                                    )
+                                    const data = JSON.parse(text as string)
+                                    const json = data[0].result.data.json
+
+                                    if (json === null) return
+
+                                    const slug = data[0].result.data.json.slug as string
+                                    const duration = data[0].result.data.json.length as number
+
+                                    const newEvents = [
+                                        ...events,
+                                        {
+                                            slug: slug,
+                                            duration: duration,
+                                            formattedDuration: getDurationFormatted(duration),
+                                        },
+                                    ]
+
+                                    updateConfig({ events: newEvents })
+
+                                    setLoading(false)
+
+                                    slugInputRef.current.value = ''
+                                }}
+                            >
+                                {loading ? <LoaderIcon className="animate-spin" /> : 'ADD'}
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
+                {events.map((event, index) => (
+                    <div
+                        className="flex flex-row gap-2 justify-between items-center w-full h-full"
+                        key={event.slug}
+                    >
+                        <div className="flex flex-row gap-2 justify-center items-center h-full">
+                            <span className="flex flex-col justify-center items-center font-bold text-black bg-white rounded-full min-w-12 min-h-12">
+                                # {index}
+                            </span>
+                            <span className="text-md">
+                                {event.slug.length > 25
+                                    ? event.slug.substring(0, 25) + '...'
+                                    : event.slug}
+                            </span>
+                        </div>
+                        <div className="flex flex-row gap-2">
+                            <Button
+                                variant="destructive"
+                                onClick={() =>
+                                    updateConfig({
+                                        events: events.filter((e) => e.slug !== event.slug),
+                                    })
+                                }
+                            >
+                                <Trash />
+                            </Button>
+                        </div>
+                    </div>
+                ))}
             </div>
+
             <div className="flex flex-col gap-2 ">
                 <h2 className="text-2xl font-semibold">Gating Options</h2>
                 <div className="flex flex-col gap-2 w-full md:w-auto">
