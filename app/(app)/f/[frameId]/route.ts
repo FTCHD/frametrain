@@ -32,7 +32,7 @@ export async function GET(request: Request, { params }: { params: { frameId: str
 
     const { frame: renderedFrame } = await buildFramePage({
         id: frame.id,
-        linkedPage: frame.linkedPage ?? undefined,
+        linkedPage: frame.linkedPage,
         ...buildParameters,
     })
 
