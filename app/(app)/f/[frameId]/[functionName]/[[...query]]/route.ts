@@ -1,6 +1,10 @@
 import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
-import type { FrameActionPayload, FrameActionPayloadValidated, FrameData } from '@/lib/farcaster'
+import type {
+    BuildFrameData,
+    FrameActionPayload,
+    FrameActionPayloadValidated,
+} from '@/lib/farcaster'
 import { updateFrameCalls, updateFrameState } from '@/lib/frame'
 import { buildFramePage, validatePayload } from '@/lib/serve'
 import type { BaseConfig, BaseState } from '@/lib/types'
@@ -26,7 +30,11 @@ export async function POST(
         }
     })
 
-    const frame = await client.select().from(frameTable).where(eq(frameTable.id, params.frameId)).get()
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(eq(frameTable.id, params.frameId))
+        .get()
 
     if (!frame) {
         notFound()
@@ -56,7 +64,7 @@ export async function POST(
             validatedData: validatedBody.action,
         })
     }
-	
+
     let buildParameters = {} as BuildFrameData
 
     try {
@@ -88,7 +96,8 @@ export async function POST(
     // no need to pass it back and forth in the future
     const { frame: renderedFrame, state: newState } = await buildFramePage({
         id: frame.id,
-        ...(buildParameters as FrameData),
+        linkedPage: frame.linkedPage,
+        ...(buildParameters as BuildFrameData),
     })
 
     if (newState) {

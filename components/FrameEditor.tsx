@@ -6,6 +6,7 @@ import {
     revertFrameConfig,
     updateFrameConfig,
     updateFrameName,
+    upsertFrameLinkedPage,
 } from '@/lib/frame'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
@@ -21,6 +22,8 @@ import MockOptions from './editor/MockOptions'
 import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
+import { Label } from './shadcn/InputLabel'
+import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
 
 export default function FrameEditor({
     frame,
@@ -34,6 +37,7 @@ export default function FrameEditor({
     const [editingName, setEditingName] = useState(false)
     const [temporaryName, setTemporaryName] = useState(frame.name)
     const [temporaryConfig, setTemporaryConfig] = useState(frame.draftConfig)
+    const [linkedPage, setLinkedPage] = useState<string | undefined>(frame.linkedPage ?? undefined)
 
     const [updating, setUpdating] = useState(false)
 
@@ -50,6 +54,17 @@ export default function FrameEditor({
         await revertFrameConfig(frame.id)
         setUpdating(false)
     }
+
+    const upsertLinkedPage = useDebouncedCallback(async (url: string | null) => {
+        if (url && url.split('.').length < 2) return
+        setUpdating(true)
+        await upsertFrameLinkedPage({
+            id: frame.id,
+            url,
+        })
+        setLinkedPage(url)
+        setUpdating(false)
+    }, 1500)
 
     const writeConfig = useDebouncedCallback(async (props: Record<string, any>) => {
         // const props = temporaryConfig
@@ -160,6 +175,56 @@ export default function FrameEditor({
                     {updating && (
                         <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
                     )}
+
+                    <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                            <TooltipTrigger asChild={true}>
+                                <Popover>
+                                    <PopoverTrigger asChild={true}>
+                                        <Button
+                                            variant="outline"
+                                            className="text-lg gap-2"
+                                            size={'lg'}
+                                        >
+                                            Linked Page
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-80">
+                                        <div className="grid gap-4">
+                                            <div className="space-y-2">
+                                                <h4 className="font-medium leading-none">
+                                                    Linked page
+                                                </h4>
+                                                <p className="text-sm text-muted-foreground">
+                                                    Link your Frame to an external web page
+                                                </p>
+                                            </div>
+                                            <div className="grid gap-2">
+                                                <div className="grid grid-cols-3 items-center gap-4">
+                                                    <Label className="w-full">Url</Label>
+                                                    <Input
+                                                        type="url"
+                                                        defaultValue={linkedPage}
+                                                        className="col-span-2 h-8"
+                                                        onChange={(e) =>
+                                                            upsertLinkedPage(
+                                                                e.target.value === ''
+                                                                    ? null
+                                                                    : e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-72 mr-8">
+                                <p>Redirected users to your own web page</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
 
                     {template.requiresValidation && (
                         <TooltipProvider delayDuration={0}>

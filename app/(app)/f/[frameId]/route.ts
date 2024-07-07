@@ -10,7 +10,11 @@ export const dynamicParams = true
 export const fetchCache = 'force-no-store'
 
 export async function GET(request: Request, { params }: { params: { frameId: string } }) {
-    const frame = await client.select().from(frameTable).where(eq(frameTable.id, params.frameId)).get()
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(eq(frameTable.id, params.frameId))
+        .get()
 
     if (!frame) {
         notFound()
@@ -26,7 +30,11 @@ export async function GET(request: Request, { params }: { params: { frameId: str
 
     const buildParameters = await initial(frame.config, frame.state)
 
-    const { frame: renderedFrame } = await buildFramePage({ id: frame.id, ...buildParameters })
+    const { frame: renderedFrame } = await buildFramePage({
+        id: frame.id,
+        linkedPage: frame.linkedPage,
+        ...buildParameters,
+    })
 
     return new Response(renderedFrame, {
         headers: {

@@ -23,10 +23,12 @@ export async function buildFramePage({
     component,
     image,
     functionName,
+    linkedPage,
 }: {
     id: string
+    linkedPage: string | null
 } & BuildFrameData) {
-    if (!component && !image) {
+    if (!(component || image)) {
         throw new Error('Either component or image must be provided')
     }
 
@@ -70,12 +72,15 @@ export async function buildFramePage({
         postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${functionName}` + '?' + searchParams,
     })
 
+    // if linkedPage is provided, create a <script> tag to redirect to the linked page
+
     const frame = `<html lang="en">
 	<head>
 		${Object.keys(metadata)
             .map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
             .join('\n')}
 		<title>🚂 FrameTrain</title>
+        ${linkedPage ? `<script>window.location.href = "${linkedPage}"</script>` : ''}
 	</head>
 	<body>
 		<h1>Hello from FrameTrain</h1>
