@@ -6,7 +6,7 @@ import {
     revertFrameConfig,
     updateFrameConfig,
     updateFrameName,
-    upsertFrameLinkedPage,
+    updateFrameLinkedPage,
 } from '@/lib/frame'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
@@ -55,13 +55,10 @@ export default function FrameEditor({
         setUpdating(false)
     }
 
-    const upsertLinkedPage = useDebouncedCallback(async (url: string | null) => {
+    const updateLinkedPage = useDebouncedCallback(async (url?: string) => {
         if (url && url.split('.').length < 2) return
         setUpdating(true)
-        await upsertFrameLinkedPage({
-            id: frame.id,
-            url,
-        })
+        await updateFrameLinkedPage(frame.id, url)
         setLinkedPage(url)
         setUpdating(false)
     }, 1500)
@@ -207,9 +204,9 @@ export default function FrameEditor({
                                                         defaultValue={linkedPage}
                                                         className="col-span-2 h-8"
                                                         onChange={(e) =>
-                                                            upsertLinkedPage(
+                                                            updateLinkedPage(
                                                                 e.target.value === ''
-                                                                    ? null
+                                                                    ? undefined
                                                                     : e.target.value
                                                             )
                                                         }

@@ -132,13 +132,7 @@ export async function publishFrameConfig(id: string) {
     revalidatePath(`/frame/${id}`)
 }
 
-export async function upsertFrameLinkedPage({
-    id,
-    url,
-}: {
-    id: string
-    url: string | null
-}) {
+export async function updateFrameLinkedPage(id: string, url?: string) {
     const sesh = await auth()
 
     if (!sesh?.user) {

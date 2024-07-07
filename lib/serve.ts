@@ -26,7 +26,7 @@ export async function buildFramePage({
     linkedPage,
 }: {
     id: string
-    linkedPage: string | null
+    linkedPage?: string
 } & BuildFrameData) {
     if (!(component || image)) {
         throw new Error('Either component or image must be provided')
