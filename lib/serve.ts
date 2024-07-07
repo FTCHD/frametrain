@@ -72,8 +72,6 @@ export async function buildFramePage({
         postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${functionName}` + '?' + searchParams,
     })
 
-    // if linkedPage is provided, create a <script> tag to redirect to the linked page
-
     const frame = `<html lang="en">
 	<head>
 		${Object.keys(metadata)
