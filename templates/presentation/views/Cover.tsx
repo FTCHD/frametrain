@@ -1,4 +1,4 @@
-import type { Slide } from '..'
+import type { Slide } from '../types'
 
 export default function CoverView(slide: Slide) {
     const title = slide?.title?.text
@@ -18,7 +18,7 @@ export default function CoverView(slide: Slide) {
     }
 
     /* Images */
-    if (slide?.image) {
+    if (slide?.image && slide.type === 'image') {
         background['backgroundImage'] = `url(${slide.image})`
         background['backgroundRepeat'] = 'no-repeat'
         background['backgroundSize'] = '100% 100%'
@@ -39,7 +39,7 @@ export default function CoverView(slide: Slide) {
                 ...background,
             }}
         >
-            {!slide.image && (
+            {(!slide.image || slide.type === 'text') && (
                 <div
                     style={{
                         width: '100%',

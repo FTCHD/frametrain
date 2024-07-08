@@ -1,5 +1,6 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
+import { Checkbox } from '@/components/shadcn/Checkbox'
 import { Input } from '@/components/shadcn/Input'
 import {
     Select,
@@ -13,35 +14,9 @@ import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
 import { type ChangeEvent, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import type { Config, Slide } from '.'
+import { type Config, type Slide, type CustomButtonType, PRESENTATION_DEFAULTS } from './types'
 
 type IImageTypes = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
-
-export const PRESENTATION_DEFAULTS: Config = {
-    slides: [
-        {
-            aspect: '1:1',
-            background: {
-                type: 'color',
-                value: 'linear-gradient(245deg, rgb(252,136,0), rgb(252,0,162))',
-            },
-            title: {
-                text: '',
-                color: '#1c1c1c',
-                weight: '700',
-                font: 'Inter',
-                style: 'normal',
-            },
-            content: {
-                text: '',
-                color: '#000000',
-                font: 'Roboto',
-                align: 'left',
-                weight: '400',
-            },
-        },
-    ],
-}
 
 export default function Inspector() {
     const uploadImage = useUploadImage()
@@ -194,7 +169,7 @@ export default function Inspector() {
                     }
 
                     /* Images */
-                    if (slide?.image) {
+                    if (slide?.image && slide.type === 'image') {
                         background['backgroundImage'] = `url(${slide.image})`
                         background['backgroundRepeat'] = 'no-repeat'
                         background['backgroundSize'] = '100% 100%'
@@ -210,7 +185,7 @@ export default function Inspector() {
                                 isCurrent ? 'outline outline-2 outline-blue-300' : 'outline-none'
                             }`}
                         >
-                            {slide?.image ? (
+                            {slide?.type === 'image' && slide.image && (
                                 <img
                                     src={slide.image}
                                     alt="Slide content"
@@ -218,7 +193,8 @@ export default function Inspector() {
                                     width={10}
                                     className="h-full w-full rounded-md"
                                 />
-                            ) : (
+                            )}
+                            {slide.type === 'text' && (content || title) && (
                                 <div className="flex flex-col gap-2">
                                     {title && (
                                         <h2
@@ -247,13 +223,12 @@ export default function Inspector() {
                                                 (content.length > 120 ? '...' : '')}
                                         </span>
                                     )}
-
-                                    {!content && !title && (
-                                        <span className="block -rotate-45 font-bold text-[#ffffff50] text-4xl">
-                                            EMPTY
-                                        </span>
-                                    )}
                                 </div>
+                            )}
+                            {!slide.image && !content && !title && (
+                                <span className="block -rotate-45 font-bold text-[#ffffff50] text-4xl">
+                                    EMPTY
+                                </span>
                             )}
                         </div>
                     )
@@ -277,6 +252,21 @@ export default function Inspector() {
 
             <h2 className="text-2xl font-bold">Cover</h2>
 
+            <h3 className="text-lg">Slide Type</h3>
+            <Select
+                key={'type-' + slide.ts}
+                defaultValue={slide.type || 'text'}
+                onValueChange={(type: 'text' | 'image') => updateSlide({ type })}
+            >
+                <SelectTrigger>
+                    <SelectValue placeholder="Text" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value={'text'}>Text</SelectItem>
+                    <SelectItem value={'image'}>Image</SelectItem>
+                </SelectContent>
+            </Select>
+
             <h3 className="text-lg">Aspect Ratio</h3>
             <Select
                 key={'aspect-' + slide.ts}
@@ -292,274 +282,453 @@ export default function Inspector() {
                 </SelectContent>
             </Select>
 
-            <h3 className="text-lg">Image</h3>
-            <div className="flex flex-col gap-5">
-                <label
-                    htmlFor="uploadFile"
-                    className="flex cursor-pointer items-center justify-center rounded-md py-1.5 px-2 text-md font-medium bg-border text-primary hover:bg-secondary-border"
-                >
-                    Upload a file
-                    <Input
-                        type="file"
-                        id="uploadFile"
-                        className="sr-only"
-                        accept="application/jpeg"
-                        onChange={async (e) => {
-                            const props = await getUploadImageProps(e)
-                            if (!props) toast.error('An error occured while uploading the image')
-
-                            let { filePath } = await uploadImage({
-                                base64String: props?.base64String as string,
-                                contentType: props?.contentType as IImageTypes,
-                            })
-
-                            filePath = `${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath}`
-
-                            updateSlide({ image: filePath })
+            {/* Buttons */}
+            <h3 className="text-lg">Buttons</h3>
+            <div className="p-2 border-input border-[1px] rounded-md bg-[#ffffff06]">
+                <div className="flex items-center gap-2 p-2">
+                    <Checkbox
+                        key={'buttons-checkbox-' + slide.ts}
+                        id="custom-button-checkbox"
+                        type="button"
+                        defaultChecked={typeof slide?.buttons === 'object'}
+                        onCheckedChange={(checked) => {
+                            updateSlide({ buttons: checked ? [] : undefined })
                         }}
                     />
-                </label>
-            </div>
-            <div className="flex flex-col">
-                <div className="flex flex-row justify-between items-center">
-                    <h3 className="text-lg font-semibold">Uploaded Images</h3>
-                    {loading && <LoaderIcon className="animate-spin" />}
+                    <label htmlFor="custom-button-checkbox">
+                        Use custom buttons for this slide
+                    </label>
                 </div>
-                <div className="flex flex-row flex-wrap gap-4 mt-2">
-                    {slide?.image ? (
-                        <img
-                            key={slide.image}
-                            src={slide.image}
-                            width={200}
-                            height={200}
-                            alt="Slider item"
-                            className="rounded-md"
+
+                {typeof slide?.buttons === 'object' && (
+                    <div className="flex flex-col gap-2 mt-4">
+                        {slide?.buttons?.map((button, i) => {
+                            return (
+                                <div key={`btn-${i}-${slide.ts}`}>
+                                    <div className="flex items-center gap-2 rounded-md p-2 border-input border-[1px]">
+                                        <Select
+                                            key={`btn-type-${i}-${slide.ts}`}
+                                            defaultValue={button.type}
+                                            onValueChange={(type: CustomButtonType) => {
+                                                const buttons = JSON.parse(
+                                                    JSON.stringify(slide.buttons)
+                                                ) // Deep copy
+                                                buttons[i] = { type }
+                                                updateSlide({ buttons })
+                                            }}
+                                        >
+                                            <SelectTrigger className="w-32 bg-transparent">
+                                                <SelectValue placeholder="Type" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value={'navigate'}>Navigate</SelectItem>
+                                                <SelectItem value={'link'}>Link</SelectItem>
+                                                <SelectItem value={'mint'}>Mint</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+
+                                        <Input
+                                            key={`btn-text-${i}-${slide.ts}`}
+                                            className="text-lg flex-1 h-10"
+                                            placeholder="Button Text"
+                                            defaultValue={button?.text}
+                                            onBlur={(e) => {
+                                                const buttons = JSON.parse(
+                                                    JSON.stringify(slide.buttons)
+                                                ) // Deep copy
+                                                buttons[i] = { ...buttons[i], text: e.target.value }
+                                                updateSlide({ buttons })
+                                            }}
+                                        />
+
+                                        <Button
+                                            className="flex items-center h-10 w-10 text-2xl text-white"
+                                            variant="destructive"
+                                            onClick={() => {
+                                                const buttons = JSON.parse(
+                                                    JSON.stringify(slide.buttons)
+                                                ) // Deep copy
+                                                buttons.splice(i, 1)
+                                                updateSlide({ buttons })
+                                            }}
+                                        >
+                                            -
+                                        </Button>
+                                    </div>
+                                    {button.type === 'navigate' && (
+                                        <Input
+                                            type="number"
+                                            min={1}
+                                            max={config.slides.length}
+                                            key={`btn-navigate-${i}-${slide.ts}`}
+                                            className="text-lg flex-1 h-10"
+                                            placeholder={`Slide Number (1-${config.slides.length})`}
+                                            defaultValue={button?.slideID ? button.slideID + 1 : 1}
+                                            onBlur={(e) => {
+                                                const buttons = JSON.parse(
+                                                    JSON.stringify(slide.buttons)
+                                                ) // Deep copy
+                                                buttons[i] = {
+                                                    ...buttons[i],
+                                                    slideID: Number.parseInt(e.target.value) - 1,
+                                                }
+                                                updateSlide({ buttons })
+                                            }}
+                                        />
+                                    )}
+                                    {button.type === 'link' && (
+                                        <Input
+                                            key={`btn-link-${i}-${slide.ts}`}
+                                            className="text-lg flex-1 h-10"
+                                            placeholder="Link"
+                                            defaultValue={button?.link || ''}
+                                            onBlur={(e) => {
+                                                const buttons = JSON.parse(
+                                                    JSON.stringify(slide.buttons)
+                                                ) // Deep copy
+                                                buttons[i] = { ...buttons[i], link: e.target.value }
+                                                updateSlide({ buttons })
+                                            }}
+                                        />
+                                    )}
+                                    {button.type === 'mint' && (
+                                        <Input
+                                            key={`btn-link-${i}-${slide.ts}`}
+                                            className="text-lg flex-1 h-10"
+                                            placeholder="Zora NFT ID"
+                                            defaultValue={button?.nftID || ''}
+                                            onBlur={(e) => {
+                                                const buttons = JSON.parse(
+                                                    JSON.stringify(slide.buttons)
+                                                ) // Deep copy
+                                                buttons[i] = {
+                                                    ...buttons[i],
+                                                    nftID: e.target.value,
+                                                }
+                                                updateSlide({ buttons })
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                            )
+                        })}
+                        {slide.buttons.length < 4 && (
+                            <Button
+                                className="flex items-center w-full p-3 bg-[#ffffff10] text-3xl text-gray-300 hover:bg-[#ffffff15]"
+                                onClick={() => {
+                                    const defaultButtonType =
+                                        config.slides.length > 0 ? 'navigate' : 'mint'
+
+                                    const options =
+                                        defaultButtonType === 'navigate'
+                                            ? {
+                                                  text: slideIndex === 0 ? '→' : '←',
+                                                  slideID:
+                                                      slideIndex === 0
+                                                          ? slideIndex + 1
+                                                          : slideIndex - 1,
+                                              }
+                                            : {
+                                                  text: 'Mint NFT',
+                                                  nftID: '',
+                                              }
+
+                                    updateSlide({
+                                        buttons: [
+                                            ...(slide?.buttons || []),
+                                            {
+                                                type: defaultButtonType,
+                                                ...options,
+                                            },
+                                        ],
+                                    })
+                                }}
+                            >
+                                +
+                            </Button>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {slide?.type === 'image' ? (
+                <>
+                    <h3 className="text-lg">Image</h3>
+                    <div className="flex flex-col gap-5">
+                        <label
+                            htmlFor="uploadFile"
+                            className="flex cursor-pointer items-center justify-center rounded-md py-1.5 px-2 text-md font-medium bg-border text-primary hover:bg-secondary-border"
+                        >
+                            Upload a file
+                            <Input
+                                type="file"
+                                id="uploadFile"
+                                className="sr-only"
+                                accept="application/jpeg"
+                                onChange={async (e) => {
+                                    const props = await getUploadImageProps(e)
+                                    if (!props)
+                                        toast.error('An error occured while uploading the image')
+
+                                    let { filePath } = await uploadImage({
+                                        base64String: props?.base64String as string,
+                                        contentType: props?.contentType as IImageTypes,
+                                    })
+
+                                    filePath = `${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath}`
+
+                                    updateSlide({ image: filePath })
+                                }}
+                            />
+                        </label>
+                    </div>
+                    <div className="flex flex-col">
+                        <div className="flex flex-row justify-between items-center">
+                            <h3 className="text-lg font-semibold">Uploaded Images</h3>
+                            {loading && <LoaderIcon className="animate-spin" />}
+                        </div>
+                        <div className="flex flex-row flex-wrap gap-4 mt-2">
+                            {slide?.image ? (
+                                <img
+                                    key={slide.image}
+                                    src={slide.image}
+                                    width={200}
+                                    height={200}
+                                    alt="Slider item"
+                                    className="rounded-md"
+                                />
+                            ) : (
+                                <p>There are no images yet</p>
+                            )}
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-4">
+                        {/* Title */}
+                        <h3 className="text-lg">Title</h3>
+                        <Input
+                            key={'t-' + slide.ts}
+                            className="text-lg"
+                            placeholder="Title"
+                            defaultValue={slide?.title?.text}
+                            onBlur={(e) => {
+                                updateSlide({
+                                    title: {
+                                        ...slide?.title,
+                                        text: e.target.value,
+                                    },
+                                })
+                            }}
                         />
-                    ) : (
-                        <p>There are no images yet</p>
-                    )}
+
+                        <h3 className="text-lg">Title Color</h3>
+                        <ColorPicker
+                            key={'tc-' + slide.ts}
+                            className="w-full"
+                            background={
+                                slide?.title?.color || PRESENTATION_DEFAULTS.slides[0].title!.color
+                            }
+                            setBackground={(value: string) =>
+                                updateSlide({
+                                    title: {
+                                        ...slide?.title,
+                                        color: value,
+                                    },
+                                })
+                            }
+                        />
+
+                        <h3 className="text-lg">Title Font</h3>
+                        <FontFamilyPicker
+                            key={'tf-' + slide.ts}
+                            defaultValue={
+                                slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
+                            }
+                            onSelect={(font) => {
+                                updateSlide({
+                                    title: {
+                                        ...slide?.title,
+                                        font,
+                                    },
+                                })
+                            }}
+                        />
+
+                        <h3 className="text-lg">Title Weight</h3>
+                        <FontWeightPicker
+                            key={'tw-' + slide.ts}
+                            currentFont={
+                                slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
+                            }
+                            defaultValue={
+                                slide?.title?.weight ||
+                                PRESENTATION_DEFAULTS.slides[0].title!.weight
+                            }
+                            onSelect={(weight: string) => {
+                                updateSlide({
+                                    title: {
+                                        ...slide?.title,
+                                        weight,
+                                    },
+                                })
+                            }}
+                        />
+
+                        <h3 className="text-lg">Title Style</h3>
+                        <FontStylePicker
+                            key={'ts-' + slide.ts}
+                            currentFont={
+                                slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
+                            }
+                            defaultValue={
+                                slide?.title?.style || PRESENTATION_DEFAULTS.slides[0].title!.style
+                            }
+                            onSelect={(style: string) =>
+                                updateSlide({
+                                    title: {
+                                        ...slide?.title,
+                                        style,
+                                    },
+                                })
+                            }
+                        />
+
+                        {/* Content */}
+                        <h3 className="text-lg">Content</h3>
+
+                        <textarea
+                            key={'c-' + slide.ts}
+                            defaultValue={slide?.content?.text || ''}
+                            placeholder="Your content"
+                            onBlur={(e) => {
+                                updateSlide({
+                                    content: {
+                                        ...slide?.content,
+                                        text: e.target.value,
+                                    },
+                                })
+                            }}
+                            className="text-lg p-2 border-input border-[1px] rounded-md bg-transparent resize-y min-h-[184px]"
+                        />
+
+                        <h3 className="text-lg">Content Color</h3>
+                        <ColorPicker
+                            key={'cc-' + slide.ts}
+                            className="w-full"
+                            background={
+                                slide?.content?.color ||
+                                PRESENTATION_DEFAULTS.slides[0].content!.color
+                            }
+                            setBackground={(value: string) =>
+                                updateSlide({
+                                    content: {
+                                        ...slide?.content,
+                                        color: value,
+                                    },
+                                })
+                            }
+                        />
+
+                        <h3 className="text-lg">Content Font</h3>
+                        <FontFamilyPicker
+                            key={'cf-' + slide.ts}
+                            defaultValue={
+                                slide?.content?.font ||
+                                PRESENTATION_DEFAULTS.slides[0].content!.font
+                            }
+                            onSelect={(font) => {
+                                updateSlide({
+                                    content: {
+                                        ...slide?.content,
+                                        font,
+                                    },
+                                })
+                            }}
+                        />
+
+                        <h3 className="text-lg">Content Weight</h3>
+                        <FontWeightPicker
+                            key={'cw-' + slide.ts}
+                            currentFont={
+                                slide?.content?.font ||
+                                PRESENTATION_DEFAULTS.slides[0].content!.font
+                            }
+                            defaultValue={
+                                slide?.content?.weight ||
+                                PRESENTATION_DEFAULTS.slides[0].content!.weight
+                            }
+                            onSelect={(weight: string) => {
+                                updateSlide({
+                                    content: {
+                                        ...slide?.content,
+                                        weight,
+                                    },
+                                })
+                            }}
+                        />
+
+                        <h3 className="text-lg">Align Content</h3>
+                        <Select
+                            key={'ca-' + slide.ts}
+                            defaultValue={
+                                slide?.content?.align ||
+                                PRESENTATION_DEFAULTS.slides[0].content!.align
+                            }
+                            onValueChange={(value: 'left' | 'center' | 'right') =>
+                                updateSlide({
+                                    content: {
+                                        ...slide?.content,
+                                        align: value,
+                                    },
+                                })
+                            }
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Left" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value={'left'}>Left</SelectItem>
+                                <SelectItem value={'center'}>Center</SelectItem>
+                                <SelectItem value={'right'}>Right</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <h3 className="text-lg">Background</h3>
+                        <ColorPicker
+                            key={'bg-' + slide.ts}
+                            enabledPickers={['solid', 'gradient', 'image']}
+                            className="w-full"
+                            background={
+                                slide?.background?.value ||
+                                PRESENTATION_DEFAULTS.slides[0].background.value
+                            }
+                            setBackground={(value: string) =>
+                                updateSlide({
+                                    background: {
+                                        type: value.includes('url') ? 'image' : 'color',
+                                        value,
+                                    },
+                                })
+                            }
+                            uploadBackground={async (base64String, contentType) => {
+                                const { filePath } = await uploadImage({
+                                    base64String: base64String,
+                                    contentType: contentType,
+                                })
+                                updateSlide({
+                                    background: {
+                                        type: 'image',
+                                        value: filePath,
+                                    },
+                                })
+                                return filePath
+                            }}
+                        />
+                    </div>
                 </div>
-            </div>
-
-            <div className="flex flex-col gap-5">
-                <div className="flex flex-col gap-2">
-                    {/* Title */}
-                    <h3 className="text-lg">Title</h3>
-                    <Input
-                        key={'t-' + slide.ts}
-                        className="text-lg"
-                        placeholder="Title"
-                        defaultValue={slide?.title?.text}
-                        onBlur={(e) => {
-                            updateSlide({
-                                title: {
-                                    ...slide?.title,
-                                    text: e.target.value,
-                                },
-                            })
-                        }}
-                    />
-
-                    <h3 className="text-lg">Title Color</h3>
-                    <ColorPicker
-                        key={'tc-' + slide.ts}
-                        className="w-full"
-                        background={
-                            slide?.title?.color || PRESENTATION_DEFAULTS.slides[0].title!.color
-                        }
-                        setBackground={(value: string) =>
-                            updateSlide({
-                                title: {
-                                    ...slide?.title,
-                                    color: value,
-                                },
-                            })
-                        }
-                    />
-
-                    <h3 className="text-lg">Title Font</h3>
-                    <FontFamilyPicker
-                        key={'tf-' + slide.ts}
-                        defaultValue={
-                            slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
-                        }
-                        onSelect={(font) => {
-                            updateSlide({
-                                title: {
-                                    ...slide?.title,
-                                    font,
-                                },
-                            })
-                        }}
-                    />
-
-                    <h3 className="text-lg">Title Weight</h3>
-                    <FontWeightPicker
-                        key={'tw-' + slide.ts}
-                        currentFont={
-                            slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
-                        }
-                        defaultValue={
-                            slide?.title?.weight || PRESENTATION_DEFAULTS.slides[0].title!.weight
-                        }
-                        onSelect={(weight: string) => {
-                            updateSlide({
-                                title: {
-                                    ...slide?.title,
-                                    weight,
-                                },
-                            })
-                        }}
-                    />
-
-                    <h3 className="text-lg">Title Style</h3>
-                    <FontStylePicker
-                        key={'ts-' + slide.ts}
-                        currentFont={
-                            slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
-                        }
-                        defaultValue={
-                            slide?.title?.style || PRESENTATION_DEFAULTS.slides[0].title!.style
-                        }
-                        onSelect={(style: string) =>
-                            updateSlide({
-                                title: {
-                                    ...slide?.title,
-                                    style,
-                                },
-                            })
-                        }
-                    />
-
-                    {/* Content */}
-                    <h3 className="text-lg">Content</h3>
-
-                    <textarea
-                        key={'c-' + slide.ts}
-                        defaultValue={slide?.content?.text || ''}
-                        placeholder="Your content"
-                        onBlur={(e) => {
-                            updateSlide({
-                                content: {
-                                    ...slide?.content,
-                                    text: e.target.value,
-                                },
-                            })
-                        }}
-                        className="text-lg p-2 border-input border-[1px] rounded-md bg-transparent resize-y min-h-[184px]"
-                    />
-
-                    <h3 className="text-lg">Content Color</h3>
-                    <ColorPicker
-                        key={'cc-' + slide.ts}
-                        className="w-full"
-                        background={
-                            slide?.content?.color || PRESENTATION_DEFAULTS.slides[0].content!.color
-                        }
-                        setBackground={(value: string) =>
-                            updateSlide({
-                                content: {
-                                    ...slide?.content,
-                                    color: value,
-                                },
-                            })
-                        }
-                    />
-
-                    <h3 className="text-lg">Content Font</h3>
-                    <FontFamilyPicker
-                        key={'cf-' + slide.ts}
-                        defaultValue={
-                            slide?.content?.font || PRESENTATION_DEFAULTS.slides[0].content!.font
-                        }
-                        onSelect={(font) => {
-                            updateSlide({
-                                content: {
-                                    ...slide?.content,
-                                    font,
-                                },
-                            })
-                        }}
-                    />
-
-                    <h3 className="text-lg">Content Weight</h3>
-                    <FontWeightPicker
-                        key={'cw-' + slide.ts}
-                        currentFont={
-                            slide?.content?.font || PRESENTATION_DEFAULTS.slides[0].content!.font
-                        }
-                        defaultValue={
-                            slide?.content?.weight ||
-                            PRESENTATION_DEFAULTS.slides[0].content!.weight
-                        }
-                        onSelect={(weight: string) => {
-                            updateSlide({
-                                content: {
-                                    ...slide?.content,
-                                    weight,
-                                },
-                            })
-                        }}
-                    />
-
-                    <h3 className="text-lg">Align Content</h3>
-                    <Select
-                        key={'ca-' + slide.ts}
-                        defaultValue={
-                            slide?.content?.align || PRESENTATION_DEFAULTS.slides[0].content!.align
-                        }
-                        onValueChange={(value: 'left' | 'center' | 'right') =>
-                            updateSlide({
-                                content: {
-                                    ...slide?.content,
-                                    align: value,
-                                },
-                            })
-                        }
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Left" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value={'left'}>Left</SelectItem>
-                            <SelectItem value={'center'}>Center</SelectItem>
-                            <SelectItem value={'right'}>Right</SelectItem>
-                        </SelectContent>
-                    </Select>
-
-                    <h3 className="text-lg">Background</h3>
-                    <ColorPicker
-                        key={'bg-' + slide.ts}
-                        enabledPickers={['solid', 'gradient', 'image']}
-                        className="w-full"
-                        background={
-                            slide?.background?.value ||
-                            PRESENTATION_DEFAULTS.slides[0].background.value
-                        }
-                        setBackground={(value: string) =>
-                            updateSlide({
-                                background: {
-                                    type: value.includes('url') ? 'image' : 'color',
-                                    value,
-                                },
-                            })
-                        }
-                        uploadBackground={async (base64String, contentType) => {
-                            const { filePath } = await uploadImage({
-                                base64String: base64String,
-                                contentType: contentType,
-                            })
-                            updateSlide({
-                                background: {
-                                    type: 'image',
-                                    value: filePath,
-                                },
-                            })
-                            return filePath
-                        }}
-                    />
-                </div>
-            </div>
+            )}
         </div>
     )
 }
