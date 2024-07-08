@@ -1,6 +1,5 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
-import { Checkbox } from '@/components/shadcn/Checkbox'
 import { Input } from '@/components/shadcn/Input'
 import {
     Select,
@@ -11,10 +10,10 @@ import {
 } from '@/components/shadcn/Select'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { LoaderIcon } from 'lucide-react'
-import { type ChangeEvent, useEffect, useState } from 'react'
+import { LoaderIcon, Trash2 } from 'lucide-react'
+import { type ChangeEvent, useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
-import { type Config, type Slide, type CustomButtonType, PRESENTATION_DEFAULTS } from './types'
+import { type Config, type CustomButtonType, PRESENTATION_DEFAULTS, type Slide } from './types'
 
 type IImageTypes = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
 
@@ -28,13 +27,11 @@ export default function Inspector() {
     const [loading, setLoading] = useState(false)
 
     // Slide states
-    // There's a timestampt to keep track of input keys
-    // When a slide gets deleted, we need to be sure new form element doesn't have the key of an deleted element
-    const [slide, setSlide] = useState<Slide & { ts: number }>({
-        ...PRESENTATION_DEFAULTS.slides[0],
-        ts: Date.now(),
-    })
-    const [slideIndex, setSlideIndex] = useState(0)
+    const [currentSlideIndex, setSlideIndex] = useState(0)
+
+    const slide = useMemo(() => {
+        return config.slides[currentSlideIndex] //|| PRESENTATION_DEFAULTS.slides[0]
+    }, [config, currentSlideIndex])
 
     /* USE-EFFECTs */
     // Apply default presentation if no slide has left
@@ -42,22 +39,13 @@ export default function Inspector() {
         if (!config?.slides?.length) updateConfig(PRESENTATION_DEFAULTS)
     }, [config, updateConfig])
 
-    // Update current slide if slide index changes
-    useEffect(() => {
-        if (config?.slides?.length) setSlide({ ...config.slides[slideIndex], ts: Date.now() })
-    }, [config, slideIndex])
-
     /* FUNCTIONs */
     function updateSlide(data: any): void {
-        const newSlides = [
-            ...config.slides.slice(0, slideIndex),
-            {
-                ...PRESENTATION_DEFAULTS.slides[0],
-                ...config.slides[slideIndex],
-                ...data,
-            },
-            ...(config.slides.slice(slideIndex + 1, config.slides.length) || []),
-        ]
+        const newSlides = config.slides.with(currentSlideIndex, {
+            ...PRESENTATION_DEFAULTS.slides[0],
+            ...config.slides[currentSlideIndex],
+            ...data,
+        })
 
         updateConfig({ slides: newSlides })
     }
@@ -67,20 +55,27 @@ export default function Inspector() {
         const slides = [...config.slides]
 
         if (direction === 'left') {
-            if (slideIndex === 0) return
+            if (currentSlideIndex === 0) return
 
-            slides[slideIndex] = { ...slides[slideIndex - 1] }
-            slides[slideIndex - 1] = og
+            slides[currentSlideIndex] = { ...slides[currentSlideIndex - 1] }
+            slides[currentSlideIndex - 1] = og
             setSlideIndex((s) => s - 1)
         } else {
-            if (slideIndex === slides.length - 1) return
+            if (currentSlideIndex === slides.length - 1) return
 
-            slides[slideIndex] = { ...slides[slideIndex + 1] }
-            slides[slideIndex + 1] = og
+            slides[currentSlideIndex] = { ...slides[currentSlideIndex + 1] }
+            slides[currentSlideIndex + 1] = og
             setSlideIndex((s) => s + 1)
         }
 
         updateConfig({ slides })
+    }
+
+    function updateButtonTarget(newTarget: string, index: number): void {
+        const newButtons = slide.buttons.map((b, buttonIndex) =>
+            buttonIndex === index ? { ...b, target: newTarget } : b
+        )
+        updateSlide({ buttons: newButtons })
     }
 
     async function getUploadImageProps(
@@ -109,7 +104,7 @@ export default function Inspector() {
     }
 
     return (
-        <div className="w-full h-full space-y-4">
+        <div className="flex flex-col gap-5 w-full h-full">
             <p>
                 This template allows you to split your long content into slides and customize the
                 background, font, and title.
@@ -120,31 +115,48 @@ export default function Inspector() {
                 <h2 className="text-2xl font-bold">Slides</h2>
 
                 {/* Slide Buttons */}
-                <div className="flex items-center justify-end gap-2">
-                    <button
-                        type="button"
-                        onClick={() => swapSlide('left')}
-                        disabled={slideIndex === 0}
-                        className="text-xl flex items-center justify-center h-10 w-10 border-input border-[1px] rounded-md cursor-pointer bg-[#ffffff10] disabled:cursor-default disabled:text-gray-500"
-                    >
-                        &lt;
-                    </button>
-                    <button
-                        type="button"
+                <div className="flex flex-row items-center justify-end gap-2">
+                    <Button onClick={() => swapSlide('left')} disabled={currentSlideIndex === 0}>
+                        &lt; Move left
+                    </Button>
+                    <Button
                         onClick={() => swapSlide('right')}
-                        disabled={slideIndex === config?.slides?.length - 1}
-                        className="text-xl flex items-center justify-center h-10 w-10 border-input border-[1px] rounded-md cursor-pointer bg-[#ffffff10] disabled:cursor-default disabled:text-gray-500"
+                        disabled={currentSlideIndex === config?.slides?.length - 1}
                     >
-                        &gt;
-                    </button>
+                        Move right &gt;
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        disabled={config?.slides?.length < 2}
+                        onClick={() => {
+                            const newSlides = config.slides
+                            newSlides.splice(currentSlideIndex, 1)
+                            setSlideIndex((c) => Math.max(0, c - 1))
+                            updateConfig({ slides: newSlides })
+                        }}
+                    >
+                        <Trash2 />
+                    </Button>
                 </div>
             </div>
             <div className="flex flex-wrap gap-3">
                 <div
                     onClick={() => {
                         updateConfig({
-                            slides: [...config.slides, PRESENTATION_DEFAULTS.slides[0]],
+                            slides: config.slides.concat([
+                                {
+                                    ...PRESENTATION_DEFAULTS.slides[0],
+                                    buttons: [
+                                        {
+                                            type: 'navigate',
+                                            label: 'Back',
+                                            target: (config.slides.length - 1).toString(),
+                                        },
+                                    ],
+                                },
+                            ]),
                         })
+
                         setSlideIndex((config?.slides || []).length)
                     }}
                     className="w-40 h-40 flex items-center justify-center p-2 border-input border-[1px] rounded-md cursor-pointer"
@@ -153,7 +165,7 @@ export default function Inspector() {
                 </div>
 
                 {config.slides?.map((slide: Slide, i: number) => {
-                    const isCurrent = i === slideIndex
+                    const isCurrent = i === currentSlideIndex
                     const content = slide?.content?.text
                     const title = slide?.title?.text
 
@@ -172,6 +184,7 @@ export default function Inspector() {
                     if (slide?.image && slide.type === 'image') {
                         background['backgroundImage'] = `url(${slide.image})`
                         background['backgroundRepeat'] = 'no-repeat'
+                        //! check this
                         background['backgroundSize'] = '100% 100%'
                         background['backgroundPosition'] = 'center'
                     }
@@ -235,31 +248,15 @@ export default function Inspector() {
                 })}
             </div>
 
-            {config.slides?.length > 0 && (
-                <Button
-                    className="mt-2 w-1/2"
-                    variant="destructive"
-                    onClick={() => {
-                        const slidesArr = config.slides
-                        slidesArr.splice(slideIndex, 1)
-                        setSlideIndex((c) => Math.max(0, c - 1))
-                        updateConfig({ slides: slidesArr })
-                    }}
-                >
-                    Remove Slide
-                </Button>
-            )}
+            <h2 className="text-2xl font-bold">Current Slide</h2>
 
-            <h2 className="text-2xl font-bold">Cover</h2>
-
-            <h3 className="text-lg">Slide Type</h3>
+            <h2 className="text-lg font-semibold">Type</h2>
             <Select
-                key={'type-' + slide.ts}
                 defaultValue={slide.type || 'text'}
                 onValueChange={(type: 'text' | 'image') => updateSlide({ type })}
             >
                 <SelectTrigger>
-                    <SelectValue placeholder="Text" />
+                    <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value={'text'}>Text</SelectItem>
@@ -267,11 +264,12 @@ export default function Inspector() {
                 </SelectContent>
             </Select>
 
-            <h3 className="text-lg">Aspect Ratio</h3>
+            <h2 className="text-lg font-semibold">Aspect Ratio</h2>
             <Select
-                key={'aspect-' + slide.ts}
-                defaultValue={slide.aspect || '1:1'}
-                onValueChange={(value: '1:1' | '1.91:1') => updateSlide({ aspect: value })}
+                defaultValue={slide.aspectRatio || '1:1'}
+                onValueChange={(value: typeof slide.aspectRatio) =>
+                    updateSlide({ aspectRatio: value })
+                }
             >
                 <SelectTrigger>
                     <SelectValue placeholder="1:1" />
@@ -282,178 +280,190 @@ export default function Inspector() {
                 </SelectContent>
             </Select>
 
-            {/* Buttons */}
-            <h3 className="text-lg">Buttons</h3>
-            <div className="p-2 border-input border-[1px] rounded-md bg-[#ffffff06]">
-                <div className="flex items-center gap-2 p-2">
-                    <Checkbox
-                        key={'buttons-checkbox-' + slide.ts}
-                        id="custom-button-checkbox"
-                        type="button"
-                        defaultChecked={typeof slide?.buttons === 'object'}
-                        onCheckedChange={(checked) => {
-                            updateSlide({ buttons: checked ? [] : undefined })
+            {slide?.type === 'text' && (
+                <>
+                    <h2 className="text-lg font-semibold">Background</h2>
+                    <ColorPicker
+                        enabledPickers={['solid', 'gradient', 'image']}
+                        className="w-full"
+                        background={
+                            slide?.background?.value ||
+                            PRESENTATION_DEFAULTS.slides[0].background.value
+                        }
+                        setBackground={(value: string) =>
+                            updateSlide({
+                                background: {
+                                    type: value.includes('url') ? 'image' : 'color',
+                                    value,
+                                },
+                            })
+                        }
+                        uploadBackground={async (base64String, contentType) => {
+                            const { filePath } = await uploadImage({
+                                base64String: base64String,
+                                contentType: contentType,
+                            })
+                            updateSlide({
+                                background: {
+                                    type: 'image',
+                                    value: filePath,
+                                },
+                            })
+                            return filePath
                         }}
                     />
-                    <label htmlFor="custom-button-checkbox">
-                        Use custom buttons for this slide
-                    </label>
-                </div>
+                </>
+            )}
 
-                {typeof slide?.buttons === 'object' && (
-                    <div className="flex flex-col gap-2 mt-4">
-                        {slide?.buttons?.map((button, i) => {
-                            return (
-                                <div key={`btn-${i}-${slide.ts}`}>
-                                    <div className="flex items-center gap-2 rounded-md p-2 border-input border-[1px]">
-                                        <Select
-                                            key={`btn-type-${i}-${slide.ts}`}
-                                            defaultValue={button.type}
-                                            onValueChange={(type: CustomButtonType) => {
-                                                const buttons = JSON.parse(
-                                                    JSON.stringify(slide.buttons)
-                                                ) // Deep copy
-                                                buttons[i] = { type }
-                                                updateSlide({ buttons })
-                                            }}
-                                        >
-                                            <SelectTrigger className="w-32 bg-transparent">
-                                                <SelectValue placeholder="Type" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value={'navigate'}>Navigate</SelectItem>
-                                                <SelectItem value={'link'}>Link</SelectItem>
-                                                <SelectItem value={'mint'}>Mint</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+            {slide?.type === 'image' && (
+                <>
+                    <h2 className="text-lg font-semibold">Object Fit</h2>
+                    <Select
+                        defaultValue={slide.objectFit || 'fill'}
+                        onValueChange={(value: typeof slide.objectFit) =>
+                            updateSlide({ objectFit: value })
+                        }
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="1:1" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value={'fill'}>Fill</SelectItem>
+                            <SelectItem value={'contain'}>Contain</SelectItem>
+                            <SelectItem value={'cover'}>Cover</SelectItem>
+                            <SelectItem value={'none'}>None</SelectItem>
+                            <SelectItem value={'scale-down'}>Scale Down</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </>
+            )}
 
-                                        <Input
-                                            key={`btn-text-${i}-${slide.ts}`}
-                                            className="text-lg flex-1 h-10"
-                                            placeholder="Button Text"
-                                            defaultValue={button?.text}
-                                            onBlur={(e) => {
-                                                const buttons = JSON.parse(
-                                                    JSON.stringify(slide.buttons)
-                                                ) // Deep copy
-                                                buttons[i] = { ...buttons[i], text: e.target.value }
-                                                updateSlide({ buttons })
-                                            }}
-                                        />
-
-                                        <Button
-                                            className="flex items-center h-10 w-10 text-2xl text-white"
-                                            variant="destructive"
-                                            onClick={() => {
-                                                const buttons = JSON.parse(
-                                                    JSON.stringify(slide.buttons)
-                                                ) // Deep copy
-                                                buttons.splice(i, 1)
-                                                updateSlide({ buttons })
-                                            }}
-                                        >
-                                            -
-                                        </Button>
-                                    </div>
-                                    {button.type === 'navigate' && (
-                                        <Input
-                                            type="number"
-                                            min={1}
-                                            max={config.slides.length}
-                                            key={`btn-navigate-${i}-${slide.ts}`}
-                                            className="text-lg flex-1 h-10"
-                                            placeholder={`Slide Number (1-${config.slides.length})`}
-                                            defaultValue={button?.slideID ? button.slideID + 1 : 1}
-                                            onBlur={(e) => {
-                                                const buttons = JSON.parse(
-                                                    JSON.stringify(slide.buttons)
-                                                ) // Deep copy
-                                                buttons[i] = {
-                                                    ...buttons[i],
-                                                    slideID: Number.parseInt(e.target.value) - 1,
+            {/* Buttons */}
+            <h2 className="text-lg font-semibold">Buttons</h2>
+            <div className="flex flex-col gap-3">
+                {slide?.buttons?.map((button, i) => {
+                    return (
+                        <div key={currentSlideIndex} className="flex flex-col gap-1">
+                            <div className="flex flex-row items-center gap-2">
+                                <Select
+                                    defaultValue={button.type}
+                                    onValueChange={(type: CustomButtonType) => {
+                                        const newButtons = slide.buttons.map((b, j) => {
+                                            if (i === j) {
+                                                return {
+                                                    ...b,
+                                                    type: type,
+                                                    target: '',
                                                 }
-                                                updateSlide({ buttons })
-                                            }}
-                                        />
-                                    )}
-                                    {button.type === 'link' && (
-                                        <Input
-                                            key={`btn-link-${i}-${slide.ts}`}
-                                            className="text-lg flex-1 h-10"
-                                            placeholder="Link"
-                                            defaultValue={button?.link || ''}
-                                            onBlur={(e) => {
-                                                const buttons = JSON.parse(
-                                                    JSON.stringify(slide.buttons)
-                                                ) // Deep copy
-                                                buttons[i] = { ...buttons[i], link: e.target.value }
-                                                updateSlide({ buttons })
-                                            }}
-                                        />
-                                    )}
-                                    {button.type === 'mint' && (
-                                        <Input
-                                            key={`btn-link-${i}-${slide.ts}`}
-                                            className="text-lg flex-1 h-10"
-                                            placeholder="Zora NFT ID"
-                                            defaultValue={button?.nftID || ''}
-                                            onBlur={(e) => {
-                                                const buttons = JSON.parse(
-                                                    JSON.stringify(slide.buttons)
-                                                ) // Deep copy
-                                                buttons[i] = {
-                                                    ...buttons[i],
-                                                    nftID: e.target.value,
+                                            }
+                                            return b
+                                        })
+                                        updateSlide({ buttons: newButtons })
+                                    }}
+                                >
+                                    <SelectTrigger className="w-32 bg-transparent">
+                                        <SelectValue placeholder="Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value={'navigate'}>Navigate</SelectItem>
+                                        <SelectItem value={'link'}>Link</SelectItem>
+                                        <SelectItem value={'mint'}>Mint</SelectItem>
+                                    </SelectContent>
+                                </Select>
+
+                                <Input
+                                    className="text-lg flex-1 h-10"
+                                    placeholder="Button Text"
+                                    defaultValue={button?.label}
+                                    onBlur={(e) => {
+                                        const newButtons = slide.buttons.map((b, index) => {
+                                            if (index === i) {
+                                                return {
+                                                    ...b,
+                                                    label: e.target.value,
                                                 }
-                                                updateSlide({ buttons })
-                                            }}
-                                        />
-                                    )}
-                                </div>
-                            )
-                        })}
-                        {slide.buttons.length < 4 && (
-                            <Button
-                                className="flex items-center w-full p-3 bg-[#ffffff10] text-3xl text-gray-300 hover:bg-[#ffffff15]"
-                                onClick={() => {
-                                    const defaultButtonType =
-                                        config.slides.length > 0 ? 'navigate' : 'mint'
+                                            }
+                                            return b
+                                        })
+                                        updateSlide({ buttons: newButtons })
+                                    }}
+                                />
 
-                                    const options =
-                                        defaultButtonType === 'navigate'
-                                            ? {
-                                                  text: slideIndex === 0 ? '→' : '←',
-                                                  slideID:
-                                                      slideIndex === 0
-                                                          ? slideIndex + 1
-                                                          : slideIndex - 1,
-                                              }
-                                            : {
-                                                  text: 'Mint NFT',
-                                                  nftID: '',
-                                              }
+                                {button.type === 'navigate' && (
+                                    <Select
+                                        defaultValue={button?.target || ''}
+                                        onValueChange={(v) => updateButtonTarget(v, i)}
+                                    >
+                                        <SelectTrigger className="flex-1">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {config.slides.map((_, slideIndex) => (
+                                                <SelectItem
+                                                    disabled={slideIndex === currentSlideIndex}
+                                                    key={slideIndex}
+                                                    value={slideIndex.toString()}
+                                                >
+                                                    Slide #{slideIndex + 1}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                )}
 
-                                    updateSlide({
-                                        buttons: [
-                                            ...(slide?.buttons || []),
-                                            {
-                                                type: defaultButtonType,
-                                                ...options,
-                                            },
-                                        ],
-                                    })
-                                }}
-                            >
-                                +
-                            </Button>
-                        )}
-                    </div>
+                                {['link', 'mint'].includes(button.type) && (
+                                    <Input
+                                        className="text-lg flex-1 h-10"
+                                        placeholder={
+                                            button.type === 'link' ? 'Link' : 'Zora NFT ID'
+                                        }
+                                        defaultValue={button?.target || ''}
+                                        onBlur={(e) => updateButtonTarget(e.target.value, i)}
+                                    />
+                                )}
+
+                                {slide.buttons.length > 1 && (
+                                    <Button
+                                        className="flex items-center h-10 w-10 text-2xl text-white"
+                                        variant="destructive"
+                                        onClick={() => {
+                                            const newButtons = slide.buttons.filter(
+                                                (_, index) => index !== i
+                                            )
+                                            updateSlide({ buttons: newButtons })
+                                        }}
+                                    >
+                                        -
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    )
+                })}
+                {(slide?.buttons?.length || 0 < 4) && (
+                    <Button
+                        className="flex items-center w-full p-3 bg-[#ffffff10] text-3xl text-gray-300 hover:bg-[#ffffff15]"
+                        onClick={() => {
+                            updateSlide({
+                                buttons: [
+                                    ...(slide?.buttons || []),
+                                    {
+                                        type: 'navigate',
+                                        label: 'Go',
+                                        target: config.slides.length.toString(),
+                                    },
+                                ],
+                            })
+                        }}
+                    >
+                        +
+                    </Button>
                 )}
             </div>
 
             {slide?.type === 'image' ? (
                 <>
-                    <h3 className="text-lg">Image</h3>
+                    <h2 className="text-lg font-semibold">Image</h2>
                     <div className="flex flex-col gap-5">
                         <label
                             htmlFor="uploadFile"
@@ -490,7 +500,6 @@ export default function Inspector() {
                         <div className="flex flex-row flex-wrap gap-4 mt-2">
                             {slide?.image ? (
                                 <img
-                                    key={slide.image}
                                     src={slide.image}
                                     width={200}
                                     height={200}
@@ -507,9 +516,8 @@ export default function Inspector() {
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-4">
                         {/* Title */}
-                        <h3 className="text-lg">Title</h3>
+                        <h2 className="text-lg font-semibold">Title</h2>
                         <Input
-                            key={'t-' + slide.ts}
                             className="text-lg"
                             placeholder="Title"
                             defaultValue={slide?.title?.text}
@@ -523,9 +531,8 @@ export default function Inspector() {
                             }}
                         />
 
-                        <h3 className="text-lg">Title Color</h3>
+                        <h2 className="text-lg font-semibold">Title Color</h2>
                         <ColorPicker
-                            key={'tc-' + slide.ts}
                             className="w-full"
                             background={
                                 slide?.title?.color || PRESENTATION_DEFAULTS.slides[0].title!.color
@@ -540,9 +547,8 @@ export default function Inspector() {
                             }
                         />
 
-                        <h3 className="text-lg">Title Font</h3>
+                        <h2 className="text-lg font-semibold">Title Font</h2>
                         <FontFamilyPicker
-                            key={'tf-' + slide.ts}
                             defaultValue={
                                 slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
                             }
@@ -556,9 +562,8 @@ export default function Inspector() {
                             }}
                         />
 
-                        <h3 className="text-lg">Title Weight</h3>
+                        <h2 className="text-lg font-semibold">Title Weight</h2>
                         <FontWeightPicker
-                            key={'tw-' + slide.ts}
                             currentFont={
                                 slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
                             }
@@ -576,9 +581,8 @@ export default function Inspector() {
                             }}
                         />
 
-                        <h3 className="text-lg">Title Style</h3>
+                        <h2 className="text-lg font-semibold">Title Style</h2>
                         <FontStylePicker
-                            key={'ts-' + slide.ts}
                             currentFont={
                                 slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
                             }
@@ -596,10 +600,9 @@ export default function Inspector() {
                         />
 
                         {/* Content */}
-                        <h3 className="text-lg">Content</h3>
+                        <h2 className="text-lg font-semibold">Content</h2>
 
                         <textarea
-                            key={'c-' + slide.ts}
                             defaultValue={slide?.content?.text || ''}
                             placeholder="Your content"
                             onBlur={(e) => {
@@ -613,9 +616,8 @@ export default function Inspector() {
                             className="text-lg p-2 border-input border-[1px] rounded-md bg-transparent resize-y min-h-[184px]"
                         />
 
-                        <h3 className="text-lg">Content Color</h3>
+                        <h2 className="text-lg font-semibold">Content Color</h2>
                         <ColorPicker
-                            key={'cc-' + slide.ts}
                             className="w-full"
                             background={
                                 slide?.content?.color ||
@@ -631,9 +633,8 @@ export default function Inspector() {
                             }
                         />
 
-                        <h3 className="text-lg">Content Font</h3>
+                        <h2 className="text-lg font-semibold">Content Font</h2>
                         <FontFamilyPicker
-                            key={'cf-' + slide.ts}
                             defaultValue={
                                 slide?.content?.font ||
                                 PRESENTATION_DEFAULTS.slides[0].content!.font
@@ -648,9 +649,8 @@ export default function Inspector() {
                             }}
                         />
 
-                        <h3 className="text-lg">Content Weight</h3>
+                        <h2 className="text-lg font-semibold">Content Weight</h2>
                         <FontWeightPicker
-                            key={'cw-' + slide.ts}
                             currentFont={
                                 slide?.content?.font ||
                                 PRESENTATION_DEFAULTS.slides[0].content!.font
@@ -669,9 +669,8 @@ export default function Inspector() {
                             }}
                         />
 
-                        <h3 className="text-lg">Align Content</h3>
+                        <h2 className="text-lg font-semibold">Content Align</h2>
                         <Select
-                            key={'ca-' + slide.ts}
                             defaultValue={
                                 slide?.content?.align ||
                                 PRESENTATION_DEFAULTS.slides[0].content!.align
@@ -694,38 +693,6 @@ export default function Inspector() {
                                 <SelectItem value={'right'}>Right</SelectItem>
                             </SelectContent>
                         </Select>
-
-                        <h3 className="text-lg">Background</h3>
-                        <ColorPicker
-                            key={'bg-' + slide.ts}
-                            enabledPickers={['solid', 'gradient', 'image']}
-                            className="w-full"
-                            background={
-                                slide?.background?.value ||
-                                PRESENTATION_DEFAULTS.slides[0].background.value
-                            }
-                            setBackground={(value: string) =>
-                                updateSlide({
-                                    background: {
-                                        type: value.includes('url') ? 'image' : 'color',
-                                        value,
-                                    },
-                                })
-                            }
-                            uploadBackground={async (base64String, contentType) => {
-                                const { filePath } = await uploadImage({
-                                    base64String: base64String,
-                                    contentType: contentType,
-                                })
-                                updateSlide({
-                                    background: {
-                                        type: 'image',
-                                        value: filePath,
-                                    },
-                                })
-                                return filePath
-                            }}
-                        />
                     </div>
                 </div>
             )}

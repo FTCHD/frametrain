@@ -1,10 +1,11 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import CoverView from '../views/Cover'
-import { renderCustomButtons } from './initial'
-import type { Config } from '../types'
+import { FrameError } from '@/sdk/handlers'
 import type { State } from '..'
+import type { Config } from '../types'
+import { renderCustomButtons } from '../utils'
+import CoverView from '../views/Cover'
 
 export default async function page(
     body: FrameActionPayload,
@@ -12,65 +13,35 @@ export default async function page(
     state: State,
     params: any
 ): Promise<BuildFrameData> {
-    const clickedButton = body?.untrustedData?.buttonIndex
+    const buttonIndex = body?.untrustedData?.buttonIndex
 
-    /* Pagination */
-    const maxPage = Math.max(config.slides.length, 1)
-    let buttons: FrameButtonMetadata[] = []
+    const currentPage: number = params?.page ? Number(params.page) : 0
 
-    let currentPage: number
-    let newPage: number
+    const clickedButton = config.slides[currentPage].buttons![buttonIndex - 1]
 
-    if (params?.page) currentPage = Number(params.page)
-    else currentPage = 0
-
-    newPage = currentPage
-    const customButton = config.slides[currentPage]?.['buttons']?.[clickedButton - 1]
-
-    // Update page for pagination button click
-    if (!customButton) {
-        // Next Page
-        if (clickedButton === 2) newPage += 1
-        // Next Page
-        else if (clickedButton === 1 && currentPage === 0) newPage += 1
-        // Previous Page
-        else if (clickedButton === 1 && currentPage === maxPage - 1) newPage -= 1
-        // Previous Page
-        else if (clickedButton === 1) newPage -= 1
+    if (!clickedButton.target) {
+        throw new FrameError('Invalid slide')
     }
 
-    // A custom navigate button is clicked
-    // We have to find which custom button is clicked and where it navigates
-    else if (customButton?.slideID) {
-        newPage = Math.max(Math.min(customButton.slideID, config.slides.length), 0)
-    }
+    const slideIndex = Number.parseInt(clickedButton.target)
 
-    const contentFont = await loadGoogleFontAllVariants(
-        config.slides[newPage].content?.font || 'Roboto'
-    )
-    const titleFont = await loadGoogleFontAllVariants(config.slides[newPage].title?.font || 'Inter')
-
-    if (!config.slides[newPage]?.['buttons']) {
-        if (newPage > 0) {
-            buttons.push({
-                label: '←',
-            })
-        }
-        if (newPage < maxPage - 1) {
-            buttons.push({
-                label: '→',
-            })
-        }
-    } else {
-        buttons = await renderCustomButtons(config.slides[newPage]['buttons']!)
+    if (slideIndex > config.slides.length - 1) {
+        throw new FrameError('Invalid slide')
     }
+	
+    const slide = config.slides[slideIndex]
+
+	const contentFont = await loadGoogleFontAllVariants(slide.content?.font || 'Roboto')
+    const titleFont = await loadGoogleFontAllVariants(slide.title?.font || 'Inter')
+
+    const buttons = await renderCustomButtons(slide['buttons']!)
 
     return {
         buttons,
         fonts: [...contentFont, ...titleFont],
-        aspectRatio: config.slides[newPage].aspect || '1:1',
-        component: CoverView(config.slides[newPage]),
+        aspectRatio: slide.aspectRatio || '1:1',
+        component: CoverView(slide),
         functionName: 'page',
-        params: { page: newPage },
+        params: { page: slideIndex },
     }
 }

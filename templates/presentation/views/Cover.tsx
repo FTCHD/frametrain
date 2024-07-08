@@ -21,7 +21,7 @@ export default function CoverView(slide: Slide) {
     if (slide?.image && slide.type === 'image') {
         background['backgroundImage'] = `url(${slide.image})`
         background['backgroundRepeat'] = 'no-repeat'
-        background['backgroundSize'] = '100% 100%'
+        background['backgroundSize'] = slide.objectFit
         background['backgroundPosition'] = 'center'
     }
 
@@ -75,7 +75,7 @@ export default function CoverView(slide: Slide) {
                                 display: 'block',
                                 whiteSpace: 'pre-wrap',
                                 wordBreak: 'break-word',
-                                fontSize: slide?.aspect === '1:1' ? '20px' : '30px',
+                                fontSize: slide?.aspectRatio === '1:1' ? '20px' : '30px',
                                 padding: '20px',
                             }}
                         >

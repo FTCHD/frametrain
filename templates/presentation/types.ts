@@ -4,14 +4,13 @@ export type BackgroundType = 'color' | 'gradient' | 'image'
 export type CustomButtonType = 'navigate' | 'link' | 'mint'
 export type CustomButtons = Array<{
     type: CustomButtonType
-    text?: string
-    link?: string
-    nftID?: string
-    slideID?: number
+    label: string
+    target: string
 }>
 export interface Slide {
     type: 'text' | 'image'
-    aspect: '1:1' | '1.91:1'
+    aspectRatio: '1:1' | '1.91:1'
+    objectFit: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down'
     background: {
         type: BackgroundType
         value: string
@@ -31,7 +30,7 @@ export interface Slide {
         weight: string
         align: 'left' | 'center' | 'right'
     }
-    buttons?: CustomButtons
+    buttons: CustomButtons
 }
 
 export interface Config extends BaseConfig {
@@ -42,7 +41,8 @@ export const PRESENTATION_DEFAULTS: Config = {
     slides: [
         {
             type: 'text',
-            aspect: '1:1',
+            aspectRatio: '1:1',
+            objectFit: 'fill',
             background: {
                 type: 'color',
                 value: 'linear-gradient(245deg, rgb(252,136,0), rgb(252,0,162))',
@@ -61,6 +61,13 @@ export const PRESENTATION_DEFAULTS: Config = {
                 align: 'left',
                 weight: '400',
             },
+            buttons: [
+                {
+                    type: 'navigate',
+                    label: 'Navigate',
+                    target: '1',
+                },
+            ],
         },
     ],
 }
