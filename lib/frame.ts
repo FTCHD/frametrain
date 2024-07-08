@@ -132,6 +132,32 @@ export async function publishFrameConfig(id: string) {
     revalidatePath(`/frame/${id}`)
 }
 
+export async function updateFrameLinkedPage(id: string, url?: string) {
+    const sesh = await auth()
+
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .get()
+
+    if (!frame) {
+        notFound()
+    }
+
+    await client
+        .update(frameTable)
+        .set({ linkedPage: url })
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .run()
+
+    revalidatePath(`/frame/${id}`)
+}
+
 export async function revertFrameConfig(id: string) {
     const sesh = await auth()
 
@@ -163,7 +189,11 @@ export async function updateFrameState(id: string, state: any) {
 }
 
 export async function updateFrameCalls(id: string, calls: number) {
-    await client.update(frameTable).set({ currentMonthCalls: calls }).where(eq(frameTable.id, id)).run()
+    await client
+        .update(frameTable)
+        .set({ currentMonthCalls: calls })
+        .where(eq(frameTable.id, id))
+        .run()
 }
 
 export async function updateFramePreview(id: string, preview: string) {

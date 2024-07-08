@@ -12,6 +12,7 @@ export const frameTable = sqliteTable('frame', {
         .$defaultFn(() => createId()),
     owner: text('owner').notNull(),
     name: text('name').notNull(),
+    linkedPage: text('linkedPage'),
     description: text('description').notNull().default('This is my Frame, forged on Frametrain.'),
     template: text('template').notNull().$type<keyof typeof templates>(),
     state: text('state', { mode: 'json' }).default('{}').$type<BaseState>(),
