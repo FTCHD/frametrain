@@ -1,3 +1,4 @@
+'use server'
 import type { FontStyle, FontWeight } from 'satori'
 
 export async function loadGoogleFont(
@@ -89,16938 +90,8506 @@ export async function loadGoogleFontAllVariants(
 
 // https://raw.githubusercontent.com/fontsource/font-files/main/metadata/google-fonts-v2.json
 // https://github.com/datalogix/google-fonts-helper/blob/main/src/google-fonts-metadata.ts
-export const googleFonts = [
-    {
-        "id":"abeezee",
-        "name":"ABeeZee",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"abel",
-        "name":"Abel",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"abhaya-libre",
-        "name":"Abhaya Libre",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"aboreto",
-        "name":"Aboreto",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"abril-fatface",
-        "name":"Abril Fatface",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"abyssinica-sil",
-        "name":"Abyssinica SIL",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"aclonica",
-        "name":"Aclonica",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"acme",
-        "name":"Acme",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"actor",
-        "name":"Actor",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"adamina",
-        "name":"Adamina",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"adlam-display",
-        "name":"ADLaM Display",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"advent-pro",
-        "name":"Advent Pro",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"afacad",
-        "name":"Afacad",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"agbalumo",
-        "name":"Agbalumo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"agdasima",
-        "name":"Agdasima",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"aguafina-script",
-        "name":"Aguafina Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"akatab",
-        "name":"Akatab",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"akaya-kanadaka",
-        "name":"Akaya Kanadaka",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"akaya-telivigala",
-        "name":"Akaya Telivigala",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"akronim",
-        "name":"Akronim",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"akshar",
-        "name":"Akshar",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"aladin",
-        "name":"Aladin",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alata",
-        "name":"Alata",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alatsi",
-        "name":"Alatsi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"albert-sans",
-        "name":"Albert Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"aldrich",
-        "name":"Aldrich",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alef",
-        "name":"Alef",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alegreya",
-        "name":"Alegreya",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"alegreya-sans",
-        "name":"Alegreya Sans",
-        "weights":[
-            100,
-            300,
-            400,
-            500,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"alegreya-sans-sc",
-        "name":"Alegreya Sans SC",
-        "weights":[
-            100,
-            300,
-            400,
-            500,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"alegreya-sc",
-        "name":"Alegreya SC",
-        "weights":[
-            400,
-            500,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"aleo",
-        "name":"Aleo",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"alex-brush",
-        "name":"Alex Brush",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alexandria",
-        "name":"Alexandria",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alfa-slab-one",
-        "name":"Alfa Slab One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alice",
-        "name":"Alice",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alike",
-        "name":"Alike",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alike-angular",
-        "name":"Alike Angular",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alkalami",
-        "name":"Alkalami",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alkatra",
-        "name":"Alkatra",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"allan",
-        "name":"Allan",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"allerta",
-        "name":"Allerta",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"allerta-stencil",
-        "name":"Allerta Stencil",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"allison",
-        "name":"Allison",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"allura",
-        "name":"Allura",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"almarai",
-        "name":"Almarai",
-        "weights":[
-            300,
-            400,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"almendra",
-        "name":"Almendra",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"almendra-display",
-        "name":"Almendra Display",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"almendra-sc",
-        "name":"Almendra SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"alumni-sans",
-        "name":"Alumni Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"alumni-sans-collegiate-one",
-        "name":"Alumni Sans Collegiate One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"alumni-sans-inline-one",
-        "name":"Alumni Sans Inline One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"alumni-sans-pinstripe",
-        "name":"Alumni Sans Pinstripe",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"amarante",
-        "name":"Amarante",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"amaranth",
-        "name":"Amaranth",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"amatic-sc",
-        "name":"Amatic SC",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"amethysta",
-        "name":"Amethysta",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"amiko",
-        "name":"Amiko",
-        "weights":[
-            400,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"amiri",
-        "name":"Amiri",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"amiri-quran",
-        "name":"Amiri Quran",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"amita",
-        "name":"Amita",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anaheim",
-        "name":"Anaheim",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"andada-pro",
-        "name":"Andada Pro",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"andika",
-        "name":"Andika",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"anek-bangla",
-        "name":"Anek Bangla",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anek-devanagari",
-        "name":"Anek Devanagari",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anek-gujarati",
-        "name":"Anek Gujarati",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anek-gurmukhi",
-        "name":"Anek Gurmukhi",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anek-kannada",
-        "name":"Anek Kannada",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anek-latin",
-        "name":"Anek Latin",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anek-malayalam",
-        "name":"Anek Malayalam",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anek-odia",
-        "name":"Anek Odia",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anek-tamil",
-        "name":"Anek Tamil",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anek-telugu",
-        "name":"Anek Telugu",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"angkor",
-        "name":"Angkor",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"annapurna-sil",
-        "name":"Annapurna SIL",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"annie-use-your-telescope",
-        "name":"Annie Use Your Telescope",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anonymous-pro",
-        "name":"Anonymous Pro",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"anta",
-        "name":"Anta",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"antic",
-        "name":"Antic",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"antic-didone",
-        "name":"Antic Didone",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"antic-slab",
-        "name":"Antic Slab",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anton",
-        "name":"Anton",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"antonio",
-        "name":"Antonio",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anuphan",
-        "name":"Anuphan",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"anybody",
-        "name":"Anybody",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"aoboshi-one",
-        "name":"Aoboshi One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ar-one-sans",
-        "name":"AR One Sans",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"arapey",
-        "name":"Arapey",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"arbutus",
-        "name":"Arbutus",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"arbutus-slab",
-        "name":"Arbutus Slab",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"architects-daughter",
-        "name":"Architects Daughter",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"archivo",
-        "name":"Archivo",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"archivo-black",
-        "name":"Archivo Black",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"archivo-narrow",
-        "name":"Archivo Narrow",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"are-you-serious",
-        "name":"Are You Serious",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"aref-ruqaa",
-        "name":"Aref Ruqaa",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"aref-ruqaa-ink",
-        "name":"Aref Ruqaa Ink",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"arima",
-        "name":"Arima",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"arimo",
-        "name":"Arimo",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"arizonia",
-        "name":"Arizonia",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"armata",
-        "name":"Armata",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"arsenal",
-        "name":"Arsenal",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"artifika",
-        "name":"Artifika",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"arvo",
-        "name":"Arvo",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"arya",
-        "name":"Arya",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"asap",
-        "name":"Asap",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"asap-condensed",
-        "name":"Asap Condensed",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"asar",
-        "name":"Asar",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"asset",
-        "name":"Asset",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"assistant",
-        "name":"Assistant",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"astloch",
-        "name":"Astloch",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"asul",
-        "name":"Asul",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"athiti",
-        "name":"Athiti",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"atkinson-hyperlegible",
-        "name":"Atkinson Hyperlegible",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"atma",
-        "name":"Atma",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"atomic-age",
-        "name":"Atomic Age",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"aubrey",
-        "name":"Aubrey",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"audiowide",
-        "name":"Audiowide",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"autour-one",
-        "name":"Autour One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"average",
-        "name":"Average",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"average-sans",
-        "name":"Average Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"averia-gruesa-libre",
-        "name":"Averia Gruesa Libre",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"averia-libre",
-        "name":"Averia Libre",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"averia-sans-libre",
-        "name":"Averia Sans Libre",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"averia-serif-libre",
-        "name":"Averia Serif Libre",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"azeret-mono",
-        "name":"Azeret Mono",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"b612",
-        "name":"B612",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"b612-mono",
-        "name":"B612 Mono",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"babylonica",
-        "name":"Babylonica",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bacasime-antique",
-        "name":"Bacasime Antique",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bad-script",
-        "name":"Bad Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bagel-fat-one",
-        "name":"Bagel Fat One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bahiana",
-        "name":"Bahiana",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bahianita",
-        "name":"Bahianita",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bai-jamjuree",
-        "name":"Bai Jamjuree",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"bakbak-one",
-        "name":"Bakbak One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ballet",
-        "name":"Ballet",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baloo-2",
-        "name":"Baloo 2",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baloo-bhai-2",
-        "name":"Baloo Bhai 2",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baloo-bhaijaan-2",
-        "name":"Baloo Bhaijaan 2",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baloo-bhaina-2",
-        "name":"Baloo Bhaina 2",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baloo-chettan-2",
-        "name":"Baloo Chettan 2",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baloo-da-2",
-        "name":"Baloo Da 2",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baloo-paaji-2",
-        "name":"Baloo Paaji 2",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baloo-tamma-2",
-        "name":"Baloo Tamma 2",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baloo-tammudu-2",
-        "name":"Baloo Tammudu 2",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baloo-thambi-2",
-        "name":"Baloo Thambi 2",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"balsamiq-sans",
-        "name":"Balsamiq Sans",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"balthazar",
-        "name":"Balthazar",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bangers",
-        "name":"Bangers",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"barlow",
-        "name":"Barlow",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"barlow-condensed",
-        "name":"Barlow Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"barlow-semi-condensed",
-        "name":"Barlow Semi Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"barriecito",
-        "name":"Barriecito",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"barrio",
-        "name":"Barrio",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"basic",
-        "name":"Basic",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baskervville",
-        "name":"Baskervville",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"battambang",
-        "name":"Battambang",
-        "weights":[
-            100,
-            300,
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"baumans",
-        "name":"Baumans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bayon",
-        "name":"Bayon",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"be-vietnam-pro",
-        "name":"Be Vietnam Pro",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"beau-rivage",
-        "name":"Beau Rivage",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bebas-neue",
-        "name":"Bebas Neue",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"belanosima",
-        "name":"Belanosima",
-        "weights":[
-            400,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"belgrano",
-        "name":"Belgrano",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bellefair",
-        "name":"Bellefair",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"belleza",
-        "name":"Belleza",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bellota",
-        "name":"Bellota",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"bellota-text",
-        "name":"Bellota Text",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"benchnine",
-        "name":"BenchNine",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"benne",
-        "name":"Benne",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bentham",
-        "name":"Bentham",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"berkshire-swash",
-        "name":"Berkshire Swash",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"besley",
-        "name":"Besley",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"beth-ellen",
-        "name":"Beth Ellen",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bevan",
-        "name":"Bevan",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"bhutuka-expanded-one",
-        "name":"BhuTuka Expanded One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"big-shoulders-display",
-        "name":"Big Shoulders Display",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"big-shoulders-inline-display",
-        "name":"Big Shoulders Inline Display",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"big-shoulders-inline-text",
-        "name":"Big Shoulders Inline Text",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"big-shoulders-stencil-display",
-        "name":"Big Shoulders Stencil Display",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"big-shoulders-stencil-text",
-        "name":"Big Shoulders Stencil Text",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"big-shoulders-text",
-        "name":"Big Shoulders Text",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bigelow-rules",
-        "name":"Bigelow Rules",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bigshot-one",
-        "name":"Bigshot One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bilbo",
-        "name":"Bilbo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bilbo-swash-caps",
-        "name":"Bilbo Swash Caps",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"biorhyme",
-        "name":"BioRhyme",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"biorhyme-expanded",
-        "name":"BioRhyme Expanded",
-        "weights":[
-            200,
-            300,
-            400,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"birthstone",
-        "name":"Birthstone",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"birthstone-bounce",
-        "name":"Birthstone Bounce",
-        "weights":[
-            400,
-            500
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"biryani",
-        "name":"Biryani",
-        "weights":[
-            200,
-            300,
-            400,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bitter",
-        "name":"Bitter",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"biz-udgothic",
-        "name":"BIZ UDGothic",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"biz-udmincho",
-        "name":"BIZ UDMincho",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"biz-udpgothic",
-        "name":"BIZ UDPGothic",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"biz-udpmincho",
-        "name":"BIZ UDPMincho",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"black-and-white-picture",
-        "name":"Black And White Picture",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"black-han-sans",
-        "name":"Black Han Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"black-ops-one",
-        "name":"Black Ops One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"blaka",
-        "name":"Blaka",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"blaka-hollow",
-        "name":"Blaka Hollow",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"blaka-ink",
-        "name":"Blaka Ink",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"blinker",
-        "name":"Blinker",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bodoni-moda",
-        "name":"Bodoni Moda",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"bokor",
-        "name":"Bokor",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bona-nova",
-        "name":"Bona Nova",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"bonbon",
-        "name":"Bonbon",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bonheur-royale",
-        "name":"Bonheur Royale",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"boogaloo",
-        "name":"Boogaloo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"borel",
-        "name":"Borel",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bowlby-one",
-        "name":"Bowlby One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bowlby-one-sc",
-        "name":"Bowlby One SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"braah-one",
-        "name":"Braah One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"brawler",
-        "name":"Brawler",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bree-serif",
-        "name":"Bree Serif",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bricolage-grotesque",
-        "name":"Bricolage Grotesque",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bruno-ace",
-        "name":"Bruno Ace",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bruno-ace-sc",
-        "name":"Bruno Ace SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"brygada-1918",
-        "name":"Brygada 1918",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"bubblegum-sans",
-        "name":"Bubblegum Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bubbler-one",
-        "name":"Bubbler One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"buda",
-        "name":"Buda",
-        "weights":[
-            300
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"buenard",
-        "name":"Buenard",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bungee",
-        "name":"Bungee",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bungee-hairline",
-        "name":"Bungee Hairline",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bungee-inline",
-        "name":"Bungee Inline",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bungee-outline",
-        "name":"Bungee Outline",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bungee-shade",
-        "name":"Bungee Shade",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"bungee-spice",
-        "name":"Bungee Spice",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"butcherman",
-        "name":"Butcherman",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"butterfly-kids",
-        "name":"Butterfly Kids",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cabin",
-        "name":"Cabin",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"cabin-condensed",
-        "name":"Cabin Condensed",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cabin-sketch",
-        "name":"Cabin Sketch",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"caesar-dressing",
-        "name":"Caesar Dressing",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cagliostro",
-        "name":"Cagliostro",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cairo",
-        "name":"Cairo",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cairo-play",
-        "name":"Cairo Play",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"caladea",
-        "name":"Caladea",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"calistoga",
-        "name":"Calistoga",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"calligraffitti",
-        "name":"Calligraffitti",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cambay",
-        "name":"Cambay",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"cambo",
-        "name":"Cambo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"candal",
-        "name":"Candal",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cantarell",
-        "name":"Cantarell",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"cantata-one",
-        "name":"Cantata One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cantora-one",
-        "name":"Cantora One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"caprasimo",
-        "name":"Caprasimo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"capriola",
-        "name":"Capriola",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"caramel",
-        "name":"Caramel",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"carattere",
-        "name":"Carattere",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cardo",
-        "name":"Cardo",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"carlito",
-        "name":"Carlito",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"carme",
-        "name":"Carme",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"carrois-gothic",
-        "name":"Carrois Gothic",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"carrois-gothic-sc",
-        "name":"Carrois Gothic SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"carter-one",
-        "name":"Carter One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"castoro",
-        "name":"Castoro",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"castoro-titling",
-        "name":"Castoro Titling",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"catamaran",
-        "name":"Catamaran",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"caudex",
-        "name":"Caudex",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"caveat",
-        "name":"Caveat",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"caveat-brush",
-        "name":"Caveat Brush",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cedarville-cursive",
-        "name":"Cedarville Cursive",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ceviche-one",
-        "name":"Ceviche One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"chakra-petch",
-        "name":"Chakra Petch",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"changa",
-        "name":"Changa",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"changa-one",
-        "name":"Changa One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"chango",
-        "name":"Chango",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"charis-sil",
-        "name":"Charis SIL",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"charm",
-        "name":"Charm",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"charmonman",
-        "name":"Charmonman",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"chathura",
-        "name":"Chathura",
-        "weights":[
-            100,
-            300,
-            400,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"chau-philomene-one",
-        "name":"Chau Philomene One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"chela-one",
-        "name":"Chela One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"chelsea-market",
-        "name":"Chelsea Market",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"chenla",
-        "name":"Chenla",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cherish",
-        "name":"Cherish",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cherry-bomb-one",
-        "name":"Cherry Bomb One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cherry-cream-soda",
-        "name":"Cherry Cream Soda",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cherry-swash",
-        "name":"Cherry Swash",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"chewy",
-        "name":"Chewy",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"chicle",
-        "name":"Chicle",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"chilanka",
-        "name":"Chilanka",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"chivo",
-        "name":"Chivo",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"chivo-mono",
-        "name":"Chivo Mono",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"chokokutai",
-        "name":"Chokokutai",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"chonburi",
-        "name":"Chonburi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cinzel",
-        "name":"Cinzel",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cinzel-decorative",
-        "name":"Cinzel Decorative",
-        "weights":[
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"clicker-script",
-        "name":"Clicker Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"climate-crisis",
-        "name":"Climate Crisis",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"coda",
-        "name":"Coda",
-        "weights":[
-            400,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"codystar",
-        "name":"Codystar",
-        "weights":[
-            300,
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"coiny",
-        "name":"Coiny",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"combo",
-        "name":"Combo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"comfortaa",
-        "name":"Comfortaa",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"comforter",
-        "name":"Comforter",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"comforter-brush",
-        "name":"Comforter Brush",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"comic-neue",
-        "name":"Comic Neue",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"coming-soon",
-        "name":"Coming Soon",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"comme",
-        "name":"Comme",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"commissioner",
-        "name":"Commissioner",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"concert-one",
-        "name":"Concert One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"condiment",
-        "name":"Condiment",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"content",
-        "name":"Content",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"contrail-one",
-        "name":"Contrail One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"convergence",
-        "name":"Convergence",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cookie",
-        "name":"Cookie",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"copse",
-        "name":"Copse",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"corben",
-        "name":"Corben",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"corinthia",
-        "name":"Corinthia",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cormorant",
-        "name":"Cormorant",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"cormorant-garamond",
-        "name":"Cormorant Garamond",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"cormorant-infant",
-        "name":"Cormorant Infant",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"cormorant-sc",
-        "name":"Cormorant SC",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cormorant-unicase",
-        "name":"Cormorant Unicase",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cormorant-upright",
-        "name":"Cormorant Upright",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"courgette",
-        "name":"Courgette",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"courier-prime",
-        "name":"Courier Prime",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"cousine",
-        "name":"Cousine",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"coustard",
-        "name":"Coustard",
-        "weights":[
-            400,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"covered-by-your-grace",
-        "name":"Covered By Your Grace",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"crafty-girls",
-        "name":"Crafty Girls",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"creepster",
-        "name":"Creepster",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"crete-round",
-        "name":"Crete Round",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"crimson-pro",
-        "name":"Crimson Pro",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"crimson-text",
-        "name":"Crimson Text",
-        "weights":[
-            400,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"croissant-one",
-        "name":"Croissant One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"crushed",
-        "name":"Crushed",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cuprum",
-        "name":"Cuprum",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"cute-font",
-        "name":"Cute Font",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cutive",
-        "name":"Cutive",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"cutive-mono",
-        "name":"Cutive Mono",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dai-banna-sil",
-        "name":"Dai Banna SIL",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"damion",
-        "name":"Damion",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dancing-script",
-        "name":"Dancing Script",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dangrek",
-        "name":"Dangrek",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"darker-grotesque",
-        "name":"Darker Grotesque",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"darumadrop-one",
-        "name":"Darumadrop One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"david-libre",
-        "name":"David Libre",
-        "weights":[
-            400,
-            500,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dawning-of-a-new-day",
-        "name":"Dawning of a New Day",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"days-one",
-        "name":"Days One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dekko",
-        "name":"Dekko",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dela-gothic-one",
-        "name":"Dela Gothic One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"delicious-handrawn",
-        "name":"Delicious Handrawn",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"delius",
-        "name":"Delius",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"delius-swash-caps",
-        "name":"Delius Swash Caps",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"delius-unicase",
-        "name":"Delius Unicase",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"della-respira",
-        "name":"Della Respira",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"denk-one",
-        "name":"Denk One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"devonshire",
-        "name":"Devonshire",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dhurjati",
-        "name":"Dhurjati",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"didact-gothic",
-        "name":"Didact Gothic",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"diphylleia",
-        "name":"Diphylleia",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"diplomata",
-        "name":"Diplomata",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"diplomata-sc",
-        "name":"Diplomata SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dm-mono",
-        "name":"DM Mono",
-        "weights":[
-            300,
-            400,
-            500
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"dm-sans",
-        "name":"DM Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"dm-serif-display",
-        "name":"DM Serif Display",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"dm-serif-text",
-        "name":"DM Serif Text",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"do-hyeon",
-        "name":"Do Hyeon",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dokdo",
-        "name":"Dokdo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"domine",
-        "name":"Domine",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"donegal-one",
-        "name":"Donegal One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dongle",
-        "name":"Dongle",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"doppio-one",
-        "name":"Doppio One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dorsa",
-        "name":"Dorsa",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dosis",
-        "name":"Dosis",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dotgothic16",
-        "name":"DotGothic16",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dr-sugiyama",
-        "name":"Dr Sugiyama",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"duru-sans",
-        "name":"Duru Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dynalight",
-        "name":"Dynalight",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"dynapuff",
-        "name":"DynaPuff",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"eagle-lake",
-        "name":"Eagle Lake",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"east-sea-dokdo",
-        "name":"East Sea Dokdo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"eater",
-        "name":"Eater",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"eb-garamond",
-        "name":"EB Garamond",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"economica",
-        "name":"Economica",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"eczar",
-        "name":"Eczar",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"edu-nsw-act-foundation",
-        "name":"Edu NSW ACT Foundation",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"edu-qld-beginner",
-        "name":"Edu QLD Beginner",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"edu-sa-beginner",
-        "name":"Edu SA Beginner",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"edu-tas-beginner",
-        "name":"Edu TAS Beginner",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"edu-vic-wa-nt-beginner",
-        "name":"Edu VIC WA NT Beginner",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"el-messiri",
-        "name":"El Messiri",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"electrolize",
-        "name":"Electrolize",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"elsie",
-        "name":"Elsie",
-        "weights":[
-            400,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"elsie-swash-caps",
-        "name":"Elsie Swash Caps",
-        "weights":[
-            400,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"emblema-one",
-        "name":"Emblema One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"emilys-candy",
-        "name":"Emilys Candy",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"encode-sans",
-        "name":"Encode Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"encode-sans-condensed",
-        "name":"Encode Sans Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"encode-sans-expanded",
-        "name":"Encode Sans Expanded",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"encode-sans-sc",
-        "name":"Encode Sans SC",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"encode-sans-semi-condensed",
-        "name":"Encode Sans Semi Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"encode-sans-semi-expanded",
-        "name":"Encode Sans Semi Expanded",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"engagement",
-        "name":"Engagement",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"englebert",
-        "name":"Englebert",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"enriqueta",
-        "name":"Enriqueta",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ephesis",
-        "name":"Ephesis",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"epilogue",
-        "name":"Epilogue",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"erica-one",
-        "name":"Erica One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"esteban",
-        "name":"Esteban",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"estonia",
-        "name":"Estonia",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"euphoria-script",
-        "name":"Euphoria Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ewert",
-        "name":"Ewert",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"exo",
-        "name":"Exo",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"exo-2",
-        "name":"Exo 2",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"expletus-sans",
-        "name":"Expletus Sans",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"explora",
-        "name":"Explora",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fahkwang",
-        "name":"Fahkwang",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"familjen-grotesk",
-        "name":"Familjen Grotesk",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"fanwood-text",
-        "name":"Fanwood Text",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"farro",
-        "name":"Farro",
-        "weights":[
-            300,
-            400,
-            500,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"farsan",
-        "name":"Farsan",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fascinate",
-        "name":"Fascinate",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fascinate-inline",
-        "name":"Fascinate Inline",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"faster-one",
-        "name":"Faster One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fasthand",
-        "name":"Fasthand",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fauna-one",
-        "name":"Fauna One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"faustina",
-        "name":"Faustina",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"federant",
-        "name":"Federant",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"federo",
-        "name":"Federo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"felipa",
-        "name":"Felipa",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fenix",
-        "name":"Fenix",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"festive",
-        "name":"Festive",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"figtree",
-        "name":"Figtree",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"finger-paint",
-        "name":"Finger Paint",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"finlandica",
-        "name":"Finlandica",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"fira-code",
-        "name":"Fira Code",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fira-mono",
-        "name":"Fira Mono",
-        "weights":[
-            400,
-            500,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fira-sans",
-        "name":"Fira Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"fira-sans-condensed",
-        "name":"Fira Sans Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"fira-sans-extra-condensed",
-        "name":"Fira Sans Extra Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"fjalla-one",
-        "name":"Fjalla One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fjord-one",
-        "name":"Fjord One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"flamenco",
-        "name":"Flamenco",
-        "weights":[
-            300,
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"flavors",
-        "name":"Flavors",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fleur-de-leah",
-        "name":"Fleur De Leah",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"flow-block",
-        "name":"Flow Block",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"flow-circular",
-        "name":"Flow Circular",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"flow-rounded",
-        "name":"Flow Rounded",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"foldit",
-        "name":"Foldit",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fondamento",
-        "name":"Fondamento",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"fontdiner-swanky",
-        "name":"Fontdiner Swanky",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"forum",
-        "name":"Forum",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fragment-mono",
-        "name":"Fragment Mono",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"francois-one",
-        "name":"Francois One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"frank-ruhl-libre",
-        "name":"Frank Ruhl Libre",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fraunces",
-        "name":"Fraunces",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"freckle-face",
-        "name":"Freckle Face",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fredericka-the-great",
-        "name":"Fredericka the Great",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fredoka",
-        "name":"Fredoka",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"freehand",
-        "name":"Freehand",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fresca",
-        "name":"Fresca",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"frijole",
-        "name":"Frijole",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fruktur",
-        "name":"Fruktur",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"fugaz-one",
-        "name":"Fugaz One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fuggles",
-        "name":"Fuggles",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"fuzzy-bubbles",
-        "name":"Fuzzy Bubbles",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gabarito",
-        "name":"Gabarito",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gabriela",
-        "name":"Gabriela",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gaegu",
-        "name":"Gaegu",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gafata",
-        "name":"Gafata",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gajraj-one",
-        "name":"Gajraj One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"galada",
-        "name":"Galada",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"galdeano",
-        "name":"Galdeano",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"galindo",
-        "name":"Galindo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gamja-flower",
-        "name":"Gamja Flower",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gantari",
-        "name":"Gantari",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"gasoek-one",
-        "name":"Gasoek One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gayathri",
-        "name":"Gayathri",
-        "weights":[
-            100,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gelasio",
-        "name":"Gelasio",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"gemunu-libre",
-        "name":"Gemunu Libre",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"genos",
-        "name":"Genos",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"gentium-book-plus",
-        "name":"Gentium Book Plus",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"gentium-plus",
-        "name":"Gentium Plus",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"geo",
-        "name":"Geo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"geologica",
-        "name":"Geologica",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"georama",
-        "name":"Georama",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"geostar",
-        "name":"Geostar",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"geostar-fill",
-        "name":"Geostar Fill",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"germania-one",
-        "name":"Germania One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gfs-didot",
-        "name":"GFS Didot",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gfs-neohellenic",
-        "name":"GFS Neohellenic",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"gideon-roman",
-        "name":"Gideon Roman",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gidugu",
-        "name":"Gidugu",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gilda-display",
-        "name":"Gilda Display",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"girassol",
-        "name":"Girassol",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"give-you-glory",
-        "name":"Give You Glory",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"glass-antiqua",
-        "name":"Glass Antiqua",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"glegoo",
-        "name":"Glegoo",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gloock",
-        "name":"Gloock",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gloria-hallelujah",
-        "name":"Gloria Hallelujah",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"glory",
-        "name":"Glory",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"gluten",
-        "name":"Gluten",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"goblin-one",
-        "name":"Goblin One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gochi-hand",
-        "name":"Gochi Hand",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"goldman",
-        "name":"Goldman",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"golos-text",
-        "name":"Golos Text",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gorditas",
-        "name":"Gorditas",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gothic-a1",
-        "name":"Gothic A1",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gotu",
-        "name":"Gotu",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"goudy-bookletter-1911",
-        "name":"Goudy Bookletter 1911",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gowun-batang",
-        "name":"Gowun Batang",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gowun-dodum",
-        "name":"Gowun Dodum",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"graduate",
-        "name":"Graduate",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"grand-hotel",
-        "name":"Grand Hotel",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"grandiflora-one",
-        "name":"Grandiflora One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"grandstander",
-        "name":"Grandstander",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"grape-nuts",
-        "name":"Grape Nuts",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gravitas-one",
-        "name":"Gravitas One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"great-vibes",
-        "name":"Great Vibes",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"grechen-fuemen",
-        "name":"Grechen Fuemen",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"grenze",
-        "name":"Grenze",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"grenze-gotisch",
-        "name":"Grenze Gotisch",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"grey-qo",
-        "name":"Grey Qo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"griffy",
-        "name":"Griffy",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gruppo",
-        "name":"Gruppo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gudea",
-        "name":"Gudea",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"gugi",
-        "name":"Gugi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gulzar",
-        "name":"Gulzar",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gupter",
-        "name":"Gupter",
-        "weights":[
-            400,
-            500,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gurajada",
-        "name":"Gurajada",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"gwendolyn",
-        "name":"Gwendolyn",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"habibi",
-        "name":"Habibi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hachi-maru-pop",
-        "name":"Hachi Maru Pop",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hahmlet",
-        "name":"Hahmlet",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"halant",
-        "name":"Halant",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hammersmith-one",
-        "name":"Hammersmith One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hanalei",
-        "name":"Hanalei",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hanalei-fill",
-        "name":"Hanalei Fill",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"handjet",
-        "name":"Handjet",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"handlee",
-        "name":"Handlee",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hanken-grotesk",
-        "name":"Hanken Grotesk",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"hanuman",
-        "name":"Hanuman",
-        "weights":[
-            100,
-            300,
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"happy-monkey",
-        "name":"Happy Monkey",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"harmattan",
-        "name":"Harmattan",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"headland-one",
-        "name":"Headland One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hedvig-letters-sans",
-        "name":"Hedvig Letters Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hedvig-letters-serif",
-        "name":"Hedvig Letters Serif",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"heebo",
-        "name":"Heebo",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"henny-penny",
-        "name":"Henny Penny",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hepta-slab",
-        "name":"Hepta Slab",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"herr-von-muellerhoff",
-        "name":"Herr Von Muellerhoff",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hi-melody",
-        "name":"Hi Melody",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hina-mincho",
-        "name":"Hina Mincho",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hind",
-        "name":"Hind",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hind-guntur",
-        "name":"Hind Guntur",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hind-madurai",
-        "name":"Hind Madurai",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hind-siliguri",
-        "name":"Hind Siliguri",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hind-vadodara",
-        "name":"Hind Vadodara",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"holtwood-one-sc",
-        "name":"Holtwood One SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"homemade-apple",
-        "name":"Homemade Apple",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"homenaje",
-        "name":"Homenaje",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"honk",
-        "name":"Honk",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hubballi",
-        "name":"Hubballi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"hurricane",
-        "name":"Hurricane",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ibarra-real-nova",
-        "name":"Ibarra Real Nova",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-mono",
-        "name":"IBM Plex Mono",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-sans",
-        "name":"IBM Plex Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-sans-arabic",
-        "name":"IBM Plex Sans Arabic",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-sans-condensed",
-        "name":"IBM Plex Sans Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-sans-devanagari",
-        "name":"IBM Plex Sans Devanagari",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-sans-hebrew",
-        "name":"IBM Plex Sans Hebrew",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-sans-jp",
-        "name":"IBM Plex Sans JP",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-sans-kr",
-        "name":"IBM Plex Sans KR",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-sans-thai",
-        "name":"IBM Plex Sans Thai",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-sans-thai-looped",
-        "name":"IBM Plex Sans Thai Looped",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ibm-plex-serif",
-        "name":"IBM Plex Serif",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"iceberg",
-        "name":"Iceberg",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"iceland",
-        "name":"Iceland",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"im-fell-double-pica",
-        "name":"IM Fell Double Pica",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"im-fell-double-pica-sc",
-        "name":"IM Fell Double Pica SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"im-fell-dw-pica",
-        "name":"IM Fell DW Pica",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"im-fell-dw-pica-sc",
-        "name":"IM Fell DW Pica SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"im-fell-english",
-        "name":"IM Fell English",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"im-fell-english-sc",
-        "name":"IM Fell English SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"im-fell-french-canon",
-        "name":"IM Fell French Canon",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"im-fell-french-canon-sc",
-        "name":"IM Fell French Canon SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"im-fell-great-primer",
-        "name":"IM Fell Great Primer",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"im-fell-great-primer-sc",
-        "name":"IM Fell Great Primer SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"imbue",
-        "name":"Imbue",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"imperial-script",
-        "name":"Imperial Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"imprima",
-        "name":"Imprima",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"inclusive-sans",
-        "name":"Inclusive Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"inconsolata",
-        "name":"Inconsolata",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"inder",
-        "name":"Inder",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"indie-flower",
-        "name":"Indie Flower",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ingrid-darling",
-        "name":"Ingrid Darling",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"inika",
-        "name":"Inika",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"inknut-antiqua",
-        "name":"Inknut Antiqua",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"inria-sans",
-        "name":"Inria Sans",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"inria-serif",
-        "name":"Inria Serif",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"inspiration",
-        "name":"Inspiration",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"instrument-sans",
-        "name":"Instrument Sans",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"instrument-serif",
-        "name":"Instrument Serif",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"inter",
-        "name":"Inter",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"inter-tight",
-        "name":"Inter Tight",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"irish-grover",
-        "name":"Irish Grover",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"island-moments",
-        "name":"Island Moments",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"istok-web",
-        "name":"Istok Web",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"italiana",
-        "name":"Italiana",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"italianno",
-        "name":"Italianno",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"itim",
-        "name":"Itim",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jacquard-12-charted",
-        "name":"Jacquard 12 Charted",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jacquard-24",
-        "name":"Jacquard 24",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jacquarda-bastarda-9",
-        "name":"Jacquarda Bastarda 9",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jacquarda-bastarda-9-charted",
-        "name":"Jacquarda Bastarda 9 Charted",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jacques-francois",
-        "name":"Jacques Francois",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jacques-francois-shadow",
-        "name":"Jacques Francois Shadow",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jaldi",
-        "name":"Jaldi",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jersey-10",
-        "name":"Jersey 10",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jersey-10-charted",
-        "name":"Jersey 10 Charted",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jersey-15",
-        "name":"Jersey 15",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jersey-15-charted",
-        "name":"Jersey 15 Charted",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jersey-20",
-        "name":"Jersey 20",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jersey-20-charted",
-        "name":"Jersey 20 Charted",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jersey-25",
-        "name":"Jersey 25",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jetbrains-mono",
-        "name":"JetBrains Mono",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"jim-nightshade",
-        "name":"Jim Nightshade",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"joan",
-        "name":"Joan",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jockey-one",
-        "name":"Jockey One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jolly-lodger",
-        "name":"Jolly Lodger",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jomhuria",
-        "name":"Jomhuria",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jomolhari",
-        "name":"Jomolhari",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"josefin-sans",
-        "name":"Josefin Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"josefin-slab",
-        "name":"Josefin Slab",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"jost",
-        "name":"Jost",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"joti-one",
-        "name":"Joti One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jua",
-        "name":"Jua",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"judson",
-        "name":"Judson",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"julee",
-        "name":"Julee",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"julius-sans-one",
-        "name":"Julius Sans One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"junge",
-        "name":"Junge",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"jura",
-        "name":"Jura",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"just-another-hand",
-        "name":"Just Another Hand",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"just-me-again-down-here",
-        "name":"Just Me Again Down Here",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"k2d",
-        "name":"K2D",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"kablammo",
-        "name":"Kablammo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kadwa",
-        "name":"Kadwa",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kaisei-decol",
-        "name":"Kaisei Decol",
-        "weights":[
-            400,
-            500,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kaisei-harunoumi",
-        "name":"Kaisei HarunoUmi",
-        "weights":[
-            400,
-            500,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kaisei-opti",
-        "name":"Kaisei Opti",
-        "weights":[
-            400,
-            500,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kaisei-tokumin",
-        "name":"Kaisei Tokumin",
-        "weights":[
-            400,
-            500,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kalam",
-        "name":"Kalam",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kalnia",
-        "name":"Kalnia",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kameron",
-        "name":"Kameron",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kanit",
-        "name":"Kanit",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"kantumruy-pro",
-        "name":"Kantumruy Pro",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"karantina",
-        "name":"Karantina",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"karla",
-        "name":"Karla",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"karma",
-        "name":"Karma",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"katibeh",
-        "name":"Katibeh",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kaushan-script",
-        "name":"Kaushan Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kavivanar",
-        "name":"Kavivanar",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kavoon",
-        "name":"Kavoon",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kay-pho-du",
-        "name":"Kay Pho Du",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kdam-thmor-pro",
-        "name":"Kdam Thmor Pro",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"keania-one",
-        "name":"Keania One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kelly-slab",
-        "name":"Kelly Slab",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kenia",
-        "name":"Kenia",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"khand",
-        "name":"Khand",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"khmer",
-        "name":"Khmer",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"khula",
-        "name":"Khula",
-        "weights":[
-            300,
-            400,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kings",
-        "name":"Kings",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kirang-haerang",
-        "name":"Kirang Haerang",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kite-one",
-        "name":"Kite One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kiwi-maru",
-        "name":"Kiwi Maru",
-        "weights":[
-            300,
-            400,
-            500
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"klee-one",
-        "name":"Klee One",
-        "weights":[
-            400,
-            600
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"knewave",
-        "name":"Knewave",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kodchasan",
-        "name":"Kodchasan",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"kode-mono",
-        "name":"Kode Mono",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"koh-santepheap",
-        "name":"Koh Santepheap",
-        "weights":[
-            100,
-            300,
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"koho",
-        "name":"KoHo",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"kolker-brush",
-        "name":"Kolker Brush",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"konkhmer-sleokchher",
-        "name":"Konkhmer Sleokchher",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kosugi",
-        "name":"Kosugi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kosugi-maru",
-        "name":"Kosugi Maru",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kotta-one",
-        "name":"Kotta One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"koulen",
-        "name":"Koulen",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kranky",
-        "name":"Kranky",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kreon",
-        "name":"Kreon",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kristi",
-        "name":"Kristi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"krona-one",
-        "name":"Krona One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"krub",
-        "name":"Krub",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"kufam",
-        "name":"Kufam",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"kulim-park",
-        "name":"Kulim Park",
-        "weights":[
-            200,
-            300,
-            400,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"kumar-one",
-        "name":"Kumar One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kumar-one-outline",
-        "name":"Kumar One Outline",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kumbh-sans",
-        "name":"Kumbh Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"kurale",
-        "name":"Kurale",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"la-belle-aurore",
-        "name":"La Belle Aurore",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"labrada",
-        "name":"Labrada",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"lacquer",
-        "name":"Lacquer",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"laila",
-        "name":"Laila",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lakki-reddy",
-        "name":"Lakki Reddy",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lalezar",
-        "name":"Lalezar",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lancelot",
-        "name":"Lancelot",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"langar",
-        "name":"Langar",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lateef",
-        "name":"Lateef",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lato",
-        "name":"Lato",
-        "weights":[
-            100,
-            300,
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"lavishly-yours",
-        "name":"Lavishly Yours",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"league-gothic",
-        "name":"League Gothic",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"league-script",
-        "name":"League Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"league-spartan",
-        "name":"League Spartan",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"leckerli-one",
-        "name":"Leckerli One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ledger",
-        "name":"Ledger",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lekton",
-        "name":"Lekton",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"lemon",
-        "name":"Lemon",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lemonada",
-        "name":"Lemonada",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lexend",
-        "name":"Lexend",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lexend-deca",
-        "name":"Lexend Deca",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lexend-exa",
-        "name":"Lexend Exa",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lexend-giga",
-        "name":"Lexend Giga",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lexend-mega",
-        "name":"Lexend Mega",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lexend-peta",
-        "name":"Lexend Peta",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lexend-tera",
-        "name":"Lexend Tera",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lexend-zetta",
-        "name":"Lexend Zetta",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-barcode-128",
-        "name":"Libre Barcode 128",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-barcode-128-text",
-        "name":"Libre Barcode 128 Text",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-barcode-39",
-        "name":"Libre Barcode 39",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-barcode-39-extended",
-        "name":"Libre Barcode 39 Extended",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-barcode-39-extended-text",
-        "name":"Libre Barcode 39 Extended Text",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-barcode-39-text",
-        "name":"Libre Barcode 39 Text",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-barcode-ean13-text",
-        "name":"Libre Barcode EAN13 Text",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-baskerville",
-        "name":"Libre Baskerville",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-bodoni",
-        "name":"Libre Bodoni",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-caslon-display",
-        "name":"Libre Caslon Display",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-caslon-text",
-        "name":"Libre Caslon Text",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"libre-franklin",
-        "name":"Libre Franklin",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"licorice",
-        "name":"Licorice",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"life-savers",
-        "name":"Life Savers",
-        "weights":[
-            400,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lilita-one",
-        "name":"Lilita One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lily-script-one",
-        "name":"Lily Script One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"limelight",
-        "name":"Limelight",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"linden-hill",
-        "name":"Linden Hill",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"linefont",
-        "name":"Linefont",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lisu-bosa",
-        "name":"Lisu Bosa",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"literata",
-        "name":"Literata",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"liu-jian-mao-cao",
-        "name":"Liu Jian Mao Cao",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"livvic",
-        "name":"Livvic",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"lobster",
-        "name":"Lobster",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lobster-two",
-        "name":"Lobster Two",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"londrina-outline",
-        "name":"Londrina Outline",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"londrina-shadow",
-        "name":"Londrina Shadow",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"londrina-sketch",
-        "name":"Londrina Sketch",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"londrina-solid",
-        "name":"Londrina Solid",
-        "weights":[
-            100,
-            300,
-            400,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"long-cang",
-        "name":"Long Cang",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lora",
-        "name":"Lora",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"love-light",
-        "name":"Love Light",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"love-ya-like-a-sister",
-        "name":"Love Ya Like A Sister",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"loved-by-the-king",
-        "name":"Loved by the King",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lovers-quarrel",
-        "name":"Lovers Quarrel",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"luckiest-guy",
-        "name":"Luckiest Guy",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lugrasimo",
-        "name":"Lugrasimo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lumanosimo",
-        "name":"Lumanosimo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lunasima",
-        "name":"Lunasima",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lusitana",
-        "name":"Lusitana",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"lustria",
-        "name":"Lustria",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"luxurious-roman",
-        "name":"Luxurious Roman",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"luxurious-script",
-        "name":"Luxurious Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"m-plus-1",
-        "name":"M PLUS 1",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"m-plus-1-code",
-        "name":"M PLUS 1 Code",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"m-plus-1p",
-        "name":"M PLUS 1p",
-        "weights":[
-            100,
-            300,
-            400,
-            500,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"m-plus-2",
-        "name":"M PLUS 2",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"m-plus-code-latin",
-        "name":"M PLUS Code Latin",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"m-plus-rounded-1c",
-        "name":"M PLUS Rounded 1c",
-        "weights":[
-            100,
-            300,
-            400,
-            500,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ma-shan-zheng",
-        "name":"Ma Shan Zheng",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"macondo",
-        "name":"Macondo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"macondo-swash-caps",
-        "name":"Macondo Swash Caps",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mada",
-        "name":"Mada",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"madimi-one",
-        "name":"Madimi One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"magra",
-        "name":"Magra",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"maiden-orange",
-        "name":"Maiden Orange",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"maitree",
-        "name":"Maitree",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"major-mono-display",
-        "name":"Major Mono Display",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mako",
-        "name":"Mako",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mali",
-        "name":"Mali",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"mallanna",
-        "name":"Mallanna",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mandali",
-        "name":"Mandali",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"manjari",
-        "name":"Manjari",
-        "weights":[
-            100,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"manrope",
-        "name":"Manrope",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mansalva",
-        "name":"Mansalva",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"manuale",
-        "name":"Manuale",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"marcellus",
-        "name":"Marcellus",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"marcellus-sc",
-        "name":"Marcellus SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"marck-script",
-        "name":"Marck Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"margarine",
-        "name":"Margarine",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"marhey",
-        "name":"Marhey",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"markazi-text",
-        "name":"Markazi Text",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"marko-one",
-        "name":"Marko One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"marmelad",
-        "name":"Marmelad",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"martel",
-        "name":"Martel",
-        "weights":[
-            200,
-            300,
-            400,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"martel-sans",
-        "name":"Martel Sans",
-        "weights":[
-            200,
-            300,
-            400,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"martian-mono",
-        "name":"Martian Mono",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"marvel",
-        "name":"Marvel",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"mate",
-        "name":"Mate",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"mate-sc",
-        "name":"Mate SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"maven-pro",
-        "name":"Maven Pro",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mclaren",
-        "name":"McLaren",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mea-culpa",
-        "name":"Mea Culpa",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"meddon",
-        "name":"Meddon",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"medievalsharp",
-        "name":"MedievalSharp",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"medula-one",
-        "name":"Medula One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"meera-inimai",
-        "name":"Meera Inimai",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"megrim",
-        "name":"Megrim",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"meie-script",
-        "name":"Meie Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"meow-script",
-        "name":"Meow Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"merienda",
-        "name":"Merienda",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"merriweather",
-        "name":"Merriweather",
-        "weights":[
-            300,
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"merriweather-sans",
-        "name":"Merriweather Sans",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"metal",
-        "name":"Metal",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"metal-mania",
-        "name":"Metal Mania",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"metamorphous",
-        "name":"Metamorphous",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"metrophobic",
-        "name":"Metrophobic",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"michroma",
-        "name":"Michroma",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"micro-5",
-        "name":"Micro 5",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"micro-5-charted",
-        "name":"Micro 5 Charted",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"milonga",
-        "name":"Milonga",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"miltonian",
-        "name":"Miltonian",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"miltonian-tattoo",
-        "name":"Miltonian Tattoo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mina",
-        "name":"Mina",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mingzat",
-        "name":"Mingzat",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"miniver",
-        "name":"Miniver",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"miriam-libre",
-        "name":"Miriam Libre",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mirza",
-        "name":"Mirza",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"miss-fajardose",
-        "name":"Miss Fajardose",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mitr",
-        "name":"Mitr",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mochiy-pop-one",
-        "name":"Mochiy Pop One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mochiy-pop-p-one",
-        "name":"Mochiy Pop P One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"modak",
-        "name":"Modak",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"modern-antiqua",
-        "name":"Modern Antiqua",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mogra",
-        "name":"Mogra",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mohave",
-        "name":"Mohave",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"moirai-one",
-        "name":"Moirai One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"molengo",
-        "name":"Molengo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"molle",
-        "name":"Molle",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic"
-        ]
-    },
-    {
-        "id":"monda",
-        "name":"Monda",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"monofett",
-        "name":"Monofett",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"monomaniac-one",
-        "name":"Monomaniac One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"monoton",
-        "name":"Monoton",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"monsieur-la-doulaise",
-        "name":"Monsieur La Doulaise",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"montaga",
-        "name":"Montaga",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"montagu-slab",
-        "name":"Montagu Slab",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"montecarlo",
-        "name":"MonteCarlo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"montez",
-        "name":"Montez",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"montserrat",
-        "name":"Montserrat",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"montserrat-alternates",
-        "name":"Montserrat Alternates",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"montserrat-subrayada",
-        "name":"Montserrat Subrayada",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"moo-lah-lah",
-        "name":"Moo Lah Lah",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mooli",
-        "name":"Mooli",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"moon-dance",
-        "name":"Moon Dance",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"moul",
-        "name":"Moul",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"moulpali",
-        "name":"Moulpali",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mountains-of-christmas",
-        "name":"Mountains of Christmas",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mouse-memoirs",
-        "name":"Mouse Memoirs",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mr-bedfort",
-        "name":"Mr Bedfort",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mr-dafoe",
-        "name":"Mr Dafoe",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mr-de-haviland",
-        "name":"Mr De Haviland",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mrs-saint-delafield",
-        "name":"Mrs Saint Delafield",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mrs-sheppards",
-        "name":"Mrs Sheppards",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ms-madi",
-        "name":"Ms Madi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mukta",
-        "name":"Mukta",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mukta-mahee",
-        "name":"Mukta Mahee",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mukta-malar",
-        "name":"Mukta Malar",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mukta-vaani",
-        "name":"Mukta Vaani",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mulish",
-        "name":"Mulish",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"murecho",
-        "name":"Murecho",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"museomoderno",
-        "name":"MuseoModerno",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"my-soul",
-        "name":"My Soul",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mynerve",
-        "name":"Mynerve",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"mystery-quest",
-        "name":"Mystery Quest",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nabla",
-        "name":"Nabla",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"namdhinggo",
-        "name":"Namdhinggo",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nanum-brush-script",
-        "name":"Nanum Brush Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nanum-gothic",
-        "name":"Nanum Gothic",
-        "weights":[
-            400,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nanum-gothic-coding",
-        "name":"Nanum Gothic Coding",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nanum-myeongjo",
-        "name":"Nanum Myeongjo",
-        "weights":[
-            400,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nanum-pen-script",
-        "name":"Nanum Pen Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"narnoor",
-        "name":"Narnoor",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"neonderthaw",
-        "name":"Neonderthaw",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nerko-one",
-        "name":"Nerko One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"neucha",
-        "name":"Neucha",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"neuton",
-        "name":"Neuton",
-        "weights":[
-            200,
-            300,
-            400,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"new-rocker",
-        "name":"New Rocker",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"new-tegomin",
-        "name":"New Tegomin",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"news-cycle",
-        "name":"News Cycle",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"newsreader",
-        "name":"Newsreader",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"niconne",
-        "name":"Niconne",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"niramit",
-        "name":"Niramit",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"nixie-one",
-        "name":"Nixie One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nobile",
-        "name":"Nobile",
-        "weights":[
-            400,
-            500,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"nokora",
-        "name":"Nokora",
-        "weights":[
-            100,
-            300,
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"norican",
-        "name":"Norican",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nosifer",
-        "name":"Nosifer",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"notable",
-        "name":"Notable",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nothing-you-could-do",
-        "name":"Nothing You Could Do",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"noticia-text",
-        "name":"Noticia Text",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"noto-color-emoji",
-        "name":"Noto Color Emoji",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nova-cut",
-        "name":"Nova Cut",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nova-flat",
-        "name":"Nova Flat",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nova-mono",
-        "name":"Nova Mono",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nova-oval",
-        "name":"Nova Oval",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nova-round",
-        "name":"Nova Round",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nova-script",
-        "name":"Nova Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nova-slim",
-        "name":"Nova Slim",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nova-square",
-        "name":"Nova Square",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ntr",
-        "name":"NTR",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"numans",
-        "name":"Numans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"nunito",
-        "name":"Nunito",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"nunito-sans",
-        "name":"Nunito Sans",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"nuosu-sil",
-        "name":"Nuosu SIL",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"odibee-sans",
-        "name":"Odibee Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"odor-mean-chey",
-        "name":"Odor Mean Chey",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"offside",
-        "name":"Offside",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"oi",
-        "name":"Oi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ojuju",
-        "name":"Ojuju",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"old-standard-tt",
-        "name":"Old Standard TT",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"oldenburg",
-        "name":"Oldenburg",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ole",
-        "name":"Ole",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"oleo-script",
-        "name":"Oleo Script",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"oleo-script-swash-caps",
-        "name":"Oleo Script Swash Caps",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"onest",
-        "name":"Onest",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"oooh-baby",
-        "name":"Oooh Baby",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"open-sans",
-        "name":"Open Sans",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"oranienbaum",
-        "name":"Oranienbaum",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"orbit",
-        "name":"Orbit",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"orbitron",
-        "name":"Orbitron",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"oregano",
-        "name":"Oregano",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"orelega-one",
-        "name":"Orelega One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"orienta",
-        "name":"Orienta",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"original-surfer",
-        "name":"Original Surfer",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"oswald",
-        "name":"Oswald",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"outfit",
-        "name":"Outfit",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"over-the-rainbow",
-        "name":"Over the Rainbow",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"overlock",
-        "name":"Overlock",
-        "weights":[
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"overlock-sc",
-        "name":"Overlock SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"overpass",
-        "name":"Overpass",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"overpass-mono",
-        "name":"Overpass Mono",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ovo",
-        "name":"Ovo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"oxanium",
-        "name":"Oxanium",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"oxygen",
-        "name":"Oxygen",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"oxygen-mono",
-        "name":"Oxygen Mono",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pacifico",
-        "name":"Pacifico",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"padauk",
-        "name":"Padauk",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"padyakke-expanded-one",
-        "name":"Padyakke Expanded One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"palanquin",
-        "name":"Palanquin",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"palanquin-dark",
-        "name":"Palanquin Dark",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"palette-mosaic",
-        "name":"Palette Mosaic",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pangolin",
-        "name":"Pangolin",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"paprika",
-        "name":"Paprika",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"parisienne",
-        "name":"Parisienne",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"passero-one",
-        "name":"Passero One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"passion-one",
-        "name":"Passion One",
-        "weights":[
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"passions-conflict",
-        "name":"Passions Conflict",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pathway-extreme",
-        "name":"Pathway Extreme",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"pathway-gothic-one",
-        "name":"Pathway Gothic One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"patrick-hand",
-        "name":"Patrick Hand",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"patrick-hand-sc",
-        "name":"Patrick Hand SC",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pattaya",
-        "name":"Pattaya",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"patua-one",
-        "name":"Patua One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pavanam",
-        "name":"Pavanam",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"paytone-one",
-        "name":"Paytone One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"peddana",
-        "name":"Peddana",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"peralta",
-        "name":"Peralta",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"permanent-marker",
-        "name":"Permanent Marker",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"petemoss",
-        "name":"Petemoss",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"petit-formal-script",
-        "name":"Petit Formal Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"petrona",
-        "name":"Petrona",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"philosopher",
-        "name":"Philosopher",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"phudu",
-        "name":"Phudu",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"piazzolla",
-        "name":"Piazzolla",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"piedra",
-        "name":"Piedra",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pinyon-script",
-        "name":"Pinyon Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pirata-one",
-        "name":"Pirata One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pixelify-sans",
-        "name":"Pixelify Sans",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"plaster",
-        "name":"Plaster",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"platypi",
-        "name":"Platypi",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"play",
-        "name":"Play",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"playball",
-        "name":"Playball",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"playfair",
-        "name":"Playfair",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"playfair-display",
-        "name":"Playfair Display",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"playfair-display-sc",
-        "name":"Playfair Display SC",
-        "weights":[
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"playpen-sans",
-        "name":"Playpen Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"plus-jakarta-sans",
-        "name":"Plus Jakarta Sans",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"podkova",
-        "name":"Podkova",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"poiret-one",
-        "name":"Poiret One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"poller-one",
-        "name":"Poller One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"poltawski-nowy",
-        "name":"Poltawski Nowy",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"poly",
-        "name":"Poly",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"pompiere",
-        "name":"Pompiere",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pontano-sans",
-        "name":"Pontano Sans",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"poor-story",
-        "name":"Poor Story",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"poppins",
-        "name":"Poppins",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"port-lligat-sans",
-        "name":"Port Lligat Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"port-lligat-slab",
-        "name":"Port Lligat Slab",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"potta-one",
-        "name":"Potta One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pragati-narrow",
-        "name":"Pragati Narrow",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"praise",
-        "name":"Praise",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"prata",
-        "name":"Prata",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"preahvihear",
-        "name":"Preahvihear",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"press-start-2p",
-        "name":"Press Start 2P",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pridi",
-        "name":"Pridi",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"princess-sofia",
-        "name":"Princess Sofia",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"prociono",
-        "name":"Prociono",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"prompt",
-        "name":"Prompt",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"prosto-one",
-        "name":"Prosto One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"protest-guerrilla",
-        "name":"Protest Guerrilla",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"protest-revolution",
-        "name":"Protest Revolution",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"protest-riot",
-        "name":"Protest Riot",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"protest-strike",
-        "name":"Protest Strike",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"proza-libre",
-        "name":"Proza Libre",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"pt-mono",
-        "name":"PT Mono",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pt-sans",
-        "name":"PT Sans",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"pt-sans-caption",
-        "name":"PT Sans Caption",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pt-sans-narrow",
-        "name":"PT Sans Narrow",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"pt-serif",
-        "name":"PT Serif",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"pt-serif-caption",
-        "name":"PT Serif Caption",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"public-sans",
-        "name":"Public Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"puppies-play",
-        "name":"Puppies Play",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"puritan",
-        "name":"Puritan",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"purple-purse",
-        "name":"Purple Purse",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"qahiri",
-        "name":"Qahiri",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"quando",
-        "name":"Quando",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"quantico",
-        "name":"Quantico",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"quattrocento",
-        "name":"Quattrocento",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"quattrocento-sans",
-        "name":"Quattrocento Sans",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"questrial",
-        "name":"Questrial",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"quicksand",
-        "name":"Quicksand",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"quintessential",
-        "name":"Quintessential",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"qwigley",
-        "name":"Qwigley",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"qwitcher-grypen",
-        "name":"Qwitcher Grypen",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"racing-sans-one",
-        "name":"Racing Sans One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"radio-canada",
-        "name":"Radio Canada",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"radley",
-        "name":"Radley",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"rajdhani",
-        "name":"Rajdhani",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rakkas",
-        "name":"Rakkas",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"raleway",
-        "name":"Raleway",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"raleway-dots",
-        "name":"Raleway Dots",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ramabhadra",
-        "name":"Ramabhadra",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ramaraja",
-        "name":"Ramaraja",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rambla",
-        "name":"Rambla",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"rammetto-one",
-        "name":"Rammetto One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rampart-one",
-        "name":"Rampart One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ranchers",
-        "name":"Ranchers",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rancho",
-        "name":"Rancho",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ranga",
-        "name":"Ranga",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rasa",
-        "name":"Rasa",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"rationale",
-        "name":"Rationale",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ravi-prakash",
-        "name":"Ravi Prakash",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"readex-pro",
-        "name":"Readex Pro",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"recursive",
-        "name":"Recursive",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"red-hat-display",
-        "name":"Red Hat Display",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"red-hat-mono",
-        "name":"Red Hat Mono",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"red-hat-text",
-        "name":"Red Hat Text",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"red-rose",
-        "name":"Red Rose",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"redacted",
-        "name":"Redacted",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"redacted-script",
-        "name":"Redacted Script",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"reddit-mono",
-        "name":"Reddit Mono",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"redressed",
-        "name":"Redressed",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"reem-kufi",
-        "name":"Reem Kufi",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"reem-kufi-fun",
-        "name":"Reem Kufi Fun",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"reem-kufi-ink",
-        "name":"Reem Kufi Ink",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"reenie-beanie",
-        "name":"Reenie Beanie",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"reggae-one",
-        "name":"Reggae One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rem",
-        "name":"REM",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"rethink-sans",
-        "name":"Rethink Sans",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"revalia",
-        "name":"Revalia",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rhodium-libre",
-        "name":"Rhodium Libre",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ribeye",
-        "name":"Ribeye",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ribeye-marrow",
-        "name":"Ribeye Marrow",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"righteous",
-        "name":"Righteous",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"risque",
-        "name":"Risque",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"road-rage",
-        "name":"Road Rage",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"roboto",
-        "name":"Roboto",
-        "weights":[
-            100,
-            300,
-            400,
-            500,
-            700,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"roboto-condensed",
-        "name":"Roboto Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"roboto-flex",
-        "name":"Roboto Flex",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"roboto-mono",
-        "name":"Roboto Mono",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"roboto-serif",
-        "name":"Roboto Serif",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"roboto-slab",
-        "name":"Roboto Slab",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rochester",
-        "name":"Rochester",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rock-3d",
-        "name":"Rock 3D",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rock-salt",
-        "name":"Rock Salt",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rocknroll-one",
-        "name":"RocknRoll One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rokkitt",
-        "name":"Rokkitt",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"romanesco",
-        "name":"Romanesco",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ropa-sans",
-        "name":"Ropa Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"rosario",
-        "name":"Rosario",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"rosarivo",
-        "name":"Rosarivo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"rouge-script",
-        "name":"Rouge Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rowdies",
-        "name":"Rowdies",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rozha-one",
-        "name":"Rozha One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik",
-        "name":"Rubik",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-80s-fade",
-        "name":"Rubik 80s Fade",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-beastly",
-        "name":"Rubik Beastly",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-broken-fax",
-        "name":"Rubik Broken Fax",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-bubbles",
-        "name":"Rubik Bubbles",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-burned",
-        "name":"Rubik Burned",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-dirt",
-        "name":"Rubik Dirt",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-distressed",
-        "name":"Rubik Distressed",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-doodle-shadow",
-        "name":"Rubik Doodle Shadow",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-doodle-triangles",
-        "name":"Rubik Doodle Triangles",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-gemstones",
-        "name":"Rubik Gemstones",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-glitch",
-        "name":"Rubik Glitch",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-glitch-pop",
-        "name":"Rubik Glitch Pop",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-iso",
-        "name":"Rubik Iso",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-lines",
-        "name":"Rubik Lines",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-maps",
-        "name":"Rubik Maps",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-marker-hatch",
-        "name":"Rubik Marker Hatch",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-maze",
-        "name":"Rubik Maze",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-microbe",
-        "name":"Rubik Microbe",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-mono-one",
-        "name":"Rubik Mono One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-moonrocks",
-        "name":"Rubik Moonrocks",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-pixels",
-        "name":"Rubik Pixels",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-puddles",
-        "name":"Rubik Puddles",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-scribble",
-        "name":"Rubik Scribble",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-spray-paint",
-        "name":"Rubik Spray Paint",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-storm",
-        "name":"Rubik Storm",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-vinyl",
-        "name":"Rubik Vinyl",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rubik-wet-paint",
-        "name":"Rubik Wet Paint",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ruda",
-        "name":"Ruda",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rufina",
-        "name":"Rufina",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ruge-boogie",
-        "name":"Ruge Boogie",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ruluko",
-        "name":"Ruluko",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rum-raisin",
-        "name":"Rum Raisin",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ruslan-display",
-        "name":"Ruslan Display",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"russo-one",
-        "name":"Russo One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ruthie",
-        "name":"Ruthie",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ruwudu",
-        "name":"Ruwudu",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"rye",
-        "name":"Rye",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sacramento",
-        "name":"Sacramento",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sahitya",
-        "name":"Sahitya",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sail",
-        "name":"Sail",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"saira",
-        "name":"Saira",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"saira-condensed",
-        "name":"Saira Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"saira-extra-condensed",
-        "name":"Saira Extra Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"saira-semi-condensed",
-        "name":"Saira Semi Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"saira-stencil-one",
-        "name":"Saira Stencil One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"salsa",
-        "name":"Salsa",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sanchez",
-        "name":"Sanchez",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"sancreek",
-        "name":"Sancreek",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sansita",
-        "name":"Sansita",
-        "weights":[
-            400,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"sansita-swashed",
-        "name":"Sansita Swashed",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sarabun",
-        "name":"Sarabun",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"sarala",
-        "name":"Sarala",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sarina",
-        "name":"Sarina",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sarpanch",
-        "name":"Sarpanch",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sassy-frass",
-        "name":"Sassy Frass",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"satisfy",
-        "name":"Satisfy",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sawarabi-gothic",
-        "name":"Sawarabi Gothic",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sawarabi-mincho",
-        "name":"Sawarabi Mincho",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"scada",
-        "name":"Scada",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"scheherazade-new",
-        "name":"Scheherazade New",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"schibsted-grotesk",
-        "name":"Schibsted Grotesk",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"schoolbell",
-        "name":"Schoolbell",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"scope-one",
-        "name":"Scope One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"seaweed-script",
-        "name":"Seaweed Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"secular-one",
-        "name":"Secular One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sedan",
-        "name":"Sedan",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"sedgwick-ave",
-        "name":"Sedgwick Ave",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sedgwick-ave-display",
-        "name":"Sedgwick Ave Display",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sen",
-        "name":"Sen",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"send-flowers",
-        "name":"Send Flowers",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sevillana",
-        "name":"Sevillana",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"seymour-one",
-        "name":"Seymour One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shadows-into-light",
-        "name":"Shadows Into Light",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shadows-into-light-two",
-        "name":"Shadows Into Light Two",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shalimar",
-        "name":"Shalimar",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shantell-sans",
-        "name":"Shantell Sans",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"shanti",
-        "name":"Shanti",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"share",
-        "name":"Share",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"share-tech",
-        "name":"Share Tech",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"share-tech-mono",
-        "name":"Share Tech Mono",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shippori-antique",
-        "name":"Shippori Antique",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shippori-antique-b1",
-        "name":"Shippori Antique B1",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shippori-mincho",
-        "name":"Shippori Mincho",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shippori-mincho-b1",
-        "name":"Shippori Mincho B1",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shizuru",
-        "name":"Shizuru",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shojumaru",
-        "name":"Shojumaru",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"short-stack",
-        "name":"Short Stack",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"shrikhand",
-        "name":"Shrikhand",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"siemreap",
-        "name":"Siemreap",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sigmar",
-        "name":"Sigmar",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sigmar-one",
-        "name":"Sigmar One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"signika",
-        "name":"Signika",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"signika-negative",
-        "name":"Signika Negative",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"silkscreen",
-        "name":"Silkscreen",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"simonetta",
-        "name":"Simonetta",
-        "weights":[
-            400,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"single-day",
-        "name":"Single Day",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sintony",
-        "name":"Sintony",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sirin-stencil",
-        "name":"Sirin Stencil",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"six-caps",
-        "name":"Six Caps",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sixtyfour",
-        "name":"Sixtyfour",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"skranji",
-        "name":"Skranji",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"slabo-13px",
-        "name":"Slabo 13px",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"slabo-27px",
-        "name":"Slabo 27px",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"slackey",
-        "name":"Slackey",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"slackside-one",
-        "name":"Slackside One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"smokum",
-        "name":"Smokum",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"smooch",
-        "name":"Smooch",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"smooch-sans",
-        "name":"Smooch Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"smythe",
-        "name":"Smythe",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sniglet",
-        "name":"Sniglet",
-        "weights":[
-            400,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"snippet",
-        "name":"Snippet",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"snowburst-one",
-        "name":"Snowburst One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sofadi-one",
-        "name":"Sofadi One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sofia",
-        "name":"Sofia",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sofia-sans",
-        "name":"Sofia Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"sofia-sans-condensed",
-        "name":"Sofia Sans Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"sofia-sans-extra-condensed",
-        "name":"Sofia Sans Extra Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"sofia-sans-semi-condensed",
-        "name":"Sofia Sans Semi Condensed",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"solitreo",
-        "name":"Solitreo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"solway",
-        "name":"Solway",
-        "weights":[
-            300,
-            400,
-            500,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sometype-mono",
-        "name":"Sometype Mono",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"song-myung",
-        "name":"Song Myung",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sono",
-        "name":"Sono",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sonsie-one",
-        "name":"Sonsie One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sora",
-        "name":"Sora",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sorts-mill-goudy",
-        "name":"Sorts Mill Goudy",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"source-code-pro",
-        "name":"Source Code Pro",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"source-sans-3",
-        "name":"Source Sans 3",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"source-serif-4",
-        "name":"Source Serif 4",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"space-grotesk",
-        "name":"Space Grotesk",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"space-mono",
-        "name":"Space Mono",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"special-elite",
-        "name":"Special Elite",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"spectral",
-        "name":"Spectral",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"spectral-sc",
-        "name":"Spectral SC",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"spicy-rice",
-        "name":"Spicy Rice",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"spinnaker",
-        "name":"Spinnaker",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"spirax",
-        "name":"Spirax",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"splash",
-        "name":"Splash",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"spline-sans",
-        "name":"Spline Sans",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"spline-sans-mono",
-        "name":"Spline Sans Mono",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"squada-one",
-        "name":"Squada One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"square-peg",
-        "name":"Square Peg",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sree-krushnadevaraya",
-        "name":"Sree Krushnadevaraya",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sriracha",
-        "name":"Sriracha",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"srisakdi",
-        "name":"Srisakdi",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"staatliches",
-        "name":"Staatliches",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"stalemate",
-        "name":"Stalemate",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"stalinist-one",
-        "name":"Stalinist One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"stardos-stencil",
-        "name":"Stardos Stencil",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"stick",
-        "name":"Stick",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"stick-no-bills",
-        "name":"Stick No Bills",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"stint-ultra-condensed",
-        "name":"Stint Ultra Condensed",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"stint-ultra-expanded",
-        "name":"Stint Ultra Expanded",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"stix-two-text",
-        "name":"STIX Two Text",
-        "weights":[
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"stoke",
-        "name":"Stoke",
-        "weights":[
-            300,
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"strait",
-        "name":"Strait",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"style-script",
-        "name":"Style Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"stylish",
-        "name":"Stylish",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sue-ellen-francisco",
-        "name":"Sue Ellen Francisco",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"suez-one",
-        "name":"Suez One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sulphur-point",
-        "name":"Sulphur Point",
-        "weights":[
-            300,
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sumana",
-        "name":"Sumana",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sunflower",
-        "name":"Sunflower",
-        "weights":[
-            300,
-            500,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sunshiney",
-        "name":"Sunshiney",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"supermercado-one",
-        "name":"Supermercado One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"sura",
-        "name":"Sura",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"suranna",
-        "name":"Suranna",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"suravaram",
-        "name":"Suravaram",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"suwannaphum",
-        "name":"Suwannaphum",
-        "weights":[
-            100,
-            300,
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"swanky-and-moo-moo",
-        "name":"Swanky and Moo Moo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"syncopate",
-        "name":"Syncopate",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"syne",
-        "name":"Syne",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"syne-mono",
-        "name":"Syne Mono",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"syne-tactile",
-        "name":"Syne Tactile",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tac-one",
-        "name":"Tac One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tai-heritage-pro",
-        "name":"Tai Heritage Pro",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tajawal",
-        "name":"Tajawal",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tangerine",
-        "name":"Tangerine",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tapestry",
-        "name":"Tapestry",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"taprom",
-        "name":"Taprom",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tauri",
-        "name":"Tauri",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"taviraj",
-        "name":"Taviraj",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"teko",
-        "name":"Teko",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tektur",
-        "name":"Tektur",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"telex",
-        "name":"Telex",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tenali-ramakrishna",
-        "name":"Tenali Ramakrishna",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tenor-sans",
-        "name":"Tenor Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"text-me-one",
-        "name":"Text Me One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"texturina",
-        "name":"Texturina",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"thasadith",
-        "name":"Thasadith",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"the-girl-next-door",
-        "name":"The Girl Next Door",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"the-nautigal",
-        "name":"The Nautigal",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tienne",
-        "name":"Tienne",
-        "weights":[
-            400,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tillana",
-        "name":"Tillana",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tilt-neon",
-        "name":"Tilt Neon",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tilt-prism",
-        "name":"Tilt Prism",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tilt-warp",
-        "name":"Tilt Warp",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"timmana",
-        "name":"Timmana",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tinos",
-        "name":"Tinos",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"tiro-bangla",
-        "name":"Tiro Bangla",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"tiro-devanagari-hindi",
-        "name":"Tiro Devanagari Hindi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"tiro-devanagari-marathi",
-        "name":"Tiro Devanagari Marathi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"tiro-devanagari-sanskrit",
-        "name":"Tiro Devanagari Sanskrit",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"tiro-gurmukhi",
-        "name":"Tiro Gurmukhi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"tiro-kannada",
-        "name":"Tiro Kannada",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"tiro-tamil",
-        "name":"Tiro Tamil",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"tiro-telugu",
-        "name":"Tiro Telugu",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"titan-one",
-        "name":"Titan One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"titillium-web",
-        "name":"Titillium Web",
-        "weights":[
-            200,
-            300,
-            400,
-            600,
-            700,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"tomorrow",
-        "name":"Tomorrow",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"tourney",
-        "name":"Tourney",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"trade-winds",
-        "name":"Trade Winds",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"train-one",
-        "name":"Train One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"trirong",
-        "name":"Trirong",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"trispace",
-        "name":"Trispace",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"trocchi",
-        "name":"Trocchi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"trochut",
-        "name":"Trochut",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"truculenta",
-        "name":"Truculenta",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"trykker",
-        "name":"Trykker",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tsukimi-rounded",
-        "name":"Tsukimi Rounded",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"tulpen-one",
-        "name":"Tulpen One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"turret-road",
-        "name":"Turret Road",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"twinkle-star",
-        "name":"Twinkle Star",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ubuntu",
-        "name":"Ubuntu",
-        "weights":[
-            300,
-            400,
-            500,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"ubuntu-condensed",
-        "name":"Ubuntu Condensed",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ubuntu-mono",
-        "name":"Ubuntu Mono",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"uchen",
-        "name":"Uchen",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"ultra",
-        "name":"Ultra",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"unbounded",
-        "name":"Unbounded",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"uncial-antiqua",
-        "name":"Uncial Antiqua",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"underdog",
-        "name":"Underdog",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"unica-one",
-        "name":"Unica One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"unifrakturcook",
-        "name":"UnifrakturCook",
-        "weights":[
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"unifrakturmaguntia",
-        "name":"UnifrakturMaguntia",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"unkempt",
-        "name":"Unkempt",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"unlock",
-        "name":"Unlock",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"unna",
-        "name":"Unna",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"updock",
-        "name":"Updock",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"urbanist",
-        "name":"Urbanist",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"vampiro-one",
-        "name":"Vampiro One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"varela",
-        "name":"Varela",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"varela-round",
-        "name":"Varela Round",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"varta",
-        "name":"Varta",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"vast-shadow",
-        "name":"Vast Shadow",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"vazirmatn",
-        "name":"Vazirmatn",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"vesper-libre",
-        "name":"Vesper Libre",
-        "weights":[
-            400,
-            500,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"viaoda-libre",
-        "name":"Viaoda Libre",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"vibes",
-        "name":"Vibes",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"vibur",
-        "name":"Vibur",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"victor-mono",
-        "name":"Victor Mono",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"vidaloka",
-        "name":"Vidaloka",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"viga",
-        "name":"Viga",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"vina-sans",
-        "name":"Vina Sans",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"voces",
-        "name":"Voces",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"volkhov",
-        "name":"Volkhov",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"vollkorn",
-        "name":"Vollkorn",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"vollkorn-sc",
-        "name":"Vollkorn SC",
-        "weights":[
-            400,
-            600,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"voltaire",
-        "name":"Voltaire",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"vt323",
-        "name":"VT323",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"vujahday-script",
-        "name":"Vujahday Script",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"waiting-for-the-sunrise",
-        "name":"Waiting for the Sunrise",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"wallpoet",
-        "name":"Wallpoet",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"walter-turncoat",
-        "name":"Walter Turncoat",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"warnes",
-        "name":"Warnes",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"water-brush",
-        "name":"Water Brush",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"waterfall",
-        "name":"Waterfall",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"wavefont",
-        "name":"Wavefont",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"wellfleet",
-        "name":"Wellfleet",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"wendy-one",
-        "name":"Wendy One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"whisper",
-        "name":"Whisper",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"windsong",
-        "name":"WindSong",
-        "weights":[
-            400,
-            500
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"wire-one",
-        "name":"Wire One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"wix-madefor-display",
-        "name":"Wix Madefor Display",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"wix-madefor-text",
-        "name":"Wix Madefor Text",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            800
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"work-sans",
-        "name":"Work Sans",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"workbench",
-        "name":"Workbench",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"xanh-mono",
-        "name":"Xanh Mono",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"yaldevi",
-        "name":"Yaldevi",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yanone-kaffeesatz",
-        "name":"Yanone Kaffeesatz",
-        "weights":[
-            200,
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yantramanav",
-        "name":"Yantramanav",
-        "weights":[
-            100,
-            300,
-            400,
-            500,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yarndings-12",
-        "name":"Yarndings 12",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yarndings-12-charted",
-        "name":"Yarndings 12 Charted",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yarndings-20",
-        "name":"Yarndings 20",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yarndings-20-charted",
-        "name":"Yarndings 20 Charted",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yatra-one",
-        "name":"Yatra One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yellowtail",
-        "name":"Yellowtail",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yeon-sung",
-        "name":"Yeon Sung",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yeseva-one",
-        "name":"Yeseva One",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yesteryear",
-        "name":"Yesteryear",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yomogi",
-        "name":"Yomogi",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"young-serif",
-        "name":"Young Serif",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yrsa",
-        "name":"Yrsa",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"ysabeau",
-        "name":"Ysabeau",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"ysabeau-infant",
-        "name":"Ysabeau Infant",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"ysabeau-office",
-        "name":"Ysabeau Office",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"ysabeau-sc",
-        "name":"Ysabeau SC",
-        "weights":[
-            100,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yuji-boku",
-        "name":"Yuji Boku",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yuji-hentaigana-akari",
-        "name":"Yuji Hentaigana Akari",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yuji-hentaigana-akebono",
-        "name":"Yuji Hentaigana Akebono",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yuji-mai",
-        "name":"Yuji Mai",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yuji-syuku",
-        "name":"Yuji Syuku",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"yusei-magic",
-        "name":"Yusei Magic",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zcool-kuaile",
-        "name":"ZCOOL KuaiLe",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zcool-qingke-huangyou",
-        "name":"ZCOOL QingKe HuangYou",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zcool-xiaowei",
-        "name":"ZCOOL XiaoWei",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zen-antique",
-        "name":"Zen Antique",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zen-antique-soft",
-        "name":"Zen Antique Soft",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zen-dots",
-        "name":"Zen Dots",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zen-kaku-gothic-antique",
-        "name":"Zen Kaku Gothic Antique",
-        "weights":[
-            300,
-            400,
-            500,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zen-kaku-gothic-new",
-        "name":"Zen Kaku Gothic New",
-        "weights":[
-            300,
-            400,
-            500,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zen-kurenaido",
-        "name":"Zen Kurenaido",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zen-loop",
-        "name":"Zen Loop",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"zen-maru-gothic",
-        "name":"Zen Maru Gothic",
-        "weights":[
-            300,
-            400,
-            500,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zen-old-mincho",
-        "name":"Zen Old Mincho",
-        "weights":[
-            400,
-            500,
-            600,
-            700,
-            900
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zen-tokyo-zoo",
-        "name":"Zen Tokyo Zoo",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zeyada",
-        "name":"Zeyada",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zhi-mang-xing",
-        "name":"Zhi Mang Xing",
-        "weights":[
-            400
-        ],
-        "styles":[
-            "normal"
-        ]
-    },
-    {
-        "id":"zilla-slab",
-        "name":"Zilla Slab",
-        "weights":[
-            300,
-            400,
-            500,
-            600,
-            700
-        ],
-        "styles":[
-            "italic",
-            "normal"
-        ]
-    },
-    {
-        "id":"zilla-slab-highlight",
-        "name":"Zilla Slab Highlight",
-        "weights":[
-            400,
-            700
-        ],
-        "styles":[
-            "normal"
-        ]
-    }
+
+const googleFonts = [
+    {
+        'id': 'abeezee',
+        'name': 'ABeeZee',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'abel',
+        'name': 'Abel',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'abhaya-libre',
+        'name': 'Abhaya Libre',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'aboreto',
+        'name': 'Aboreto',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'abril-fatface',
+        'name': 'Abril Fatface',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'abyssinica-sil',
+        'name': 'Abyssinica SIL',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'aclonica',
+        'name': 'Aclonica',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'acme',
+        'name': 'Acme',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'actor',
+        'name': 'Actor',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'adamina',
+        'name': 'Adamina',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'adlam-display',
+        'name': 'ADLaM Display',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'advent-pro',
+        'name': 'Advent Pro',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'afacad',
+        'name': 'Afacad',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'agbalumo',
+        'name': 'Agbalumo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'agdasima',
+        'name': 'Agdasima',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'aguafina-script',
+        'name': 'Aguafina Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'akatab',
+        'name': 'Akatab',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'akaya-kanadaka',
+        'name': 'Akaya Kanadaka',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'akaya-telivigala',
+        'name': 'Akaya Telivigala',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'akronim',
+        'name': 'Akronim',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'akshar',
+        'name': 'Akshar',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'aladin',
+        'name': 'Aladin',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alata',
+        'name': 'Alata',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alatsi',
+        'name': 'Alatsi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'albert-sans',
+        'name': 'Albert Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'aldrich',
+        'name': 'Aldrich',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alef',
+        'name': 'Alef',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alegreya',
+        'name': 'Alegreya',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'alegreya-sans',
+        'name': 'Alegreya Sans',
+        'weights': [100, 300, 400, 500, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'alegreya-sans-sc',
+        'name': 'Alegreya Sans SC',
+        'weights': [100, 300, 400, 500, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'alegreya-sc',
+        'name': 'Alegreya SC',
+        'weights': [400, 500, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'aleo',
+        'name': 'Aleo',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'alex-brush',
+        'name': 'Alex Brush',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alexandria',
+        'name': 'Alexandria',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alfa-slab-one',
+        'name': 'Alfa Slab One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alice',
+        'name': 'Alice',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alike',
+        'name': 'Alike',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alike-angular',
+        'name': 'Alike Angular',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alkalami',
+        'name': 'Alkalami',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alkatra',
+        'name': 'Alkatra',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'allan',
+        'name': 'Allan',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'allerta',
+        'name': 'Allerta',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'allerta-stencil',
+        'name': 'Allerta Stencil',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'allison',
+        'name': 'Allison',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'allura',
+        'name': 'Allura',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'almarai',
+        'name': 'Almarai',
+        'weights': [300, 400, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'almendra',
+        'name': 'Almendra',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'almendra-display',
+        'name': 'Almendra Display',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'almendra-sc',
+        'name': 'Almendra SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'alumni-sans',
+        'name': 'Alumni Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'alumni-sans-collegiate-one',
+        'name': 'Alumni Sans Collegiate One',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'alumni-sans-inline-one',
+        'name': 'Alumni Sans Inline One',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'alumni-sans-pinstripe',
+        'name': 'Alumni Sans Pinstripe',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'amarante',
+        'name': 'Amarante',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'amaranth',
+        'name': 'Amaranth',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'amatic-sc',
+        'name': 'Amatic SC',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'amethysta',
+        'name': 'Amethysta',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'amiko',
+        'name': 'Amiko',
+        'weights': [400, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'amiri',
+        'name': 'Amiri',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'amiri-quran',
+        'name': 'Amiri Quran',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'amita',
+        'name': 'Amita',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anaheim',
+        'name': 'Anaheim',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'andada-pro',
+        'name': 'Andada Pro',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'andika',
+        'name': 'Andika',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'anek-bangla',
+        'name': 'Anek Bangla',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anek-devanagari',
+        'name': 'Anek Devanagari',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anek-gujarati',
+        'name': 'Anek Gujarati',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anek-gurmukhi',
+        'name': 'Anek Gurmukhi',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anek-kannada',
+        'name': 'Anek Kannada',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anek-latin',
+        'name': 'Anek Latin',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anek-malayalam',
+        'name': 'Anek Malayalam',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anek-odia',
+        'name': 'Anek Odia',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anek-tamil',
+        'name': 'Anek Tamil',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anek-telugu',
+        'name': 'Anek Telugu',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'angkor',
+        'name': 'Angkor',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'annapurna-sil',
+        'name': 'Annapurna SIL',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'annie-use-your-telescope',
+        'name': 'Annie Use Your Telescope',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anonymous-pro',
+        'name': 'Anonymous Pro',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'anta',
+        'name': 'Anta',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'antic',
+        'name': 'Antic',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'antic-didone',
+        'name': 'Antic Didone',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'antic-slab',
+        'name': 'Antic Slab',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anton',
+        'name': 'Anton',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'antonio',
+        'name': 'Antonio',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anuphan',
+        'name': 'Anuphan',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'anybody',
+        'name': 'Anybody',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'aoboshi-one',
+        'name': 'Aoboshi One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ar-one-sans',
+        'name': 'AR One Sans',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'arapey',
+        'name': 'Arapey',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'arbutus',
+        'name': 'Arbutus',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'arbutus-slab',
+        'name': 'Arbutus Slab',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'architects-daughter',
+        'name': 'Architects Daughter',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'archivo',
+        'name': 'Archivo',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'archivo-black',
+        'name': 'Archivo Black',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'archivo-narrow',
+        'name': 'Archivo Narrow',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'are-you-serious',
+        'name': 'Are You Serious',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'aref-ruqaa',
+        'name': 'Aref Ruqaa',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'aref-ruqaa-ink',
+        'name': 'Aref Ruqaa Ink',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'arima',
+        'name': 'Arima',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'arimo',
+        'name': 'Arimo',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'arizonia',
+        'name': 'Arizonia',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'armata',
+        'name': 'Armata',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'arsenal',
+        'name': 'Arsenal',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'artifika',
+        'name': 'Artifika',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'arvo',
+        'name': 'Arvo',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'arya',
+        'name': 'Arya',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'asap',
+        'name': 'Asap',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'asap-condensed',
+        'name': 'Asap Condensed',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'asar',
+        'name': 'Asar',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'asset',
+        'name': 'Asset',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'assistant',
+        'name': 'Assistant',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'astloch',
+        'name': 'Astloch',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'asul',
+        'name': 'Asul',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'athiti',
+        'name': 'Athiti',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'atkinson-hyperlegible',
+        'name': 'Atkinson Hyperlegible',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'atma',
+        'name': 'Atma',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'atomic-age',
+        'name': 'Atomic Age',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'aubrey',
+        'name': 'Aubrey',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'audiowide',
+        'name': 'Audiowide',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'autour-one',
+        'name': 'Autour One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'average',
+        'name': 'Average',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'average-sans',
+        'name': 'Average Sans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'averia-gruesa-libre',
+        'name': 'Averia Gruesa Libre',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'averia-libre',
+        'name': 'Averia Libre',
+        'weights': [300, 400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'averia-sans-libre',
+        'name': 'Averia Sans Libre',
+        'weights': [300, 400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'averia-serif-libre',
+        'name': 'Averia Serif Libre',
+        'weights': [300, 400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'azeret-mono',
+        'name': 'Azeret Mono',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'b612',
+        'name': 'B612',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'b612-mono',
+        'name': 'B612 Mono',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'babylonica',
+        'name': 'Babylonica',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bacasime-antique',
+        'name': 'Bacasime Antique',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bad-script',
+        'name': 'Bad Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bagel-fat-one',
+        'name': 'Bagel Fat One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bahiana',
+        'name': 'Bahiana',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bahianita',
+        'name': 'Bahianita',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bai-jamjuree',
+        'name': 'Bai Jamjuree',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'bakbak-one',
+        'name': 'Bakbak One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ballet',
+        'name': 'Ballet',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baloo-2',
+        'name': 'Baloo 2',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baloo-bhai-2',
+        'name': 'Baloo Bhai 2',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baloo-bhaijaan-2',
+        'name': 'Baloo Bhaijaan 2',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baloo-bhaina-2',
+        'name': 'Baloo Bhaina 2',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baloo-chettan-2',
+        'name': 'Baloo Chettan 2',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baloo-da-2',
+        'name': 'Baloo Da 2',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baloo-paaji-2',
+        'name': 'Baloo Paaji 2',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baloo-tamma-2',
+        'name': 'Baloo Tamma 2',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baloo-tammudu-2',
+        'name': 'Baloo Tammudu 2',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baloo-thambi-2',
+        'name': 'Baloo Thambi 2',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'balsamiq-sans',
+        'name': 'Balsamiq Sans',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'balthazar',
+        'name': 'Balthazar',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bangers',
+        'name': 'Bangers',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'barlow',
+        'name': 'Barlow',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'barlow-condensed',
+        'name': 'Barlow Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'barlow-semi-condensed',
+        'name': 'Barlow Semi Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'barriecito',
+        'name': 'Barriecito',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'barrio',
+        'name': 'Barrio',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'basic',
+        'name': 'Basic',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baskervville',
+        'name': 'Baskervville',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'battambang',
+        'name': 'Battambang',
+        'weights': [100, 300, 400, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'baumans',
+        'name': 'Baumans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bayon',
+        'name': 'Bayon',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'be-vietnam-pro',
+        'name': 'Be Vietnam Pro',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'beau-rivage',
+        'name': 'Beau Rivage',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bebas-neue',
+        'name': 'Bebas Neue',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'belanosima',
+        'name': 'Belanosima',
+        'weights': [400, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'belgrano',
+        'name': 'Belgrano',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bellefair',
+        'name': 'Bellefair',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'belleza',
+        'name': 'Belleza',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bellota',
+        'name': 'Bellota',
+        'weights': [300, 400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'bellota-text',
+        'name': 'Bellota Text',
+        'weights': [300, 400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'benchnine',
+        'name': 'BenchNine',
+        'weights': [300, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'benne',
+        'name': 'Benne',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bentham',
+        'name': 'Bentham',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'berkshire-swash',
+        'name': 'Berkshire Swash',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'besley',
+        'name': 'Besley',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'beth-ellen',
+        'name': 'Beth Ellen',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bevan',
+        'name': 'Bevan',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'bhutuka-expanded-one',
+        'name': 'BhuTuka Expanded One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'big-shoulders-display',
+        'name': 'Big Shoulders Display',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'big-shoulders-inline-display',
+        'name': 'Big Shoulders Inline Display',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'big-shoulders-inline-text',
+        'name': 'Big Shoulders Inline Text',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'big-shoulders-stencil-display',
+        'name': 'Big Shoulders Stencil Display',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'big-shoulders-stencil-text',
+        'name': 'Big Shoulders Stencil Text',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'big-shoulders-text',
+        'name': 'Big Shoulders Text',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bigelow-rules',
+        'name': 'Bigelow Rules',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bigshot-one',
+        'name': 'Bigshot One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bilbo',
+        'name': 'Bilbo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bilbo-swash-caps',
+        'name': 'Bilbo Swash Caps',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'biorhyme',
+        'name': 'BioRhyme',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'biorhyme-expanded',
+        'name': 'BioRhyme Expanded',
+        'weights': [200, 300, 400, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'birthstone',
+        'name': 'Birthstone',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'birthstone-bounce',
+        'name': 'Birthstone Bounce',
+        'weights': [400, 500],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'biryani',
+        'name': 'Biryani',
+        'weights': [200, 300, 400, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bitter',
+        'name': 'Bitter',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'biz-udgothic',
+        'name': 'BIZ UDGothic',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'biz-udmincho',
+        'name': 'BIZ UDMincho',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'biz-udpgothic',
+        'name': 'BIZ UDPGothic',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'biz-udpmincho',
+        'name': 'BIZ UDPMincho',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'black-and-white-picture',
+        'name': 'Black And White Picture',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'black-han-sans',
+        'name': 'Black Han Sans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'black-ops-one',
+        'name': 'Black Ops One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'blaka',
+        'name': 'Blaka',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'blaka-hollow',
+        'name': 'Blaka Hollow',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'blaka-ink',
+        'name': 'Blaka Ink',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'blinker',
+        'name': 'Blinker',
+        'weights': [100, 200, 300, 400, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bodoni-moda',
+        'name': 'Bodoni Moda',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'bokor',
+        'name': 'Bokor',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bona-nova',
+        'name': 'Bona Nova',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'bonbon',
+        'name': 'Bonbon',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bonheur-royale',
+        'name': 'Bonheur Royale',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'boogaloo',
+        'name': 'Boogaloo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'borel',
+        'name': 'Borel',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bowlby-one',
+        'name': 'Bowlby One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bowlby-one-sc',
+        'name': 'Bowlby One SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'braah-one',
+        'name': 'Braah One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'brawler',
+        'name': 'Brawler',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bree-serif',
+        'name': 'Bree Serif',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bricolage-grotesque',
+        'name': 'Bricolage Grotesque',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bruno-ace',
+        'name': 'Bruno Ace',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bruno-ace-sc',
+        'name': 'Bruno Ace SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'brygada-1918',
+        'name': 'Brygada 1918',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'bubblegum-sans',
+        'name': 'Bubblegum Sans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bubbler-one',
+        'name': 'Bubbler One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'buda',
+        'name': 'Buda',
+        'weights': [300],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'buenard',
+        'name': 'Buenard',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bungee',
+        'name': 'Bungee',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bungee-hairline',
+        'name': 'Bungee Hairline',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bungee-inline',
+        'name': 'Bungee Inline',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bungee-outline',
+        'name': 'Bungee Outline',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bungee-shade',
+        'name': 'Bungee Shade',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'bungee-spice',
+        'name': 'Bungee Spice',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'butcherman',
+        'name': 'Butcherman',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'butterfly-kids',
+        'name': 'Butterfly Kids',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cabin',
+        'name': 'Cabin',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'cabin-condensed',
+        'name': 'Cabin Condensed',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cabin-sketch',
+        'name': 'Cabin Sketch',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'caesar-dressing',
+        'name': 'Caesar Dressing',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cagliostro',
+        'name': 'Cagliostro',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cairo',
+        'name': 'Cairo',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cairo-play',
+        'name': 'Cairo Play',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'caladea',
+        'name': 'Caladea',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'calistoga',
+        'name': 'Calistoga',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'calligraffitti',
+        'name': 'Calligraffitti',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cambay',
+        'name': 'Cambay',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'cambo',
+        'name': 'Cambo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'candal',
+        'name': 'Candal',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cantarell',
+        'name': 'Cantarell',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'cantata-one',
+        'name': 'Cantata One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cantora-one',
+        'name': 'Cantora One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'caprasimo',
+        'name': 'Caprasimo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'capriola',
+        'name': 'Capriola',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'caramel',
+        'name': 'Caramel',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'carattere',
+        'name': 'Carattere',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cardo',
+        'name': 'Cardo',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'carlito',
+        'name': 'Carlito',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'carme',
+        'name': 'Carme',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'carrois-gothic',
+        'name': 'Carrois Gothic',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'carrois-gothic-sc',
+        'name': 'Carrois Gothic SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'carter-one',
+        'name': 'Carter One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'castoro',
+        'name': 'Castoro',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'castoro-titling',
+        'name': 'Castoro Titling',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'catamaran',
+        'name': 'Catamaran',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'caudex',
+        'name': 'Caudex',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'caveat',
+        'name': 'Caveat',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'caveat-brush',
+        'name': 'Caveat Brush',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cedarville-cursive',
+        'name': 'Cedarville Cursive',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ceviche-one',
+        'name': 'Ceviche One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'chakra-petch',
+        'name': 'Chakra Petch',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'changa',
+        'name': 'Changa',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'changa-one',
+        'name': 'Changa One',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'chango',
+        'name': 'Chango',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'charis-sil',
+        'name': 'Charis SIL',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'charm',
+        'name': 'Charm',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'charmonman',
+        'name': 'Charmonman',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'chathura',
+        'name': 'Chathura',
+        'weights': [100, 300, 400, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'chau-philomene-one',
+        'name': 'Chau Philomene One',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'chela-one',
+        'name': 'Chela One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'chelsea-market',
+        'name': 'Chelsea Market',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'chenla',
+        'name': 'Chenla',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cherish',
+        'name': 'Cherish',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cherry-bomb-one',
+        'name': 'Cherry Bomb One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cherry-cream-soda',
+        'name': 'Cherry Cream Soda',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cherry-swash',
+        'name': 'Cherry Swash',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'chewy',
+        'name': 'Chewy',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'chicle',
+        'name': 'Chicle',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'chilanka',
+        'name': 'Chilanka',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'chivo',
+        'name': 'Chivo',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'chivo-mono',
+        'name': 'Chivo Mono',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'chokokutai',
+        'name': 'Chokokutai',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'chonburi',
+        'name': 'Chonburi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cinzel',
+        'name': 'Cinzel',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cinzel-decorative',
+        'name': 'Cinzel Decorative',
+        'weights': [400, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'clicker-script',
+        'name': 'Clicker Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'climate-crisis',
+        'name': 'Climate Crisis',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'coda',
+        'name': 'Coda',
+        'weights': [400, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'codystar',
+        'name': 'Codystar',
+        'weights': [300, 400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'coiny',
+        'name': 'Coiny',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'combo',
+        'name': 'Combo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'comfortaa',
+        'name': 'Comfortaa',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'comforter',
+        'name': 'Comforter',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'comforter-brush',
+        'name': 'Comforter Brush',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'comic-neue',
+        'name': 'Comic Neue',
+        'weights': [300, 400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'coming-soon',
+        'name': 'Coming Soon',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'comme',
+        'name': 'Comme',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'commissioner',
+        'name': 'Commissioner',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'concert-one',
+        'name': 'Concert One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'condiment',
+        'name': 'Condiment',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'content',
+        'name': 'Content',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'contrail-one',
+        'name': 'Contrail One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'convergence',
+        'name': 'Convergence',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cookie',
+        'name': 'Cookie',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'copse',
+        'name': 'Copse',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'corben',
+        'name': 'Corben',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'corinthia',
+        'name': 'Corinthia',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cormorant',
+        'name': 'Cormorant',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'cormorant-garamond',
+        'name': 'Cormorant Garamond',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'cormorant-infant',
+        'name': 'Cormorant Infant',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'cormorant-sc',
+        'name': 'Cormorant SC',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cormorant-unicase',
+        'name': 'Cormorant Unicase',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cormorant-upright',
+        'name': 'Cormorant Upright',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'courgette',
+        'name': 'Courgette',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'courier-prime',
+        'name': 'Courier Prime',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'cousine',
+        'name': 'Cousine',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'coustard',
+        'name': 'Coustard',
+        'weights': [400, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'covered-by-your-grace',
+        'name': 'Covered By Your Grace',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'crafty-girls',
+        'name': 'Crafty Girls',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'creepster',
+        'name': 'Creepster',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'crete-round',
+        'name': 'Crete Round',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'crimson-pro',
+        'name': 'Crimson Pro',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'crimson-text',
+        'name': 'Crimson Text',
+        'weights': [400, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'croissant-one',
+        'name': 'Croissant One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'crushed',
+        'name': 'Crushed',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cuprum',
+        'name': 'Cuprum',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'cute-font',
+        'name': 'Cute Font',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cutive',
+        'name': 'Cutive',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'cutive-mono',
+        'name': 'Cutive Mono',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dai-banna-sil',
+        'name': 'Dai Banna SIL',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'damion',
+        'name': 'Damion',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dancing-script',
+        'name': 'Dancing Script',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dangrek',
+        'name': 'Dangrek',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'darker-grotesque',
+        'name': 'Darker Grotesque',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'darumadrop-one',
+        'name': 'Darumadrop One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'david-libre',
+        'name': 'David Libre',
+        'weights': [400, 500, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dawning-of-a-new-day',
+        'name': 'Dawning of a New Day',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'days-one',
+        'name': 'Days One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dekko',
+        'name': 'Dekko',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dela-gothic-one',
+        'name': 'Dela Gothic One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'delicious-handrawn',
+        'name': 'Delicious Handrawn',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'delius',
+        'name': 'Delius',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'delius-swash-caps',
+        'name': 'Delius Swash Caps',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'delius-unicase',
+        'name': 'Delius Unicase',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'della-respira',
+        'name': 'Della Respira',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'denk-one',
+        'name': 'Denk One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'devonshire',
+        'name': 'Devonshire',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dhurjati',
+        'name': 'Dhurjati',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'didact-gothic',
+        'name': 'Didact Gothic',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'diphylleia',
+        'name': 'Diphylleia',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'diplomata',
+        'name': 'Diplomata',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'diplomata-sc',
+        'name': 'Diplomata SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dm-mono',
+        'name': 'DM Mono',
+        'weights': [300, 400, 500],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'dm-sans',
+        'name': 'DM Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'dm-serif-display',
+        'name': 'DM Serif Display',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'dm-serif-text',
+        'name': 'DM Serif Text',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'do-hyeon',
+        'name': 'Do Hyeon',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dokdo',
+        'name': 'Dokdo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'domine',
+        'name': 'Domine',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'donegal-one',
+        'name': 'Donegal One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dongle',
+        'name': 'Dongle',
+        'weights': [300, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'doppio-one',
+        'name': 'Doppio One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dorsa',
+        'name': 'Dorsa',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dosis',
+        'name': 'Dosis',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dotgothic16',
+        'name': 'DotGothic16',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dr-sugiyama',
+        'name': 'Dr Sugiyama',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'duru-sans',
+        'name': 'Duru Sans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dynalight',
+        'name': 'Dynalight',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'dynapuff',
+        'name': 'DynaPuff',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'eagle-lake',
+        'name': 'Eagle Lake',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'east-sea-dokdo',
+        'name': 'East Sea Dokdo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'eater',
+        'name': 'Eater',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'eb-garamond',
+        'name': 'EB Garamond',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'economica',
+        'name': 'Economica',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'eczar',
+        'name': 'Eczar',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'edu-nsw-act-foundation',
+        'name': 'Edu NSW ACT Foundation',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'edu-qld-beginner',
+        'name': 'Edu QLD Beginner',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'edu-sa-beginner',
+        'name': 'Edu SA Beginner',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'edu-tas-beginner',
+        'name': 'Edu TAS Beginner',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'edu-vic-wa-nt-beginner',
+        'name': 'Edu VIC WA NT Beginner',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'el-messiri',
+        'name': 'El Messiri',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'electrolize',
+        'name': 'Electrolize',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'elsie',
+        'name': 'Elsie',
+        'weights': [400, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'elsie-swash-caps',
+        'name': 'Elsie Swash Caps',
+        'weights': [400, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'emblema-one',
+        'name': 'Emblema One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'emilys-candy',
+        'name': 'Emilys Candy',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'encode-sans',
+        'name': 'Encode Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'encode-sans-condensed',
+        'name': 'Encode Sans Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'encode-sans-expanded',
+        'name': 'Encode Sans Expanded',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'encode-sans-sc',
+        'name': 'Encode Sans SC',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'encode-sans-semi-condensed',
+        'name': 'Encode Sans Semi Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'encode-sans-semi-expanded',
+        'name': 'Encode Sans Semi Expanded',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'engagement',
+        'name': 'Engagement',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'englebert',
+        'name': 'Englebert',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'enriqueta',
+        'name': 'Enriqueta',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ephesis',
+        'name': 'Ephesis',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'epilogue',
+        'name': 'Epilogue',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'erica-one',
+        'name': 'Erica One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'esteban',
+        'name': 'Esteban',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'estonia',
+        'name': 'Estonia',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'euphoria-script',
+        'name': 'Euphoria Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ewert',
+        'name': 'Ewert',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'exo',
+        'name': 'Exo',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'exo-2',
+        'name': 'Exo 2',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'expletus-sans',
+        'name': 'Expletus Sans',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'explora',
+        'name': 'Explora',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fahkwang',
+        'name': 'Fahkwang',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'familjen-grotesk',
+        'name': 'Familjen Grotesk',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'fanwood-text',
+        'name': 'Fanwood Text',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'farro',
+        'name': 'Farro',
+        'weights': [300, 400, 500, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'farsan',
+        'name': 'Farsan',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fascinate',
+        'name': 'Fascinate',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fascinate-inline',
+        'name': 'Fascinate Inline',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'faster-one',
+        'name': 'Faster One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fasthand',
+        'name': 'Fasthand',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fauna-one',
+        'name': 'Fauna One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'faustina',
+        'name': 'Faustina',
+        'weights': [300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'federant',
+        'name': 'Federant',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'federo',
+        'name': 'Federo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'felipa',
+        'name': 'Felipa',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fenix',
+        'name': 'Fenix',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'festive',
+        'name': 'Festive',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'figtree',
+        'name': 'Figtree',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'finger-paint',
+        'name': 'Finger Paint',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'finlandica',
+        'name': 'Finlandica',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'fira-code',
+        'name': 'Fira Code',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fira-mono',
+        'name': 'Fira Mono',
+        'weights': [400, 500, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fira-sans',
+        'name': 'Fira Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'fira-sans-condensed',
+        'name': 'Fira Sans Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'fira-sans-extra-condensed',
+        'name': 'Fira Sans Extra Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'fjalla-one',
+        'name': 'Fjalla One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fjord-one',
+        'name': 'Fjord One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'flamenco',
+        'name': 'Flamenco',
+        'weights': [300, 400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'flavors',
+        'name': 'Flavors',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fleur-de-leah',
+        'name': 'Fleur De Leah',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'flow-block',
+        'name': 'Flow Block',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'flow-circular',
+        'name': 'Flow Circular',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'flow-rounded',
+        'name': 'Flow Rounded',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'foldit',
+        'name': 'Foldit',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fondamento',
+        'name': 'Fondamento',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'fontdiner-swanky',
+        'name': 'Fontdiner Swanky',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'forum',
+        'name': 'Forum',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fragment-mono',
+        'name': 'Fragment Mono',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'francois-one',
+        'name': 'Francois One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'frank-ruhl-libre',
+        'name': 'Frank Ruhl Libre',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fraunces',
+        'name': 'Fraunces',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'freckle-face',
+        'name': 'Freckle Face',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fredericka-the-great',
+        'name': 'Fredericka the Great',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fredoka',
+        'name': 'Fredoka',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'freehand',
+        'name': 'Freehand',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fresca',
+        'name': 'Fresca',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'frijole',
+        'name': 'Frijole',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fruktur',
+        'name': 'Fruktur',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'fugaz-one',
+        'name': 'Fugaz One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fuggles',
+        'name': 'Fuggles',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'fuzzy-bubbles',
+        'name': 'Fuzzy Bubbles',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gabarito',
+        'name': 'Gabarito',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gabriela',
+        'name': 'Gabriela',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gaegu',
+        'name': 'Gaegu',
+        'weights': [300, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gafata',
+        'name': 'Gafata',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gajraj-one',
+        'name': 'Gajraj One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'galada',
+        'name': 'Galada',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'galdeano',
+        'name': 'Galdeano',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'galindo',
+        'name': 'Galindo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gamja-flower',
+        'name': 'Gamja Flower',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gantari',
+        'name': 'Gantari',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'gasoek-one',
+        'name': 'Gasoek One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gayathri',
+        'name': 'Gayathri',
+        'weights': [100, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gelasio',
+        'name': 'Gelasio',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'gemunu-libre',
+        'name': 'Gemunu Libre',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'genos',
+        'name': 'Genos',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'gentium-book-plus',
+        'name': 'Gentium Book Plus',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'gentium-plus',
+        'name': 'Gentium Plus',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'geo',
+        'name': 'Geo',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'geologica',
+        'name': 'Geologica',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'georama',
+        'name': 'Georama',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'geostar',
+        'name': 'Geostar',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'geostar-fill',
+        'name': 'Geostar Fill',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'germania-one',
+        'name': 'Germania One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gfs-didot',
+        'name': 'GFS Didot',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gfs-neohellenic',
+        'name': 'GFS Neohellenic',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'gideon-roman',
+        'name': 'Gideon Roman',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gidugu',
+        'name': 'Gidugu',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gilda-display',
+        'name': 'Gilda Display',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'girassol',
+        'name': 'Girassol',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'give-you-glory',
+        'name': 'Give You Glory',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'glass-antiqua',
+        'name': 'Glass Antiqua',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'glegoo',
+        'name': 'Glegoo',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gloock',
+        'name': 'Gloock',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gloria-hallelujah',
+        'name': 'Gloria Hallelujah',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'glory',
+        'name': 'Glory',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'gluten',
+        'name': 'Gluten',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'goblin-one',
+        'name': 'Goblin One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gochi-hand',
+        'name': 'Gochi Hand',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'goldman',
+        'name': 'Goldman',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'golos-text',
+        'name': 'Golos Text',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gorditas',
+        'name': 'Gorditas',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gothic-a1',
+        'name': 'Gothic A1',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gotu',
+        'name': 'Gotu',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'goudy-bookletter-1911',
+        'name': 'Goudy Bookletter 1911',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gowun-batang',
+        'name': 'Gowun Batang',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gowun-dodum',
+        'name': 'Gowun Dodum',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'graduate',
+        'name': 'Graduate',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'grand-hotel',
+        'name': 'Grand Hotel',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'grandiflora-one',
+        'name': 'Grandiflora One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'grandstander',
+        'name': 'Grandstander',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'grape-nuts',
+        'name': 'Grape Nuts',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gravitas-one',
+        'name': 'Gravitas One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'great-vibes',
+        'name': 'Great Vibes',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'grechen-fuemen',
+        'name': 'Grechen Fuemen',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'grenze',
+        'name': 'Grenze',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'grenze-gotisch',
+        'name': 'Grenze Gotisch',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'grey-qo',
+        'name': 'Grey Qo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'griffy',
+        'name': 'Griffy',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gruppo',
+        'name': 'Gruppo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gudea',
+        'name': 'Gudea',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'gugi',
+        'name': 'Gugi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gulzar',
+        'name': 'Gulzar',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gupter',
+        'name': 'Gupter',
+        'weights': [400, 500, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gurajada',
+        'name': 'Gurajada',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'gwendolyn',
+        'name': 'Gwendolyn',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'habibi',
+        'name': 'Habibi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hachi-maru-pop',
+        'name': 'Hachi Maru Pop',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hahmlet',
+        'name': 'Hahmlet',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'halant',
+        'name': 'Halant',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hammersmith-one',
+        'name': 'Hammersmith One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hanalei',
+        'name': 'Hanalei',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hanalei-fill',
+        'name': 'Hanalei Fill',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'handjet',
+        'name': 'Handjet',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'handlee',
+        'name': 'Handlee',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hanken-grotesk',
+        'name': 'Hanken Grotesk',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'hanuman',
+        'name': 'Hanuman',
+        'weights': [100, 300, 400, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'happy-monkey',
+        'name': 'Happy Monkey',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'harmattan',
+        'name': 'Harmattan',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'headland-one',
+        'name': 'Headland One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hedvig-letters-sans',
+        'name': 'Hedvig Letters Sans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hedvig-letters-serif',
+        'name': 'Hedvig Letters Serif',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'heebo',
+        'name': 'Heebo',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'henny-penny',
+        'name': 'Henny Penny',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hepta-slab',
+        'name': 'Hepta Slab',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'herr-von-muellerhoff',
+        'name': 'Herr Von Muellerhoff',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hi-melody',
+        'name': 'Hi Melody',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hina-mincho',
+        'name': 'Hina Mincho',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hind',
+        'name': 'Hind',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hind-guntur',
+        'name': 'Hind Guntur',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hind-madurai',
+        'name': 'Hind Madurai',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hind-siliguri',
+        'name': 'Hind Siliguri',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hind-vadodara',
+        'name': 'Hind Vadodara',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'holtwood-one-sc',
+        'name': 'Holtwood One SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'homemade-apple',
+        'name': 'Homemade Apple',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'homenaje',
+        'name': 'Homenaje',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'honk',
+        'name': 'Honk',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hubballi',
+        'name': 'Hubballi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'hurricane',
+        'name': 'Hurricane',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ibarra-real-nova',
+        'name': 'Ibarra Real Nova',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'ibm-plex-mono',
+        'name': 'IBM Plex Mono',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'ibm-plex-sans',
+        'name': 'IBM Plex Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'ibm-plex-sans-arabic',
+        'name': 'IBM Plex Sans Arabic',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ibm-plex-sans-condensed',
+        'name': 'IBM Plex Sans Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'ibm-plex-sans-devanagari',
+        'name': 'IBM Plex Sans Devanagari',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ibm-plex-sans-hebrew',
+        'name': 'IBM Plex Sans Hebrew',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ibm-plex-sans-jp',
+        'name': 'IBM Plex Sans JP',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ibm-plex-sans-kr',
+        'name': 'IBM Plex Sans KR',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ibm-plex-sans-thai',
+        'name': 'IBM Plex Sans Thai',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ibm-plex-sans-thai-looped',
+        'name': 'IBM Plex Sans Thai Looped',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ibm-plex-serif',
+        'name': 'IBM Plex Serif',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'iceberg',
+        'name': 'Iceberg',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'iceland',
+        'name': 'Iceland',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'im-fell-double-pica',
+        'name': 'IM Fell Double Pica',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'im-fell-double-pica-sc',
+        'name': 'IM Fell Double Pica SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'im-fell-dw-pica',
+        'name': 'IM Fell DW Pica',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'im-fell-dw-pica-sc',
+        'name': 'IM Fell DW Pica SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'im-fell-english',
+        'name': 'IM Fell English',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'im-fell-english-sc',
+        'name': 'IM Fell English SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'im-fell-french-canon',
+        'name': 'IM Fell French Canon',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'im-fell-french-canon-sc',
+        'name': 'IM Fell French Canon SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'im-fell-great-primer',
+        'name': 'IM Fell Great Primer',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'im-fell-great-primer-sc',
+        'name': 'IM Fell Great Primer SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'imbue',
+        'name': 'Imbue',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'imperial-script',
+        'name': 'Imperial Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'imprima',
+        'name': 'Imprima',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'inclusive-sans',
+        'name': 'Inclusive Sans',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'inconsolata',
+        'name': 'Inconsolata',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'inder',
+        'name': 'Inder',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'indie-flower',
+        'name': 'Indie Flower',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ingrid-darling',
+        'name': 'Ingrid Darling',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'inika',
+        'name': 'Inika',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'inknut-antiqua',
+        'name': 'Inknut Antiqua',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'inria-sans',
+        'name': 'Inria Sans',
+        'weights': [300, 400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'inria-serif',
+        'name': 'Inria Serif',
+        'weights': [300, 400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'inspiration',
+        'name': 'Inspiration',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'instrument-sans',
+        'name': 'Instrument Sans',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'instrument-serif',
+        'name': 'Instrument Serif',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'inter',
+        'name': 'Inter',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'inter-tight',
+        'name': 'Inter Tight',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'irish-grover',
+        'name': 'Irish Grover',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'island-moments',
+        'name': 'Island Moments',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'istok-web',
+        'name': 'Istok Web',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'italiana',
+        'name': 'Italiana',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'italianno',
+        'name': 'Italianno',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'itim',
+        'name': 'Itim',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jacquard-12-charted',
+        'name': 'Jacquard 12 Charted',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jacquard-24',
+        'name': 'Jacquard 24',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jacquarda-bastarda-9',
+        'name': 'Jacquarda Bastarda 9',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jacquarda-bastarda-9-charted',
+        'name': 'Jacquarda Bastarda 9 Charted',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jacques-francois',
+        'name': 'Jacques Francois',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jacques-francois-shadow',
+        'name': 'Jacques Francois Shadow',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jaldi',
+        'name': 'Jaldi',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jersey-10',
+        'name': 'Jersey 10',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jersey-10-charted',
+        'name': 'Jersey 10 Charted',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jersey-15',
+        'name': 'Jersey 15',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jersey-15-charted',
+        'name': 'Jersey 15 Charted',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jersey-20',
+        'name': 'Jersey 20',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jersey-20-charted',
+        'name': 'Jersey 20 Charted',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jersey-25',
+        'name': 'Jersey 25',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jetbrains-mono',
+        'name': 'JetBrains Mono',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'jim-nightshade',
+        'name': 'Jim Nightshade',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'joan',
+        'name': 'Joan',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jockey-one',
+        'name': 'Jockey One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jolly-lodger',
+        'name': 'Jolly Lodger',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jomhuria',
+        'name': 'Jomhuria',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jomolhari',
+        'name': 'Jomolhari',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'josefin-sans',
+        'name': 'Josefin Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'josefin-slab',
+        'name': 'Josefin Slab',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'jost',
+        'name': 'Jost',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'joti-one',
+        'name': 'Joti One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jua',
+        'name': 'Jua',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'judson',
+        'name': 'Judson',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'julee',
+        'name': 'Julee',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'julius-sans-one',
+        'name': 'Julius Sans One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'junge',
+        'name': 'Junge',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'jura',
+        'name': 'Jura',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'just-another-hand',
+        'name': 'Just Another Hand',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'just-me-again-down-here',
+        'name': 'Just Me Again Down Here',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'k2d',
+        'name': 'K2D',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'kablammo',
+        'name': 'Kablammo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kadwa',
+        'name': 'Kadwa',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kaisei-decol',
+        'name': 'Kaisei Decol',
+        'weights': [400, 500, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kaisei-harunoumi',
+        'name': 'Kaisei HarunoUmi',
+        'weights': [400, 500, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kaisei-opti',
+        'name': 'Kaisei Opti',
+        'weights': [400, 500, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kaisei-tokumin',
+        'name': 'Kaisei Tokumin',
+        'weights': [400, 500, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kalam',
+        'name': 'Kalam',
+        'weights': [300, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kalnia',
+        'name': 'Kalnia',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kameron',
+        'name': 'Kameron',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kanit',
+        'name': 'Kanit',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'kantumruy-pro',
+        'name': 'Kantumruy Pro',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'karantina',
+        'name': 'Karantina',
+        'weights': [300, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'karla',
+        'name': 'Karla',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'karma',
+        'name': 'Karma',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'katibeh',
+        'name': 'Katibeh',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kaushan-script',
+        'name': 'Kaushan Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kavivanar',
+        'name': 'Kavivanar',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kavoon',
+        'name': 'Kavoon',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kay-pho-du',
+        'name': 'Kay Pho Du',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kdam-thmor-pro',
+        'name': 'Kdam Thmor Pro',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'keania-one',
+        'name': 'Keania One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kelly-slab',
+        'name': 'Kelly Slab',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kenia',
+        'name': 'Kenia',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'khand',
+        'name': 'Khand',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'khmer',
+        'name': 'Khmer',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'khula',
+        'name': 'Khula',
+        'weights': [300, 400, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kings',
+        'name': 'Kings',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kirang-haerang',
+        'name': 'Kirang Haerang',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kite-one',
+        'name': 'Kite One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kiwi-maru',
+        'name': 'Kiwi Maru',
+        'weights': [300, 400, 500],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'klee-one',
+        'name': 'Klee One',
+        'weights': [400, 600],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'knewave',
+        'name': 'Knewave',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kodchasan',
+        'name': 'Kodchasan',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'kode-mono',
+        'name': 'Kode Mono',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'koh-santepheap',
+        'name': 'Koh Santepheap',
+        'weights': [100, 300, 400, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'koho',
+        'name': 'KoHo',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'kolker-brush',
+        'name': 'Kolker Brush',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'konkhmer-sleokchher',
+        'name': 'Konkhmer Sleokchher',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kosugi',
+        'name': 'Kosugi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kosugi-maru',
+        'name': 'Kosugi Maru',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kotta-one',
+        'name': 'Kotta One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'koulen',
+        'name': 'Koulen',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kranky',
+        'name': 'Kranky',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kreon',
+        'name': 'Kreon',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kristi',
+        'name': 'Kristi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'krona-one',
+        'name': 'Krona One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'krub',
+        'name': 'Krub',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'kufam',
+        'name': 'Kufam',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'kulim-park',
+        'name': 'Kulim Park',
+        'weights': [200, 300, 400, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'kumar-one',
+        'name': 'Kumar One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kumar-one-outline',
+        'name': 'Kumar One Outline',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kumbh-sans',
+        'name': 'Kumbh Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'kurale',
+        'name': 'Kurale',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'la-belle-aurore',
+        'name': 'La Belle Aurore',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'labrada',
+        'name': 'Labrada',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'lacquer',
+        'name': 'Lacquer',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'laila',
+        'name': 'Laila',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lakki-reddy',
+        'name': 'Lakki Reddy',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lalezar',
+        'name': 'Lalezar',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lancelot',
+        'name': 'Lancelot',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'langar',
+        'name': 'Langar',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lateef',
+        'name': 'Lateef',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lato',
+        'name': 'Lato',
+        'weights': [100, 300, 400, 700, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'lavishly-yours',
+        'name': 'Lavishly Yours',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'league-gothic',
+        'name': 'League Gothic',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'league-script',
+        'name': 'League Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'league-spartan',
+        'name': 'League Spartan',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'leckerli-one',
+        'name': 'Leckerli One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ledger',
+        'name': 'Ledger',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lekton',
+        'name': 'Lekton',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'lemon',
+        'name': 'Lemon',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lemonada',
+        'name': 'Lemonada',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lexend',
+        'name': 'Lexend',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lexend-deca',
+        'name': 'Lexend Deca',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lexend-exa',
+        'name': 'Lexend Exa',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lexend-giga',
+        'name': 'Lexend Giga',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lexend-mega',
+        'name': 'Lexend Mega',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lexend-peta',
+        'name': 'Lexend Peta',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lexend-tera',
+        'name': 'Lexend Tera',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lexend-zetta',
+        'name': 'Lexend Zetta',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'libre-barcode-128',
+        'name': 'Libre Barcode 128',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'libre-barcode-128-text',
+        'name': 'Libre Barcode 128 Text',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'libre-barcode-39',
+        'name': 'Libre Barcode 39',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'libre-barcode-39-extended',
+        'name': 'Libre Barcode 39 Extended',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'libre-barcode-39-extended-text',
+        'name': 'Libre Barcode 39 Extended Text',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'libre-barcode-39-text',
+        'name': 'Libre Barcode 39 Text',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'libre-barcode-ean13-text',
+        'name': 'Libre Barcode EAN13 Text',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'libre-baskerville',
+        'name': 'Libre Baskerville',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'libre-bodoni',
+        'name': 'Libre Bodoni',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'libre-caslon-display',
+        'name': 'Libre Caslon Display',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'libre-caslon-text',
+        'name': 'Libre Caslon Text',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'libre-franklin',
+        'name': 'Libre Franklin',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'licorice',
+        'name': 'Licorice',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'life-savers',
+        'name': 'Life Savers',
+        'weights': [400, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lilita-one',
+        'name': 'Lilita One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lily-script-one',
+        'name': 'Lily Script One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'limelight',
+        'name': 'Limelight',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'linden-hill',
+        'name': 'Linden Hill',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'linefont',
+        'name': 'Linefont',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lisu-bosa',
+        'name': 'Lisu Bosa',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'literata',
+        'name': 'Literata',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'liu-jian-mao-cao',
+        'name': 'Liu Jian Mao Cao',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'livvic',
+        'name': 'Livvic',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'lobster',
+        'name': 'Lobster',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lobster-two',
+        'name': 'Lobster Two',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'londrina-outline',
+        'name': 'Londrina Outline',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'londrina-shadow',
+        'name': 'Londrina Shadow',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'londrina-sketch',
+        'name': 'Londrina Sketch',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'londrina-solid',
+        'name': 'Londrina Solid',
+        'weights': [100, 300, 400, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'long-cang',
+        'name': 'Long Cang',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lora',
+        'name': 'Lora',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'love-light',
+        'name': 'Love Light',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'love-ya-like-a-sister',
+        'name': 'Love Ya Like A Sister',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'loved-by-the-king',
+        'name': 'Loved by the King',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lovers-quarrel',
+        'name': 'Lovers Quarrel',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'luckiest-guy',
+        'name': 'Luckiest Guy',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lugrasimo',
+        'name': 'Lugrasimo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lumanosimo',
+        'name': 'Lumanosimo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lunasima',
+        'name': 'Lunasima',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lusitana',
+        'name': 'Lusitana',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'lustria',
+        'name': 'Lustria',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'luxurious-roman',
+        'name': 'Luxurious Roman',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'luxurious-script',
+        'name': 'Luxurious Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'm-plus-1',
+        'name': 'M PLUS 1',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'm-plus-1-code',
+        'name': 'M PLUS 1 Code',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'm-plus-1p',
+        'name': 'M PLUS 1p',
+        'weights': [100, 300, 400, 500, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'm-plus-2',
+        'name': 'M PLUS 2',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'm-plus-code-latin',
+        'name': 'M PLUS Code Latin',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'm-plus-rounded-1c',
+        'name': 'M PLUS Rounded 1c',
+        'weights': [100, 300, 400, 500, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ma-shan-zheng',
+        'name': 'Ma Shan Zheng',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'macondo',
+        'name': 'Macondo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'macondo-swash-caps',
+        'name': 'Macondo Swash Caps',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mada',
+        'name': 'Mada',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'madimi-one',
+        'name': 'Madimi One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'magra',
+        'name': 'Magra',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'maiden-orange',
+        'name': 'Maiden Orange',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'maitree',
+        'name': 'Maitree',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'major-mono-display',
+        'name': 'Major Mono Display',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mako',
+        'name': 'Mako',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mali',
+        'name': 'Mali',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'mallanna',
+        'name': 'Mallanna',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mandali',
+        'name': 'Mandali',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'manjari',
+        'name': 'Manjari',
+        'weights': [100, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'manrope',
+        'name': 'Manrope',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mansalva',
+        'name': 'Mansalva',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'manuale',
+        'name': 'Manuale',
+        'weights': [300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'marcellus',
+        'name': 'Marcellus',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'marcellus-sc',
+        'name': 'Marcellus SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'marck-script',
+        'name': 'Marck Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'margarine',
+        'name': 'Margarine',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'marhey',
+        'name': 'Marhey',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'markazi-text',
+        'name': 'Markazi Text',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'marko-one',
+        'name': 'Marko One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'marmelad',
+        'name': 'Marmelad',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'martel',
+        'name': 'Martel',
+        'weights': [200, 300, 400, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'martel-sans',
+        'name': 'Martel Sans',
+        'weights': [200, 300, 400, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'martian-mono',
+        'name': 'Martian Mono',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'marvel',
+        'name': 'Marvel',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'mate',
+        'name': 'Mate',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'mate-sc',
+        'name': 'Mate SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'maven-pro',
+        'name': 'Maven Pro',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mclaren',
+        'name': 'McLaren',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mea-culpa',
+        'name': 'Mea Culpa',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'meddon',
+        'name': 'Meddon',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'medievalsharp',
+        'name': 'MedievalSharp',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'medula-one',
+        'name': 'Medula One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'meera-inimai',
+        'name': 'Meera Inimai',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'megrim',
+        'name': 'Megrim',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'meie-script',
+        'name': 'Meie Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'meow-script',
+        'name': 'Meow Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'merienda',
+        'name': 'Merienda',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'merriweather',
+        'name': 'Merriweather',
+        'weights': [300, 400, 700, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'merriweather-sans',
+        'name': 'Merriweather Sans',
+        'weights': [300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'metal',
+        'name': 'Metal',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'metal-mania',
+        'name': 'Metal Mania',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'metamorphous',
+        'name': 'Metamorphous',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'metrophobic',
+        'name': 'Metrophobic',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'michroma',
+        'name': 'Michroma',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'micro-5',
+        'name': 'Micro 5',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'micro-5-charted',
+        'name': 'Micro 5 Charted',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'milonga',
+        'name': 'Milonga',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'miltonian',
+        'name': 'Miltonian',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'miltonian-tattoo',
+        'name': 'Miltonian Tattoo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mina',
+        'name': 'Mina',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mingzat',
+        'name': 'Mingzat',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'miniver',
+        'name': 'Miniver',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'miriam-libre',
+        'name': 'Miriam Libre',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mirza',
+        'name': 'Mirza',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'miss-fajardose',
+        'name': 'Miss Fajardose',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mitr',
+        'name': 'Mitr',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mochiy-pop-one',
+        'name': 'Mochiy Pop One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mochiy-pop-p-one',
+        'name': 'Mochiy Pop P One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'modak',
+        'name': 'Modak',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'modern-antiqua',
+        'name': 'Modern Antiqua',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mogra',
+        'name': 'Mogra',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mohave',
+        'name': 'Mohave',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'moirai-one',
+        'name': 'Moirai One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'molengo',
+        'name': 'Molengo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'molle',
+        'name': 'Molle',
+        'weights': [400],
+        'styles': ['italic'],
+    },
+    {
+        'id': 'monda',
+        'name': 'Monda',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'monofett',
+        'name': 'Monofett',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'monomaniac-one',
+        'name': 'Monomaniac One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'monoton',
+        'name': 'Monoton',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'monsieur-la-doulaise',
+        'name': 'Monsieur La Doulaise',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'montaga',
+        'name': 'Montaga',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'montagu-slab',
+        'name': 'Montagu Slab',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'montecarlo',
+        'name': 'MonteCarlo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'montez',
+        'name': 'Montez',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'montserrat',
+        'name': 'Montserrat',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'montserrat-alternates',
+        'name': 'Montserrat Alternates',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'montserrat-subrayada',
+        'name': 'Montserrat Subrayada',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'moo-lah-lah',
+        'name': 'Moo Lah Lah',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mooli',
+        'name': 'Mooli',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'moon-dance',
+        'name': 'Moon Dance',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'moul',
+        'name': 'Moul',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'moulpali',
+        'name': 'Moulpali',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mountains-of-christmas',
+        'name': 'Mountains of Christmas',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mouse-memoirs',
+        'name': 'Mouse Memoirs',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mr-bedfort',
+        'name': 'Mr Bedfort',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mr-dafoe',
+        'name': 'Mr Dafoe',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mr-de-haviland',
+        'name': 'Mr De Haviland',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mrs-saint-delafield',
+        'name': 'Mrs Saint Delafield',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mrs-sheppards',
+        'name': 'Mrs Sheppards',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ms-madi',
+        'name': 'Ms Madi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mukta',
+        'name': 'Mukta',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mukta-mahee',
+        'name': 'Mukta Mahee',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mukta-malar',
+        'name': 'Mukta Malar',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mukta-vaani',
+        'name': 'Mukta Vaani',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mulish',
+        'name': 'Mulish',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'murecho',
+        'name': 'Murecho',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'museomoderno',
+        'name': 'MuseoModerno',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'my-soul',
+        'name': 'My Soul',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mynerve',
+        'name': 'Mynerve',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'mystery-quest',
+        'name': 'Mystery Quest',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nabla',
+        'name': 'Nabla',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'namdhinggo',
+        'name': 'Namdhinggo',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nanum-brush-script',
+        'name': 'Nanum Brush Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nanum-gothic',
+        'name': 'Nanum Gothic',
+        'weights': [400, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nanum-gothic-coding',
+        'name': 'Nanum Gothic Coding',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nanum-myeongjo',
+        'name': 'Nanum Myeongjo',
+        'weights': [400, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nanum-pen-script',
+        'name': 'Nanum Pen Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'narnoor',
+        'name': 'Narnoor',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'neonderthaw',
+        'name': 'Neonderthaw',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nerko-one',
+        'name': 'Nerko One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'neucha',
+        'name': 'Neucha',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'neuton',
+        'name': 'Neuton',
+        'weights': [200, 300, 400, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'new-rocker',
+        'name': 'New Rocker',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'new-tegomin',
+        'name': 'New Tegomin',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'news-cycle',
+        'name': 'News Cycle',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'newsreader',
+        'name': 'Newsreader',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'niconne',
+        'name': 'Niconne',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'niramit',
+        'name': 'Niramit',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'nixie-one',
+        'name': 'Nixie One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nobile',
+        'name': 'Nobile',
+        'weights': [400, 500, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'nokora',
+        'name': 'Nokora',
+        'weights': [100, 300, 400, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'norican',
+        'name': 'Norican',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nosifer',
+        'name': 'Nosifer',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'notable',
+        'name': 'Notable',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nothing-you-could-do',
+        'name': 'Nothing You Could Do',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'noticia-text',
+        'name': 'Noticia Text',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'noto-color-emoji',
+        'name': 'Noto Color Emoji',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nova-cut',
+        'name': 'Nova Cut',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nova-flat',
+        'name': 'Nova Flat',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nova-mono',
+        'name': 'Nova Mono',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nova-oval',
+        'name': 'Nova Oval',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nova-round',
+        'name': 'Nova Round',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nova-script',
+        'name': 'Nova Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nova-slim',
+        'name': 'Nova Slim',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nova-square',
+        'name': 'Nova Square',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ntr',
+        'name': 'NTR',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'numans',
+        'name': 'Numans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'nunito',
+        'name': 'Nunito',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'nunito-sans',
+        'name': 'Nunito Sans',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'nuosu-sil',
+        'name': 'Nuosu SIL',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'odibee-sans',
+        'name': 'Odibee Sans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'odor-mean-chey',
+        'name': 'Odor Mean Chey',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'offside',
+        'name': 'Offside',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'oi',
+        'name': 'Oi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ojuju',
+        'name': 'Ojuju',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'old-standard-tt',
+        'name': 'Old Standard TT',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'oldenburg',
+        'name': 'Oldenburg',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ole',
+        'name': 'Ole',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'oleo-script',
+        'name': 'Oleo Script',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'oleo-script-swash-caps',
+        'name': 'Oleo Script Swash Caps',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'onest',
+        'name': 'Onest',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'oooh-baby',
+        'name': 'Oooh Baby',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'open-sans',
+        'name': 'Open Sans',
+        'weights': [300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'oranienbaum',
+        'name': 'Oranienbaum',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'orbit',
+        'name': 'Orbit',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'orbitron',
+        'name': 'Orbitron',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'oregano',
+        'name': 'Oregano',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'orelega-one',
+        'name': 'Orelega One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'orienta',
+        'name': 'Orienta',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'original-surfer',
+        'name': 'Original Surfer',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'oswald',
+        'name': 'Oswald',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'outfit',
+        'name': 'Outfit',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'over-the-rainbow',
+        'name': 'Over the Rainbow',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'overlock',
+        'name': 'Overlock',
+        'weights': [400, 700, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'overlock-sc',
+        'name': 'Overlock SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'overpass',
+        'name': 'Overpass',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'overpass-mono',
+        'name': 'Overpass Mono',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ovo',
+        'name': 'Ovo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'oxanium',
+        'name': 'Oxanium',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'oxygen',
+        'name': 'Oxygen',
+        'weights': [300, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'oxygen-mono',
+        'name': 'Oxygen Mono',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pacifico',
+        'name': 'Pacifico',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'padauk',
+        'name': 'Padauk',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'padyakke-expanded-one',
+        'name': 'Padyakke Expanded One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'palanquin',
+        'name': 'Palanquin',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'palanquin-dark',
+        'name': 'Palanquin Dark',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'palette-mosaic',
+        'name': 'Palette Mosaic',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pangolin',
+        'name': 'Pangolin',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'paprika',
+        'name': 'Paprika',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'parisienne',
+        'name': 'Parisienne',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'passero-one',
+        'name': 'Passero One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'passion-one',
+        'name': 'Passion One',
+        'weights': [400, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'passions-conflict',
+        'name': 'Passions Conflict',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pathway-extreme',
+        'name': 'Pathway Extreme',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'pathway-gothic-one',
+        'name': 'Pathway Gothic One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'patrick-hand',
+        'name': 'Patrick Hand',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'patrick-hand-sc',
+        'name': 'Patrick Hand SC',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pattaya',
+        'name': 'Pattaya',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'patua-one',
+        'name': 'Patua One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pavanam',
+        'name': 'Pavanam',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'paytone-one',
+        'name': 'Paytone One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'peddana',
+        'name': 'Peddana',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'peralta',
+        'name': 'Peralta',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'permanent-marker',
+        'name': 'Permanent Marker',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'petemoss',
+        'name': 'Petemoss',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'petit-formal-script',
+        'name': 'Petit Formal Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'petrona',
+        'name': 'Petrona',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'philosopher',
+        'name': 'Philosopher',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'phudu',
+        'name': 'Phudu',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'piazzolla',
+        'name': 'Piazzolla',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'piedra',
+        'name': 'Piedra',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pinyon-script',
+        'name': 'Pinyon Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pirata-one',
+        'name': 'Pirata One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pixelify-sans',
+        'name': 'Pixelify Sans',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'plaster',
+        'name': 'Plaster',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'platypi',
+        'name': 'Platypi',
+        'weights': [300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'play',
+        'name': 'Play',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'playball',
+        'name': 'Playball',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'playfair',
+        'name': 'Playfair',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'playfair-display',
+        'name': 'Playfair Display',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'playfair-display-sc',
+        'name': 'Playfair Display SC',
+        'weights': [400, 700, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'playpen-sans',
+        'name': 'Playpen Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'plus-jakarta-sans',
+        'name': 'Plus Jakarta Sans',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'podkova',
+        'name': 'Podkova',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'poiret-one',
+        'name': 'Poiret One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'poller-one',
+        'name': 'Poller One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'poltawski-nowy',
+        'name': 'Poltawski Nowy',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'poly',
+        'name': 'Poly',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'pompiere',
+        'name': 'Pompiere',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pontano-sans',
+        'name': 'Pontano Sans',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'poor-story',
+        'name': 'Poor Story',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'poppins',
+        'name': 'Poppins',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'port-lligat-sans',
+        'name': 'Port Lligat Sans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'port-lligat-slab',
+        'name': 'Port Lligat Slab',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'potta-one',
+        'name': 'Potta One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pragati-narrow',
+        'name': 'Pragati Narrow',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'praise',
+        'name': 'Praise',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'prata',
+        'name': 'Prata',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'preahvihear',
+        'name': 'Preahvihear',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'press-start-2p',
+        'name': 'Press Start 2P',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pridi',
+        'name': 'Pridi',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'princess-sofia',
+        'name': 'Princess Sofia',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'prociono',
+        'name': 'Prociono',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'prompt',
+        'name': 'Prompt',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'prosto-one',
+        'name': 'Prosto One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'protest-guerrilla',
+        'name': 'Protest Guerrilla',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'protest-revolution',
+        'name': 'Protest Revolution',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'protest-riot',
+        'name': 'Protest Riot',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'protest-strike',
+        'name': 'Protest Strike',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'proza-libre',
+        'name': 'Proza Libre',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'pt-mono',
+        'name': 'PT Mono',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pt-sans',
+        'name': 'PT Sans',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'pt-sans-caption',
+        'name': 'PT Sans Caption',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pt-sans-narrow',
+        'name': 'PT Sans Narrow',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'pt-serif',
+        'name': 'PT Serif',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'pt-serif-caption',
+        'name': 'PT Serif Caption',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'public-sans',
+        'name': 'Public Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'puppies-play',
+        'name': 'Puppies Play',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'puritan',
+        'name': 'Puritan',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'purple-purse',
+        'name': 'Purple Purse',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'qahiri',
+        'name': 'Qahiri',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'quando',
+        'name': 'Quando',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'quantico',
+        'name': 'Quantico',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'quattrocento',
+        'name': 'Quattrocento',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'quattrocento-sans',
+        'name': 'Quattrocento Sans',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'questrial',
+        'name': 'Questrial',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'quicksand',
+        'name': 'Quicksand',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'quintessential',
+        'name': 'Quintessential',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'qwigley',
+        'name': 'Qwigley',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'qwitcher-grypen',
+        'name': 'Qwitcher Grypen',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'racing-sans-one',
+        'name': 'Racing Sans One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'radio-canada',
+        'name': 'Radio Canada',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'radley',
+        'name': 'Radley',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'rajdhani',
+        'name': 'Rajdhani',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rakkas',
+        'name': 'Rakkas',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'raleway',
+        'name': 'Raleway',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'raleway-dots',
+        'name': 'Raleway Dots',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ramabhadra',
+        'name': 'Ramabhadra',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ramaraja',
+        'name': 'Ramaraja',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rambla',
+        'name': 'Rambla',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'rammetto-one',
+        'name': 'Rammetto One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rampart-one',
+        'name': 'Rampart One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ranchers',
+        'name': 'Ranchers',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rancho',
+        'name': 'Rancho',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ranga',
+        'name': 'Ranga',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rasa',
+        'name': 'Rasa',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'rationale',
+        'name': 'Rationale',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ravi-prakash',
+        'name': 'Ravi Prakash',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'readex-pro',
+        'name': 'Readex Pro',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'recursive',
+        'name': 'Recursive',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'red-hat-display',
+        'name': 'Red Hat Display',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'red-hat-mono',
+        'name': 'Red Hat Mono',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'red-hat-text',
+        'name': 'Red Hat Text',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'red-rose',
+        'name': 'Red Rose',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'redacted',
+        'name': 'Redacted',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'redacted-script',
+        'name': 'Redacted Script',
+        'weights': [300, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'reddit-mono',
+        'name': 'Reddit Mono',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'redressed',
+        'name': 'Redressed',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'reem-kufi',
+        'name': 'Reem Kufi',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'reem-kufi-fun',
+        'name': 'Reem Kufi Fun',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'reem-kufi-ink',
+        'name': 'Reem Kufi Ink',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'reenie-beanie',
+        'name': 'Reenie Beanie',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'reggae-one',
+        'name': 'Reggae One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rem',
+        'name': 'REM',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'rethink-sans',
+        'name': 'Rethink Sans',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'revalia',
+        'name': 'Revalia',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rhodium-libre',
+        'name': 'Rhodium Libre',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ribeye',
+        'name': 'Ribeye',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ribeye-marrow',
+        'name': 'Ribeye Marrow',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'righteous',
+        'name': 'Righteous',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'risque',
+        'name': 'Risque',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'road-rage',
+        'name': 'Road Rage',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'roboto',
+        'name': 'Roboto',
+        'weights': [100, 300, 400, 500, 700, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'roboto-condensed',
+        'name': 'Roboto Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'roboto-flex',
+        'name': 'Roboto Flex',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'roboto-mono',
+        'name': 'Roboto Mono',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'roboto-serif',
+        'name': 'Roboto Serif',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'roboto-slab',
+        'name': 'Roboto Slab',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rochester',
+        'name': 'Rochester',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rock-3d',
+        'name': 'Rock 3D',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rock-salt',
+        'name': 'Rock Salt',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rocknroll-one',
+        'name': 'RocknRoll One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rokkitt',
+        'name': 'Rokkitt',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'romanesco',
+        'name': 'Romanesco',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ropa-sans',
+        'name': 'Ropa Sans',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'rosario',
+        'name': 'Rosario',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'rosarivo',
+        'name': 'Rosarivo',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'rouge-script',
+        'name': 'Rouge Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rowdies',
+        'name': 'Rowdies',
+        'weights': [300, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rozha-one',
+        'name': 'Rozha One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik',
+        'name': 'Rubik',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'rubik-80s-fade',
+        'name': 'Rubik 80s Fade',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-beastly',
+        'name': 'Rubik Beastly',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-broken-fax',
+        'name': 'Rubik Broken Fax',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-bubbles',
+        'name': 'Rubik Bubbles',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-burned',
+        'name': 'Rubik Burned',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-dirt',
+        'name': 'Rubik Dirt',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-distressed',
+        'name': 'Rubik Distressed',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-doodle-shadow',
+        'name': 'Rubik Doodle Shadow',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-doodle-triangles',
+        'name': 'Rubik Doodle Triangles',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-gemstones',
+        'name': 'Rubik Gemstones',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-glitch',
+        'name': 'Rubik Glitch',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-glitch-pop',
+        'name': 'Rubik Glitch Pop',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-iso',
+        'name': 'Rubik Iso',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-lines',
+        'name': 'Rubik Lines',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-maps',
+        'name': 'Rubik Maps',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-marker-hatch',
+        'name': 'Rubik Marker Hatch',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-maze',
+        'name': 'Rubik Maze',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-microbe',
+        'name': 'Rubik Microbe',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-mono-one',
+        'name': 'Rubik Mono One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-moonrocks',
+        'name': 'Rubik Moonrocks',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-pixels',
+        'name': 'Rubik Pixels',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-puddles',
+        'name': 'Rubik Puddles',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-scribble',
+        'name': 'Rubik Scribble',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-spray-paint',
+        'name': 'Rubik Spray Paint',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-storm',
+        'name': 'Rubik Storm',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-vinyl',
+        'name': 'Rubik Vinyl',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rubik-wet-paint',
+        'name': 'Rubik Wet Paint',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ruda',
+        'name': 'Ruda',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rufina',
+        'name': 'Rufina',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ruge-boogie',
+        'name': 'Ruge Boogie',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ruluko',
+        'name': 'Ruluko',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rum-raisin',
+        'name': 'Rum Raisin',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ruslan-display',
+        'name': 'Ruslan Display',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'russo-one',
+        'name': 'Russo One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ruthie',
+        'name': 'Ruthie',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ruwudu',
+        'name': 'Ruwudu',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'rye',
+        'name': 'Rye',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sacramento',
+        'name': 'Sacramento',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sahitya',
+        'name': 'Sahitya',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sail',
+        'name': 'Sail',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'saira',
+        'name': 'Saira',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'saira-condensed',
+        'name': 'Saira Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'saira-extra-condensed',
+        'name': 'Saira Extra Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'saira-semi-condensed',
+        'name': 'Saira Semi Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'saira-stencil-one',
+        'name': 'Saira Stencil One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'salsa',
+        'name': 'Salsa',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sanchez',
+        'name': 'Sanchez',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'sancreek',
+        'name': 'Sancreek',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sansita',
+        'name': 'Sansita',
+        'weights': [400, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'sansita-swashed',
+        'name': 'Sansita Swashed',
+        'weights': [300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sarabun',
+        'name': 'Sarabun',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'sarala',
+        'name': 'Sarala',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sarina',
+        'name': 'Sarina',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sarpanch',
+        'name': 'Sarpanch',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sassy-frass',
+        'name': 'Sassy Frass',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'satisfy',
+        'name': 'Satisfy',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sawarabi-gothic',
+        'name': 'Sawarabi Gothic',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sawarabi-mincho',
+        'name': 'Sawarabi Mincho',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'scada',
+        'name': 'Scada',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'scheherazade-new',
+        'name': 'Scheherazade New',
+        'weights': [400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'schibsted-grotesk',
+        'name': 'Schibsted Grotesk',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'schoolbell',
+        'name': 'Schoolbell',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'scope-one',
+        'name': 'Scope One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'seaweed-script',
+        'name': 'Seaweed Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'secular-one',
+        'name': 'Secular One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sedan',
+        'name': 'Sedan',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'sedgwick-ave',
+        'name': 'Sedgwick Ave',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sedgwick-ave-display',
+        'name': 'Sedgwick Ave Display',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sen',
+        'name': 'Sen',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'send-flowers',
+        'name': 'Send Flowers',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sevillana',
+        'name': 'Sevillana',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'seymour-one',
+        'name': 'Seymour One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shadows-into-light',
+        'name': 'Shadows Into Light',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shadows-into-light-two',
+        'name': 'Shadows Into Light Two',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shalimar',
+        'name': 'Shalimar',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shantell-sans',
+        'name': 'Shantell Sans',
+        'weights': [300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'shanti',
+        'name': 'Shanti',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'share',
+        'name': 'Share',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'share-tech',
+        'name': 'Share Tech',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'share-tech-mono',
+        'name': 'Share Tech Mono',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shippori-antique',
+        'name': 'Shippori Antique',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shippori-antique-b1',
+        'name': 'Shippori Antique B1',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shippori-mincho',
+        'name': 'Shippori Mincho',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shippori-mincho-b1',
+        'name': 'Shippori Mincho B1',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shizuru',
+        'name': 'Shizuru',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shojumaru',
+        'name': 'Shojumaru',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'short-stack',
+        'name': 'Short Stack',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'shrikhand',
+        'name': 'Shrikhand',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'siemreap',
+        'name': 'Siemreap',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sigmar',
+        'name': 'Sigmar',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sigmar-one',
+        'name': 'Sigmar One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'signika',
+        'name': 'Signika',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'signika-negative',
+        'name': 'Signika Negative',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'silkscreen',
+        'name': 'Silkscreen',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'simonetta',
+        'name': 'Simonetta',
+        'weights': [400, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'single-day',
+        'name': 'Single Day',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sintony',
+        'name': 'Sintony',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sirin-stencil',
+        'name': 'Sirin Stencil',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'six-caps',
+        'name': 'Six Caps',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sixtyfour',
+        'name': 'Sixtyfour',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'skranji',
+        'name': 'Skranji',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'slabo-13px',
+        'name': 'Slabo 13px',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'slabo-27px',
+        'name': 'Slabo 27px',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'slackey',
+        'name': 'Slackey',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'slackside-one',
+        'name': 'Slackside One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'smokum',
+        'name': 'Smokum',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'smooch',
+        'name': 'Smooch',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'smooch-sans',
+        'name': 'Smooch Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'smythe',
+        'name': 'Smythe',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sniglet',
+        'name': 'Sniglet',
+        'weights': [400, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'snippet',
+        'name': 'Snippet',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'snowburst-one',
+        'name': 'Snowburst One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sofadi-one',
+        'name': 'Sofadi One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sofia',
+        'name': 'Sofia',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sofia-sans',
+        'name': 'Sofia Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'sofia-sans-condensed',
+        'name': 'Sofia Sans Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'sofia-sans-extra-condensed',
+        'name': 'Sofia Sans Extra Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'sofia-sans-semi-condensed',
+        'name': 'Sofia Sans Semi Condensed',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'solitreo',
+        'name': 'Solitreo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'solway',
+        'name': 'Solway',
+        'weights': [300, 400, 500, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sometype-mono',
+        'name': 'Sometype Mono',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'song-myung',
+        'name': 'Song Myung',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sono',
+        'name': 'Sono',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sonsie-one',
+        'name': 'Sonsie One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sora',
+        'name': 'Sora',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sorts-mill-goudy',
+        'name': 'Sorts Mill Goudy',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'source-code-pro',
+        'name': 'Source Code Pro',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'source-sans-3',
+        'name': 'Source Sans 3',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'source-serif-4',
+        'name': 'Source Serif 4',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'space-grotesk',
+        'name': 'Space Grotesk',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'space-mono',
+        'name': 'Space Mono',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'special-elite',
+        'name': 'Special Elite',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'spectral',
+        'name': 'Spectral',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'spectral-sc',
+        'name': 'Spectral SC',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'spicy-rice',
+        'name': 'Spicy Rice',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'spinnaker',
+        'name': 'Spinnaker',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'spirax',
+        'name': 'Spirax',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'splash',
+        'name': 'Splash',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'spline-sans',
+        'name': 'Spline Sans',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'spline-sans-mono',
+        'name': 'Spline Sans Mono',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'squada-one',
+        'name': 'Squada One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'square-peg',
+        'name': 'Square Peg',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sree-krushnadevaraya',
+        'name': 'Sree Krushnadevaraya',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sriracha',
+        'name': 'Sriracha',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'srisakdi',
+        'name': 'Srisakdi',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'staatliches',
+        'name': 'Staatliches',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'stalemate',
+        'name': 'Stalemate',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'stalinist-one',
+        'name': 'Stalinist One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'stardos-stencil',
+        'name': 'Stardos Stencil',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'stick',
+        'name': 'Stick',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'stick-no-bills',
+        'name': 'Stick No Bills',
+        'weights': [200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'stint-ultra-condensed',
+        'name': 'Stint Ultra Condensed',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'stint-ultra-expanded',
+        'name': 'Stint Ultra Expanded',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'stix-two-text',
+        'name': 'STIX Two Text',
+        'weights': [400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'stoke',
+        'name': 'Stoke',
+        'weights': [300, 400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'strait',
+        'name': 'Strait',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'style-script',
+        'name': 'Style Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'stylish',
+        'name': 'Stylish',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sue-ellen-francisco',
+        'name': 'Sue Ellen Francisco',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'suez-one',
+        'name': 'Suez One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sulphur-point',
+        'name': 'Sulphur Point',
+        'weights': [300, 400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sumana',
+        'name': 'Sumana',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sunflower',
+        'name': 'Sunflower',
+        'weights': [300, 500, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sunshiney',
+        'name': 'Sunshiney',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'supermercado-one',
+        'name': 'Supermercado One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'sura',
+        'name': 'Sura',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'suranna',
+        'name': 'Suranna',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'suravaram',
+        'name': 'Suravaram',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'suwannaphum',
+        'name': 'Suwannaphum',
+        'weights': [100, 300, 400, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'swanky-and-moo-moo',
+        'name': 'Swanky and Moo Moo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'syncopate',
+        'name': 'Syncopate',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'syne',
+        'name': 'Syne',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'syne-mono',
+        'name': 'Syne Mono',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'syne-tactile',
+        'name': 'Syne Tactile',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tac-one',
+        'name': 'Tac One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tai-heritage-pro',
+        'name': 'Tai Heritage Pro',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tajawal',
+        'name': 'Tajawal',
+        'weights': [200, 300, 400, 500, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tangerine',
+        'name': 'Tangerine',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tapestry',
+        'name': 'Tapestry',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'taprom',
+        'name': 'Taprom',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tauri',
+        'name': 'Tauri',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'taviraj',
+        'name': 'Taviraj',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'teko',
+        'name': 'Teko',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tektur',
+        'name': 'Tektur',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'telex',
+        'name': 'Telex',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tenali-ramakrishna',
+        'name': 'Tenali Ramakrishna',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tenor-sans',
+        'name': 'Tenor Sans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'text-me-one',
+        'name': 'Text Me One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'texturina',
+        'name': 'Texturina',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'thasadith',
+        'name': 'Thasadith',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'the-girl-next-door',
+        'name': 'The Girl Next Door',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'the-nautigal',
+        'name': 'The Nautigal',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tienne',
+        'name': 'Tienne',
+        'weights': [400, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tillana',
+        'name': 'Tillana',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tilt-neon',
+        'name': 'Tilt Neon',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tilt-prism',
+        'name': 'Tilt Prism',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tilt-warp',
+        'name': 'Tilt Warp',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'timmana',
+        'name': 'Timmana',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tinos',
+        'name': 'Tinos',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'tiro-bangla',
+        'name': 'Tiro Bangla',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'tiro-devanagari-hindi',
+        'name': 'Tiro Devanagari Hindi',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'tiro-devanagari-marathi',
+        'name': 'Tiro Devanagari Marathi',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'tiro-devanagari-sanskrit',
+        'name': 'Tiro Devanagari Sanskrit',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'tiro-gurmukhi',
+        'name': 'Tiro Gurmukhi',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'tiro-kannada',
+        'name': 'Tiro Kannada',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'tiro-tamil',
+        'name': 'Tiro Tamil',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'tiro-telugu',
+        'name': 'Tiro Telugu',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'titan-one',
+        'name': 'Titan One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'titillium-web',
+        'name': 'Titillium Web',
+        'weights': [200, 300, 400, 600, 700, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'tomorrow',
+        'name': 'Tomorrow',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'tourney',
+        'name': 'Tourney',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'trade-winds',
+        'name': 'Trade Winds',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'train-one',
+        'name': 'Train One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'trirong',
+        'name': 'Trirong',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'trispace',
+        'name': 'Trispace',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'trocchi',
+        'name': 'Trocchi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'trochut',
+        'name': 'Trochut',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'truculenta',
+        'name': 'Truculenta',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'trykker',
+        'name': 'Trykker',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tsukimi-rounded',
+        'name': 'Tsukimi Rounded',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'tulpen-one',
+        'name': 'Tulpen One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'turret-road',
+        'name': 'Turret Road',
+        'weights': [200, 300, 400, 500, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'twinkle-star',
+        'name': 'Twinkle Star',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ubuntu',
+        'name': 'Ubuntu',
+        'weights': [300, 400, 500, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'ubuntu-condensed',
+        'name': 'Ubuntu Condensed',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ubuntu-mono',
+        'name': 'Ubuntu Mono',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'uchen',
+        'name': 'Uchen',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'ultra',
+        'name': 'Ultra',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'unbounded',
+        'name': 'Unbounded',
+        'weights': [200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'uncial-antiqua',
+        'name': 'Uncial Antiqua',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'underdog',
+        'name': 'Underdog',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'unica-one',
+        'name': 'Unica One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'unifrakturcook',
+        'name': 'UnifrakturCook',
+        'weights': [700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'unifrakturmaguntia',
+        'name': 'UnifrakturMaguntia',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'unkempt',
+        'name': 'Unkempt',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'unlock',
+        'name': 'Unlock',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'unna',
+        'name': 'Unna',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'updock',
+        'name': 'Updock',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'urbanist',
+        'name': 'Urbanist',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'vampiro-one',
+        'name': 'Vampiro One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'varela',
+        'name': 'Varela',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'varela-round',
+        'name': 'Varela Round',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'varta',
+        'name': 'Varta',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'vast-shadow',
+        'name': 'Vast Shadow',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'vazirmatn',
+        'name': 'Vazirmatn',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'vesper-libre',
+        'name': 'Vesper Libre',
+        'weights': [400, 500, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'viaoda-libre',
+        'name': 'Viaoda Libre',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'vibes',
+        'name': 'Vibes',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'vibur',
+        'name': 'Vibur',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'victor-mono',
+        'name': 'Victor Mono',
+        'weights': [100, 200, 300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'vidaloka',
+        'name': 'Vidaloka',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'viga',
+        'name': 'Viga',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'vina-sans',
+        'name': 'Vina Sans',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'voces',
+        'name': 'Voces',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'volkhov',
+        'name': 'Volkhov',
+        'weights': [400, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'vollkorn',
+        'name': 'Vollkorn',
+        'weights': [400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'vollkorn-sc',
+        'name': 'Vollkorn SC',
+        'weights': [400, 600, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'voltaire',
+        'name': 'Voltaire',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'vt323',
+        'name': 'VT323',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'vujahday-script',
+        'name': 'Vujahday Script',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'waiting-for-the-sunrise',
+        'name': 'Waiting for the Sunrise',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'wallpoet',
+        'name': 'Wallpoet',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'walter-turncoat',
+        'name': 'Walter Turncoat',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'warnes',
+        'name': 'Warnes',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'water-brush',
+        'name': 'Water Brush',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'waterfall',
+        'name': 'Waterfall',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'wavefont',
+        'name': 'Wavefont',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'wellfleet',
+        'name': 'Wellfleet',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'wendy-one',
+        'name': 'Wendy One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'whisper',
+        'name': 'Whisper',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'windsong',
+        'name': 'WindSong',
+        'weights': [400, 500],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'wire-one',
+        'name': 'Wire One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'wix-madefor-display',
+        'name': 'Wix Madefor Display',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'wix-madefor-text',
+        'name': 'Wix Madefor Text',
+        'weights': [400, 500, 600, 700, 800],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'work-sans',
+        'name': 'Work Sans',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'workbench',
+        'name': 'Workbench',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'xanh-mono',
+        'name': 'Xanh Mono',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'yaldevi',
+        'name': 'Yaldevi',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yanone-kaffeesatz',
+        'name': 'Yanone Kaffeesatz',
+        'weights': [200, 300, 400, 500, 600, 700],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yantramanav',
+        'name': 'Yantramanav',
+        'weights': [100, 300, 400, 500, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yarndings-12',
+        'name': 'Yarndings 12',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yarndings-12-charted',
+        'name': 'Yarndings 12 Charted',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yarndings-20',
+        'name': 'Yarndings 20',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yarndings-20-charted',
+        'name': 'Yarndings 20 Charted',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yatra-one',
+        'name': 'Yatra One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yellowtail',
+        'name': 'Yellowtail',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yeon-sung',
+        'name': 'Yeon Sung',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yeseva-one',
+        'name': 'Yeseva One',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yesteryear',
+        'name': 'Yesteryear',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yomogi',
+        'name': 'Yomogi',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'young-serif',
+        'name': 'Young Serif',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yrsa',
+        'name': 'Yrsa',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'ysabeau',
+        'name': 'Ysabeau',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'ysabeau-infant',
+        'name': 'Ysabeau Infant',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'ysabeau-office',
+        'name': 'Ysabeau Office',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'ysabeau-sc',
+        'name': 'Ysabeau SC',
+        'weights': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yuji-boku',
+        'name': 'Yuji Boku',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yuji-hentaigana-akari',
+        'name': 'Yuji Hentaigana Akari',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yuji-hentaigana-akebono',
+        'name': 'Yuji Hentaigana Akebono',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yuji-mai',
+        'name': 'Yuji Mai',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yuji-syuku',
+        'name': 'Yuji Syuku',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'yusei-magic',
+        'name': 'Yusei Magic',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zcool-kuaile',
+        'name': 'ZCOOL KuaiLe',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zcool-qingke-huangyou',
+        'name': 'ZCOOL QingKe HuangYou',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zcool-xiaowei',
+        'name': 'ZCOOL XiaoWei',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zen-antique',
+        'name': 'Zen Antique',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zen-antique-soft',
+        'name': 'Zen Antique Soft',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zen-dots',
+        'name': 'Zen Dots',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zen-kaku-gothic-antique',
+        'name': 'Zen Kaku Gothic Antique',
+        'weights': [300, 400, 500, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zen-kaku-gothic-new',
+        'name': 'Zen Kaku Gothic New',
+        'weights': [300, 400, 500, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zen-kurenaido',
+        'name': 'Zen Kurenaido',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zen-loop',
+        'name': 'Zen Loop',
+        'weights': [400],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'zen-maru-gothic',
+        'name': 'Zen Maru Gothic',
+        'weights': [300, 400, 500, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zen-old-mincho',
+        'name': 'Zen Old Mincho',
+        'weights': [400, 500, 600, 700, 900],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zen-tokyo-zoo',
+        'name': 'Zen Tokyo Zoo',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zeyada',
+        'name': 'Zeyada',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zhi-mang-xing',
+        'name': 'Zhi Mang Xing',
+        'weights': [400],
+        'styles': ['normal'],
+    },
+    {
+        'id': 'zilla-slab',
+        'name': 'Zilla Slab',
+        'weights': [300, 400, 500, 600, 700],
+        'styles': ['italic', 'normal'],
+    },
+    {
+        'id': 'zilla-slab-highlight',
+        'name': 'Zilla Slab Highlight',
+        'weights': [400, 700],
+        'styles': ['normal'],
+    },
 ]
+
+export async function getGoogleFonts() {
+    return googleFonts
+}
