@@ -5,14 +5,14 @@ import {
     publishFrameConfig,
     revertFrameConfig,
     updateFrameConfig,
-    updateFrameName,
     updateFrameLinkedPage,
+    updateFrameName,
 } from '@/lib/frame'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
 import { ImageUp, Undo2 } from 'lucide-react'
 import NextLink from 'next/link'
-import { useEffect, useState } from 'react'
+import { type ChangeEvent, useEffect, useState } from 'react'
 import { ArrowLeft, Copy } from 'react-feather'
 import { toast } from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
@@ -21,9 +21,8 @@ import { InspectorContext } from './editor/Context'
 import MockOptions from './editor/MockOptions'
 import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
-import { Label } from './shadcn/InputLabel'
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
 
 export default function FrameEditor({
     frame,
@@ -37,8 +36,6 @@ export default function FrameEditor({
     const [editingName, setEditingName] = useState(false)
     const [temporaryName, setTemporaryName] = useState(frame.name)
     const [temporaryConfig, setTemporaryConfig] = useState(frame.draftConfig)
-    const [linkedPage, setLinkedPage] = useState<string | undefined>(frame.linkedPage ?? undefined)
-
     const [updating, setUpdating] = useState(false)
 
     const refreshPreview = useRefreshPreview()
@@ -55,11 +52,12 @@ export default function FrameEditor({
         setUpdating(false)
     }
 
-    const updateLinkedPage = useDebouncedCallback(async (url?: string) => {
+    const updateLinkedPage = useDebouncedCallback(async (e: ChangeEvent<HTMLInputElement>) => {
+        const url = e.target.value
+        if (!url || url === '') return
         if (url && url.split('.').length < 2) return
         setUpdating(true)
         await updateFrameLinkedPage(frame.id, url)
-        setLinkedPage(url)
         setUpdating(false)
     }, 1500)
 
@@ -173,55 +171,31 @@ export default function FrameEditor({
                         <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
                     )}
 
-                    <TooltipProvider delayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild={true}>
-                                <Popover>
-                                    <PopoverTrigger asChild={true}>
-                                        <Button
-                                            variant="outline"
-                                            className="text-lg gap-2"
-                                            size={'lg'}
-                                        >
-                                            Linked Page
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-80">
-                                        <div className="grid gap-4">
-                                            <div className="space-y-2">
-                                                <h4 className="font-medium leading-none">
-                                                    Linked page
-                                                </h4>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Link your Frame to an external web page
-                                                </p>
-                                            </div>
-                                            <div className="grid gap-2">
-                                                <div className="grid grid-cols-3 items-center gap-4">
-                                                    <Label className="w-full">Url</Label>
-                                                    <Input
-                                                        type="url"
-                                                        defaultValue={linkedPage}
-                                                        className="col-span-2 h-8"
-                                                        onChange={(e) =>
-                                                            updateLinkedPage(
-                                                                e.target.value === ''
-                                                                    ? undefined
-                                                                    : e.target.value
-                                                            )
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </PopoverContent>
-                                </Popover>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-72 mr-8">
-                                <p>Redirected users to your own web page</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <Popover>
+                        <PopoverTrigger asChild={true}>
+                            <Button variant="outline" className="text-lg gap-2" size={'lg'}>
+                                Connect Page
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80">
+                            <div className="grid gap-4">
+                                <div className="space-y-2">
+                                    <h4 className="font-medium leading-none">Connect your page</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                        Instead of the default page, FrameTrain will open your
+                                        custom link when somebody clicks directly on the Frame.
+                                    </p>
+                                </div>
+                                <Input
+                                    id="urlInput"
+                                    type="url"
+                                    defaultValue={frame.linkedPage || undefined}
+                                    className="w-full"
+                                    onChange={updateLinkedPage}
+                                />
+                            </div>
+                        </PopoverContent>
+                    </Popover>
 
                     {template.requiresValidation && (
                         <TooltipProvider delayDuration={0}>

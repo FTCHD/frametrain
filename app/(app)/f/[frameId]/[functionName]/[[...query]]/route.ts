@@ -96,7 +96,7 @@ export async function POST(
     // no need to pass it back and forth in the future
     const { frame: renderedFrame, state: newState } = await buildFramePage({
         id: frame.id,
-        linkedPage: frame.linkedPage,
+        linkedPage: frame.linkedPage || undefined,
         ...(buildParameters as BuildFrameData),
     })
 

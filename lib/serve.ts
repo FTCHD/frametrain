@@ -26,9 +26,9 @@ export async function buildFramePage({
     linkedPage,
 }: {
     id: string
-    linkedPage: string | null
+    linkedPage: string | undefined
 } & BuildFrameData) {
-    if (!(component || image)) {
+    if (!component && !image) {
         throw new Error('Either component or image must be provided')
     }
 
@@ -77,11 +77,15 @@ export async function buildFramePage({
 		${Object.keys(metadata)
             .map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
             .join('\n')}
-		<title>🚂 FrameTrain</title>
-        ${linkedPage ? `<script>window.location.href = "${linkedPage}"</script>` : ''}
+		<title>&#128642; FrameTrain</title>
 	</head>
+	<style>
+		* {
+			background-color: #17101f;
+		}
+	</style>
 	<body>
-		<h1>Hello from FrameTrain</h1>
+		<h1 style='color: #fff; font-family: system-ui;'>&#128642; Hello from FrameTrain</h1>
 	</body>
 	</html>
 	`
