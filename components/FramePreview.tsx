@@ -24,8 +24,8 @@ const textFaint = '#9fa3af'
 
 export function FramePreview() {
     const [history, setHistory] = useAtom(previewHistoryAtom)
-	
-	useEffect(() => {
+
+    useEffect(() => {
         // reset preview when un-mounting (= navigating to another page)
         return () => {
             setHistory([])
@@ -197,10 +197,12 @@ function FrameButton({
     const { action, target } = button
 
     const confirmAction = useCallback(async () => {
+        const fid = mockOptions.fid
+
         const result = await simulateCall(
             {
                 untrustedData: {
-                    fid: 368382,
+                    fid,
                     url: target!,
                     messageHash: '0xDebug',
                     timestamp: 0,
@@ -209,7 +211,7 @@ function FrameButton({
                     inputText: inputText,
                     state: 'Debug',
                     castId: {
-                        fid: 368382,
+                        fid,
                         hash: '0xDebug',
                     },
                 },
@@ -219,9 +221,9 @@ function FrameButton({
             },
             mockOptions
         )
-		
-		if (!result) return
-		
+
+        if (!result) return
+
         setPreviewHistory((prev: any) => [...prev, result])
     }, [target, index, inputText, mockOptions, setPreviewHistory])
 

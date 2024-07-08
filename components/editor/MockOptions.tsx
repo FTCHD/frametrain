@@ -14,18 +14,34 @@ import { mockOptionsAtom } from '@/lib/store'
 import { useAtom } from 'jotai'
 import { User } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Input } from '../shadcn/Input'
 
-export default function MockOptions() {
+export default function MockOptions({ fid }: { fid: string }) {
     const [open, setOpen] = useState(false)
     const [mockOptions, setMockOptions] = useAtom(mockOptionsAtom)
 
     useEffect(() => {
         // we reset the mock options
-        setMockOptions([])
+        setMockOptions(() => ({
+            recasted: false,
+            liked: false,
+            follower: false,
+            following: false,
+            fid: Number.parseInt(fid),
+        }))
 
-        // undefined so when we visit a Frame that doesn't require validation, this doesn't stay in memory
-        return () => setMockOptions(undefined)
-    }, [setMockOptions])
+        // we reset again so when we visit a Frame that doesn't require validation, this doesn't stay in memory
+        // otherwise it would send it when calling simulateCall
+        return () => {
+            setMockOptions(() => ({
+                recasted: false,
+                liked: false,
+                follower: false,
+                following: false,
+                fid: 0,
+            }))
+        }
+    }, [setMockOptions, fid])
 
     return (
         <DropdownMenu open={open}>
@@ -44,15 +60,9 @@ export default function MockOptions() {
                         <User className="mr-2 h-4 w-4" />
                         <span className="w-full">Recasted</span>
                         <Switch
-                            checked={mockOptions?.includes('recasted')}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    setMockOptions([...(mockOptions || []), 'recasted'])
-                                } else {
-                                    setMockOptions(
-                                        mockOptions?.filter((option) => option !== 'recasted')
-                                    )
-                                }
+                            checked={mockOptions.recasted}
+                            onCheckedChange={(recasted) => {
+                                setMockOptions((prev) => ({ ...prev, recasted }))
                             }}
                         />
                     </DropdownMenuItem>
@@ -60,15 +70,9 @@ export default function MockOptions() {
                         <User className="mr-2 h-4 w-4" />
                         <span className="w-full">Liked</span>
                         <Switch
-                            checked={mockOptions?.includes('liked')}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    setMockOptions([...(mockOptions || []), 'liked'])
-                                } else {
-                                    setMockOptions(
-                                        mockOptions?.filter((option) => option !== 'liked')
-                                    )
-                                }
+                            checked={mockOptions.liked}
+                            onCheckedChange={(liked) => {
+                                setMockOptions((prev) => ({ ...prev, liked }))
                             }}
                         />
                     </DropdownMenuItem>
@@ -76,15 +80,12 @@ export default function MockOptions() {
                         <User className="mr-2 h-4 w-4" />
                         <span className="w-full">Following</span>
                         <Switch
-                            checked={mockOptions?.includes('following')}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    setMockOptions([...(mockOptions || []), 'following'])
-                                } else {
-                                    setMockOptions(
-                                        mockOptions?.filter((option) => option !== 'following')
-                                    )
-                                }
+                            checked={mockOptions.following}
+                            onCheckedChange={(following) => {
+                                setMockOptions((prev) => ({
+                                    ...prev,
+                                    following,
+                                }))
                             }}
                         />
                     </DropdownMenuItem>
@@ -92,27 +93,26 @@ export default function MockOptions() {
                         <User className="mr-2 h-4 w-4" />
                         <span className="w-full">Follower</span>
                         <Switch
-                            checked={mockOptions?.includes('follower')}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    setMockOptions([...(mockOptions || []), 'follower'])
-                                } else {
-                                    setMockOptions(
-                                        mockOptions?.filter((option) => option !== 'follower')
-                                    )
-                                }
+                            checked={mockOptions.follower}
+                            onCheckedChange={(follower) => {
+                                setMockOptions((prev) => ({ ...prev, follower }))
                             }}
                         />
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
 
-                {/* <DropdownMenuSeparator />
+                <DropdownMenuSeparator />
 
                 <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>FID</span>
-                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                </DropdownMenuItem> */}
+                    <span className="w-full">FID</span>
+                    <Input
+                        defaultValue={mockOptions.fid}
+                        onChange={async (e) => {
+                            const fid = Number.parseInt(e.target.value)
+                            setMockOptions((prev) => ({ ...prev, fid }))
+                        }}
+                    />
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )
