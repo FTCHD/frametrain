@@ -21,7 +21,7 @@ export default function MockOptions({ fid }: { fid: string }) {
     const [mockOptions, setMockOptions] = useAtom(mockOptionsAtom)
 
     useEffect(() => {
-        if (mockOptions.fid > 0) return
+        // we reset the mock options
         setMockOptions(() => ({
             recasted: false,
             liked: false,
@@ -29,11 +29,10 @@ export default function MockOptions({ fid }: { fid: string }) {
             following: false,
             fid: Number.parseInt(fid),
         }))
-    }, [fid, mockOptions.fid, setMockOptions])
 
-    useEffect(() => {
+        // we reset again so when we visit a Frame that doesn't require validation, this doesn't stay in memory
+        // otherwise it would send it when calling simulateCall
         return () => {
-            // reset fid as the only default mock option
             setMockOptions(() => ({
                 recasted: false,
                 liked: false,
@@ -42,7 +41,7 @@ export default function MockOptions({ fid }: { fid: string }) {
                 fid: 0,
             }))
         }
-    }, [setMockOptions])
+    }, [setMockOptions, fid])
 
     return (
         <DropdownMenu open={open}>
@@ -104,16 +103,13 @@ export default function MockOptions({ fid }: { fid: string }) {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem className="hover:bg-none">
+                <DropdownMenuItem>
                     <span className="w-full">FID</span>
                     <Input
-                        type="number"
                         defaultValue={mockOptions.fid}
                         onChange={async (e) => {
                             const fid = Number.parseInt(e.target.value)
-                            setTimeout(() => {
-                                setMockOptions((prev) => ({ ...prev, fid }))
-                            }, 1500)
+                            setMockOptions((prev) => ({ ...prev, fid }))
                         }}
                     />
                 </DropdownMenuItem>
