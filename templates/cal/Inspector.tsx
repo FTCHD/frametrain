@@ -1,14 +1,6 @@
 'use client'
+import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { ToggleGroup } from '@/components/shadcn/ToggleGroup'
-import { ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { useFarcasterId, useFrameConfig, useFrameId } from '@/sdk/hooks'
-import { uploadImage } from '@/sdk/upload'
-import type { Config } from '.'
-import { getName } from './utils/metadata'
-import toast from 'react-hot-toast'
-
 import {
     Select,
     SelectContent,
@@ -17,19 +9,26 @@ import {
     SelectValue,
 } from '@/components/shadcn/Select'
 import { Switch } from '@/components/shadcn/Switch'
+import { ToggleGroup } from '@/components/shadcn/ToggleGroup'
+import { ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
+import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { corsFetch } from '@/sdk/scrape'
-import Link from 'next/link'
-import { useDebouncedCallback } from 'use-debounce'
-import { useEffect, useRef, useState } from 'react'
-import { Button } from '@/components/shadcn/Button'
 import { LoaderIcon, Trash } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
+import { useDebouncedCallback } from 'use-debounce'
+import type { Config } from '.'
+import { getDurationFormatted } from './utils/date'
 import { fetchProfileData } from './utils/fetchData'
-import { getDurationFormatted } from './utils/getDays'
+import { getName } from './utils/nft'
 
 export default function Inspector() {
-    const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const fid = useFarcasterId()
+    const uploadImage = useUploadImage()
+
     const slugInputRef = useRef<HTMLInputElement>(null)
     const [loading, setLoading] = useState(false)
     const events = config.events || []
@@ -50,6 +49,7 @@ export default function Inspector() {
         } catch (_) {}
     }
 
+    //! no need for an useEffect here, just call handleSubmit when the input changes
     useEffect(() => {
         if (config.name) return
 
@@ -114,6 +114,7 @@ export default function Inspector() {
                     className="text-lg"
                     placeholder="Enter your cal.com username"
                     defaultValue={config.username}
+                    //! the line below is wrong, it will never let the user delete the username from the field
                     onChange={(e) => {
                         if (e.target.value === '') return
                         debouncedHandle(e.target.value)
@@ -173,6 +174,9 @@ export default function Inspector() {
                                         ]
 
                                         updateConfig({ events: newEvents })
+                                        //! just omit the parameter in catch blocks if you don't use it
+                                        //! (_) is just redundant
+                                        //! find => replace
                                     } catch (_) {
                                         toast.error(`No event type found for: ${eventSlug}`)
                                     } finally {
@@ -547,7 +551,6 @@ export default function Inspector() {
                         }
                         uploadBackground={async (base64String, contentType) => {
                             const { filePath } = await uploadImage({
-                                frameId: frameId,
                                 base64String: base64String,
                                 contentType: contentType,
                             })

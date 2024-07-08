@@ -2,15 +2,12 @@
 import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import { FrameError } from '@/sdk/handlers'
-
 import type { Config, State } from '..'
-
-import { balances721, balancesERC1155 } from '../utils/balances'
-
+import { getCurrentAndFutureDate } from '../utils/date'
+import { extractDatesAndSlots } from '../utils/date'
+import { holdsErc721, holdsErc1155 } from '../utils/nft'
 import DateView from '../views/Date'
 import PageView from '../views/Duration'
-import { getCurrentAndFutureDate } from '../utils/getDays'
-import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
 
 export default async function duration(
     body: FrameActionPayloadValidated,
@@ -77,13 +74,13 @@ export default async function duration(
             throw new FrameError('You do not have a wallet that holds the required NFT.')
         }
         if (config.nftOptions.nftType === 'ERC721') {
-            nftGate = await balances721(
+            nftGate = await holdsErc721(
                 body.validatedData.interactor.verified_addresses.eth_addresses,
                 config.nftOptions.nftAddress,
                 config.nftOptions.nftChain
             )
         } else {
-            nftGate = await balancesERC1155(
+            nftGate = await holdsErc1155(
                 body.validatedData.interactor.verified_addresses.eth_addresses,
                 config.nftOptions.nftAddress,
                 config.nftOptions.tokenId,

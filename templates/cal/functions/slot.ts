@@ -1,12 +1,11 @@
 'use server'
 import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
+import { getCurrentAndFutureDate } from '../utils/date'
+import { extractDatesAndSlots } from '../utils/date'
 import NextView from '../views/Confirm'
 import PageView from '../views/Slot'
-
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
-import { getCurrentAndFutureDate } from '../utils/getDays'
 
 export default async function slot(
     body: FrameActionPayloadValidated,

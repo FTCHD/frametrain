@@ -1,3 +1,18 @@
+export const months: { [key: number]: string } = {
+    1: 'January',
+    2: 'February',
+    3: 'March',
+    4: 'April',
+    5: 'May',
+    6: 'June',
+    7: 'July',
+    8: 'August',
+    9: 'September',
+    10: 'October',
+    11: 'November',
+    12: 'December',
+}
+
 export function getCurrentAndFutureDate(days: number) {
     const formatDate = (date: any) => {
         const year = date.getFullYear()
@@ -27,7 +42,7 @@ export function getCurrentAndFutureDate(days: number) {
  * @param mins - number of minutes
  * @returns formatted string
  **/
-export const getDurationFormatted = (mins: number | undefined) => {
+export function getDurationFormatted(mins: number | undefined) {
     if (!mins) return null
 
     const hours = Math.floor(mins / 60)
@@ -45,4 +60,25 @@ export const getDurationFormatted = (mins: number | undefined) => {
 
     if (hourStr && minStr) return `${hourStr} ${minStr}`
     return hourStr || minStr
+}
+
+export function extractDatesAndSlots(data: any) {
+    if (!data || typeof data !== 'object') {
+        throw new Error('Invalid input data')
+    }
+
+    const dates = Object.keys(data)
+
+    const timeSlots = dates.map((date) => {
+        return data[date].map((slot: any) => {
+            const dateObject = new Date(slot.time)
+            return dateObject.toLocaleString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'UTC',
+            })
+        })
+    })
+
+    return [dates, timeSlots]
 }

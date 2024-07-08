@@ -1,5 +1,5 @@
 import type { Config } from '..'
-import { months } from '../utils/const'
+import { months } from '../utils/date'
 
 export default function CoverView(
     config: Config,

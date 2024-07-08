@@ -1,5 +1,8 @@
 import { corsFetch } from '@/sdk/scrape'
 
+//! remove this function
+//! just rename to getDescription and get only the user's description
+//! everything else is taken from the api trpc route
 export async function fetchProfileData(username: string) {
     const response = await corsFetch(`https://cal.com/${username}`)
     if (!response) return null

@@ -1,9 +1,8 @@
 'use server'
 import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import CoverView from '../views/Cover'
-
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function errors(
     body: FrameActionPayloadValidated,
