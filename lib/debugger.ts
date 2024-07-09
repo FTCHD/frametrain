@@ -7,39 +7,30 @@ import toast from 'react-hot-toast'
 import { z } from 'zod'
 import type { MockOptions } from './store'
 
-export async function getPreview(url: string) {
-    try {
-        const response = await fetch(url)
-        const text = await response.text()
-        return parseFrameHtml(text)
-    } catch (error) {
-        toast.error('Whoops! Something went wrong.')
-        console.error('Error fetching frame:', error)
-    }
-}
-
-export async function simulateCall(frameData: FrameRequest, options: MockOptions) {
-    const postUrl = frameData.untrustedData.url
-
+export async function simulateCall(
+    postUrl: string,
+    requestPayload: FrameRequest | undefined,
+    mockOptions: MockOptions
+) {
     const debugPayload = {
-        ...frameData,
+        ...requestPayload,
     } as any
 
-    const hasOptions = Object.values(options).some(Boolean)
+    const hasMock = Object.values(mockOptions).some(Boolean)
 
-    if (hasOptions) {
+    if (hasMock && requestPayload) {
         const timestamp = new Date().toISOString()
-        const isRecasted = options.recasted
-        const isLiked = options.liked
-        const isFollower = options.follower
-        const isFollowing = options.following
+        const isRecasted = mockOptions.recasted
+        const isLiked = mockOptions.liked
+        const isFollower = mockOptions.follower
+        const isFollowing = mockOptions.following
 
         debugPayload.validatedData = {
             object: 'validated_frame_action',
-            url: frameData.untrustedData.url,
+            url: requestPayload.untrustedData.url,
             interactor: {
                 object: 'user',
-                fid: frameData.untrustedData.fid,
+                fid: requestPayload.untrustedData.fid,
                 custody_address: null,
                 username: null,
                 display_name: null,
@@ -59,17 +50,17 @@ export async function simulateCall(frameData: FrameRequest, options: MockOptions
                     followed_by: isFollower,
                 },
             },
-            tapped_button: { index: frameData.untrustedData.buttonIndex },
+            tapped_button: { index: requestPayload.untrustedData.buttonIndex },
             state: {
-                serialized: frameData.untrustedData.state || '',
+                serialized: requestPayload.untrustedData.state || '',
             },
             cast: {
                 object: 'cast',
                 hash: '0x0000000000000000000000000000000000000001',
-                fid: frameData.untrustedData.fid,
+                fid: requestPayload.untrustedData.fid,
                 author: {
                     object: 'user',
-                    fid: frameData.untrustedData.fid,
+                    fid: requestPayload.untrustedData.fid,
                     custody_address: null,
                     username: null,
                     display_name: null,
@@ -114,21 +105,23 @@ export async function simulateCall(frameData: FrameRequest, options: MockOptions
         }
     }
 
-    const res = await fetch(postUrl, {
-        method: 'POST',
-        body: JSON.stringify(debugPayload),
-        redirect: 'manual',
-    })
+    const options: RequestInit | undefined = requestPayload
+        ? {
+              method: 'POST',
+              body: JSON.stringify(debugPayload),
+              redirect: 'manual',
+          }
+        : undefined
+
+    const res = await fetch(postUrl, options)
 
     if (res.status !== 200) {
         try {
             const message = await res.json().then((json) => json.message)
             toast.error(message)
-        } catch {
-            toast.error('An error occurred, please turn it off and on again')
+        } finally {
+			return
         }
-
-        return
     }
 
     // if (res.status === 302) {

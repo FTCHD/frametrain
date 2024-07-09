@@ -1,7 +1,14 @@
+import type { FrameRequest } from '@coinbase/onchainkit/frame'
 import { atom } from 'jotai'
-import type { getPreview } from './debugger'
+import type { simulateCall } from './debugger'
 
-export const previewHistoryAtom = atom<Awaited<ReturnType<typeof getPreview>>[]>([])
+
+export const previewLoadingAtom = atom(false)
+export const previewErrorAtom = atom(false)
+export const previewParametersAtom = atom<{functionName?: string, buttonIndex: number, inputText?: string, params?: string} | undefined>(undefined)
+export const previewStateAtom = atom<Awaited<ReturnType<typeof simulateCall>> | undefined>(
+    undefined
+)
 
 export type MockOptions = {
     fid: number

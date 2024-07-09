@@ -8,11 +8,12 @@ import {
     updateFrameLinkedPage,
     updateFrameName,
 } from '@/lib/frame'
+import { previewParametersAtom } from '@/lib/store'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
 import { ImageUp, Undo2 } from 'lucide-react'
 import NextLink from 'next/link'
-import { type ChangeEvent, useEffect, useState } from 'react'
+import { type ChangeEvent, useEffect, useRef, useState, useCallback } from 'react'
 import { ArrowLeft, Copy } from 'react-feather'
 import { toast } from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
@@ -23,6 +24,7 @@ import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
+import { useAtom } from 'jotai'
 
 export default function FrameEditor({
     frame,
@@ -33,12 +35,15 @@ export default function FrameEditor({
     template: (typeof templates)[keyof typeof templates]
     fid: string
 }) {
+	const refreshPreview = useRefreshPreview(frame.id)
+	
     const [editingName, setEditingName] = useState(false)
-    const [temporaryName, setTemporaryName] = useState(frame.name)
+    const [currentName, setCurrentName] = useState(frame.name)
     const [temporaryConfig, setTemporaryConfig] = useState(frame.draftConfig)
     const [updating, setUpdating] = useState(false)
-
-    const refreshPreview = useRefreshPreview()
+	const [previewData, setPreviewData] = useAtom(previewParametersAtom)
+	
+    const tempNameRef = useRef<HTMLInputElement>(null)
 
     async function publishConfig() {
         setUpdating(true)
@@ -59,7 +64,7 @@ export default function FrameEditor({
         setUpdating(true)
         await updateFrameLinkedPage(frame.id, url)
         setUpdating(false)
-    }, 1500)
+    }, 1000)
 
     const writeConfig = useDebouncedCallback(async (props: Record<string, any>) => {
         // const props = temporaryConfig
@@ -73,9 +78,11 @@ export default function FrameEditor({
         const newConfig = Object.assign({}, frame.draftConfig, props)
 
         await updateFrameConfig(frame.id, newConfig)
-
+		
+		refreshPreview()
+		
         setUpdating(false)
-    }, 1500)
+    }, 1000)
 
     function updateConfig(props: Record<string, any>) {
         if (!props || Object.keys(props).length === 0) {
@@ -85,11 +92,14 @@ export default function FrameEditor({
         const newConfig = Object.assign({}, temporaryConfig, props)
 
         setTemporaryConfig(newConfig)
-
+		
         writeConfig(newConfig)
     }
 
     async function updateName() {
+        const temporaryName = tempNameRef.current?.value
+        if (!temporaryName) return
+        setCurrentName(temporaryName)
         setEditingName(false)
         if (temporaryName === frame.name) return
         setUpdating(true)
@@ -97,25 +107,23 @@ export default function FrameEditor({
         setUpdating(false)
     }
 
-    async function handleEnter(e: KeyboardEvent) {
-        if (!editingName) return
-        if (!['Enter', 'Escape'].includes(e.key)) return
-
-        await updateName()
-    }
-
     useEffect(() => {
+        async function handleEnter(e: KeyboardEvent) {
+            if (!editingName) return
+            if (!['Enter', 'Escape'].includes(e.key)) return
+
+            await updateName()
+        }
+
         window.addEventListener('keydown', handleEnter)
 
         return () => {
             window.removeEventListener('keydown', handleEnter)
         }
     })
+	
+	
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: need draftConfig to know when to refresh
-    useEffect(() => {
-        refreshPreview(`${process.env.NEXT_PUBLIC_HOST}/p/${frame.id}`)
-    }, [frame.draftConfig, refreshPreview, frame.id])
 
     // prevents losing a save cycle when navigating away
     useEffect(
@@ -138,9 +146,11 @@ export default function FrameEditor({
                     </NextLink>
                     {editingName ? (
                         <Input
-                            value={temporaryName}
-                            onChange={(e) => setTemporaryName(e.target.value)}
-                            onBlur={handleEnter}
+                            defaultValue={currentName}
+                            ref={tempNameRef}
+                            onBlur={async () => {
+                                await updateName()
+                            }}
                             className="text-4xl font-bold focus:bg-transparent hover:bg-transparent"
                         />
                     ) : (
@@ -156,7 +166,7 @@ export default function FrameEditor({
                                             }
                                         }}
                                     >
-                                        {frame.name}
+                                        {currentName}
                                     </h1>
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-72 ml-8">
