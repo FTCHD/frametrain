@@ -57,7 +57,7 @@ export default function Inspector() {
                 fid,
                 events: [],
             })
-        } catch (_) {}
+        } catch {}
     }, 1000)
 
     const handleNFT = async (nftAddress: string) => {
@@ -161,10 +161,7 @@ export default function Inspector() {
                                         ]
 
                                         updateConfig({ events: newEvents })
-                                        //! just omit the parameter in catch blocks if you don't use it
-                                        //! (_) is just redundant
-                                        //! find => replace
-                                    } catch (_) {
+                                    } catch {
                                         toast.error(`No event type found for: ${eventSlug}`)
                                     } finally {
                                         setLoading(false)

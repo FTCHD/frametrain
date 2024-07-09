@@ -64,7 +64,7 @@ export default async function duration(
             containsUserFID = data.result.some(
                 (item: any) => item.fid === body.validatedData.interactor.fid
             )
-        } catch (_) {
+        } catch {
             throw new FrameError('Failed to fetch your engagement data')
         }
     }
