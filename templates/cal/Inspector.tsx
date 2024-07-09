@@ -16,12 +16,12 @@ import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { corsFetch } from '@/sdk/scrape'
 import { LoaderIcon, Trash } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
 import { getDurationFormatted } from './utils/date'
-import { fetchProfileData } from './utils/fetchData'
+import { fetchProfileData } from './utils/cal'
 import { getName } from './utils/nft'
 
 export default function Inspector() {
@@ -38,10 +38,11 @@ export default function Inspector() {
 
         if (username === '') {
             updateConfig({
-                fid: undefined,
                 name: undefined,
                 username: undefined,
                 image: undefined,
+                bio: [],
+                fid: undefined,
                 events: [],
             })
             return

@@ -76,7 +76,6 @@ export async function getEventId(username: string, eventSlug: string) {
     }
 }
 
-//! take the Description too
 export async function fetchProfileData(username: string) {
     const response = await corsFetch(`https://cal.com/${username}`)
     if (!response) return null
@@ -85,14 +84,32 @@ export async function fetchProfileData(username: string) {
     const parsedhtml = parser.parseFromString(response, 'text/html')
     if (!parsedhtml) return null
 
-    const data = parsedhtml.getElementById('__NEXT_DATA__')
-    if (!data?.textContent) return null
+    const nextData = parsedhtml.getElementById('__NEXT_DATA__')
+    if (!nextData?.textContent) return null
 
-    const obj = JSON.parse(data.textContent)
-    const profile = obj?.props?.pageProps?.profile as {
+    const obj = JSON.parse(nextData.textContent)?.props?.pageProps
+    const profile = obj?.profile as {
         name: string
         username: string
         image: string
     } | null
-    return profile
+    const bio: string[] = []
+
+    if (obj.safeBio.length) {
+        const body = parser.parseFromString(obj.safeBio, 'text/html').body.children
+        for (const child of body) {
+            if (child.textContent) bio.push(child.textContent)
+        }
+    }
+
+    const data = profile
+        ? {
+              name: profile.name,
+              username: profile.username,
+              image: profile.image,
+              bio,
+          }
+        : undefined
+
+    return data
 }

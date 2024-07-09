@@ -12,12 +12,14 @@ export default function CoverView(config: Config) {
         backgroundProp['backgroundColor'] = '#black'
     }
 
+    const paragraphs =
+        config.bio.length > 2 ? [config.bio[0], config.bio[config.bio.length - 1]] : config.bio
+
     return (
         <div
             style={{
                 width: '100%',
                 height: '100%',
-
                 display: 'flex',
                 flexDirection: 'column',
                 textAlign: 'center',
@@ -83,6 +85,31 @@ export default function CoverView(config: Config) {
                     </div>
                 </div>
             </div>
+            {config.bio.length ? (
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 15,
+                        marginBottom: '2rem',
+                    }}
+                >
+                    {paragraphs.map((bio) => (
+                        <div
+                            style={{
+                                overflowWrap: 'break-word',
+                                fontSize: '30px',
+                                lineHeight: '2.5rem',
+                            }}
+                            key={bio}
+                        >
+                            {bio.length > 90 ? bio.slice(0, 90) + '...' : bio}
+                        </div>
+                    ))}
+                </div>
+            ) : null}
 
             {config.gatingOptions.nftGating ? (
                 <div
