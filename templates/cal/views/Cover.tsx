@@ -12,6 +12,9 @@ export default function CoverView(config: Config) {
         backgroundProp['backgroundColor'] = '#black'
     }
 
+    const paragraphs =
+        config.bio.length > 2 ? [config.bio[0], config.bio[config.bio.length - 1]] : config.bio
+
     return (
         <div
             style={{
@@ -93,16 +96,16 @@ export default function CoverView(config: Config) {
                         marginBottom: '2rem',
                     }}
                 >
-                    {config.bio.map((bio) => (
+                    {paragraphs.map((bio) => (
                         <div
                             style={{
                                 overflowWrap: 'break-word',
                                 fontSize: '30px',
-                                lineHeight: '1.25rem',
+                                lineHeight: '2.5rem',
                             }}
                             key={bio}
                         >
-                            {bio}
+                            {bio.length > 90 ? bio.slice(0, 90) + '...' : bio}
                         </div>
                     ))}
                 </div>
