@@ -16,6 +16,7 @@ export interface Config extends BaseConfig {
     image: string | undefined
     name: string | undefined
     username: string | undefined
+    bio: string[]
     events: {
         slug: string
         duration: string
@@ -52,6 +53,7 @@ export default {
     functions,
     initialConfig: {
         events: [],
+        bio: [],
         gatingOptions: {
             karmaGating: false,
             nftGating: false,

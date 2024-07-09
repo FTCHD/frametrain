@@ -17,7 +17,6 @@ export default function CoverView(config: Config) {
             style={{
                 width: '100%',
                 height: '100%',
-
                 display: 'flex',
                 flexDirection: 'column',
                 textAlign: 'center',
@@ -83,6 +82,31 @@ export default function CoverView(config: Config) {
                     </div>
                 </div>
             </div>
+            {config.bio.length ? (
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 15,
+                        marginBottom: '2rem',
+                    }}
+                >
+                    {config.bio.map((bio) => (
+                        <div
+                            style={{
+                                overflowWrap: 'break-word',
+                                fontSize: '30px',
+                                lineHeight: '1.25rem',
+                            }}
+                            key={bio}
+                        >
+                            {bio}
+                        </div>
+                    ))}
+                </div>
+            ) : null}
 
             {config.gatingOptions.nftGating ? (
                 <div

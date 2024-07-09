@@ -39,10 +39,11 @@ export default function Inspector() {
 
         if (username === '') {
             updateConfig({
-                fid: undefined,
                 name: undefined,
                 username: undefined,
                 image: undefined,
+                bio: [],
+                fid: undefined,
                 events: [],
             })
             return
