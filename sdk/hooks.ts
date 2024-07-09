@@ -1,6 +1,8 @@
 import { InspectorContext } from '@/components/editor/Context'
 import { useContext } from 'react'
 import { uploadImage } from './upload'
+import { previewParametersAtom } from '@/lib/store'
+import { useAtom } from 'jotai'
 
 export function useFarcasterId() {
     const context = useContext(InspectorContext)
@@ -56,4 +58,10 @@ export function useUploadImage() {
     }) => {
         return uploadImage({ frameId, base64String, buffer, contentType })
     }
+}
+
+export function useUpdatePreview() {
+	const [, setPreviewData] = useAtom(previewParametersAtom)
+	
+	return setPreviewData
 }
