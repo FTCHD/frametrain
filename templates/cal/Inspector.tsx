@@ -20,7 +20,7 @@ import { Switch } from '@/components/shadcn/Switch'
 import { corsFetch } from '@/sdk/scrape'
 import Link from 'next/link'
 import { useDebouncedCallback } from 'use-debounce'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button } from '@/components/shadcn/Button'
 import { LoaderIcon, Trash } from 'lucide-react'
 import { fetchProfileData } from './utils/fetchData'
@@ -34,9 +34,19 @@ export default function Inspector() {
     const [loading, setLoading] = useState(false)
     const events = config.events || []
 
-    const handleSubmit = async (username: string) => {
-        if (username === '') return
+    const onChangeUsername = useDebouncedCallback(async (username: string) => {
         if (config.username === username) return
+
+        if (username === '') {
+            updateConfig({
+                fid: undefined,
+                name: undefined,
+                username: undefined,
+                image: undefined,
+                events: [],
+            })
+            return
+        }
 
         try {
             const data = await fetchProfileData(username)
@@ -48,27 +58,6 @@ export default function Inspector() {
                 events: [],
             })
         } catch (_) {}
-    }
-
-    useEffect(() => {
-        if (config.name) return
-
-        async function fetchUser() {
-            try {
-                const data = await fetchProfileData(config.username)
-                if (!data) return
-
-                updateConfig({
-                    ...data,
-                    fid,
-                })
-            } catch (_) {}
-        }
-        fetchUser()
-    }, [config.username, config.name, fid, updateConfig])
-
-    const debouncedHandle = useDebouncedCallback((username: string) => {
-        handleSubmit(username)
     }, 1000)
 
     const handleNFT = async (nftAddress: string) => {
@@ -115,8 +104,7 @@ export default function Inspector() {
                     placeholder="Enter your cal.com username"
                     defaultValue={config.username}
                     onChange={(e) => {
-                        if (e.target.value === '') return
-                        debouncedHandle(e.target.value)
+                        onChangeUsername(e.target.value)
                     }}
                 />
             </div>
