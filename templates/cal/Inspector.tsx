@@ -316,6 +316,7 @@ export default function Inspector() {
                                     <SelectItem value="POLYGON">POLYGON</SelectItem>
                                     <SelectItem value="FANTOM">FANTOM</SelectItem>
                                     <SelectItem value="ARBITRUM">ARBITRUM</SelectItem>
+                                    <SelectItem value="BNB">BNB</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

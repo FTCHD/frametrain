@@ -1,5 +1,5 @@
 import { http, createPublicClient } from 'viem'
-import { base, mainnet, optimism, zora, blast, arbitrum, fantom, polygon } from 'viem/chains'
+import { base, mainnet, optimism, zora, blast, arbitrum, fantom, polygon, bsc } from 'viem/chains'
 
 export const ethClient = createPublicClient({
     chain: mainnet,
@@ -38,5 +38,10 @@ export const fantomClient = createPublicClient({
 
 export const polygonClient = createPublicClient({
     chain: polygon,
+    transport: http(),
+})
+
+export const bscClient = createPublicClient({
+    chain: bsc,
     transport: http(),
 })

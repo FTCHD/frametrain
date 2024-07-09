@@ -7,6 +7,7 @@ import {
     fantomClient,
     arbitrumClient,
     polygonClient,
+    bscClient,
 } from './viem'
 
 const balanceOfABI721 = [
@@ -106,6 +107,11 @@ function getChainClient(chain: string) {
 
         case 'ARBITRUM': {
             selectedClient = arbitrumClient
+            break
+        }
+
+        case 'BNB': {
+            selectedClient = bscClient
             break
         }
 
