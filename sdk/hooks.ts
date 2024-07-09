@@ -1,6 +1,9 @@
 import { InspectorContext } from '@/components/editor/Context'
 import { useContext } from 'react'
+import { type DebouncedState, useDebouncedCallback } from 'use-debounce'
 import { uploadImage } from './upload'
+import { previewParametersAtom } from '@/lib/store'
+import { useAtom } from 'jotai'
 
 export function useFarcasterId() {
     const context = useContext(InspectorContext)
@@ -19,7 +22,11 @@ export function useFrameConfig<T>() {
         throw new Error('useFrameConfig must be used within an InspectorProvider')
     }
 
-    return [context.config, context.update] as [T, (props: any) => void]
+    const debouncedUpdate = useDebouncedCallback((v: any) => {
+        context.update(v)
+    }, 500)
+
+    return [context.config, debouncedUpdate] as [T, DebouncedState<(props: any) => void>]
 }
 
 export function useFrameId() {
@@ -56,4 +63,10 @@ export function useUploadImage() {
     }) => {
         return uploadImage({ frameId, base64String, buffer, contentType })
     }
+}
+
+export function useUpdatePreview() {
+	const [, setPreviewData] = useAtom(previewParametersAtom)
+	
+	return setPreviewData
 }

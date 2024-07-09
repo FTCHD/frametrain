@@ -2,9 +2,14 @@
 
 import { type FrameMetadataWithImageObject, simulateCall } from '@/lib/debugger'
 import type { FrameButtonMetadata } from '@/lib/farcaster'
-import { mockOptionsAtom, previewHistoryAtom } from '@/lib/store'
+import {
+	previewErrorAtom,
+    previewLoadingAtom,
+    previewParametersAtom,
+    previewStateAtom,
+} from '@/lib/store'
 import { useAtom, useAtomValue } from 'jotai'
-import { type ChangeEvent, type PropsWithChildren, useCallback, useEffect, useState } from 'react'
+import { type ChangeEvent, type PropsWithChildren, useCallback, useEffect, useState, useMemo } from 'react'
 import { Delete, ExternalLink, PlusCircle } from 'react-feather'
 import { BorderBeam } from './BorderBeam'
 import { Button } from './shadcn/Button'
@@ -23,26 +28,18 @@ const borderFaint = '#4c3a4e80'
 const textFaint = '#9fa3af'
 
 export function FramePreview() {
-    const [history, setHistory] = useAtom(previewHistoryAtom)
+	const preview = useAtomValue(previewStateAtom)
+	const error = useAtomValue(previewErrorAtom)
+
+    if (error) {
+        return <ErrorFrame />
+    }
 	
-	useEffect(() => {
-        // reset preview when un-mounting (= navigating to another page)
-        return () => {
-            setHistory([])
-        }
-    }, [setHistory])
-
-    if (history.length === 0) {
+	if (!preview) {
         return <PlaceholderFrame />
     }
 
-    const latestFrame = history.at(-1)
-
-    if (!latestFrame) {
-        return <PlaceholderFrame />
-    }
-
-    return <ValidFrame metadata={latestFrame.metadata} />
+    return <ValidFrame metadata={preview.metadata} />
 }
 
 function PlaceholderFrame() {
@@ -53,17 +50,31 @@ function PlaceholderFrame() {
     )
 }
 
+function ErrorFrame() {
+    return (
+        <div className="flex justify-center items-center w-full h-full">
+            Edit your template configuration on the rigth side.
+        </div>
+    )
+}
+
 function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
-    const aspectRatioStyle =
-        metadata.image.aspectRatio === '1:1' ? { aspectRatio: '1/1' } : { aspectRatio: '1.91/1' }
+	const { image, input, buttons, postUrl } = metadata
+	
+	const aspectRatio = useMemo(() =>
+        (image.aspectRatio || '1.91/1').replace(':', '/'), [metadata]) 
+	
+	const params = useMemo(() => 
+		metadata.postUrl?.split('?')[1], [metadata])
+	
+	const functionName = useMemo(() =>
+		metadata.postUrl?.split(process.env.NEXT_PUBLIC_HOST!)[1].split('/').at(-1)?.split('?')[0], [metadata])
 
     const [inputText, setInputText] = useState('')
-    const { image, input, buttons } = metadata
-
-    const [loadingContainer, setLoadingContainer] = useState(false)
-
     const [modalOpen, setModalOpen] = useState(false)
     const [modalFn, setModalFn] = useState<any>()
+	
+	const loadingContainer = useAtomValue(previewLoadingAtom)
 
     const handleOpenModal = useCallback((fn: any) => {
         setModalOpen(true)
@@ -75,11 +86,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
         []
     )
 
-    const toggleLoadingContainer = useCallback(() => {
-        setLoadingContainer((prev) => !prev)
-    }, [])
-
-    return (
+	return (
         <>
             <div className="flex flex-col justify-center relative h-full bg-transparent p-[1.5px]">
                 <div
@@ -89,7 +96,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                     <div
                         className="relative border-0 border-b cursor-pointer border-[#4c3a4e80] w-full md:w-[min(calc(100dvw-45dvw),calc(100dvh-30dvh))]"
                         style={{
-                            ...aspectRatioStyle,
+							aspectRatio,
                             // width: 'min(calc(100dvw - 45dvw), calc(100dvh - 30dvh))',
                         }}
                     >
@@ -97,7 +104,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                             className={'object-cover absolute inset-0 w-full h-full'}
                             src={image.src}
                             alt=""
-                            style={{ ...aspectRatioStyle }}
+                            style={{ aspectRatio }}
                         />
                     </div>
 
@@ -116,13 +123,15 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                             {buttons?.map((button, index) =>
                                 button ? (
                                     <FrameButton
-                                        inputText={inputText}
                                         key={button.label}
-                                        index={index + 1}
+                                        buttonIndex={index + 1}
                                         button={button}
+                                        inputText={inputText}
                                         state={metadata.state}
+										functionName={functionName}
+										params={params}
                                         handleOpenModal={handleOpenModal}
-                                        toggleContainer={toggleLoadingContainer}
+                                        // toggleContainer={toggleLoadingContainer}
                                     >
                                         {button.label}
                                     </FrameButton>
@@ -177,65 +186,51 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
 function FrameButton({
     children,
     button,
-    index,
+    buttonIndex,
     inputText,
     state,
+	functionName,
+	params,
     handleOpenModal,
-    toggleContainer,
 }: PropsWithChildren<{
     //! Changed from NonNullable<FrameMetadataWithImageObject['buttons']>[0]
     button: FrameButtonMetadata
-    index: number
+    buttonIndex: number
     inputText: string
     state: any
+	functionName: string | undefined
+	params: string | undefined
     handleOpenModal: (fn: any) => void
-    toggleContainer: () => void
 }>) {
-    const [isLoading, setIsLoading] = useState(false)
-    const [, setPreviewHistory] = useAtom(previewHistoryAtom)
-    const mockOptions = useAtomValue(mockOptionsAtom)
     const { action, target } = button
+	
+	const [previewData, setPreviewData] = useAtom(previewParametersAtom)
 
     const confirmAction = useCallback(async () => {
-        const result = await simulateCall(
-            {
-                untrustedData: {
-                    fid: 368382,
-                    url: target!,
-                    messageHash: '0xDebug',
-                    timestamp: 0,
-                    network: 1,
-                    buttonIndex: index,
-                    inputText: inputText,
-                    state: 'Debug',
-                    castId: {
-                        fid: 368382,
-                        hash: '0xDebug',
-                    },
-                },
-                trustedData: {
-                    messageBytes: 'Debug',
-                },
-            },
-            mockOptions
-        )
+		// setPreviewData((prev) => ({
+		// 	functionName: functionName,
+		// 	inputText: inputText,
+		// 	buttonIndex: buttonIndex,
+		// }))
 		
-		if (!result) return
+		const newData =  {
+		functionName: functionName,
+		inputText: inputText,
+		buttonIndex: buttonIndex,
+		params: params,
+	}
 		
-        setPreviewHistory((prev: any) => [...prev, result])
-    }, [target, index, inputText, mockOptions, setPreviewHistory])
+		setPreviewData(newData)
+		
+    }, [ buttonIndex, inputText, functionName, params, setPreviewData])
 
     const handleClick = useCallback(async () => {
         if (action === 'post' || action === 'post_redirect') {
-            toggleContainer()
-            setIsLoading(true)
             if (action === 'post_redirect') {
                 handleOpenModal(() => confirmAction)
             } else {
                 await confirmAction()
             }
-            toggleContainer()
-            setIsLoading(false)
             return
         }
 
@@ -243,14 +238,14 @@ function FrameButton({
             const onConfirm = () => window.open(target, '_blank')
             handleOpenModal(() => onConfirm)
         }
-    }, [action, target, confirmAction, handleOpenModal, toggleContainer])
+    }, [action, target, confirmAction, handleOpenModal])
 
     return (
         <button
             className="rounded-lg font-normal disabled:opacity-50 border border-[#4c3a4ec0] px-4 py-2 text-sm flex h-10 flex-row items-center justify-center  bg-[#ffffff1a] hover:bg-[#ffffff1a] w-full"
             type="button"
             onClick={handleClick}
-            disabled={isLoading || button?.action === 'mint'}
+            // disabled={isLoading || button?.action === 'mint'}
         >
             <span className="items-center font-normal text-white line-clamp-1">{children}</span>
             {buttonIcon({ action })}

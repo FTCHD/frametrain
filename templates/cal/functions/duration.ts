@@ -4,13 +4,13 @@ import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import { balances721, balancesERC1155 } from '../utils/balances'
 import PageView from '../views/Duration'
-import NotSatisfied from '../views/NotSatisfied'
+import { FrameError } from '@/sdk/handlers'
 
 export default async function duration(
     body: FrameActionPayloadValidated,
     config: Config,
-    state: State,
-    params: any
+    _state: State,
+    _params: any
 ): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const fonts = [...roboto]
@@ -27,70 +27,19 @@ export default async function duration(
         config.gatingOptions.follower &&
         !body.validatedData.interactor.viewer_context.followed_by
     ) {
-        return {
-            buttons: [
-                {
-                    label: 'back',
-                },
-            ],
-            fonts: fonts,
-
-            component: NotSatisfied(
-                config,
-                'You have not satisfied the requirements. Only profiles followed by the creator can schedule a call.'
-            ),
-            functionName: 'errors',
-        }
+        throw new FrameError('Only profiles followed by the creator can schedule a call.')
     }
 
     if (config.gatingOptions.following && !body.validatedData.interactor.viewer_context.following) {
-        return {
-            buttons: [
-                {
-                    label: 'back',
-                },
-            ],
-            fonts: fonts,
-
-            component: NotSatisfied(
-                config,
-                'You have not satisfied the requirements. Please follow the creator and try again.'
-            ),
-            functionName: 'errors',
-        }
+        throw new FrameError('Please follow the creator and try again.')
     }
 
     if (config.gatingOptions.recasted && !body.validatedData.cast.viewer_context.recasted) {
-        return {
-            buttons: [
-                {
-                    label: 'back',
-                },
-            ],
-            fonts: fonts,
-            component: NotSatisfied(
-                config,
-                'You have not satisfied the requirements. Please recast this frame and try again.'
-            ),
-            functionName: 'errors',
-        }
+        throw new FrameError('Please recast this frame and try again.')
     }
 
     if (config.gatingOptions.liked && !body.validatedData.cast.viewer_context.liked) {
-        return {
-            buttons: [
-                {
-                    label: 'back',
-                },
-            ],
-            fonts: fonts,
-
-            component: NotSatisfied(
-                config,
-                'You have not satisfied the requirements. Please like this frame and try again.'
-            ),
-            functionName: 'errors',
-        }
+        throw new FrameError('Please like this frame and try again.')
     }
 
     if (config.gatingOptions.karmaGating) {
@@ -115,20 +64,7 @@ export default async function duration(
 
     if (config.gatingOptions.nftGating) {
         if (body.validatedData.interactor.verified_addresses.eth_addresses.length === 0) {
-            return {
-                buttons: [
-                    {
-                        label: 'back',
-                    },
-                ],
-                fonts: fonts,
-
-                component: NotSatisfied(
-                    config,
-                    'Please connect a wallet to your profile that holds the NFT required to schedule a call.'
-                ),
-                functionName: 'errors',
-            }
+            throw new FrameError('You do not have a wallet that holds the required NFT.')
         }
         if (config.nftOptions.nftType === 'ERC721') {
             nftGate = await balances721(
@@ -147,35 +83,11 @@ export default async function duration(
     }
 
     if (!containsUserFID) {
-        return {
-            buttons: [
-                {
-                    label: 'back',
-                },
-            ],
-            fonts: fonts,
-            component: NotSatisfied(
-                config,
-                'You have not satisfied the requirements. Only people within 2nd degree of connection can schedule a call.'
-            ),
-            functionName: 'errors',
-        }
+        throw new FrameError('Only people within 2nd degree of connection can schedule a call.')
     }
 
     if (!nftGate) {
-        return {
-            buttons: [
-                {
-                    label: 'back',
-                },
-            ],
-            fonts: fonts,
-            component: NotSatisfied(
-                config,
-                `You have not satisfied the requirements. You need to hold ${config.nftOptions.nftName} to schedule a call.`
-            ),
-            functionName: 'errors',
-        }
+        throw new FrameError(`You need to hold ${config.nftOptions.nftName} to schedule a call.`)
     }
 
     return {

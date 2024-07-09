@@ -41,7 +41,7 @@ export default function VoteView(config: Record<string, string>) {
                     textWrap: 'balance',
                 }}
             >
-                {question.toUpperCase()}
+                {question?.toUpperCase() || 'Enter a question'}
             </div>
         </div>
     )
