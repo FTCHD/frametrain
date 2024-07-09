@@ -8,7 +8,7 @@ import { getEventId } from '../utils/cal'
 import { getCurrentAndFutureDate } from '../utils/date'
 import { extractDatesAndSlots } from '../utils/date'
 import PageView from '../views/AfterConfirm'
-import FailView from '../views/Failed'
+import initial from './initial'
 
 export default async function confirm(
     body: FrameActionPayload,
@@ -27,19 +27,7 @@ export default async function confirm(
     const buttonIndex = body.untrustedData.buttonIndex
 
     if (buttonIndex === 1) {
-        //! this logic, and the `errors` function seems like they shouldn't exist anymore
-        //! we removed NotSatisfied and converted it to FrameError
-        //! either this or the naming is off
-        return {
-            buttons: [
-                {
-                    label: 'back',
-                },
-            ],
-            component: FailView(config),
-            functionName: 'errors',
-            fonts: fonts,
-        }
+        return initial(config, state)
     }
 
     const dates = getCurrentAndFutureDate(30)
@@ -68,11 +56,11 @@ export default async function confirm(
     const slots = await fetch(url)
     const slotsResponse = await slots.json()
 
-    const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
+    const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
     const date = datesArray[params.date]
 
     const email = body.untrustedData.inputText
-    const eventTypeId = await getEventId(config.username, params.duration)
+    const eventTypeId = await getEventId(config.username!, params.duration)
 
     try {
         await bookCall(
@@ -80,9 +68,9 @@ export default async function confirm(
             email!,
             slotsResponse.result.data.json.slots[date][params.slot].time,
             eventTypeId,
-            config.username
+            config.username!
         )
-    } catch (error) {
+    } catch {
         throw new FrameError('Error booking event.')
     }
 
