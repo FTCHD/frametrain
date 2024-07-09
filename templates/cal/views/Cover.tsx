@@ -90,10 +90,8 @@ export default function CoverView(config: Config) {
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 15,
-                        marginBottom: '2rem',
+                        gap: 10,
+                        alignSelf: 'flex-start',
                     }}
                 >
                     {paragraphs.map((bio) => (
@@ -109,7 +107,7 @@ export default function CoverView(config: Config) {
                         </div>
                     ))}
                 </div>
-            ) : null}
+            ) : undefined}
 
             {config.gatingOptions.nftGating ? (
                 <div
