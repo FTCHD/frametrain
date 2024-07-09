@@ -33,9 +33,19 @@ export default function Inspector() {
     const [loading, setLoading] = useState(false)
     const events = config.events || []
 
-    const handleSubmit = async (username: string) => {
-        if (username === '') return
+    const onChangeUsername = useDebouncedCallback(async (username: string) => {
         if (config.username === username) return
+
+        if (username === '') {
+            updateConfig({
+                fid: undefined,
+                name: undefined,
+                username: undefined,
+                image: undefined,
+                events: [],
+            })
+            return
+        }
 
         try {
             const data = await fetchProfileData(username)
@@ -47,28 +57,6 @@ export default function Inspector() {
                 events: [],
             })
         } catch (_) {}
-    }
-
-    //! no need for an useEffect here, just call handleSubmit when the input changes
-    useEffect(() => {
-        if (config.name) return
-
-        async function fetchUser() {
-            try {
-                const data = await fetchProfileData(config.username)
-                if (!data) return
-
-                updateConfig({
-                    ...data,
-                    fid,
-                })
-            } catch (_) {}
-        }
-        fetchUser()
-    }, [config.username, config.name, fid, updateConfig])
-
-    const debouncedHandle = useDebouncedCallback((username: string) => {
-        handleSubmit(username)
     }, 1000)
 
     const handleNFT = async (nftAddress: string) => {
@@ -114,10 +102,8 @@ export default function Inspector() {
                     className="text-lg"
                     placeholder="Enter your cal.com username"
                     defaultValue={config.username}
-                    //! the line below is wrong, it will never let the user delete the username from the field
                     onChange={(e) => {
-                        if (e.target.value === '') return
-                        debouncedHandle(e.target.value)
+                        onChangeUsername(e.target.value)
                     }}
                 />
             </div>
