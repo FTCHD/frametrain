@@ -1,5 +1,5 @@
 import type { FrameButtonMetadata } from '@/lib/farcaster'
-import type { CustomButtons } from './types'
+import type { CustomButtons } from '.'
 
 export async function renderCustomButtons(
     customButtons: CustomButtons

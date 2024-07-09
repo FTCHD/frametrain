@@ -2,15 +2,14 @@
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import { FrameError } from '@/sdk/handlers'
-import type { State } from '..'
-import type { Config } from '../types'
+import type { Config } from '../'
 import { renderCustomButtons } from '../utils'
 import CoverView from '../views/Cover'
 
 export default async function page(
     body: FrameActionPayload,
     config: Config,
-    state: State,
+    state: {},
     params: any
 ): Promise<BuildFrameData> {
     const buttonIndex = body?.untrustedData?.buttonIndex

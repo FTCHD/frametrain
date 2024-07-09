@@ -13,14 +13,14 @@ import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { LoaderIcon, Trash2 } from 'lucide-react'
 import { type ChangeEvent, useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
-import { type Config, type CustomButtonType, PRESENTATION_DEFAULTS, type Slide } from './types'
+import { type Config, type CustomButtonType, PRESENTATION_DEFAULTS, type Slide } from '.'
 
 type IImageTypes = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
 
 export default function Inspector() {
     const uploadImage = useUploadImage()
 
-    // General States
+	// General States
     const [config, updateConfig] = useFrameConfig<Config>()
 
     // Image States
@@ -105,11 +105,6 @@ export default function Inspector() {
 
     return (
         <div className="flex flex-col gap-5 w-full h-full">
-            <p>
-                This template allows you to split your long content into slides and customize the
-                background, font, and title.
-            </p>
-
             {/* Slides */}
             <div className="w-full flex items-center justify-between">
                 <h2 className="text-2xl font-bold">Slides</h2>
@@ -156,8 +151,6 @@ export default function Inspector() {
                                 },
                             ]),
                         })
-
-                        setSlideIndex((config?.slides || []).length)
                     }}
                     className="w-40 h-40 flex items-center justify-center p-2 border-input border-[1px] rounded-md cursor-pointer"
                 >

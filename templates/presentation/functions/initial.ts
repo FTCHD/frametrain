@@ -1,7 +1,7 @@
 'use server'
 import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import { type Config, PRESENTATION_DEFAULTS } from '../types'
+import { type Config, PRESENTATION_DEFAULTS } from '../'
 import { renderCustomButtons } from '../utils'
 import CoverView from '../views/Cover'
 

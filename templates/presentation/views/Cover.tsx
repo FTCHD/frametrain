@@ -1,4 +1,4 @@
-import type { Slide } from '../types'
+import type { Slide } from '../'
 
 export default function CoverView(slide: Slide) {
     const title = slide?.title?.text
