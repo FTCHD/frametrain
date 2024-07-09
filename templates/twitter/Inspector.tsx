@@ -8,7 +8,7 @@ import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { scrapeTwitterPost } from '@/sdk/scrape'
 import { LoaderIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Trash } from 'react-feather'
 import type { Config } from '.'
 
@@ -23,36 +23,6 @@ export default function Inspector() {
 
     const tweetInputRef = useRef<HTMLInputElement>(null)
 
-    const profileInputRef = useRef<HTMLInputElement>(null)
-    const titleInputRef = useRef<HTMLInputElement>(null)
-    const bottomTextInputRef = useRef<HTMLInputElement>(null)
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <>
-    useEffect(() => {
-        if (!titleInputRef.current) return
-        if (titleInputRef.current.value) return
-        if (!config.title?.text) return
-
-        titleInputRef.current.value = config.title.text
-    }, [titleInputRef.current])
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <>
-    useEffect(() => {
-        if (!profileInputRef.current) return
-        if (profileInputRef.current.value) return
-        if (!config.profile) return
-
-        profileInputRef.current.value = config.profile
-    }, [profileInputRef.current])
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <>
-    useEffect(() => {
-        if (!bottomTextInputRef.current) return
-        if (bottomTextInputRef.current.value) return
-        if (!config.bottom?.text) return
-
-        bottomTextInputRef.current.value = config.bottom.text
-    }, [bottomTextInputRef.current])
 
     return (
         <>
@@ -62,7 +32,6 @@ export default function Inspector() {
                     <div className="flex flex-col gap-2 w-full">
                         <h2 className="text-lg">Title Text</h2>
                         <Input
-                            ref={titleInputRef}
                             defaultValue={config.title?.text}
                             onChange={(e) =>
                                 updateConfig({
@@ -140,14 +109,12 @@ export default function Inspector() {
                         <Input
                             placeholder="No @ or https:// prefix"
                             defaultValue={config?.profile}
-                            ref={profileInputRef}
                             onChange={(e) => updateConfig({ profile: e.target.value })}
                         />
                     </div>
                     <div className="flex flex-col gap-2 w-full">
                         <h2 className="text-lg">Bottom Text</h2>
                         <Input
-                            ref={bottomTextInputRef}
                             defaultValue={config?.bottom?.text}
                             onChange={(e) =>
                                 updateConfig({
