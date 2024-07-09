@@ -1,5 +1,13 @@
-//! allow for more evm chains
-import { baseClient, client, opClient } from './viem'
+import {
+    ethClient,
+    baseClient,
+    blastClient,
+    opClient,
+    zoraClient,
+    fantomClient,
+    arbitrumClient,
+    polygonClient,
+} from './viem'
 
 const balanceOfABI721 = [
     {
@@ -59,14 +67,12 @@ const nameABI = [
     },
 ]
 
-export const holdsErc721 = async (ownerAddresses: any, contract: any, chain: any) => {
-    const calls = []
-    let hasNFT = false
-
+function getChainClient(chain: string) {
     let selectedClient
+
     switch (chain) {
         case 'ETH': {
-            selectedClient = client
+            selectedClient = ethClient
             break
         }
         case 'BASE': {
@@ -77,9 +83,44 @@ export const holdsErc721 = async (ownerAddresses: any, contract: any, chain: any
             selectedClient = opClient
             break
         }
+
+        case 'ZORA': {
+            selectedClient = zoraClient
+            break
+        }
+
+        case 'BLAST': {
+            selectedClient = blastClient
+            break
+        }
+
+        case 'POLYGON': {
+            selectedClient = polygonClient
+            break
+        }
+
+        case 'FANTOM': {
+            selectedClient = fantomClient
+            break
+        }
+
+        case 'ARBITRUM': {
+            selectedClient = arbitrumClient
+            break
+        }
+
         default:
             throw new Error('Unsupported chain')
     }
+
+    return selectedClient
+}
+
+export const holdsErc721 = async (ownerAddresses: any, contract: any, chain: any) => {
+    const calls = []
+    let hasNFT = false
+
+    const selectedClient = getChainClient(chain)
 
     // biome-ignore lint/style/useForOf: <explanation>
     for (let i = 0; i < ownerAddresses.length; i++) {
@@ -112,28 +153,10 @@ export const holdsErc1155 = async (
     tokenId: any,
     chain: any
 ) => {
-    // biome-ignore lint/style/useConst: <explanation>
-    let calls = []
+    const calls = []
     let hasNFT = false
 
-    // biome-ignore lint/correctness/noUnusedVariables: <explanation>
-    let selectedClient
-    switch (chain) {
-        case 'ETH': {
-            selectedClient = client
-            break
-        }
-        case 'BASE': {
-            selectedClient = baseClient
-            break
-        }
-        case 'OP': {
-            selectedClient = opClient
-            break
-        }
-        default:
-            throw new Error('Unsupported chain')
-    }
+    const selectedClient = getChainClient(chain)
 
     // biome-ignore lint/style/useForOf: <explanation>
     for (let i = 0; i < ownerAddresses.length; i++) {
@@ -161,24 +184,8 @@ export const holdsErc1155 = async (
 }
 
 export async function getName(contractAddress: any, chain: any): Promise<string> {
-    let selectedClient
+    const selectedClient = getChainClient(chain)
 
-    switch (chain) {
-        case 'ETH': {
-            selectedClient = client
-            break
-        }
-        case 'BASE': {
-            selectedClient = baseClient
-            break
-        }
-        case 'OP': {
-            selectedClient = opClient
-            break
-        }
-        default:
-            throw new Error('Unsupported chain')
-    }
     try {
         let name: any = await selectedClient.readContract({
             address: contractAddress,

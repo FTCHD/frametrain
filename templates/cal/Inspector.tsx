@@ -311,6 +311,11 @@ export default function Inspector() {
                                     <SelectItem value="ETH">ETH</SelectItem>
                                     <SelectItem value="BASE">BASE</SelectItem>
                                     <SelectItem value="OP">OP</SelectItem>
+                                    <SelectItem value="ZORA">ZORA</SelectItem>
+                                    <SelectItem value="BLAST">BLAST</SelectItem>
+                                    <SelectItem value="POLYGON">POLYGON</SelectItem>
+                                    <SelectItem value="FANTOM">FANTOM</SelectItem>
+                                    <SelectItem value="ARBITRUM">ARBITRUM</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
