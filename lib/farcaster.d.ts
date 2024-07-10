@@ -30,4 +30,8 @@ export interface BuildFrameData {
     component?: ReactElement
     image?: string
     functionName?: string
+    webhook?: {
+        event: string
+        data: Record<string | unknown>
+    }
 }

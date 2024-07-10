@@ -10,6 +10,9 @@ import type {
     FrameValidatedActionPayload,
 } from './farcaster'
 import type { BaseState } from './types'
+import { client } from '@/db/client'
+import { frameTable } from '@/db/schema'
+import { and, eq } from 'drizzle-orm'
 
 export async function buildFramePage({
     id,
@@ -23,6 +26,7 @@ export async function buildFramePage({
     component,
     image,
     functionName,
+    webhook,
     linkedPage,
 }: {
     id: string
@@ -33,6 +37,10 @@ export async function buildFramePage({
     }
 
     let imageData
+
+    if (webhook) {
+        triggerEvent(id, webhook.event, webhook.data).catch(console.log)
+    }
 
     if (component) {
         const renderedImage = new ImageResponse(component, {
@@ -275,4 +283,76 @@ export async function validatePayload(
         })) as FrameValidatedActionPayload
 
     return r
+}
+
+function sleep(seconds: number) {
+    return new Promise((resolve) => setTimeout(resolve, seconds * 1000))
+}
+
+/**
+ * @name triggerEvent
+ *
+ * A function that sends webhook info based on the event type and the data.
+ * It sends a POST request to the webhook url.
+ * There's a limit of 3 tries at an interval of 5 seconds each
+ *
+ * @param frameId string - the frame id
+ * @param event string - an object of the event name and external url
+ * @param data object - data to be sent with the event
+ * @returns Promise<void>
+ */
+async function triggerEvent(frameId: string, event: string, data: Record<string, unknown>) {
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(and(eq(frameTable.id, frameId)))
+        .get()
+
+    if (!frame?.webhooks) {
+        return
+    }
+
+    // where frame.webhooks is a list of webhook objects with structure as {[eventName]: webhookUrl}
+    // get the webhook url for the event
+    const webhookUrl = frame.webhooks[event] as string | undefined
+
+    if (!webhookUrl) {
+        return
+    }
+
+    const id = crypto.randomUUID()
+
+    for (let i = 0; i <= 3; i++) {
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id,
+                    event,
+                    data: {
+                        ...data,
+                        createdAt: new Date().toISOString(),
+                    },
+                }),
+            })
+            console.log(
+                `[triggerEvent|OK] >> Successfully sent event data to ${webhookUrl} for ${event}`
+            )
+
+            return response
+        } catch (error) {
+            console.log(
+                `[triggerEvent|ERROR] >> failed to send data to ${webhookUrl} for ${event}`,
+                error
+            )
+
+            if (i < 3) {
+                console.log(`[triggerEvent|ERROR] >> Retry ${i + 1}/3 after 5 seconds...`)
+                await sleep(5)
+            } else {
+                console.log('[triggerEvent|ERROR] >> Retry failed')
+            }
+        }
+    }
 }
