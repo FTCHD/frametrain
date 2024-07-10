@@ -1,14 +1,14 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
-import type { Config, State } from '..'
-import PageView from '../views/AfterConfirm'
-import FailView from '../views/Failed'
-
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import { bookCall } from '../utils/bookCall'
-import { extractDatesAndSlots } from '../utils/extractDatesAndSlots'
-import { getCurrentAndFutureDate } from '../utils/getDays'
-import { getEventSlug } from '../utils/getEventSlug'
+import { FrameError } from '@/sdk/handlers'
+import type { Config, State } from '..'
+import { bookCall } from '../utils/cal'
+import { getEventId } from '../utils/cal'
+import { getCurrentAndFutureDate } from '../utils/date'
+import { extractDatesAndSlots } from '../utils/date'
+import PageView from '../views/AfterConfirm'
+import initial from './initial'
 
 export default async function confirm(
     body: FrameActionPayload,
@@ -25,18 +25,11 @@ export default async function confirm(
     }
 
     const buttonIndex = body.untrustedData.buttonIndex
+
     if (buttonIndex === 1) {
-        return {
-            buttons: [
-                {
-                    label: 'back',
-                },
-            ],
-            component: FailView(config),
-            functionName: 'errors',
-            fonts: fonts,
-        }
+        return initial(config, state)
     }
+
     const dates = getCurrentAndFutureDate(30)
     const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
         JSON.stringify({
@@ -63,18 +56,23 @@ export default async function confirm(
     const slots = await fetch(url)
     const slotsResponse = await slots.json()
 
-    const [datesArray, slotsArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
+    const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
     const date = datesArray[params.date]
 
     const email = body.untrustedData.inputText
-    const eventTypeId = await getEventSlug(config.username, params.duration)
-    await bookCall(
-        email?.split('@')[0] || '',
-        email!,
-        slotsResponse.result.data.json.slots[date][params.slot].time,
-        eventTypeId,
-        config.username
-    )
+    const eventTypeId = await getEventId(config.username!, params.duration)
+
+    try {
+        await bookCall(
+            email?.split('@')[0] || '',
+            email!,
+            slotsResponse.result.data.json.slots[date][params.slot].time,
+            eventTypeId,
+            config.username!
+        )
+    } catch {
+        throw new FrameError('Error booking event.')
+    }
 
     return {
         buttons: [

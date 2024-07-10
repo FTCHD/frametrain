@@ -4,7 +4,6 @@ import cover from './cover.jpg'
 import functions from './functions'
 
 export interface Config extends BaseConfig {
-    username: string
     fontFamily?: string
     primaryColor?: string
     secondaryColor?: string
@@ -12,9 +11,17 @@ export interface Config extends BaseConfig {
     titleStyle?: string
     background?: string
     bodyColor?: string
-    fid: number
-    image: string
-    name: string
+
+    fid: number | undefined
+    image: string | undefined
+    name: string | undefined
+    username: string | undefined
+    bio: string[]
+    events: {
+        slug: string
+        duration: string
+        formattedDuration: string
+    }[]
 
     gatingOptions: {
         karmaGating: boolean
@@ -45,6 +52,8 @@ export default {
     Inspector,
     functions,
     initialConfig: {
+        events: [],
+        bio: [],
         gatingOptions: {
             karmaGating: false,
             nftGating: false,

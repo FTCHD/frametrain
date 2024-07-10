@@ -1,10 +1,13 @@
 'use server'
 import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, State } from '..'
-import { balances721, balancesERC1155 } from '../utils/balances'
-import PageView from '../views/Duration'
 import { FrameError } from '@/sdk/handlers'
+import type { Config, State } from '..'
+import { getCurrentAndFutureDate } from '../utils/date'
+import { extractDatesAndSlots } from '../utils/date'
+import { holdsErc721, holdsErc1155 } from '../utils/nft'
+import DateView from '../views/Date'
+import PageView from '../views/Duration'
 
 export default async function duration(
     body: FrameActionPayloadValidated,
@@ -22,6 +25,10 @@ export default async function duration(
 
     let containsUserFID = true
     let nftGate = true
+
+    if ((config.events || []).length === 0) {
+        throw new FrameError('No events available to schedule.')
+    }
 
     if (
         config.gatingOptions.follower &&
@@ -57,8 +64,8 @@ export default async function duration(
             containsUserFID = data.result.some(
                 (item: any) => item.fid === body.validatedData.interactor.fid
             )
-        } catch (error) {
-            console.log(error)
+        } catch {
+            throw new FrameError('Failed to fetch your engagement data')
         }
     }
 
@@ -67,13 +74,13 @@ export default async function duration(
             throw new FrameError('You do not have a wallet that holds the required NFT.')
         }
         if (config.nftOptions.nftType === 'ERC721') {
-            nftGate = await balances721(
+            nftGate = await holdsErc721(
                 body.validatedData.interactor.verified_addresses.eth_addresses,
                 config.nftOptions.nftAddress,
                 config.nftOptions.nftChain
             )
         } else {
-            nftGate = await balancesERC1155(
+            nftGate = await holdsErc1155(
                 body.validatedData.interactor.verified_addresses.eth_addresses,
                 config.nftOptions.nftAddress,
                 config.nftOptions.tokenId,
@@ -90,15 +97,66 @@ export default async function duration(
         throw new FrameError(`You need to hold ${config.nftOptions.nftName} to schedule a call.`)
     }
 
+    if (config.events.length === 1) {
+        const event = config.events[0]
+        const dates = getCurrentAndFutureDate(30)
+        const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
+            JSON.stringify({
+                json: {
+                    isTeamEvent: false,
+                    usernameList: [`${config.username}`],
+                    eventTypeSlug: event.slug,
+                    startTime: dates[0],
+                    endTime: dates[1],
+                    timeZone: 'UTC',
+                    duration: null,
+                    rescheduleUid: null,
+                    orgSlug: null,
+                },
+                meta: {
+                    values: {
+                        duration: ['undefined'],
+                        orgSlug: ['undefined'],
+                    },
+                },
+            })
+        )}`
+
+        const slots = await fetch(url)
+        const slotsResponse = await slots.json()
+        const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
+
+        if (!datesArray.length) {
+            throw new FrameError('No events available to schedule.')
+        }
+
+        return {
+            fonts,
+            buttons: [
+                {
+                    label: '⬅️',
+                },
+                {
+                    label: 'Select',
+                },
+                {
+                    label: '➡️',
+                },
+            ],
+            component: DateView(config, datesArray, 0, event.formattedDuration),
+            params: {
+                date: 0,
+                eventSlug: event.slug,
+                dateLength: datesArray.length,
+            },
+            functionName: 'date',
+        }
+    }
+
     return {
-        buttons: [
-            {
-                label: '15min',
-            },
-            {
-                label: '30min',
-            },
-        ],
+        buttons: config.events.map((event) => ({
+            label: event.formattedDuration,
+        })),
         fonts: fonts,
 
         component: PageView(config),
