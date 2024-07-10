@@ -1,0 +1,1 @@
+ALTER TABLE `frame` ADD `webhooks` text DEFAULT '{}';
