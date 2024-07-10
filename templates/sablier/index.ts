@@ -24,4 +24,5 @@ export default {
     } as Config,
     cover,
     requiresValidation: false,
+    events: [],
 } satisfies BaseTemplate
