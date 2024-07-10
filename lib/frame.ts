@@ -158,6 +158,36 @@ export async function updateFrameLinkedPage(id: string, url?: string) {
     revalidatePath(`/frame/${id}`)
 }
 
+export async function updateFrameWebhooks(id: string) {
+    const sesh = await auth()
+
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .get()
+
+    if (!frame) {
+        notFound()
+    }
+
+    await client
+        .update(frameTable)
+        .set({
+            webhooks: {
+                ...frame.webhooks,
+            },
+        })
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .run()
+
+    revalidatePath(`/frame/${id}`)
+}
+
 export async function revertFrameConfig(id: string) {
     const sesh = await auth()
 

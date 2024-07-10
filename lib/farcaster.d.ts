@@ -32,6 +32,6 @@ export interface BuildFrameData {
     functionName?: string
     webhook?: {
         event: string
-        data: Record<string | unknown>
+        data: Record<string, unknown>
     }
 }

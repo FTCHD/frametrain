@@ -117,6 +117,7 @@ export async function buildPreviewFramePage({
     component,
     image,
     functionName,
+    webhook,
 }: {
     id: string
     buttons: FrameButtonMetadata[]
@@ -129,12 +130,20 @@ export async function buildPreviewFramePage({
     component: ReactElement
     image: string
     functionName?: string
+    webhook?: {
+        event: string
+        data: Record<string, unknown>
+    }
 }) {
     if (!component && !image) {
         throw new Error('Either component or image must be provided')
     }
 
     let imageData
+
+    if (webhook) {
+        triggerEvent(id, webhook.event, webhook.data).catch(console.log)
+    }
 
     if (component) {
         const renderedImage = new ImageResponse(component, {
