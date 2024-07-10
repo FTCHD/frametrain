@@ -158,7 +158,11 @@ export async function updateFrameLinkedPage(id: string, url?: string) {
     revalidatePath(`/frame/${id}`)
 }
 
-export async function updateFrameWebhooks(id: string) {
+export async function updateFrameWebhooks(
+    id: string,
+    webhook: Record<string, string>,
+    action: 'add' | 'remove'
+) {
     const sesh = await auth()
 
     if (!sesh?.user) {
@@ -175,12 +179,18 @@ export async function updateFrameWebhooks(id: string) {
         notFound()
     }
 
+    const webhooks = frame.webhooks || {}
+
+    if (action === 'add') {
+        webhooks[webhook.event] = webhook.url
+    } else {
+        delete webhooks[webhook.event]
+    }
+
     await client
         .update(frameTable)
         .set({
-            webhooks: {
-                ...frame.webhooks,
-            },
+            webhooks,
         })
         .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
