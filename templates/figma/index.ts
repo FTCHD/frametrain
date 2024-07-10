@@ -22,4 +22,5 @@ export default {
         text: 'Default Text',
     },
     requiresValidation: false,
+    events: [],
 } satisfies BaseTemplate

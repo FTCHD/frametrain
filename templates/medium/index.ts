@@ -29,4 +29,5 @@ export default {
     functions,
     cover,
     requiresValidation: false,
+    events: [],
 } satisfies BaseTemplate

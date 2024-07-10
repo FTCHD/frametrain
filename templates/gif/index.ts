@@ -22,4 +22,5 @@ export default {
     functions,
     initialConfig: {},
     requiresValidation: false,
+    events: [],
 } satisfies BaseTemplate

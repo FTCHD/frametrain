@@ -17,8 +17,8 @@ export interface Config extends BaseConfig {
 
 export interface State extends BaseState {
     votesForId: Record<string, number>
-	votesForOption: Record<string, number>
-	totalVotes: number
+    votesForOption: Record<string, number>
+    totalVotes: number
 }
 
 export default {
@@ -31,4 +31,5 @@ export default {
     functions,
     cover,
     requiresValidation: true,
+    events: [],
 } satisfies BaseTemplate

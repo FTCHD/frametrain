@@ -52,4 +52,5 @@ export default {
         allowDuplicates: false,
     },
     requiresValidation: true,
+    events: [],
 } satisfies BaseTemplate

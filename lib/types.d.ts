@@ -2,7 +2,6 @@ import type { StaticImageData } from 'next/image'
 import type { ElementType } from 'react'
 import type { BuildFrameData } from './farcaster'
 
-
 export interface BaseConfig {
     [key: string]: boolean | number | string | null | undefined | any
 }
@@ -26,4 +25,5 @@ export interface BaseTemplate {
     initialConfig?: any
     cover: StaticImageData
     requiresValidation: boolean
+    events: string[]
 }

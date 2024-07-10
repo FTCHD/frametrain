@@ -54,8 +54,7 @@ export default {
     initialConfig: {
         events: [],
         bio: [],
-        gatingOptions: {
-            karmaGating: false,
+        g: {
             nftGating: false,
             recasted: false,
             liked: false,
@@ -68,4 +67,5 @@ export default {
         },
     },
     requiresValidation: true,
+    events: [],
 } satisfies BaseTemplate
