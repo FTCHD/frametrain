@@ -12,7 +12,7 @@ import { Switch } from '@/components/shadcn/Switch'
 import { ToggleGroup } from '@/components/shadcn/ToggleGroup'
 import { ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { useFarcasterId, useFrameConfig, useResetPreview, useUploadImage } from '@/sdk/hooks'
 import { corsFetch } from '@/sdk/scrape'
 import { LoaderIcon, Trash } from 'lucide-react'
 import Link from 'next/link'
@@ -28,6 +28,7 @@ export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
     const fid = useFarcasterId()
     const uploadImage = useUploadImage()
+    const resetPreview = useResetPreview()
 
     const slugInputRef = useRef<HTMLInputElement>(null)
     const [loading, setLoading] = useState(false)
@@ -37,6 +38,7 @@ export default function Inspector() {
         if (config.username === username) return
 
         if (username === '') {
+            resetPreview()
             updateConfig({
                 name: undefined,
                 username: undefined,
@@ -51,7 +53,7 @@ export default function Inspector() {
         try {
             const data = await fetchProfileData(username)
             if (!data) return
-
+            resetPreview()
             updateConfig({
                 ...data,
                 fid,
