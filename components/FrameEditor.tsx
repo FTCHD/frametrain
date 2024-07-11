@@ -199,6 +199,7 @@ export default function FrameEditor({
                                 <Input
                                     id="urlInput"
                                     type="url"
+                                    placeholder="Enter your URL here"
                                     defaultValue={frame.linkedPage || undefined}
                                     className="w-full"
                                     onChange={updateLinkedPage}
