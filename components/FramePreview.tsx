@@ -11,6 +11,7 @@ import {
 import { useAtom, useAtomValue } from 'jotai'
 import { type ChangeEvent, type PropsWithChildren, useCallback, useMemo, useState } from 'react'
 import { Delete, ExternalLink, PlusCircle } from 'react-feather'
+import toast from 'react-hot-toast'
 import { BorderBeam } from './BorderBeam'
 import { Button } from './shadcn/Button'
 import {
@@ -135,7 +136,6 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                                         state={metadata.state}
                                         functionName={functionName}
                                         params={params}
-                                        handleOpenModal={handleOpenModal}
                                     >
                                         {button.label}
                                     </FrameButton>
@@ -195,7 +195,6 @@ function FrameButton({
     state,
     functionName,
     params,
-    handleOpenModal,
 }: PropsWithChildren<{
     //! Changed from NonNullable<FrameMetadataWithImageObject['buttons']>[0]
     button: FrameButtonMetadata
@@ -204,14 +203,13 @@ function FrameButton({
     state: any
     functionName: string | undefined
     params: string | undefined
-    handleOpenModal: (fn: any) => void
 }>) {
     const { action, target } = button
 
     const [, setPreviewData] = useAtom(previewParametersAtom)
     const previewLoading = useAtomValue(previewLoadingAtom)
 
-    const confirmAction = useCallback(async () => {
+    const actionCallback = useCallback(async () => {
         const newData = {
             functionName: functionName,
             inputText: inputText,
@@ -223,27 +221,28 @@ function FrameButton({
     }, [buttonIndex, inputText, functionName, params, setPreviewData])
 
     const handleClick = useCallback(async () => {
-        if (action === 'post' || action === 'post_redirect') {
-            if (action === 'post_redirect') {
-                handleOpenModal(() => confirmAction)
-            } else {
-                await confirmAction()
+        switch (action) {
+            case 'link': {
+                window.open(target, '_blank')
+                break
             }
-            return
+            case 'post': {
+                await actionCallback()
+                break
+            }
+            default: {
+                toast.error('Not implemented yet')
+                break
+            }
         }
-
-        if (action === 'link') {
-            const onConfirm = () => window.open(target, '_blank')
-            handleOpenModal(() => onConfirm)
-        }
-    }, [action, target, confirmAction, handleOpenModal])
+    }, [action, target, actionCallback])
 
     return (
         <button
             className="rounded-lg font-normal disabled:opacity-50 border border-[#4c3a4ec0] px-4 py-2 text-sm flex h-10 flex-row items-center justify-center  bg-[#ffffff1a] hover:bg-[#ffffff1a] w-full"
             type="button"
             onClick={handleClick}
-            // disabled={previewLoading || button?.action === 'mint'}
+            disabled={previewLoading || button?.action === 'mint'}
         >
             <span className="items-center font-normal text-white line-clamp-1">{children}</span>
             {buttonIcon({ action })}
