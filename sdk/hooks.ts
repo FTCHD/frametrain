@@ -1,9 +1,9 @@
 import { InspectorContext } from '@/components/editor/Context'
-import { useContext } from 'react'
-import { type DebouncedState, useDebouncedCallback } from 'use-debounce'
-import { uploadImage } from './upload'
 import { previewParametersAtom } from '@/lib/store'
 import { useAtom } from 'jotai'
+import { useCallback, useContext } from 'react'
+import { type DebouncedState, useDebouncedCallback } from 'use-debounce'
+import { uploadImage } from './upload'
 
 export function useFarcasterId() {
     const context = useContext(InspectorContext)
@@ -65,8 +65,18 @@ export function useUploadImage() {
     }
 }
 
-export function useUpdatePreview() {
-	const [, setPreviewData] = useAtom(previewParametersAtom)
-	
-	return setPreviewData
+export function useFramePreview() {
+    const [previewData, setPreviewData] = useAtom(previewParametersAtom)
+
+    return [previewData, setPreviewData]
+}
+
+export function useResetPreview() {
+    const [, setPreviewData] = useAtom(previewParametersAtom)
+
+    const reset = useCallback(() => {
+        setPreviewData(undefined)
+    }, [setPreviewData])
+
+    return reset
 }
