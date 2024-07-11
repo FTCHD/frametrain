@@ -39,8 +39,8 @@ export function FramePreview() {
     if (!preview) {
         return <PlaceholderFrame />
     }
-
-    return <ValidFrame metadata={preview.metadata} />
+	
+    return <ValidFrame key={preview.metadata.image.src} metadata={preview.metadata} />
 }
 
 function PlaceholderFrame() {
@@ -64,16 +64,11 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
 
     const aspectRatio = useMemo(() => (image.aspectRatio || '1.91/1').replace(':', '/'), [image])
 
-    const params = useMemo(() => metadata.postUrl?.split('?')[1], [metadata])
+    const params = useMemo(() => postUrl?.split('?')[1], [postUrl])
 
     const functionName = useMemo(
-        () =>
-            metadata.postUrl
-                ?.split(process.env.NEXT_PUBLIC_HOST!)[1]
-                .split('/')
-                .at(-1)
-                ?.split('?')[0],
-        [metadata]
+        () => postUrl?.split(process.env.NEXT_PUBLIC_HOST!)[1].split('/').at(-1)?.split('?')[0],
+        [postUrl]
     )
 
     const [inputText, setInputText] = useState('')
@@ -139,7 +134,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                                     >
                                         {button.label}
                                     </FrameButton>
-                                ) : null
+                                ) : undefined
                             )}
                         </div>
                     </div>
