@@ -1,16 +1,17 @@
 'use client'
 
-import { type FrameMetadataWithImageObject, simulateCall } from '@/lib/debugger'
+import type { FrameMetadataWithImageObject } from '@/lib/debugger'
 import type { FrameButtonMetadata } from '@/lib/farcaster'
 import {
-	previewErrorAtom,
+    previewErrorAtom,
     previewLoadingAtom,
     previewParametersAtom,
     previewStateAtom,
 } from '@/lib/store'
 import { useAtom, useAtomValue } from 'jotai'
-import { type ChangeEvent, type PropsWithChildren, useCallback, useEffect, useState, useMemo } from 'react'
+import { type ChangeEvent, type PropsWithChildren, useCallback, useMemo, useState } from 'react'
 import { Delete, ExternalLink, PlusCircle } from 'react-feather'
+import toast from 'react-hot-toast'
 import { BorderBeam } from './BorderBeam'
 import { Button } from './shadcn/Button'
 import {
@@ -28,18 +29,18 @@ const borderFaint = '#4c3a4e80'
 const textFaint = '#9fa3af'
 
 export function FramePreview() {
-	const preview = useAtomValue(previewStateAtom)
-	const error = useAtomValue(previewErrorAtom)
+    const preview = useAtomValue(previewStateAtom)
+    const error = useAtomValue(previewErrorAtom)
 
     if (error) {
         return <ErrorFrame />
     }
-	
-	if (!preview) {
+
+    if (!preview) {
         return <PlaceholderFrame />
     }
-
-    return <ValidFrame metadata={preview.metadata} />
+	
+    return <ValidFrame key={preview.metadata.image.src} metadata={preview.metadata} />
 }
 
 function PlaceholderFrame() {
@@ -59,22 +60,22 @@ function ErrorFrame() {
 }
 
 function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
-	const { image, input, buttons, postUrl } = metadata
-	
-	const aspectRatio = useMemo(() =>
-        (image.aspectRatio || '1.91/1').replace(':', '/'), [metadata]) 
-	
-	const params = useMemo(() => 
-		metadata.postUrl?.split('?')[1], [metadata])
-	
-	const functionName = useMemo(() =>
-		metadata.postUrl?.split(process.env.NEXT_PUBLIC_HOST!)[1].split('/').at(-1)?.split('?')[0], [metadata])
+    const { image, input, buttons, postUrl } = metadata
+
+    const aspectRatio = useMemo(() => (image.aspectRatio || '1.91/1').replace(':', '/'), [image])
+
+    const params = useMemo(() => postUrl?.split('?')[1], [postUrl])
+
+    const functionName = useMemo(
+        () => postUrl?.split(process.env.NEXT_PUBLIC_HOST!)[1].split('/').at(-1)?.split('?')[0],
+        [postUrl]
+    )
 
     const [inputText, setInputText] = useState('')
     const [modalOpen, setModalOpen] = useState(false)
     const [modalFn, setModalFn] = useState<any>()
-	
-	const loadingContainer = useAtomValue(previewLoadingAtom)
+
+    const loadingContainer = useAtomValue(previewLoadingAtom)
 
     const handleOpenModal = useCallback((fn: any) => {
         setModalOpen(true)
@@ -86,7 +87,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
         []
     )
 
-	return (
+    return (
         <>
             <div className="flex flex-col justify-center relative h-full bg-transparent p-[1.5px]">
                 <div
@@ -96,7 +97,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                     <div
                         className="relative border-0 border-b cursor-pointer border-[#4c3a4e80] w-full md:w-[min(calc(100dvw-45dvw),calc(100dvh-30dvh))]"
                         style={{
-							aspectRatio,
+                            aspectRatio,
                             // width: 'min(calc(100dvw - 45dvw), calc(100dvh - 30dvh))',
                         }}
                     >
@@ -128,14 +129,12 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                                         button={button}
                                         inputText={inputText}
                                         state={metadata.state}
-										functionName={functionName}
-										params={params}
-                                        handleOpenModal={handleOpenModal}
-                                        // toggleContainer={toggleLoadingContainer}
+                                        functionName={functionName}
+                                        params={params}
                                     >
                                         {button.label}
                                     </FrameButton>
-                                ) : null
+                                ) : undefined
                             )}
                         </div>
                     </div>
@@ -189,63 +188,56 @@ function FrameButton({
     buttonIndex,
     inputText,
     state,
-	functionName,
-	params,
-    handleOpenModal,
+    functionName,
+    params,
 }: PropsWithChildren<{
     //! Changed from NonNullable<FrameMetadataWithImageObject['buttons']>[0]
     button: FrameButtonMetadata
     buttonIndex: number
     inputText: string
     state: any
-	functionName: string | undefined
-	params: string | undefined
-    handleOpenModal: (fn: any) => void
+    functionName: string | undefined
+    params: string | undefined
 }>) {
     const { action, target } = button
-	
-	const [previewData, setPreviewData] = useAtom(previewParametersAtom)
 
-    const confirmAction = useCallback(async () => {
-		// setPreviewData((prev) => ({
-		// 	functionName: functionName,
-		// 	inputText: inputText,
-		// 	buttonIndex: buttonIndex,
-		// }))
-		
-		const newData =  {
-		functionName: functionName,
-		inputText: inputText,
-		buttonIndex: buttonIndex,
-		params: params,
-	}
-		
-		setPreviewData(newData)
-		
-    }, [ buttonIndex, inputText, functionName, params, setPreviewData])
+    const [, setPreviewData] = useAtom(previewParametersAtom)
+    const previewLoading = useAtomValue(previewLoadingAtom)
+
+    const actionCallback = useCallback(async () => {
+        const newData = {
+            functionName: functionName,
+            inputText: inputText,
+            buttonIndex: buttonIndex,
+            params: params,
+        }
+
+        setPreviewData(newData)
+    }, [buttonIndex, inputText, functionName, params, setPreviewData])
 
     const handleClick = useCallback(async () => {
-        if (action === 'post' || action === 'post_redirect') {
-            if (action === 'post_redirect') {
-                handleOpenModal(() => confirmAction)
-            } else {
-                await confirmAction()
+        switch (action) {
+            case 'link': {
+                window.open(target, '_blank')
+                break
             }
-            return
+            case 'post': {
+                await actionCallback()
+                break
+            }
+            default: {
+                toast.error('Not implemented yet')
+                break
+            }
         }
-
-        if (action === 'link') {
-            const onConfirm = () => window.open(target, '_blank')
-            handleOpenModal(() => onConfirm)
-        }
-    }, [action, target, confirmAction, handleOpenModal])
+    }, [action, target, actionCallback])
 
     return (
         <button
             className="rounded-lg font-normal disabled:opacity-50 border border-[#4c3a4ec0] px-4 py-2 text-sm flex h-10 flex-row items-center justify-center  bg-[#ffffff1a] hover:bg-[#ffffff1a] w-full"
             type="button"
             onClick={handleClick}
-            // disabled={isLoading || button?.action === 'mint'}
+            disabled={previewLoading || button?.action === 'mint'}
         >
             <span className="items-center font-normal text-white line-clamp-1">{children}</span>
             {buttonIcon({ action })}
