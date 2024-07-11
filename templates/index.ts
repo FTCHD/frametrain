@@ -9,6 +9,7 @@ import medium from './medium'
 import pdf from './pdf'
 import poll from './poll'
 import quizlet from './quizlet'
+import sablier from './sablier'
 import twitter from './twitter'
 import presentation from './presentation'
 
@@ -17,6 +18,7 @@ export default {
     pdf,
     poll,
     figma,
+    sablier,
     twitter,
     discourse,
     gif,

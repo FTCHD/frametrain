@@ -1,9 +1,8 @@
 import type { Config } from '..'
-import { months } from '../utils/const'
+import { months } from '../utils/date'
 
 export default function CoverView(
     config: Config,
-    duration: string,
     dates: string[],
     dateParam: number,
     mins: string
@@ -122,7 +121,9 @@ export default function CoverView(
                     style={{
                         display: 'flex',
                     }}
-                >{`${mins} mins`}</div>
+                >
+                    {mins}
+                </div>
             </div>
             <div
                 style={{

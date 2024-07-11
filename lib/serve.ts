@@ -78,6 +78,7 @@ export async function buildFramePage({
             .map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
             .join('\n')}
 		<title>&#128642; FrameTrain</title>
+		${linkedPage ? `<script>window.location.href = "${linkedPage}"</script>` : ''}
 	</head>
 	<style>
 		* {
