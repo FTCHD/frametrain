@@ -455,7 +455,7 @@ export default function Inspector() {
             </div>
 
             {slide?.type === 'image' ? (
-                <>
+                <div key={currentSlideIndex} className="flex flex-col gap-4">
                     <h2 className="text-lg font-semibold">Image</h2>
                     <div className="flex flex-col gap-5">
                         <label
@@ -504,10 +504,9 @@ export default function Inspector() {
                             )}
                         </div>
                     </div>
-                </>
+					</div>
             ) : (
-                <div className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-4">
+                    <div key={currentSlideIndex} className="flex flex-col gap-4">
                         {/* Title */}
                         <h2 className="text-lg font-semibold">Title</h2>
                         <Input
@@ -687,7 +686,6 @@ export default function Inspector() {
                             </SelectContent>
                         </Select>
                     </div>
-                </div>
             )}
         </div>
     )
