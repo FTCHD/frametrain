@@ -63,7 +63,7 @@ export function useRefreshPreview(frameId: string) {
 	
 	useEffect(() => {
 		refreshPreviewCallback()
-	}, [postUrl, mockOptions])
+	}, [postUrl, mockOptions, previewData])
 	
 
     const refreshPreviewCallback = useCallback(async () => {

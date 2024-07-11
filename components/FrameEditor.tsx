@@ -11,9 +11,10 @@ import {
 import { previewParametersAtom } from '@/lib/store'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
+import { useAtom } from 'jotai'
 import { ImageUp, Undo2 } from 'lucide-react'
 import NextLink from 'next/link'
-import { type ChangeEvent, useEffect, useRef, useState, useCallback } from 'react'
+import { type ChangeEvent, useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Copy } from 'react-feather'
 import { toast } from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
@@ -24,7 +25,6 @@ import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
-import { useAtom } from 'jotai'
 
 export default function FrameEditor({
     frame,
@@ -35,14 +35,14 @@ export default function FrameEditor({
     template: (typeof templates)[keyof typeof templates]
     fid: string
 }) {
-	const refreshPreview = useRefreshPreview(frame.id)
-	
+    const refreshPreview = useRefreshPreview(frame.id)
+
     const [editingName, setEditingName] = useState(false)
     const [currentName, setCurrentName] = useState(frame.name)
     const [temporaryConfig, setTemporaryConfig] = useState(frame.draftConfig)
     const [updating, setUpdating] = useState(false)
-	const [previewData, setPreviewData] = useAtom(previewParametersAtom)
-	
+    const [, setPreviewData] = useAtom(previewParametersAtom)
+
     const tempNameRef = useRef<HTMLInputElement>(null)
 
     async function publishConfig() {
@@ -78,9 +78,9 @@ export default function FrameEditor({
         const newConfig = Object.assign({}, frame.draftConfig, props)
 
         await updateFrameConfig(frame.id, newConfig)
-		
-		refreshPreview()
-		
+
+        refreshPreview()
+
         setUpdating(false)
     }, 1000)
 
@@ -92,7 +92,7 @@ export default function FrameEditor({
         const newConfig = Object.assign({}, temporaryConfig, props)
 
         setTemporaryConfig(newConfig)
-		
+
         writeConfig(newConfig)
     }
 
@@ -121,9 +121,11 @@ export default function FrameEditor({
             window.removeEventListener('keydown', handleEnter)
         }
     })
-	
-	
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <>
+    useEffect(() => {
+        setPreviewData(undefined)
+    }, [])
 
     // prevents losing a save cycle when navigating away
     useEffect(
