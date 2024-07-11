@@ -83,15 +83,12 @@ export default async function dateHanlder(
         }
 
         default: {
-            if (buttonIndex === 1 || buttonIndex == 3) {
+            if (buttonIndex === 1) {
                 date =
-                    buttonIndex === 1
-                        ? date == 0
-                            ? params.dateLength - 1
-                            : date - 1
-                        : date == params.dateLength - 1
-                          ? 0
-                          : date + 1
+                    params.date === undefined ? date : date === 0 ? params.dateLength - 1 : date - 1
+            } else {
+                date =
+                    params.date === undefined ? date : date === params.dateLength - 1 ? 0 : date + 1
             }
         }
     }
