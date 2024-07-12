@@ -345,11 +345,18 @@ async function triggerEvent(frameId: string, event: string, data: Record<string,
                     },
                 }),
             })
+
+            if (!response.ok) {
+                throw new Error('Failed to send data')
+            }
+
             console.log(
-                `[triggerEvent|OK] >> Successfully sent event data to ${webhookUrl} for ${event}`
+                `[triggerEvent|OK] >> Successfully sent event data to ${webhookUrl} for ${event} with id ${id} on attempt ${
+                    i + 1
+                }/3`
             )
 
-            return response
+            break
         } catch (error) {
             console.log(
                 `[triggerEvent|ERROR] >> failed to send data to ${webhookUrl} for ${event}`,
