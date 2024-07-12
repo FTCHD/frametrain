@@ -5,7 +5,7 @@ import type {
     FrameActionPayload,
     FrameActionPayloadValidated,
 } from '@/lib/farcaster'
-import { getFrameWebhooks, updateFrameCalls, updateFrameStorage } from '@/lib/frame'
+import { updateFrameCalls, updateFrameStorage } from '@/lib/frame'
 import { buildFramePage, validatePayload } from '@/lib/serve'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
