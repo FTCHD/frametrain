@@ -55,6 +55,7 @@ export default {
         events: [],
         bio: [],
         gatingOptions: {
+            karmaGating: false,
             nftGating: false,
             recasted: false,
             liked: false,
