@@ -6,7 +6,7 @@ import { InfoIcon } from 'lucide-react'
 import Link from 'next/link'
 import SlideDesigner from './components/SlideDesigner'
 import type { FramePressConfig, SlideConfig } from './config'
-import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './consts'
+import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
 
 const FIGMA_PAT_HELP =
     'https://help.figma.com/hc/en-us/articles/8085703771159-Manage-personal-access-tokens'
