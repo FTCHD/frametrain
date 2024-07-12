@@ -11,12 +11,16 @@ import {
 } from '@/components/shadcn/DropdownMenu'
 import { Switch } from '@/components/shadcn/Switch'
 import { useState } from 'react'
-import { Label } from '../shadcn/InputLabel'
 import { Input } from '../shadcn/Input'
 import { useDebouncedCallback } from 'use-debounce'
 import { updateFrameWebhooks } from '@/lib/frame'
 
-export default function WebhookEventOptions(props: {
+export default function WebhookEventOptions({
+    events,
+    webhooks,
+    id,
+    setUpdating,
+}: {
     events: string[]
     webhooks: { [key: string]: string }
     id: string
@@ -26,19 +30,19 @@ export default function WebhookEventOptions(props: {
     const [webhookEvents, setWebhookEvents] = useState<
         { event: string; url?: string; enabled: boolean }[]
     >(
-        props.webhooks
-            ? props.events.map((event) => ({
+        webhooks
+            ? events.map((event) => ({
                   event,
-                  url: props.webhooks[event],
-                  enabled: !!props.webhooks[event],
+                  url: webhooks[event],
+                  enabled: !!webhooks[event],
               }))
             : []
     )
 
     const updateWebhook = useDebouncedCallback(async (event: string, url?: string) => {
-        props.setUpdating(true)
-        await updateFrameWebhooks(props.id, { event, url })
-        props.setUpdating(false)
+        setUpdating(true)
+        await updateFrameWebhooks(id, { event, url })
+        setUpdating(false)
     }, 1000)
 
     return (
@@ -59,10 +63,13 @@ export default function WebhookEventOptions(props: {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                    {props.events.map((event) => (
+                    {events.map((event) => (
                         <DropdownMenuItem className="flex-col gap-4" key={event}>
                             <div className="flex items-start w-full">
-                                <span className="w-full">{event}</span>
+                                <span className="w-full">
+                                    {event[0].toUpperCase()}
+                                    {event.slice(1)}
+                                </span>
                                 <Switch
                                     checked={
                                         webhookEvents.find((wh) => wh.event === event)?.enabled
@@ -76,7 +83,7 @@ export default function WebhookEventOptions(props: {
                                             )
                                         )
 
-                                        if (!value) await updateWebhook(event)
+                                        if (webhooks[event] && !value) await updateWebhook(event)
                                     }}
                                 />
                             </div>
@@ -94,17 +101,6 @@ export default function WebhookEventOptions(props: {
                         </DropdownMenuItem>
                     ))}
                 </DropdownMenuGroup>
-
-                {/* <DropdownMenuItem>
-                    <span className="w-full">FID</span>
-                    <Input
-                        defaultValue={mockOptions.fid}
-                        onChange={async (e) => {
-                            const fid = Number.parseInt(e.target.value)
-                            setMockOptions((prev) => ({ ...prev, fid }))
-                        }}
-                    />
-                </DropdownMenuItem> */}
             </DropdownMenuContent>
         </DropdownMenu>
     )
