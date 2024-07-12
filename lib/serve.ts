@@ -10,7 +10,6 @@ import type {
     FrameValidatedActionPayload,
 } from './farcaster'
 import type { BaseStorage } from './types'
-import type { BaseState } from './types'
 import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
 import { and, eq } from 'drizzle-orm'
