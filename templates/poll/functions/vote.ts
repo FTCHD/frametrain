@@ -88,5 +88,15 @@ export default async function vote(
             colors
         ),
         functionName: 'results',
+        webhook: {
+            event: 'vote',
+            data: {
+                voter,
+                totalVotes,
+                votes: sortedOptions.map((option) => ({
+                    [option.displayLabel]: newState.votesForOption?.[option.index] ?? 0,
+                })),
+            },
+        },
     }
 }
