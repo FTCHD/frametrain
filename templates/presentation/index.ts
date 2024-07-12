@@ -1,7 +1,7 @@
 import type { BaseConfig, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
-import functions from './functions'
+import handlers from './handlers'
 
 export type BackgroundType = 'color' | 'gradient' | 'image'
 export type CustomButtonType = 'navigate' | 'link' | 'mint'
@@ -85,9 +85,9 @@ export default {
     creatorFid: '661506',
     creatorName: 'oynozan',
     cover,
-	initialConfig: PRESENTATION_DEFAULTS,
+    initialConfig: PRESENTATION_DEFAULTS,
     enabled: true,
     Inspector,
-    functions,
+    handlers,
     requiresValidation: false,
 } satisfies BaseTemplate

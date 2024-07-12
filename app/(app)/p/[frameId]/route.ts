@@ -32,7 +32,7 @@ export async function GET(request: NextRequest, { params }: { params: { frameId:
 
     const template = templates[frame.template]
 
-    const { initial } = template.functions
+    const { initial } = template.handlers
 
     const buildParameters = await initial({
         body: undefined,

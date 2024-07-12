@@ -1,7 +1,7 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.webp'
-import functions from './functions'
+import handlers from './handlers'
 
 export interface Config extends BaseConfig {
     tweets: Record<string, any>[]
@@ -28,7 +28,7 @@ export default {
     creatorName: 'Chris',
     enabled: true,
     Inspector,
-    functions,
+    handlers,
     cover,
     requiresValidation: false,
 } satisfies BaseTemplate

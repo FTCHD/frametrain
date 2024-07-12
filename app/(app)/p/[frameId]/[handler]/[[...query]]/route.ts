@@ -50,9 +50,9 @@ export async function POST(
     const body: FrameActionPayload | FrameActionPayloadValidated =
         (await request.json()) as FrameActionPayload
 
-    type ValidSlide = Omit<typeof template.functions, 'initial'>
+    type ValidHandler = Omit<typeof template.handlers, 'initial'>
 
-    const handlerFn = template.functions[params.handler as keyof ValidSlide]
+    const handlerFn = template.handlers[params.handler as keyof ValidHandler]
 
     if (!handlerFn) {
         notFound()

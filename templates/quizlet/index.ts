@@ -2,7 +2,7 @@ import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import type { dimensionsForRatio } from '@/sdk/constants'
 import Inspector from './Inspector'
 import cover from './cover.webp'
-import functions from './functions'
+import handlers from './handlers'
 
 export type StyleConfig = {
     textColor: string
@@ -98,7 +98,7 @@ export default {
     creatorName: 'Steve',
     enabled: true,
     Inspector,
-    functions,
+    handlers,
     cover,
     initialConfig: {
         qna: [],

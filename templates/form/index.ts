@@ -1,7 +1,7 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
-import functions from './functions'
+import handlers from './handlers'
 
 export type fieldTypes = {
     fieldName: string
@@ -42,7 +42,7 @@ export default {
     cover,
     enabled: true,
     Inspector,
-    functions,
+    handlers,
     initialConfig: {
         fields: [],
         backgroundColor: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)',

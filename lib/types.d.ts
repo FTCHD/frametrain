@@ -11,15 +11,15 @@ export interface BaseStorage {
     [key: string]: boolean | number | string | null | undefined | any
 }
 
-export type BaseFunction = ({
+export type BaseHandler = ({
     body,
     config,
     storage,
     params,
 }: { body: any; config: any; storage: any; params: any }) => Promise<BuildFrameData>
 
-export interface BaseFunctions {
-    [key: string]: BaseFunction
+export interface BaseHandlers {
+    [key: string]: BaseHandler
 }
 
 export interface BaseTemplate {
@@ -29,7 +29,7 @@ export interface BaseTemplate {
     creatorName: string
     enabled: boolean
     Inspector: ElementType
-    functions: BaseFunctions
+    handlers: BaseHandlers
     initialConfig?: any
     cover: StaticImageData
     requiresValidation: boolean

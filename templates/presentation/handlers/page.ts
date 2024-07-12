@@ -2,7 +2,7 @@
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config } from '../'
+import type { Config } from '..'
 import { renderCustomButtons } from '../utils'
 import CoverView from '../views/Cover'
 

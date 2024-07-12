@@ -49,7 +49,7 @@ export async function POST(
     let body: FrameActionPayload | FrameActionPayloadValidated =
         (await request.json()) as FrameActionPayload
 
-    const handlerFn = template.functions[params.handler as keyof typeof template.functions]
+    const handlerFn = template.handlers[params.handler as keyof typeof template.handlers]
 
     if (!handlerFn) {
         notFound()

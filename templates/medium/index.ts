@@ -1,7 +1,7 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpg'
-import functions from './functions'
+import handlers from './handlers'
 import type { Article } from './utils'
 
 export interface Config extends BaseConfig {
@@ -26,7 +26,7 @@ export default {
     creatorName: 'Q',
     enabled: true,
     Inspector,
-    functions,
+    handlers,
     cover,
     requiresValidation: false,
 } satisfies BaseTemplate
