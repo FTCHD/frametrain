@@ -25,7 +25,7 @@ export interface BuildFrameData {
     inputText?: string
     refreshPeriod?: number
     params?: any
-    state?: BaseState
+    storage?: BaseStorage
     fonts?: any[]
     component?: ReactElement
     image?: string

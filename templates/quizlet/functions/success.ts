@@ -1,12 +1,12 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import initial from './initial'
 
 export default async function success(
     body: FrameActionPayload,
     config: Config,
-    state: State
+    storage: Storage
 ): Promise<BuildFrameData> {
     const buttons: FrameButtonMetadata[] = [
         {
@@ -17,7 +17,7 @@ export default async function success(
     ]
 
     if (!config.success.image || body.untrustedData.buttonIndex === 1) {
-        return initial(config, state)
+        return initial(config, storage)
     }
 
     if (config.success.url) {

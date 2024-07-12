@@ -1,7 +1,7 @@
 'use server'
 import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import { getCurrentAndFutureDate } from '../utils/date'
 import { extractDatesAndSlots } from '../utils/date'
 import NextView from '../views/Confirm'
@@ -10,7 +10,7 @@ import PageView from '../views/Slot'
 export default async function slot(
     body: FrameActionPayloadValidated,
     config: Config,
-    state: State,
+    storage: Storage,
     params: any
 ): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')

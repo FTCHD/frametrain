@@ -1,4 +1,4 @@
-import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
+import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import type { dimensionsForRatio } from '@/sdk/constants'
 import Inspector from './Inspector'
 import cover from './cover.webp'
@@ -77,7 +77,7 @@ export interface Config extends BaseConfig {
     currentQnaIndex: number
 }
 
-export interface State extends BaseState {
+export interface Storage extends BaseStorage {
     // with questions and answers form being in the following format
     // qna: [ { question: string, answer: string, choices: string[] } ]
     // answers should be in the following format

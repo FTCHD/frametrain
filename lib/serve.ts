@@ -9,7 +9,7 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from './farcaster'
-import type { BaseState } from './types'
+import type { BaseStorage } from './types'
 
 export async function buildFramePage({
     id,
@@ -18,7 +18,7 @@ export async function buildFramePage({
     inputText,
     refreshPeriod,
     params,
-    state,
+    storage,
     fonts,
     component,
     image,
@@ -91,10 +91,7 @@ export async function buildFramePage({
 	</html>
 	`
 
-    return {
-        frame,
-        state,
-    }
+    return frame
 }
 
 export async function buildPreviewFramePage({
@@ -104,7 +101,7 @@ export async function buildPreviewFramePage({
     inputText,
     refreshPeriod,
     params,
-    state,
+    storage,
     fonts,
     component,
     image,
@@ -116,7 +113,7 @@ export async function buildPreviewFramePage({
     inputText?: string
     refreshPeriod?: number
     params?: any
-    state?: BaseState
+    storage?: BaseStorage
     fonts?: any[]
     component: ReactElement
     image: string
@@ -170,10 +167,7 @@ export async function buildPreviewFramePage({
 	</html>
 	`
 
-    return {
-        frame,
-        state,
-    }
+    return frame
 }
 
 function buildFrame({

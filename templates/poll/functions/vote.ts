@@ -5,54 +5,54 @@ import type {
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import ResultsView from '../views/Results'
 
 export default async function vote(
     body: FrameActionPayload | FrameValidatedActionPayload,
     config: Config,
-    state: State,
+    storage: Storage,
     params: any
 ): Promise<BuildFrameData> {
     const voter = body.untrustedData.fid.toString()
     const buttonIndex = body.untrustedData.buttonIndex
-    const pastIndex = state.votesForId?.[voter]
+    const pastIndex = storage.votesForId?.[voter]
 
-    let newState = state
+    let newStorage = storage
 
     if (buttonIndex !== pastIndex) {
         // console.log('pastIndex', pastIndex)
         const revertPastVote = pastIndex
             ? {
                   [pastIndex]:
-                      state.votesForOption?.[pastIndex] > 1
-                          ? state.votesForOption?.[pastIndex] - 1
+                      storage.votesForOption?.[pastIndex] > 1
+                          ? storage.votesForOption?.[pastIndex] - 1
                           : 0,
               }
             : null
 
-        newState = Object.assign(state, {
+        newStorage = Object.assign(storage, {
             votesForId: {
-                ...(state.votesForId ?? {}),
+                ...(storage.votesForId ?? {}),
                 [voter]: buttonIndex,
             },
             votesForOption: {
-                ...(state.votesForOption ?? {}),
-                [buttonIndex]: (state?.votesForOption?.[buttonIndex] ?? 0) + 1,
+                ...(storage.votesForOption ?? {}),
+                [buttonIndex]: (storage?.votesForOption?.[buttonIndex] ?? 0) + 1,
                 ...(revertPastVote ?? {}),
             },
-            totalVotes: (state?.totalVotes ?? 0) + (revertPastVote ? 0 : 1),
+            totalVotes: (storage?.totalVotes ?? 0) + (revertPastVote ? 0 : 1),
         })
     }
 
     // console.log(voter)
-    // console.log(state)
-    // console.log(newState)
+    // console.log(storage)
+    // console.log(newStorage)
 
-    const totalVotes = newState.totalVotes
+    const totalVotes = newStorage.totalVotes
 
     const percentageForEachOption = Object.fromEntries(
-        Object.entries(newState.votesForOption).map(([key, value]) => [
+        Object.entries(newStorage.votesForOption).map(([key, value]) => [
             key,
             (value / totalVotes) * 100,
         ]) as [string, number][]
@@ -77,14 +77,14 @@ export default async function vote(
             { label: 'Create Poll', action: 'link', target: 'https://frametra.in' },
         ],
         aspectRatio: '1.91:1',
-        state: newState,
+        storage: newStorage,
         fonts: roboto,
         component: ResultsView(
             config?.question,
             sortedOptions,
             totalVotes,
             percentageForEachOption,
-            newState.votesForOption,
+            newStorage.votesForOption,
             colors
         ),
         handler: 'results',

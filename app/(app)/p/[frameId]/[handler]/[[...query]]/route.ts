@@ -7,7 +7,7 @@ import type {
 } from '@/lib/farcaster'
 import { updateFramePreview } from '@/lib/frame'
 import { buildPreviewFramePage } from '@/lib/serve'
-import type { BaseConfig, BaseState } from '@/lib/types'
+import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
 import templates from '@/templates'
 import { eq } from 'drizzle-orm'
@@ -64,7 +64,7 @@ export async function POST(
         buildParameters = await handlerFn(
             body,
             frame.draftConfig as BaseConfig,
-            frame.state as BaseState,
+            frame.storage as BaseStorage,
             searchParams
         )
     } catch (error) {
@@ -85,7 +85,7 @@ export async function POST(
         )
     }
 
-    const { frame: renderedFrame } = await buildPreviewFramePage({
+    const renderedFrame = await buildPreviewFramePage({
         id: frame.id,
         ...buildParameters,
     })

@@ -5,9 +5,9 @@ import type {
     FrameActionPayload,
     FrameActionPayloadValidated,
 } from '@/lib/farcaster'
-import { updateFrameCalls, updateFrameState } from '@/lib/frame'
+import { updateFrameCalls, updateFrameStorage } from '@/lib/frame'
 import { buildFramePage, validatePayload } from '@/lib/serve'
-import type { BaseConfig, BaseState } from '@/lib/types'
+import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
 import templates from '@/templates'
 import { eq } from 'drizzle-orm'
@@ -71,7 +71,7 @@ export async function POST(
         buildParameters = await handlerFn(
             body,
             frame.config as BaseConfig,
-            frame.state as BaseState,
+            frame.storage as BaseStorage,
             searchParams
         )
     } catch (error) {
@@ -92,17 +92,17 @@ export async function POST(
         )
     }
 
-    // state can be taken directly from the handler
-    // no need to pass it back and forth in the future
-    const { frame: renderedFrame, state: newState } = await buildFramePage({
+    const renderedFrame = await buildFramePage({
         id: frame.id,
         linkedPage: frame.linkedPage || undefined,
         ...(buildParameters as BuildFrameData),
     })
+	
+	const storageData = buildParameters.storage as BaseStorage | undefined
 
-    if (newState) {
-        await updateFrameState(frame.id, newState)
-        console.log('Updated frame state')
+    if (storageData) {
+        await updateFrameStorage(frame.id, storageData)
+        console.log('Updated frame storage')
     }
     await updateFrameCalls(frame.id, frame.currentMonthCalls + 1)
 

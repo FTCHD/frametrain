@@ -2,7 +2,7 @@
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import { bookCall } from '../utils/cal'
 import { getEventId } from '../utils/cal'
 import { getCurrentAndFutureDate } from '../utils/date'
@@ -13,7 +13,7 @@ import initial from './initial'
 export default async function confirm(
     body: FrameActionPayload,
     config: Config,
-    state: State,
+    storage: Storage,
     params: any
 ): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
@@ -27,7 +27,7 @@ export default async function confirm(
     const buttonIndex = body.untrustedData.buttonIndex
 
     if (buttonIndex === 1) {
-        return initial(config, state)
+        return initial(config, storage)
     }
 
     const dates = getCurrentAndFutureDate(30)

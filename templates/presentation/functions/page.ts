@@ -9,7 +9,7 @@ import CoverView from '../views/Cover'
 export default async function page(
     body: FrameActionPayload,
     config: Config,
-    state: {},
+    storage: {},
     params: any
 ): Promise<BuildFrameData> {
     const buttonIndex = body?.untrustedData?.buttonIndex
@@ -27,10 +27,10 @@ export default async function page(
     if (slideIndex > config.slides.length - 1) {
         throw new FrameError('Invalid slide')
     }
-	
+
     const slide = config.slides[slideIndex]
 
-	const contentFont = await loadGoogleFontAllVariants(slide.content?.font || 'Roboto')
+    const contentFont = await loadGoogleFontAllVariants(slide.content?.font || 'Roboto')
     const titleFont = await loadGoogleFontAllVariants(slide.title?.font || 'Inter')
 
     const buttons = await renderCustomButtons(slide['buttons']!)

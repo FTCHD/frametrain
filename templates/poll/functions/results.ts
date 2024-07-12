@@ -4,14 +4,14 @@ import type {
     FrameActionPayload,
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import initial from './initial'
 
 export default async function results(
     body: FrameActionPayload | FrameValidatedActionPayload,
     config: Config,
-    state: State,
+    storage: Storage,
     params: any
 ): Promise<BuildFrameData> {
-    return initial(config, state)
+    return initial(config, storage)
 }

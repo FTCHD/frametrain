@@ -7,12 +7,12 @@ export interface BaseConfig {
     [key: string]: boolean | number | string | null | undefined | any
 }
 
-export interface BaseState {
+export interface BaseStorage {
     [key: string]: boolean | number | string | null | undefined | any
 }
 
 export interface BaseFunctions {
-    [key: string]: (body: any, config: any, state: any, params: any) => Promise<BuildFrameData>
+    [key: string]: (body: any, config: any, storage: any, params: any) => Promise<BuildFrameData>
 }
 
 export interface BaseTemplate {

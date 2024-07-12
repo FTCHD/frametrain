@@ -2,7 +2,7 @@
 import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, State } from '..'
+import type { Config } from '..'
 import { getCurrentAndFutureDate } from '../utils/date'
 import { extractDatesAndSlots } from '../utils/date'
 import { holdsErc721, holdsErc1155 } from '../utils/nft'
@@ -12,7 +12,7 @@ import PageView from '../views/Duration'
 export default async function duration(
     body: FrameActionPayloadValidated,
     config: Config,
-    _state: State,
+    storage: Storage,
     _params: any
 ): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')

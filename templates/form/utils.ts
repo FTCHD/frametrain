@@ -1,8 +1,8 @@
-import type { State } from '.'
+import type { Storage } from '.'
 
-export function getIndexForFid(fid: number | string, state: State): number {
+export function getIndexForFid(fid: number | string, storage: Storage): number {
     let index: number = -1
-    state.data?.find((record, i) => {
+    storage.data?.find((record, i) => {
         if (record.fid === fid) {
             index = i
         }

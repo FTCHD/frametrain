@@ -2,7 +2,7 @@
 
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import { choicesRepresentation } from '../utils'
 import QuestionView from '../views/Question'
 import ResultsView from '../views/Results'
@@ -10,14 +10,14 @@ import ResultsView from '../views/Results'
 export default async function answer(
     body: FrameActionPayload,
     config: Config,
-    state: State,
+    storage: Storage,
     params: any
 ): Promise<BuildFrameData> {
     const student = body.untrustedData.fid.toString()
     const choice = body.untrustedData.buttonIndex - 1
-    const pastAnswers = state.answers?.[student] ?? []
+    const pastAnswers = storage.answers?.[student] ?? []
 
-    let newState = state
+    let newStorage = storage
     const nextPage = params?.currentPage !== undefined ? Number(params?.currentPage) + 1 : 1
     const qnaCount = config.qna.length
     const lastPage = nextPage === qnaCount
@@ -41,18 +41,18 @@ export default async function answer(
         } else {
             updatedAnswers = [latestAnswer, ...updatedAnswers]
         }
-        newState = {
-            ...state,
+        newStorage = {
+            ...storage,
             answers: {
-                ...(state.answers ?? {}),
+                ...(storage.answers ?? {}),
                 [student]: updatedAnswers,
             },
         }
     } else {
         pastAnswers.push({ questionIndex: qna.index, answer: userAnswer })
-        newState = Object.assign(state, {
+        newStorage = Object.assign(storage, {
             answers: {
-                ...(state.answers ?? {}),
+                ...(storage.answers ?? {}),
                 [student]: pastAnswers,
             },
         })
@@ -83,7 +83,7 @@ export default async function answer(
         )
     }
 
-    const updatedAnswers = newState.answers[student]
+    const updatedAnswers = newStorage.answers[student]
 
     const correctAnswers = updatedAnswers.reduce((acc, past) => {
         const qna = config.qna[past.questionIndex]
@@ -100,7 +100,7 @@ export default async function answer(
 
     return {
         buttons,
-        state: newState,
+        storage: newStorage,
         fonts,
         component: lastPage
             ? ResultsView(

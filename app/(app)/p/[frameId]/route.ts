@@ -20,9 +20,9 @@ export async function GET(request: Request, { params }: { params: { frameId: str
 
     const { initial } = template.functions
 
-    const buildParameters = await initial(frame.draftConfig, frame.state)
+    const buildParameters = await initial(frame.draftConfig, frame.storage)
 
-    const { frame: renderedFrame } = await buildPreviewFramePage({
+    const renderedFrame = await buildPreviewFramePage({
         id: frame.id,
         ...buildParameters,
     })

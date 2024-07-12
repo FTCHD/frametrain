@@ -1,4 +1,4 @@
-import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
+import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import functions from './functions'
@@ -29,7 +29,7 @@ interface DATA_RECORD {
     timestamp: number
 }
 
-export interface State extends BaseState {
+export interface Storage extends BaseStorage {
     inputNames: string[]
     data: DATA_RECORD[]
 }

@@ -65,7 +65,7 @@ export async function createFrame({
         description,
         config: templates[template].initialConfig,
         draftConfig: templates[template].initialConfig,
-        state: {},
+        storage: {},
         template: template,
     }
 
@@ -184,8 +184,8 @@ export async function revertFrameConfig(id: string) {
     revalidatePath(`/frame/${id}`)
 }
 
-export async function updateFrameState(id: string, state: any) {
-    await client.update(frameTable).set({ state }).where(eq(frameTable.id, id)).run()
+export async function updateFrameStorage(id: string, storage: any) {
+    await client.update(frameTable).set({ storage }).where(eq(frameTable.id, id)).run()
 }
 
 export async function updateFrameCalls(id: string, calls: number) {

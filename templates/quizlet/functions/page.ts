@@ -1,21 +1,21 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import QuestionView from '../views/Question'
 import ResultsView from '../views/Results'
 
 export default async function page(
     body: FrameActionPayload,
     config: Config,
-    state: State,
+    storage: Storage,
     _params: any
 ): Promise<BuildFrameData> {
     const user = body.untrustedData.fid.toString()
     const qna = config.qna[0]
     const fonts = await loadGoogleFontAllVariants(qna.design?.qnaFont ?? 'Roboto')
     const buttons: FrameButtonMetadata[] = []
-    const pastAnswers = state.answers?.[user] ?? []
+    const pastAnswers = storage.answers?.[user] ?? []
     const scores = { yes: 0, no: 0 }
 
     if (config.answerOnce) {
@@ -50,7 +50,6 @@ export default async function page(
     }
 
     return {
-        state,
         buttons,
         fonts,
         component: config.answerOnce

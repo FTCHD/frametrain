@@ -1,7 +1,7 @@
 'use server'
 import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import { UsersState, removeFidFromUserState, updateUserState } from '../state'
 import { getIndexForFid, validateField } from '../utils'
 import ConfirmOverwriteView from '../views/ConfirmOverwrite'
@@ -15,14 +15,14 @@ import initial from './initial'
 export default async function input(
     body: FrameActionPayloadValidated,
     config: Config,
-    state: State,
+    storage: Storage,
     params: any
 ): Promise<BuildFrameData> {
     const fid = body.validatedData.interactor.fid
     const buttonIndex = body.validatedData.tapped_button.index
     const textInput = body.validatedData?.input?.text || ''
 
-    let newState = state
+    let newStorage = storage
 
     if (!UsersState[fid]) {
         updateUserState(fid, { pageType: 'init', inputValues: [] })
@@ -41,11 +41,11 @@ export default async function input(
 
             if (!config.allowDuplicates) {
                 // CHECK IF THE USER HAS SUBMITTED THE FORM BEFORE
-                const index = getIndexForFid(fid, newState)
+                const index = getIndexForFid(fid, newStorage)
                 if (index >= 0) {
                     updateUserState(fid, {
                         pageType: 'confirm_overwrite',
-                        inputValues: newState.data[index].inputValues,
+                        inputValues: newStorage.data[index].inputValues,
                         inputFieldNumber: 0,
                         totalInputFieldNumber: config.fields.length,
                         isOldUser: true,
@@ -179,9 +179,9 @@ export default async function input(
     // Display relevant page based on UserState (modified above)
     switch (UsersState[fid].pageType) {
         case 'init':
-            return initial(config, newState)
+            return initial(config, newStorage)
         case 'about':
-            return about(body, config, newState, params)
+            return about(body, config, newStorage, params)
         case 'input':
             return {
                 buttons: [
@@ -196,7 +196,7 @@ export default async function input(
                     },
                 ],
                 inputText: 'Enter The Value',
-                state: newState,
+                storage: newStorage,
                 component: InputView(config, UsersState[fid]),
                 handler: 'input',
             }
@@ -210,7 +210,7 @@ export default async function input(
                         label: 'Submit',
                     },
                 ],
-                state: newState,
+                storage: newStorage,
                 component: ConfirmSubmitView(config, UsersState[fid]),
                 handler: 'input',
             }
@@ -218,16 +218,16 @@ export default async function input(
             if (!config.allowDuplicates) {
                 // CHECK IF USER HAS ALREADY SUBMITTED
                 if (UsersState[fid].isOldUser) {
-                    const index = getIndexForFid(fid, newState)
-                    newState.data = [
-                        ...newState.data.slice(0, index),
-                        ...newState.data.slice(index + 1),
+                    const index = getIndexForFid(fid, newStorage)
+                    newStorage.data = [
+                        ...newStorage.data.slice(0, index),
+                        ...newStorage.data.slice(index + 1),
                     ]
                 }
             }
-            newState = Object.assign(newState, {
+            newStorage = Object.assign(newStorage, {
                 data: [
-                    ...(newState.data || []),
+                    ...(newStorage.data || []),
                     {
                         fid,
                         inputValues: UsersState[fid].inputValues,
@@ -246,7 +246,7 @@ export default async function input(
                         target: 'https://frametra.in',
                     },
                 ],
-                state: newState,
+                storage: newStorage,
                 component: SuccessView(config),
                 handler: 'input',
             }
@@ -261,7 +261,7 @@ export default async function input(
                         label: 'Continue',
                     },
                 ],
-                state: newState,
+                storage: newStorage,
                 component: ConfirmOverwriteView(config),
                 handler: 'input',
             }
@@ -278,7 +278,6 @@ export default async function input(
                 label: '←',
             },
         ],
-        state,
         component: InputView(config, UsersState[fid]),
         handler: 'initial',
     }

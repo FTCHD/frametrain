@@ -1,13 +1,12 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
-import type { State } from '..'
 import type { FramePressConfig } from '../Config'
 import buildFrame from './frame'
 
 export default async function slide(
     body: FrameActionPayload,
     config: FramePressConfig,
-    state: State,
+    storage: {},
     params: any
 ): Promise<BuildFrameData> {
     const slideId = params.origin

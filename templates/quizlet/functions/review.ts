@@ -2,19 +2,19 @@
 
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import ReviewAnswersView from '../views/Review'
 
 export default async function review(
     body: FrameActionPayload,
     config: Config,
-    state: State,
+    storage: Storage,
     params: any
 ): Promise<BuildFrameData> {
     const student = body.untrustedData.fid.toString()
-    const pastAnswers = state.answers?.[student] ?? []
+    const pastAnswers = storage.answers?.[student] ?? []
 
-    const newState = state
+    const newStorage = storage
     const currentPage = params?.currentPage === undefined ? 0 : Number.parseInt(params?.currentPage)
     const nextPage = currentPage > 0 ? currentPage + 1 : 1
     const lastPage = currentPage === config.qna.length
@@ -60,7 +60,7 @@ export default async function review(
 
     return {
         buttons,
-        state: newState,
+        storage: newStorage,
         fonts,
         component: ReviewAnswersView({ total: qnas.length, qna, userAnswer }),
         handler: lastPage ? 'success' : 'review',

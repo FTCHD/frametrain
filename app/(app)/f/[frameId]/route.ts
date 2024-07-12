@@ -28,9 +28,9 @@ export async function GET(request: Request, { params }: { params: { frameId: str
     //     (t) => t.default
     // )
 
-    const buildParameters = await initial(frame.config, frame.state)
+    const buildParameters = await initial(frame.config, frame.storage)
 
-    const { frame: renderedFrame } = await buildFramePage({
+    const renderedFrame = await buildFramePage({
         id: frame.id,
         linkedPage: frame.linkedPage || undefined,
         ...buildParameters,

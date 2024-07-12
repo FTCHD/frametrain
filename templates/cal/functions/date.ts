@@ -2,7 +2,7 @@
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, State } from '..'
+import type { Config } from '..'
 import { getCurrentAndFutureDate } from '../utils/date'
 import { extractDatesAndSlots } from '../utils/date'
 import PageView from '../views/Date'
@@ -11,7 +11,7 @@ import NextView from '../views/Slot'
 export default async function dateHanlder(
     body: FrameActionPayload,
     config: Config,
-    _state: State,
+    storage: Storage,
     params: any
 ): Promise<BuildFrameData> {
     const fonts = await loadGoogleFontAllVariants(config?.fontFamily ?? 'Roboto')

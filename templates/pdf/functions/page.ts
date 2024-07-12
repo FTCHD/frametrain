@@ -1,14 +1,14 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { dimensionsForRatio } from '@/sdk/constants'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import PageView from '../views/Page'
 import initial from './initial'
 
 export default async function page(
     body: FrameActionPayload,
     config: Config,
-    state: State,
+    storage: Storage,
     params: any
 ): Promise<BuildFrameData> {
     const nextPage =
@@ -41,7 +41,7 @@ export default async function page(
     }
 
     if (body.untrustedData.buttonIndex === 1 && nextPage === 0) {
-        return initial(config, state)
+        return initial(config, storage)
     }
 
     const slideUrl = config.slideUrls[nextPage - 1]

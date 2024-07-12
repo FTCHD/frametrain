@@ -307,7 +307,7 @@ export default function FrameEditor({
                             value={{
                                 frameId: frame.id,
                                 config: temporaryConfig as typeof template.initialConfig,
-                                state: frame.state!,
+                                storage: frame.storage!,
                                 update: updateConfig,
                                 fid: fid,
                                 // setLoading

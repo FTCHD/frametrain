@@ -1,14 +1,14 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, State } from '..'
+import type { Config, Storage } from '..'
 import PageView from '../views/Page'
 import initial from './initial'
 
 export default async function page(
     body: FrameActionPayload,
     config: Config,
-    state: State,
+    storage: Storage,
     params: any
 ): Promise<BuildFrameData> {
     const nextPage =
@@ -38,12 +38,12 @@ export default async function page(
         buttons.push({
             label: 'Medium',
             action: 'link',
-            target: config.article?.url
+            target: config.article?.url,
         })
     }
 
     if (body.untrustedData.buttonIndex === 1 && nextPage === 0) {
-        return initial(config, state)
+        return initial(config, storage)
     }
 
     const page = config.article?.pages[nextPage - 1]
