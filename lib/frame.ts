@@ -176,6 +176,16 @@ export async function updateFrameLinkedPage(id: string, url?: string) {
     revalidatePath(`/frame/${id}`)
 }
 
+export async function getFrameWebhooks(id: string) {
+    const frame = await client.select().from(frameTable).where(eq(frameTable.id, id)).get()
+
+    if (!frame) {
+        return null
+    }
+
+    return frame.webhooks
+}
+
 export async function updateFrameWebhooks(id: string, webhook: { event: string; url?: string }) {
     const sesh = await auth()
 

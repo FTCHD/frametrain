@@ -5,7 +5,7 @@ import type {
     FrameActionPayload,
     FrameActionPayloadValidated,
 } from '@/lib/farcaster'
-import { updateFrameCalls, updateFrameStorage } from '@/lib/frame'
+import { getFrameWebhooks, updateFrameCalls, updateFrameStorage } from '@/lib/frame'
 import { buildFramePage, validatePayload } from '@/lib/serve'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
@@ -97,14 +97,45 @@ export async function POST(
         linkedPage: frame.linkedPage || undefined,
         ...(buildParameters as BuildFrameData),
     })
-	
-	const storageData = buildParameters.storage as BaseStorage | undefined
+
+    const storageData = buildParameters.storage as BaseStorage | undefined
 
     if (storageData) {
         await updateFrameStorage(frame.id, storageData)
         console.log('Updated frame storage')
     }
     await updateFrameCalls(frame.id, frame.currentMonthCalls + 1)
+
+    // Allow for important logic to get processed and don't wait for webhooks to finish
+    if (buildParameters.webhooks?.length) {
+        try {
+            for (const webhook of buildParameters.webhooks) {
+                const webhookInfo = await getFrameWebhooks(frame.id)
+
+                if (!webhookInfo?.[webhook.event]) {
+                    continue
+                }
+
+                fetch(webhookInfo[webhook.event], {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        event: webhook.event,
+                        data: {
+                            ...webhook.data,
+                            createdAt: new Date().toISOString(),
+                        },
+                    }),
+                })
+                    .then(() => {
+                        console.log('Sent webhook')
+                    })
+                    .catch((e) => {
+                        console.error('Error sending webhook', e)
+                    })
+            }
+        } catch {}
+    }
 
     return new Response(renderedFrame, {
         headers: {
