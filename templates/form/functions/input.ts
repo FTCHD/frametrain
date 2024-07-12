@@ -198,7 +198,7 @@ export default async function input(
                 inputText: 'Enter The Value',
                 state: newState,
                 component: InputView(config, UsersState[fid]),
-                functionName: 'input',
+                handler: 'input',
             }
         case 'confirm_submit':
             return {
@@ -212,7 +212,7 @@ export default async function input(
                 ],
                 state: newState,
                 component: ConfirmSubmitView(config, UsersState[fid]),
-                functionName: 'input',
+                handler: 'input',
             }
         case 'success': {
             if (!config.allowDuplicates) {
@@ -248,7 +248,7 @@ export default async function input(
                 ],
                 state: newState,
                 component: SuccessView(config),
-                functionName: 'input',
+                handler: 'input',
             }
         }
         case 'confirm_overwrite':
@@ -263,7 +263,7 @@ export default async function input(
                 ],
                 state: newState,
                 component: ConfirmOverwriteView(config),
-                functionName: 'input',
+                handler: 'input',
             }
         default:
             break
@@ -280,6 +280,6 @@ export default async function input(
         ],
         state,
         component: InputView(config, UsersState[fid]),
-        functionName: 'initial',
+        handler: 'initial',
     }
 }

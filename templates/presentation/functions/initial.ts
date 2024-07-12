@@ -23,6 +23,6 @@ export default async function initial(config: Config): Promise<BuildFrameData> {
         fonts: [...contentFont, ...titleFont],
         aspectRatio: c.slides[0]?.aspectRatio || '1:1',
         component: CoverView(c.slides[0]),
-        functionName: 'page',
+        handler: 'page',
     }
 }

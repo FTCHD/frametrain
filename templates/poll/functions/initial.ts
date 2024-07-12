@@ -14,6 +14,6 @@ export default async function initial(config: Config, state: State): Promise<Bui
         aspectRatio: '1.91:1',
         fonts: roboto,
         component: VoteView(config),
-        functionName: 'vote',
+        handler: 'vote',
     }
 }

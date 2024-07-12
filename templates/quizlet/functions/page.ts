@@ -1,7 +1,7 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
-import type { Config, State } from '..'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import type { Config, State } from '..'
 import QuestionView from '../views/Question'
 import ResultsView from '../views/Results'
 
@@ -56,7 +56,7 @@ export default async function page(
         component: config.answerOnce
             ? ResultsView(config.qna.length, scores, config)
             : QuestionView({ qna, total: config.qna.length }),
-        functionName: config.answerOnce ? 'results' : 'answer',
+        handler: config.answerOnce ? 'results' : 'answer',
         params: config.answerOnce ? { currentPage: 1 } : undefined,
     }
 }

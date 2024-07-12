@@ -1,9 +1,9 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
 import ReviewAnswersView from '../views/Review'
 import initial from './initial'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function results(
     body: FrameActionPayload,
@@ -30,7 +30,7 @@ export default async function results(
         fonts: roboto,
         state,
         component: ReviewAnswersView({ qna, total: qnas.length, userAnswer }),
-        functionName: 'review',
+        handler: 'review',
         params: { currentPage: 1 },
     }
 }

@@ -17,6 +17,6 @@ export default async function initial(config: Config, state: State): Promise<Bui
         buttons: [{ label: 'Schedule' }],
         fonts: fonts,
         component: CoverView(config),
-        functionName: 'duration',
+        handler: 'duration',
     }
 }

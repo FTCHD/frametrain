@@ -5,13 +5,12 @@ import type {
     FrameActionPayload,
     FrameActionPayloadValidated,
 } from '@/lib/farcaster'
-import { updateFramePreview } from '@/lib/frame'
-import { buildPreviewFramePage } from '@/lib/serve'
+import { updateFrameCalls, updateFrameState } from '@/lib/frame'
+import { buildFramePage, validatePayload } from '@/lib/serve'
 import type { BaseConfig, BaseState } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
 import templates from '@/templates'
 import { eq } from 'drizzle-orm'
-import ms from 'ms'
 import { notFound } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 
@@ -21,45 +20,57 @@ export const fetchCache = 'force-no-store'
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { frameId: string; functionName: string } }
+    { params }: { params: { frameId: string; handler: string } }
 ) {
     const searchParams: Record<string, string> = {}
 
     request.nextUrl.searchParams.forEach((value, key) => {
-        if (!['frameId', 'functionName'].includes(key)) {
+        if (!['frameId', 'handler'].includes(key)) {
             searchParams[key] = value
         }
     })
 
-    const frame = await client.select().from(frameTable).where(eq(frameTable.id, params.frameId)).get()
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(eq(frameTable.id, params.frameId))
+        .get()
 
     if (!frame) {
         notFound()
     }
 
-    if (!frame.draftConfig) {
+    if (!frame.config) {
         notFound()
     }
 
     const template = templates[frame.template]
 
-    const body: FrameActionPayload | FrameActionPayloadValidated =
+    let body: FrameActionPayload | FrameActionPayloadValidated =
         (await request.json()) as FrameActionPayload
 
-    type ValidSlide = Omit<typeof template.functions, 'initial'>
+    const handlerFn = template.functions[params.handler as keyof typeof template.functions]
 
-    const handler = template.functions[params.functionName as keyof ValidSlide]
-
-    if (!handler) {
+    if (!handlerFn) {
         notFound()
     }
-	
-	let buildParameters = {} as BuildFrameData
+
+    if (template.requiresValidation) {
+        const validatedBody = await validatePayload(body)
+        if (!validatedBody.valid) {
+            throw new Error('PAYLOAD NOT VALID')
+        }
+        body = Object.assign({}, body, {
+            validatedData: validatedBody.action,
+        })
+    }
+
+    let buildParameters = {} as BuildFrameData
 
     try {
-        buildParameters = await handler(
+        buildParameters = await handlerFn(
             body,
-            frame.draftConfig as BaseConfig,
+            frame.config as BaseConfig,
             frame.state as BaseState,
             searchParams
         )
@@ -81,15 +92,19 @@ export async function POST(
         )
     }
 
-
-    const { frame: renderedFrame } = await buildPreviewFramePage({
+    // state can be taken directly from the handler
+    // no need to pass it back and forth in the future
+    const { frame: renderedFrame, state: newState } = await buildFramePage({
         id: frame.id,
-        ...buildParameters,
+        linkedPage: frame.linkedPage || undefined,
+        ...(buildParameters as BuildFrameData),
     })
 
-    if (frame.updatedAt.getTime() < Date.now() - ms('5m')) {
-        await updateFramePreview(frame.id, renderedFrame)
+    if (newState) {
+        await updateFrameState(frame.id, newState)
+        console.log('Updated frame state')
     }
+    await updateFrameCalls(frame.id, frame.currentMonthCalls + 1)
 
     return new Response(renderedFrame, {
         headers: {

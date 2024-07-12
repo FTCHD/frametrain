@@ -67,7 +67,7 @@ export default async function buildFrame(
         fonts,
         aspectRatio: slideConfig.aspectRatio,
         component: view,
-        functionName: 'slide',
+        handler: 'slide',
         params: { origin: slideConfig.id },
     }
 }

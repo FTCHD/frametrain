@@ -21,8 +21,8 @@ export default async function initial(config: Config, state: State): Promise<Bui
             textColor: config.coverTextColor,
             imageSize: config.imageSize,
             textPosition: config.textPosition,
-            hideTitleAuthor: config.hideTitleAuthor
+            hideTitleAuthor: config.hideTitleAuthor,
         }),
-        functionName: 'page',
+        handler: 'page',
     }
 }

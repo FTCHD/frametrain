@@ -11,6 +11,6 @@ export default async function initial(config: Config, state: State): Promise<Bui
         buttons: [{ label: 'VIEW' }],
         fonts: roboto,
         component: CoverView(config),
-        functionName: 'page',
+        handler: 'page',
     }
 }

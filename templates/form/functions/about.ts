@@ -17,6 +17,6 @@ export default async function about(
         ],
         aspectRatio: '1.91:1',
         component: AboutView(config),
-        functionName: 'input',
+        handler: 'input',
     }
 }

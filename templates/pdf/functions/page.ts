@@ -53,7 +53,7 @@ export default async function page(
             slideUrl: slideUrl,
             sizes: dimensionsForRatio[config.aspectRatio as keyof typeof dimensionsForRatio],
         }),
-        functionName: 'page',
+        handler: 'page',
         params: {
             currentPage: nextPage,
         },

@@ -3,9 +3,9 @@
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, State } from '..'
+import { choicesRepresentation } from '../utils'
 import QuestionView from '../views/Question'
 import ResultsView from '../views/Results'
-import { choicesRepresentation } from '../utils'
 
 export default async function answer(
     body: FrameActionPayload,
@@ -112,7 +112,7 @@ export default async function answer(
                   config
               )
             : QuestionView({ qna: nextQna, total: qnaCount }),
-        functionName: lastPage ? 'results' : 'answer',
+        handler: lastPage ? 'results' : 'answer',
         params: lastPage ? undefined : { currentPage: nextPage },
     }
 }

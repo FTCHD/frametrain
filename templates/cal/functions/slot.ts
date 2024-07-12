@@ -72,7 +72,7 @@ export default async function slot(
                 fonts: fonts,
 
                 component: PageView(config, slotsArray[params.date], slot),
-                functionName: 'slot',
+                handler: 'slot',
                 params: {
                     durationFixed: 'fixed',
                     duration: params.duration,
@@ -130,7 +130,7 @@ export default async function slot(
                     datesArray[params.date],
                     slotsArray[params.date][params.slot]
                 ),
-                functionName: 'confirm',
+                handler: 'confirm',
                 params: {
                     durationFixed: 'fixed',
                     duration: params.duration,
@@ -189,7 +189,7 @@ export default async function slot(
                 fonts: fonts,
 
                 component: PageView(config, slotsArray[params.date], slot),
-                functionName: 'slot',
+                handler: 'slot',
                 params: {
                     durationFixed: 'fixed',
                     duration: params.duration,
@@ -215,7 +215,7 @@ export default async function slot(
         fonts: fonts,
 
         component: PageView(config, [], 0),
-        functionName: 'slot',
+        handler: 'slot',
         params: {
             durationFixed: 'fixed',
             duration: params.duration,

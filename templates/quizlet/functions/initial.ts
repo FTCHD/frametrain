@@ -18,7 +18,7 @@ export default async function initial(config: Config, _: State): Promise<BuildFr
                   text: config.cover.text,
                   configuration: config.cover.configuration,
               }),
-        functionName: 'page',
+        handler: 'page',
         image: config.cover.image,
         aspectRatio:
             config.cover.image && config.cover.aspectRatio !== undefined

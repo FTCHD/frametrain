@@ -59,11 +59,11 @@ export default async function page(
             slideCount: slideCount,
             pagesBgColor: config.pagesBgColor,
             pagesTextColor: config.pagesTextColor,
-            pagesFontSize: config.pagesFontSize
+            pagesFontSize: config.pagesFontSize,
         }),
-        functionName: 'page',
+        handler: 'page',
         params: {
             currentPage: nextPage,
-        }
+        },
     }
 }

@@ -87,6 +87,6 @@ export default async function vote(
             newState.votesForOption,
             colors
         ),
-        functionName: 'results',
+        handler: 'results',
     }
 }

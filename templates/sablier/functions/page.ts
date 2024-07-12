@@ -51,7 +51,7 @@ export default async function page(
                 aspectRatio: '1.91:1',
                 fonts: [...urbanist, ...catamaran],
                 component: TokenView(data),
-                functionName: 'page',
+                handler: 'page',
             }
         }
 
@@ -90,7 +90,7 @@ export default async function page(
                     },
                     history
                 ),
-                functionName: 'page',
+                handler: 'page',
             }
         }
 

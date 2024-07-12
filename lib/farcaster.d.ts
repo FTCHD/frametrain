@@ -29,5 +29,5 @@ export interface BuildFrameData {
     fonts?: any[]
     component?: ReactElement
     image?: string
-    functionName?: string
+    handler?: string
 }

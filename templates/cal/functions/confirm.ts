@@ -84,6 +84,6 @@ export default async function confirm(
         ],
         fonts: fonts,
         component: PageView(config),
-        functionName: 'initial',
+        handler: 'initial',
     }
 }

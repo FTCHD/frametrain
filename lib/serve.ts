@@ -22,7 +22,7 @@ export async function buildFramePage({
     fonts,
     component,
     image,
-    functionName,
+    handler,
     linkedPage,
 }: {
     id: string
@@ -69,7 +69,7 @@ export async function buildFramePage({
         aspectRatio,
         inputText,
         refreshPeriod,
-        postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${functionName}` + '?' + searchParams,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${handler}` + '?' + searchParams,
     })
 
     const frame = `<html lang="en">
@@ -108,7 +108,7 @@ export async function buildPreviewFramePage({
     fonts,
     component,
     image,
-    functionName,
+    handler,
 }: {
     id: string
     buttons: FrameButtonMetadata[]
@@ -120,7 +120,7 @@ export async function buildPreviewFramePage({
     fonts?: any[]
     component: ReactElement
     image: string
-    functionName?: string
+    handler?: string
 }) {
     if (!component && !image) {
         throw new Error('Either component or image must be provided')
@@ -154,7 +154,7 @@ export async function buildPreviewFramePage({
         aspectRatio,
         inputText,
         refreshPeriod,
-        postUrl: `${process.env.NEXT_PUBLIC_HOST}/p/${id}/${functionName}` + '?' + searchParams,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/p/${id}/${handler}` + '?' + searchParams,
     })
 
     const frame = `<html lang="en">

@@ -17,6 +17,6 @@ export default async function page(
         ],
         aspectRatio: '1:1',
         component: PageView(config),
-        functionName: 'initial',
+        handler: 'initial',
     }
 }

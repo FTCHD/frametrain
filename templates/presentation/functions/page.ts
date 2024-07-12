@@ -40,7 +40,7 @@ export default async function page(
         fonts: [...contentFont, ...titleFont],
         aspectRatio: slide.aspectRatio || '1:1',
         component: CoverView(slide),
-        functionName: 'page',
+        handler: 'page',
         params: { page: slideIndex },
     }
 }

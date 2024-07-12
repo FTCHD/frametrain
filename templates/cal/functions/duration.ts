@@ -149,7 +149,7 @@ export default async function duration(
                 eventSlug: event.slug,
                 dateLength: datesArray.length,
             },
-            functionName: 'date',
+            handler: 'date',
         }
     }
 
@@ -160,6 +160,6 @@ export default async function duration(
         fonts: fonts,
 
         component: PageView(config),
-        functionName: 'date',
+        handler: 'date',
     }
 }

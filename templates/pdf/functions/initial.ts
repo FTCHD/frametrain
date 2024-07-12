@@ -21,6 +21,6 @@ export default async function initial(config: Config, state: State): Promise<Bui
             backgroundColor: config.backgroundColor,
             textColor: config.textColor,
         }),
-        functionName: 'page',
+        handler: 'page',
     }
 }

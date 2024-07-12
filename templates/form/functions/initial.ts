@@ -24,6 +24,6 @@ export default async function initial(config: Config, state: State): Promise<Bui
         ],
         fonts: roboto,
         component: CoverView(config),
-        functionName: 'input',
+        handler: 'input',
     }
 }

@@ -77,7 +77,7 @@ export default async function post(
             highlightFont: config.highlightFont,
             highlightColor: config.highlightColor,
         }),
-        functionName: 'post',
+        handler: 'post',
         params: { currentPage: nextPage },
     }
 }

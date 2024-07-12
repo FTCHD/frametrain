@@ -41,6 +41,6 @@ export default async function initial(config: Config, state: State): Promise<Bui
         aspectRatio: '1.91:1',
         fonts: [...urbanist, ...catamaran],
         component: CoverView(data),
-        functionName: 'page',
+        handler: 'page',
     }
 }

@@ -72,7 +72,7 @@ export default async function dateHanlder(
                 fonts,
 
                 component: NextView(config, slotsArray[date], 0),
-                functionName: 'slot',
+                handler: 'slot',
                 params: {
                     duration: event.slug,
                     date,
@@ -138,7 +138,7 @@ export default async function dateHanlder(
         ],
         fonts,
         component: PageView(config, datesArray, date, event.formattedDuration),
-        functionName: 'date',
+        handler: 'date',
         params: {
             date,
             eventSlug: event.slug,

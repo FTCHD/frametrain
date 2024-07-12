@@ -1,8 +1,8 @@
 'use server'
 
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
-import type { Config, State } from '..'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import type { Config, State } from '..'
 import ReviewAnswersView from '../views/Review'
 
 export default async function review(
@@ -63,7 +63,7 @@ export default async function review(
         state: newState,
         fonts,
         component: ReviewAnswersView({ total: qnas.length, qna, userAnswer }),
-        functionName: lastPage ? 'success' : 'review',
+        handler: lastPage ? 'success' : 'review',
         params: !lastPage ? { currentPage: nextPage } : undefined,
     }
 }

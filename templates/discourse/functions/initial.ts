@@ -35,6 +35,6 @@ export default async function initial(config: Config, state: State): Promise<Bui
             highlightColor: config.highlightColor,
             highlightFont: config.highlightFont,
         }),
-        functionName: 'post',
+        handler: 'post',
     }
 }
