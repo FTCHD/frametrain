@@ -1,7 +1,7 @@
-import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
+import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.webp'
-import functions from './functions'
+import handlers from './handlers'
 
 export interface Config extends BaseConfig {
     options: {
@@ -15,7 +15,7 @@ export interface Config extends BaseConfig {
     barColor?: string
 }
 
-export interface State extends BaseState {
+export interface Storage extends BaseStorage {
     votesForId: Record<string, number>
     votesForOption: Record<string, number>
     totalVotes: number
@@ -28,7 +28,7 @@ export default {
     creatorName: 'Dan',
     enabled: true,
     Inspector,
-    functions,
+    handlers,
     cover,
     requiresValidation: true,
     events: [],

@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
-import { Textarea } from '@/components/shadcn/Textarea'
-import { FontFamilyPicker } from '@/sdk/components/FontFamilyPicker'
-import { ColorPicker } from '@/sdk/components/ColorPicker'
 import { Slider } from '@/components/shadcn/Slider'
+import { Textarea } from '@/components/shadcn/Textarea'
+import { Toggle } from '@/components/shadcn/Toggle'
+import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
+import { FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import { ColorPicker } from '@/sdk/components/ColorPicker'
+import { FontFamilyPicker } from '@/sdk/components/FontFamilyPicker'
 import {
     AlignCenterIcon,
     AlignLeftIcon,
@@ -10,15 +12,13 @@ import {
     ArrowDownFromLineIcon,
     ArrowUpFromLineIcon,
     CirclePower,
+    CloudDownload,
     FoldVerticalIcon,
     Type,
-    CloudDownload,
 } from 'lucide-react'
-import { FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
+import React, { useState } from 'react'
+import type { TextLayerConfig } from '../config'
 import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
-import { Toggle } from '@/components/shadcn/Toggle'
-import type { TextLayerConfig } from '../Config'
 
 type TextLayerDesignerProps = {
     config: TextLayerConfig

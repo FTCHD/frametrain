@@ -1,6 +1,7 @@
+'use server'
 import type { FarcasterUserInfo } from '@/lib/farcaster'
 
-export async function getInfoForFids(fids: string[]): Promise<FarcasterUserInfo[]> {
+export async function getFarcasterProfiles(fids: string[]): Promise<FarcasterUserInfo[]> {
     const options = {
         method: 'GET',
         headers: {

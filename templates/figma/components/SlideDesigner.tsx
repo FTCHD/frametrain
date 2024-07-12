@@ -19,7 +19,7 @@ import type {
     SlideConfig,
     TextLayerConfig,
     TextLayerConfigs,
-} from '../Config'
+} from '../config'
 import { FigmaView, getDimensionsForAspectRatio } from '../views/FigmaView'
 import { ButtonDesigner, type ButtonTarget } from './ButtonDesigner'
 import { FigmaDesigner } from './FigmaDesigner'

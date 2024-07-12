@@ -66,7 +66,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
 
     const params = useMemo(() => postUrl?.split('?')[1], [postUrl])
 
-    const functionName = useMemo(
+    const handler = useMemo(
         () => postUrl?.split(process.env.NEXT_PUBLIC_HOST!)[1].split('/').at(-1)?.split('?')[0],
         [postUrl]
     )
@@ -129,7 +129,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                                         button={button}
                                         inputText={inputText}
                                         state={metadata.state}
-                                        functionName={functionName}
+                                        handler={handler}
                                         params={params}
                                     >
                                         {button.label}
@@ -188,7 +188,7 @@ function FrameButton({
     buttonIndex,
     inputText,
     state,
-    functionName,
+    handler,
     params,
 }: PropsWithChildren<{
     //! Changed from NonNullable<FrameMetadataWithImageObject['buttons']>[0]
@@ -196,7 +196,7 @@ function FrameButton({
     buttonIndex: number
     inputText: string
     state: any
-    functionName: string | undefined
+    handler: string | undefined
     params: string | undefined
 }>) {
     const { action, target } = button
@@ -206,14 +206,14 @@ function FrameButton({
 
     const actionCallback = useCallback(async () => {
         const newData = {
-            functionName: functionName,
+            handler: handler,
             inputText: inputText,
             buttonIndex: buttonIndex,
             params: params,
         }
 
         setPreviewData(newData)
-    }, [buttonIndex, inputText, functionName, params, setPreviewData])
+    }, [buttonIndex, inputText, handler, params, setPreviewData])
 
     const handleClick = useCallback(async () => {
         switch (action) {

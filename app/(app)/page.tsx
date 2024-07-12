@@ -3,8 +3,9 @@ import AccountButton from '@/components/foundation/AccountButton'
 import Header from '@/components/foundation/Header'
 import ProjectCard from '@/components/home/ProjectCard'
 import TemplateCard from '@/components/home/TemplateCard'
-import { getFrameList } from '@/lib/frame'
+import { getRecentFrameList } from '@/lib/frame'
 import templates from '@/templates'
+import { ArrowRightIcon } from 'lucide-react'
 import NextLink from 'next/link'
 
 export default async function Home() {
@@ -27,7 +28,7 @@ export default async function Home() {
         )
     }
 
-    const frames = await getFrameList()
+    const frames = await getRecentFrameList()
 
     return (
         <div className="flex flex-col p-5 w-full h-full gap-5">
@@ -35,7 +36,19 @@ export default async function Home() {
             <div className="flex flex-grow justify-center items-center">
                 <div className="flex flex-col w-full">
                     <div className="flex flex-col p-4 space-y-8 w-full md:pl-4">
-                        <h1 className="text-3xl font-semibold">🖼️ Frames</h1>
+                        <div className="flex flex-row w-full items-center gap-8">
+                            <h1 className="text-3xl font-semibold">🖼️ Frames</h1>
+                            <NextLink href="/frames">
+                                <p className="group text-sm flex flex-row gap-1 items-center text-[#ffffff90] border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90]">
+                                    View all{' '}
+                                    <ArrowRightIcon
+                                        color="#ffffff90"
+                                        size={16}
+                                        className="ml-1 group-hover:m-0 transition-all duration-300"
+                                    />
+                                </p>
+                            </NextLink>
+                        </div>
                         {frames.length ? (
                             <div className="flex flex-wrap gap-4 justify-start">
                                 {frames.map((frame) => (

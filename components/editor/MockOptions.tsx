@@ -46,7 +46,7 @@ export default function MockOptions({ fid }: { fid: string }) {
     return (
         <DropdownMenu open={open}>
             <DropdownMenuTrigger asChild={true} onClick={() => setOpen(!open)}>
-                <Button variant="outline" className="text-lg" size={'lg'}>
+                <Button variant="outline" className="text-lg opacity-0 md:opacity-100" size={'lg'}>
                     Simulate
                 </Button>
             </DropdownMenuTrigger>
@@ -57,7 +57,7 @@ export default function MockOptions({ fid }: { fid: string }) {
 
                 <DropdownMenuGroup>
                     <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
+                        <User className="mr-2 w-4 h-4" />
                         <span className="w-full">Recasted</span>
                         <Switch
                             checked={mockOptions.recasted}
@@ -67,7 +67,7 @@ export default function MockOptions({ fid }: { fid: string }) {
                         />
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
+                        <User className="mr-2 w-4 h-4" />
                         <span className="w-full">Liked</span>
                         <Switch
                             checked={mockOptions.liked}
@@ -77,7 +77,7 @@ export default function MockOptions({ fid }: { fid: string }) {
                         />
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
+                        <User className="mr-2 w-4 h-4" />
                         <span className="w-full">Following</span>
                         <Switch
                             checked={mockOptions.following}
@@ -90,7 +90,7 @@ export default function MockOptions({ fid }: { fid: string }) {
                         />
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
+                        <User className="mr-2 w-4 h-4" />
                         <span className="w-full">Follower</span>
                         <Switch
                             checked={mockOptions.follower}

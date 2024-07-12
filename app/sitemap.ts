@@ -13,5 +13,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
         {
             url: 'https://frametra.in',
         },
+        {
+            url: 'https://frametra.in/templates',
+        },
     ]
 }

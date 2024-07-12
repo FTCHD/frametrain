@@ -25,17 +25,16 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/shadcn/Table'
-  
 import { ColorPicker } from '@/sdk/components'
-import { useFrameConfig, useFrameId, useFrameState } from '@/sdk/hooks'
+import { useFrameConfig, useFrameId, useFrameStorage } from '@/sdk/hooks'
 import { useEffect, useRef, useState } from 'react'
 import { Trash } from 'react-feather'
 import toast from 'react-hot-toast'
-import type { Config, State, fieldTypes } from '.'
+import type { Config, Storage, fieldTypes } from '.'
 
 export default function Inspector() {
     const frameId = useFrameId()
-    const state = useFrameState() as State
+    const storage = useFrameStorage() as Storage
     const [config, updateConfig] = useFrameConfig<Config>()
 
     const [showModal, setShowModal] = useState(false)
@@ -63,11 +62,11 @@ export default function Inspector() {
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>Form Submissions</DialogTitle>
-                            {/* <DialogDescription>{JSON.stringify(state)}</DialogDescription> */}
+                            {/* <DialogDescription>{JSON.stringify(storage)}</DialogDescription> */}
                             <DialogDescription>
                                 <Table>
                                     <TableCaption>
-                                        {state.data?.length || 0} Submission(s)
+                                        {storage.data?.length || 0} Submission(s)
                                     </TableCaption>
                                     <TableHeader>
                                         <TableRow>
@@ -85,7 +84,7 @@ export default function Inspector() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {state.data?.map((record, rowIndex) => (
+                                        {storage.data?.map((record, rowIndex) => (
                                             <TableRow key={rowIndex}>
                                                 <TableCell className="font-medium">
                                                     {record.timestamp}
@@ -112,11 +111,11 @@ export default function Inspector() {
 
                 <Button
                     onClick={() => {
-                        if (!state.data?.length) {
+                        if (!storage.data?.length) {
                             toast.error('No data to download')
                             return
                         }
-                        downloadCSV(state, 'form-results.csv', [
+                        downloadCSV(storage, 'form-results.csv', [
                             ...config.fields.map((field) => field.fieldName ?? ''),
                         ])
                     }}
@@ -403,12 +402,12 @@ export default function Inspector() {
     )
 }
 
-function downloadCSV(state: State, fileName: string, inputNames: string[]): void {
+function downloadCSV(storage: Storage, fileName: string, inputNames: string[]): void {
     // Column names
     const columnNames = ['timestamp', 'fid', inputNames]
 
     // Rows
-    const rows = state.data.map((record) => [record.timestamp, record.fid, ...record.inputValues])
+    const rows = storage.data.map((record) => [record.timestamp, record.fid, ...record.inputValues])
 
     // Combine column names and rows into CSV string
     const csvContent = [

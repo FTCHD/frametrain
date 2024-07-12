@@ -1,14 +1,14 @@
-import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
+import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
-import functions from './functions'
+import handlers from './handlers'
 
 export interface Config extends BaseConfig {
     streamId: string
     shape: string
 }
 
-export interface State extends BaseState {}
+export interface Storage extends BaseStorage {}
 
 export default {
     name: 'Sablier Template',
@@ -17,7 +17,7 @@ export default {
     creatorName: 'Paul',
     enabled: true,
     Inspector,
-    functions,
+    handlers,
     initialConfig: {
         streamId: 'LL-1-70',
         shape: 'Linear',

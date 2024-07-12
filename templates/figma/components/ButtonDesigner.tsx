@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Input } from '@/components/shadcn/Input'
 import { Checkbox } from '@/components/shadcn/Checkbox'
+import { Input } from '@/components/shadcn/Input'
 import {
     Select,
     SelectContent,
@@ -10,7 +9,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
-import type { ButtonConfig } from '../Config'
+import React, { useState } from 'react'
+import type { ButtonConfig } from '../config'
 
 type ButtonTarget = {
     id: string

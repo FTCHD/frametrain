@@ -3,7 +3,7 @@ import { auth } from '@/auth'
 import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
 import templates from '@/templates'
-import { type InferInsertModel, and, eq } from 'drizzle-orm'
+import { type InferInsertModel, and, desc, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { uploadPreview } from './storage'
@@ -19,6 +19,24 @@ export async function getFrameList() {
         .select()
         .from(frameTable)
         .where(eq(frameTable.owner, sesh.user.id!))
+        .all()
+
+    return frames
+}
+
+export async function getRecentFrameList() {
+    const sesh = await auth()
+
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frames = await client
+        .select()
+        .from(frameTable)
+        .where(eq(frameTable.owner, sesh.user.id!))
+        .limit(10)
+        .orderBy(desc(frameTable.updatedAt))
         .all()
 
     return frames
@@ -65,7 +83,7 @@ export async function createFrame({
         description,
         config: templates[template].initialConfig,
         draftConfig: templates[template].initialConfig,
-        state: {},
+        storage: {},
         template: template,
     }
 
@@ -220,8 +238,8 @@ export async function revertFrameConfig(id: string) {
     revalidatePath(`/frame/${id}`)
 }
 
-export async function updateFrameState(id: string, state: any) {
-    await client.update(frameTable).set({ state }).where(eq(frameTable.id, id)).run()
+export async function updateFrameStorage(id: string, storage: any) {
+    await client.update(frameTable).set({ storage }).where(eq(frameTable.id, id)).run()
 }
 
 export async function updateFrameCalls(id: string, calls: number) {

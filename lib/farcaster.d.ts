@@ -25,11 +25,11 @@ export interface BuildFrameData {
     inputText?: string
     refreshPeriod?: number
     params?: any
-    state?: BaseState
+    storage?: BaseStorage
     fonts?: any[]
     component?: ReactElement
     image?: string
-    functionName?: string
+    handler?: string
     webhook?: {
         event: string
         data: Record<string, unknown>

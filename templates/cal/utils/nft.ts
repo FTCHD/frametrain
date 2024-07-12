@@ -1,13 +1,13 @@
 import {
-    ethClient,
+    arbitrumClient,
     baseClient,
     blastClient,
-    opClient,
-    zoraClient,
-    fantomClient,
-    arbitrumClient,
-    polygonClient,
     bscClient,
+    ethClient,
+    fantomClient,
+    opClient,
+    polygonClient,
+    zoraClient,
 } from './viem'
 
 const balanceOfABI721 = [
@@ -133,7 +133,7 @@ export const holdsErc721 = async (ownerAddresses: any, contract: any, chain: any
         calls.push({
             address: contract,
             abi: balanceOfABI721,
-            functionName: 'balanceOf',
+            handler: 'balanceOf',
             args: [ownerAddresses[i]],
         })
     }
@@ -169,7 +169,7 @@ export const holdsErc1155 = async (
         calls.push({
             address: contract,
             abi: balanceOfABI1155,
-            functionName: 'balanceOf',
+            handler: 'balanceOf',
             args: [ownerAddresses[i], tokenId],
         })
     }
@@ -196,7 +196,7 @@ export async function getName(contractAddress: any, chain: any): Promise<string>
         let name: any = await selectedClient.readContract({
             address: contractAddress,
             abi: nameABI,
-            functionName: 'name',
+            handler: 'name',
             args: [],
         })
         name = name.toString()

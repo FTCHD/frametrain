@@ -1,13 +1,13 @@
-import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
+import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpg'
-import functions from './functions'
+import handlers from './handlers'
 
 export interface Config extends BaseConfig {
     text: string
 }
 
-export interface State extends BaseState {}
+export interface Storage extends BaseStorage {}
 
 export default {
     name: 'Figma',
@@ -17,7 +17,7 @@ export default {
     cover,
     enabled: true,
     Inspector,
-    functions,
+    handlers,
     initialConfig: {
         text: 'Default Text',
     },

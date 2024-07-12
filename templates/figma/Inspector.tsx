@@ -4,9 +4,9 @@ import { Input } from '@/components/shadcn/Input'
 import { useFrameConfig } from '@/sdk/hooks'
 import { InfoIcon } from 'lucide-react'
 import Link from 'next/link'
-import type { FramePressConfig, SlideConfig } from './Config'
-import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './Constants'
 import SlideDesigner from './components/SlideDesigner'
+import type { FramePressConfig, SlideConfig } from './config'
+import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
 
 const FIGMA_PAT_HELP =
     'https://help.figma.com/hc/en-us/articles/8085703771159-Manage-personal-access-tokens'
