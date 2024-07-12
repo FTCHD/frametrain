@@ -54,7 +54,7 @@ export default {
     initialConfig: {
         events: [],
         bio: [],
-        g: {
+        gatingOptions: {
             nftGating: false,
             recasted: false,
             liked: false,
