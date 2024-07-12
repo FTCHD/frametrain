@@ -17,10 +17,10 @@ export function useRefreshPreview(frameId: string) {
     const mockOptions = useAtomValue(mockOptionsAtom)
 
     const postUrl = useMemo(() => {
-        const functionName = previewData?.functionName || ''
+        const handler = previewData?.handler || ''
         const params = previewData?.params ? `?${previewData.params}` : ''
 
-        return `${process.env.NEXT_PUBLIC_HOST}/p/${frameId}/${functionName}` + params
+        return `${process.env.NEXT_PUBLIC_HOST}/p/${frameId}/${handler}` + params
     }, [frameId, previewData])
 
     const refreshPreviewCallback = useCallback(async () => {

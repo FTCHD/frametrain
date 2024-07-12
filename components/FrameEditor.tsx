@@ -25,6 +25,7 @@ import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
+import WebhookEventOptions from './editor/WebhookEventOptions'
 
 export default function FrameEditor({
     frame,
@@ -138,8 +139,8 @@ export default function FrameEditor({
     const { Inspector } = template as any
 
     return (
-        <div className="flex flex-col-reverse md:flex-col w-full h-full">
-            <div className="flex justify-between items-center p-4 bg-secondary-background">
+        <div className="flex flex-col-reverse w-full h-full md:flex-col">
+            <div className="flex justify-between items-center p-4 bg-[#17101f]">
                 <div className="flex gap-4 items-center">
                     <NextLink style={{ textDecoration: 'none' }} href={'/'}>
                         <div className="p-2 hover:bg-[#636b74] rounded-md">
@@ -171,7 +172,7 @@ export default function FrameEditor({
                                         {currentName}
                                     </h1>
                                 </TooltipTrigger>
-                                <TooltipContent className="max-w-72 ml-8">
+                                <TooltipContent className="ml-8 max-w-72">
                                     <p>Tap to edit the title, press enter to save.</p>
                                 </TooltipContent>
                             </Tooltip>
@@ -183,9 +184,31 @@ export default function FrameEditor({
                         <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
                     )}
 
+                    {template.events.length ? (
+                        <TooltipProvider delayDuration={0}>
+                            <Tooltip>
+                                <TooltipTrigger asChild={true}>
+                                    <WebhookEventOptions
+                                        id={frame.id}
+                                        events={template.events}
+                                        webhooks={Object.assign({}, frame.webhooks)}
+                                        setUpdating={setUpdating}
+                                    />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-72 flex flex-col gap-2">
+                                    <p>Enable or disable the reception of webhook events.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    ) : null}
+
                     <Popover>
                         <PopoverTrigger asChild={true}>
-                            <Button variant="outline" className="text-lg gap-2" size={'lg'}>
+                            <Button
+                                variant="outline"
+                                className="gap-2 text-lg opacity-0 md:opacity-100"
+                                size={'lg'}
+                            >
                                 Connect Page
                             </Button>
                         </PopoverTrigger>
@@ -216,7 +239,7 @@ export default function FrameEditor({
                                 <TooltipTrigger asChild={true}>
                                     <MockOptions fid={fid} />
                                 </TooltipTrigger>
-                                <TooltipContent className="max-w-72 flex flex-col gap-2">
+                                <TooltipContent className="flex flex-col gap-2 max-w-72">
                                     <p>
                                         You can use these toggles to enable or disable the
                                         simulation of an interaction.
@@ -235,7 +258,7 @@ export default function FrameEditor({
                             <TooltipTrigger asChild={true}>
                                 <Button
                                     variant="outline"
-                                    className="text-lg gap-2"
+                                    className="gap-2 text-lg opacity-0 md:opacity-100"
                                     size={'lg'}
                                     onClick={async () => {
                                         await revertConfig()
@@ -245,7 +268,7 @@ export default function FrameEditor({
                                     Revert <Undo2 size={18} />
                                 </Button>
                             </TooltipTrigger>
-                            <TooltipContent className="max-w-72 mr-8">
+                            <TooltipContent className="mr-8 max-w-72">
                                 <p>Goes back to the published version.</p>
                             </TooltipContent>
                         </Tooltip>
@@ -256,7 +279,7 @@ export default function FrameEditor({
                             <TooltipTrigger asChild={true}>
                                 <Button
                                     variant="outline"
-                                    className="text-lg gap-2"
+                                    className="gap-2 text-lg"
                                     size={'lg'}
                                     onClick={async () => {
                                         await publishConfig()
@@ -266,7 +289,7 @@ export default function FrameEditor({
                                     Publish <ImageUp size={18} />
                                 </Button>
                             </TooltipTrigger>
-                            <TooltipContent className="max-w-72 mr-8">
+                            <TooltipContent className="mr-8 max-w-72">
                                 <p>Publishes the current changes.</p>
                             </TooltipContent>
                         </Tooltip>
@@ -288,7 +311,7 @@ export default function FrameEditor({
                                     <span className="text-lg">URL</span> <Copy size={18} />
                                 </Button>
                             </TooltipTrigger>
-                            <TooltipContent className="max-w-72 mr-8">
+                            <TooltipContent className="mr-8 max-w-72">
                                 <p>Copies the shareable Frame URL to your clipboard.</p>
                             </TooltipContent>
                         </Tooltip>
@@ -299,7 +322,7 @@ export default function FrameEditor({
                 <div className="flex flex-col justify-center items-center px-12 py-6 w-full md:w-3/5">
                     <FramePreview />
                 </div>
-                <div className="w-full h-full bg-[#0c0c0c] md:w-2/5 flex flex-col p-6 gap-3">
+                <div className="w-full h-full bg-[#0c0c0c] border-[#17101f] border-0 md:border-4 md:w-2/5 flex flex-col p-6 gap-3">
                     <h1 className="mb-4 text-4xl font-bold">Configuration</h1>
 
                     <div className="overflow-y-scroll max-h-[calc(100dvh-200px)]">
@@ -307,7 +330,7 @@ export default function FrameEditor({
                             value={{
                                 frameId: frame.id,
                                 config: temporaryConfig as typeof template.initialConfig,
-                                state: frame.state!,
+                                storage: frame.storage!,
                                 update: updateConfig,
                                 fid: fid,
                                 // setLoading

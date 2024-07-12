@@ -20,9 +20,9 @@ const FUNNY_MESSAGES = [
 
 export default function Loading() {
     return (
-        <div className="flex flex-col items-center justify-center h-full w-full px-10 md:px-20">
-            <div className="flex flex-col items-center justify-center w-full space-y-4">
-                <Progress  className="animate-progress h-4 w-full max-w-lg bg-blue-500 origin-left-right " />
+        <div className="flex flex-col items-center justify-center h-full w-full px-10 md:px-20 bg-[#17101f]">
+            <div className="flex flex-col justify-center items-center space-y-4 w-full">
+                <Progress className="w-full max-w-lg h-4 bg-blue-500 animate-progress origin-left-right" />
                 <h4 className="text-2xl font-bold text-primary">
                     {FUNNY_MESSAGES[Math.floor(Math.random() * FUNNY_MESSAGES.length)]}
                 </h4>

@@ -1,8 +1,8 @@
-import type { BaseConfig, BaseState, BaseTemplate } from '@/lib/types'
+import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import type { dimensionsForRatio } from '@/sdk/constants'
 import Inspector from './Inspector'
 import cover from './cover.webp'
-import functions from './functions'
+import handlers from './handlers'
 
 export type StyleConfig = {
     textColor: string
@@ -77,7 +77,7 @@ export interface Config extends BaseConfig {
     currentQnaIndex: number
 }
 
-export interface State extends BaseState {
+export interface Storage extends BaseStorage {
     // with questions and answers form being in the following format
     // qna: [ { question: string, answer: string, choices: string[] } ]
     // answers should be in the following format
@@ -98,7 +98,7 @@ export default {
     creatorName: 'Steve',
     enabled: true,
     Inspector,
-    functions,
+    handlers,
     cover,
     initialConfig: {
         qna: [],
@@ -134,4 +134,5 @@ export default {
         },
     },
     requiresValidation: true,
+    events: [],
 } satisfies BaseTemplate

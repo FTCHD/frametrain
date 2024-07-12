@@ -17,6 +17,8 @@ export const metadata: Metadata = {
     alternates: {
         canonical: 'https://frametra.in',
     },
+    keywords:
+        'farcaster, warpcast, neynar, airstack, moxie, supercast, framesjs, frogfm, gated frames, no code frames builder',
     icons: {
         icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚂</text></svg>',
     },
@@ -50,6 +52,7 @@ export default function Layout(props: { children: React.ReactNode }) {
                         width: '100dvw',
                         margin: 0,
                         padding: 0,
+                        backgroundColor: '#17101f',
                     }}
                 >
                     <ThemeProvider attribute="class" defaultTheme="dark">

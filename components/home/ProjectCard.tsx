@@ -7,7 +7,7 @@ export default function ProjectCard({
         <a
             href={`/frame/${id}`}
             style={{ textDecoration: 'none' }}
-            className="w-[370px] h-[130px] bg-[#0B0D0E] p-4  border-[#32383E] border rounded-lg hover:drop-shadow-2xl"
+            className="w-[370px] h-[130px] bg-[#ffffff09] p-4  border-[#32383E] border rounded-lg hover:drop-shadow-2xl hover:bg-[#ffffff1a] transition-all duration-300"
             key={id}
         >
             <div className="flex flex-row gap-5 justify-center w-full h-full">

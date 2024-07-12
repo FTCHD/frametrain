@@ -1,18 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import toast from 'react-hot-toast'
-import { CloudDownload, Loader2 } from 'lucide-react'
-import type {
-    AspectRatio,
-    BaseImagePaths,
-    FigmaMetadata,
-    TextLayerConfig,
-    TextLayerConfigs,
-} from '../Config'
-import { getFigmaDesign, svgToDataUrl } from '../utils/FigmaApi'
-import { Input } from '@/components/shadcn/Input'
+import { Badge } from '@/components/shadcn/Badge'
 import { Button } from '@/components/shadcn/Button'
+import { Input } from '@/components/shadcn/Input'
 import {
     Select,
     SelectContent,
@@ -20,9 +10,19 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
-import { Badge } from '@/components/shadcn/Badge'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { useFrameId, useUploadImage } from '@/sdk/hooks'
+import { CloudDownload, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
+import type {
+    AspectRatio,
+    BaseImagePaths,
+    FigmaMetadata,
+    TextLayerConfig,
+    TextLayerConfigs,
+} from '../config'
+import { getFigmaDesign, svgToDataUrl } from '../utils/FigmaApi'
 
 const SVG_TEXT_DEBUG_ENABLED = false
 

@@ -39,14 +39,14 @@ export function useFrameId() {
     return context.frameId
 }
 
-export function useFrameState() {
+export function useFrameStorage() {
     const context = useContext(InspectorContext)
 
     if (!context) {
-        throw new Error('useFrameState must be used within an InspectorProvider')
+        throw new Error('useFrameStorage must be used within an InspectorProvider')
     }
 
-    return context.state
+    return context.storage
 }
 
 export function useUploadImage() {

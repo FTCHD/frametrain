@@ -9,7 +9,7 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from './farcaster'
-import type { BaseState } from './types'
+import type { BaseStorage } from './types'
 
 export async function buildFramePage({
     id,
@@ -18,11 +18,11 @@ export async function buildFramePage({
     inputText,
     refreshPeriod,
     params,
-    state,
+    storage,
     fonts,
     component,
     image,
-    functionName,
+    handler,
     linkedPage,
 }: {
     id: string
@@ -69,7 +69,7 @@ export async function buildFramePage({
         aspectRatio,
         inputText,
         refreshPeriod,
-        postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${functionName}` + '?' + searchParams,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${handler}` + '?' + searchParams,
     })
 
     const frame = `<html lang="en">
@@ -91,10 +91,7 @@ export async function buildFramePage({
 	</html>
 	`
 
-    return {
-        frame,
-        state,
-    }
+    return frame
 }
 
 export async function buildPreviewFramePage({
@@ -104,11 +101,11 @@ export async function buildPreviewFramePage({
     inputText,
     refreshPeriod,
     params,
-    state,
+    storage,
     fonts,
     component,
     image,
-    functionName,
+    handler,
 }: {
     id: string
     buttons: FrameButtonMetadata[]
@@ -116,11 +113,11 @@ export async function buildPreviewFramePage({
     inputText?: string
     refreshPeriod?: number
     params?: any
-    state?: BaseState
+    storage?: BaseStorage
     fonts?: any[]
     component: ReactElement
     image: string
-    functionName?: string
+    handler?: string
 }) {
     if (!component && !image) {
         throw new Error('Either component or image must be provided')
@@ -154,7 +151,7 @@ export async function buildPreviewFramePage({
         aspectRatio,
         inputText,
         refreshPeriod,
-        postUrl: `${process.env.NEXT_PUBLIC_HOST}/p/${id}/${functionName}` + '?' + searchParams,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/p/${id}/${handler}` + '?' + searchParams,
     })
 
     const frame = `<html lang="en">
@@ -170,10 +167,7 @@ export async function buildPreviewFramePage({
 	</html>
 	`
 
-    return {
-        frame,
-        state,
-    }
+    return frame
 }
 
 function buildFrame({

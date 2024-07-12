@@ -13,9 +13,9 @@ This repository is mostly geared towards template artists. If you're looking to 
 ![Farcaster Frames Templates](https://raw.githubusercontent.com/FTCHD/frametrain/main/.github/templates.png)
 Templates live in the **`@/templates`** folder. Each template follows a clear folder structure:
 
-- `functions` — a collection of 1 or more handlers, used as controllers for displaying the `views`. Must contain at least an `initial` handler.
+- `handlers` — a collection of 1 or more functions, used as controllers for displaying the `views`. Must contain at least an `initial` handler.
 - `views` — a collection of 1 or more React components, rendered as the Frames’ image using `satori`. Must contain at least a `Cover` view.
-- `Inspector` — a React component displayed in the Frame Editor. Used to get input from the user, transform it as needed and saving it as the Frame’s config. This config will be used by the **`functions`** to properly display the `views`.
+- `Inspector` — a React component displayed in the Frame Editor. Used to get input from the user, transform it as needed and saving it as the Frame’s config. This config will be used by the **`handlers`** to properly display the `views`.
 - `cover` — a cover image for the template, displayed in the template selection screen.
 
 Everything else is completely up to you. You can have a `hooks`, `types`, `utils`, or an `assets` folder if you want.
@@ -34,7 +34,7 @@ Currently all templates have been create internally, and hosting Frames is free.
 
 Soon you will be able to subscribe and host your Frames with no imposed limits (as opposed to the always free tier which would have some limits). The revenue from subscriptions will be shared with template creators, depending on usage.
 
-Usage is counted as calls coming from a Farcaster client to any of the template’s **`functions`**. The more Farcaster users interact with a Frame, the more its template creator earns.
+Usage is counted as calls coming from a Farcaster client to any of the template’s **`handlers`**. The more Farcaster users interact with a Frame, the more its template creator earns.
 
 At the end of the month, costs are subtracted, the number of calls are added to calculate a ratio, and each creator is rewarded.
 

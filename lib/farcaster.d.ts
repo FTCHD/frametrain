@@ -4,6 +4,8 @@ import type {
     ValidatedFrameActionResponse as NeynarValidatedFrameActionResponse,
 } from '@neynar/nodejs-sdk/build/neynar-api/v2'
 import type { FrameActionPayload as FramesJSFrameActionPayload } from 'frames.js'
+import type { ReactElement } from 'react'
+import type { BaseStorage } from './types'
 
 // We use the version from OnchainKit because it doesn't set the `action` and `target` fields as required.
 export type FrameButtonMetadata = OnchainKitFrameButtonMetadata
@@ -25,9 +27,13 @@ export interface BuildFrameData {
     inputText?: string
     refreshPeriod?: number
     params?: any
-    state?: BaseState
+    storage?: BaseStorage
     fonts?: any[]
     component?: ReactElement
     image?: string
-    functionName?: string
+    handler?: string
+    webhooks?: {
+        event: string
+        data: Record<string, unknown>
+    }[]
 }
