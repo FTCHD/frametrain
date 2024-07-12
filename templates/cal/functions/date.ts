@@ -1,7 +1,7 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import { FrameError } from '@/sdk/handlers'
 import type { Config, State } from '..'
 import { getCurrentAndFutureDate } from '../utils/date'
 import { extractDatesAndSlots } from '../utils/date'

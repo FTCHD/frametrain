@@ -1,10 +1,10 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
-import { FigmaView } from '../views/FigmaView'
-import type { FramePressConfig, SlideConfig } from '../Config'
-import type { FontStyle, FontWeight } from 'satori'
-import { FrameError } from '@/sdk/handlers'
+import { FrameError } from '@/sdk/error'
 import { loadGoogleFont } from '@/sdk/fonts'
+import type { FontStyle, FontWeight } from 'satori'
+import type { FramePressConfig, SlideConfig } from '../Config'
+import { FigmaView } from '../views/FigmaView'
 
 export default async function buildFrame(
     config: FramePressConfig,

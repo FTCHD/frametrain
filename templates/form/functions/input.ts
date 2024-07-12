@@ -1,6 +1,6 @@
 'use server'
 import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
-import { FrameError } from '@/sdk/handlers'
+import { FrameError } from '@/sdk/error'
 import type { Config, State } from '..'
 import { UsersState, removeFidFromUserState, updateUserState } from '../state'
 import { getIndexForFid, validateField } from '../utils'

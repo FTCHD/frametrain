@@ -1,8 +1,8 @@
-import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
-import type { AspectRatio, SlideConfig, TextLayerConfig } from '../Config'
-import he from 'he'
 import { dimensionsForRatio } from '@/sdk/constants'
-import { FrameError } from '@/sdk/handlers'
+import { FrameError } from '@/sdk/error'
+import he from 'he'
+import type { AspectRatio, SlideConfig, TextLayerConfig } from '../Config'
+import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
 
 /*
 

@@ -8,7 +8,7 @@ import type {
 import { updateFramePreview } from '@/lib/frame'
 import { buildPreviewFramePage } from '@/lib/serve'
 import type { BaseConfig, BaseState } from '@/lib/types'
-import { FrameError } from '@/sdk/handlers'
+import { FrameError } from '@/sdk/error'
 import templates from '@/templates'
 import { eq } from 'drizzle-orm'
 import ms from 'ms'
