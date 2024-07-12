@@ -9,7 +9,7 @@ import {
     updateFrameName,
 } from '@/lib/frame'
 import { previewParametersAtom } from '@/lib/store'
-import templates from '@/templates'
+import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
 import { useAtom } from 'jotai'
 import { ImageUp, Undo2 } from 'lucide-react'
