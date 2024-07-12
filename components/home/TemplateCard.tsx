@@ -4,6 +4,7 @@ import type templates from '@/templates'
 import type { StaticImageData } from 'next/image'
 import NextImage from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { Plus } from 'react-feather'
 import { Separator } from '../shadcn/Separator'
 
@@ -20,10 +21,13 @@ export default function TemplateCard({
     }
 }) {
     const router = useRouter()
+	
+	const [isLoading, setLoading] = useState(false)
 
     const { name, description, creatorName, cover } = template
 
     async function createAndNavigate() {
+		setLoading(true)
         const newFrame = await createFrame({
             name: 'My Frame',
             template: id as keyof typeof templates,
