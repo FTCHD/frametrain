@@ -1,14 +1,19 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
-import type { Config, Storage } from '..'
+import type { Config } from '..'
 import PageView from '../views/Page'
 
-export default async function page(
-    body: FrameActionPayload,
-    config: Config,
-    storage: Storage,
+export default async function page({
+    body,
+    config,
+    storage,
+    params,
+}: {
+    body: FrameActionPayload
+    config: Config
+    storage: Storage
     params: any
-): Promise<BuildFrameData> {
+}): Promise<BuildFrameData> {
     return {
         buttons: [
             {

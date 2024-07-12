@@ -1,7 +1,7 @@
 import { dimensionsForRatio } from '@/sdk/constants'
 import { FrameError } from '@/sdk/error'
 import he from 'he'
-import type { AspectRatio, SlideConfig, TextLayerConfig } from '../Config'
+import type { AspectRatio, SlideConfig, TextLayerConfig } from '../config'
 import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
 
 /*

@@ -1,18 +1,19 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, Storage } from '..'
+import type { Config } from '..'
 import { getLogoForToken, getStreamData, getStreamHistory } from '../utils/actions'
 import HistoryView from '../views/History'
 import TokenView from '../views/Token'
 import initial from './initial'
 
-export default async function page(
-    body: FrameActionPayload,
-    config: Config,
-    storage: Storage,
-    params: any
-): Promise<BuildFrameData> {
+export default async function page({
+    body,
+    config,
+}: {
+    body: FrameActionPayload
+    config: Config
+}): Promise<BuildFrameData> {
     const buttonIndex = body.untrustedData.buttonIndex
 
     switch (buttonIndex) {
@@ -95,7 +96,7 @@ export default async function page(
         }
 
         default: {
-            return initial(config, storage)
+            return initial({ config })
         }
     }
 }

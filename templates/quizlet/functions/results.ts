@@ -5,17 +5,20 @@ import type { Config, Storage } from '..'
 import ReviewAnswersView from '../views/Review'
 import initial from './initial'
 
-export default async function results(
-    body: FrameActionPayload,
-    config: Config,
-    storage: Storage,
-    _params: any
-): Promise<BuildFrameData> {
+export default async function results({
+    body,
+    config,
+    storage,
+}: {
+    body: FrameActionPayload
+    config: Config
+    storage: Storage
+}): Promise<BuildFrameData> {
     const userId = body.untrustedData.fid.toString()
     const choice = body.untrustedData.buttonIndex
 
     if (choice === 1) {
-        return initial(config, storage)
+        return initial({ config })
     }
 
     const roboto = await loadGoogleFontAllVariants('Roboto')

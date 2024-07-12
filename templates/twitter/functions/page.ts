@@ -5,12 +5,17 @@ import type { Config, Storage } from '..'
 import PageView from '../views/Page'
 import initial from './initial'
 
-export default async function page(
-    body: FrameActionPayload,
-    config: Config,
-    storage: Storage,
+export default async function page({
+    body,
+    config,
+    storage,
+    params,
+}: {
+    body: FrameActionPayload
+    config: Config
+    storage: Storage
     params: any
-): Promise<BuildFrameData> {
+}): Promise<BuildFrameData> {
     const nextPage =
         params?.currentPage !== undefined
             ? body.untrustedData.buttonIndex === 1
@@ -41,7 +46,7 @@ export default async function page(
     }
 
     if (body.untrustedData.buttonIndex === 1 && nextPage === 0) {
-        return initial(config, storage)
+        return initial({ config })
     }
 
     const tweet = config.tweets[nextPage - 1]

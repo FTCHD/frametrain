@@ -3,7 +3,7 @@ import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFont } from '@/sdk/fonts'
 import type { FontStyle, FontWeight } from 'satori'
-import type { FramePressConfig, SlideConfig } from '../Config'
+import type { FramePressConfig, SlideConfig } from '../config'
 import { FigmaView } from '../views/FigmaView'
 
 export default async function buildFrame(

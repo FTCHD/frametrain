@@ -2,11 +2,11 @@
 
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, Storage } from '..'
+import type { Config } from '..'
 import CoverView from '../views/Cover'
 import EventView from '../views/Event'
 
-export default async function initial(config: Config, storage: Storage): Promise<BuildFrameData> {
+export default async function initial({ config }: { config: Config }): Promise<BuildFrameData> {
     const buttons: FrameButtonMetadata[] = []
     const { event, ...rest } = config
 

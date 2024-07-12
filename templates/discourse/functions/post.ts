@@ -1,20 +1,23 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, Storage } from '..'
+import type { Config } from '..'
 import PostView from '../views/Post'
 import initial from './initial'
 
-export default async function post(
-    body: FrameActionPayload,
-    config: Config,
-    storage: Storage,
+export default async function post({
+    body,
+    config,
+    params,
+}: {
+    body: FrameActionPayload
+    config: Config
     params: any
-): Promise<BuildFrameData> {
+}): Promise<BuildFrameData> {
     const buttonIndex = body.untrustedData.buttonIndex
 
     if (buttonIndex === 1 && params?.currentPage) {
-        return initial(config, storage)
+        return initial({ config })
     }
 
     let nextPage: number
@@ -42,7 +45,7 @@ export default async function post(
         .catch(console.error)
 
     if (!post?.raw) {
-        return initial(config, storage)
+        return initial({ config })
     }
 
     const textFont = await loadGoogleFontAllVariants(config.textFont || 'Lato')

@@ -5,12 +5,17 @@ import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import ReviewAnswersView from '../views/Review'
 
-export default async function review(
-    body: FrameActionPayload,
-    config: Config,
-    storage: Storage,
+export default async function review({
+    body,
+    config,
+    storage,
+    params,
+}: {
+    body: FrameActionPayload
+    config: Config
+    storage: Storage
     params: any
-): Promise<BuildFrameData> {
+}): Promise<BuildFrameData> {
     const student = body.untrustedData.fid.toString()
     const pastAnswers = storage.answers?.[student] ?? []
 

@@ -68,12 +68,12 @@ export async function POST(
     let buildParameters = {} as BuildFrameData
 
     try {
-        buildParameters = await handlerFn(
-            body,
-            frame.config as BaseConfig,
-            frame.storage as BaseStorage,
-            searchParams
-        )
+        buildParameters = await handlerFn({
+            body: body,
+            config: frame.config as BaseConfig,
+            storage: frame.storage as BaseStorage,
+            params: searchParams,
+        })
     } catch (error) {
         if (error instanceof FrameError) {
             return Response.json(

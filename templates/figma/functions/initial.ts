@@ -1,7 +1,7 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
-import type { FramePressConfig } from '../Config'
-import buildFrame from './frame'
+import type { BuildFrameData } from '@/lib/farcaster'
+import type { FramePressConfig } from '../config'
+import buildFrame from '../utils/build'
 
 export default async function initial(config: FramePressConfig): Promise<BuildFrameData> {
     const slideConfig = config.slides?.[0]

@@ -1,19 +1,18 @@
 'use server'
-import type {
-    BuildFrameData,
-    FrameActionPayload,
-    FrameValidatedActionPayload,
-} from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import ResultsView from '../views/Results'
 
-export default async function vote(
-    body: FrameActionPayload | FrameValidatedActionPayload,
-    config: Config,
-    storage: Storage,
-    params: any
-): Promise<BuildFrameData> {
+export default async function vote({
+    body,
+    config,
+    storage,
+}: {
+    body: FrameActionPayload
+    config: Config
+    storage: Storage
+}): Promise<BuildFrameData> {
     const voter = body.untrustedData.fid.toString()
     const buttonIndex = body.untrustedData.buttonIndex
     const pastIndex = storage.votesForId?.[voter]

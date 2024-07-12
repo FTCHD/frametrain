@@ -10,12 +10,17 @@ import { extractDatesAndSlots } from '../utils/date'
 import PageView from '../views/AfterConfirm'
 import initial from './initial'
 
-export default async function confirm(
-    body: FrameActionPayload,
-    config: Config,
-    storage: Storage,
+export default async function confirm({
+    body,
+    config,
+    params,
+    storage,
+}: {
+    body: FrameActionPayload
+    config: Config
     params: any
-): Promise<BuildFrameData> {
+    storage: Storage
+}): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const fonts = [...roboto]
 
@@ -27,7 +32,7 @@ export default async function confirm(
     const buttonIndex = body.untrustedData.buttonIndex
 
     if (buttonIndex === 1) {
-        return initial(config, storage)
+        return initial({ config })
     }
 
     const dates = getCurrentAndFutureDate(30)

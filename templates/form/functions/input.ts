@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
+import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import type { Config, Storage } from '..'
 import { UsersState, removeFidFromUserState, updateUserState } from '../state'
@@ -12,12 +12,17 @@ import about from './about'
 import initial from './initial'
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
-export default async function input(
-    body: FrameActionPayloadValidated,
-    config: Config,
-    storage: Storage,
+export default async function input({
+    body,
+    config,
+    storage,
+    params,
+}: {
+    body: FrameValidatedActionPayload
+    config: Config
+    storage: Storage
     params: any
-): Promise<BuildFrameData> {
+}): Promise<BuildFrameData> {
     const fid = body.validatedData.interactor.fid
     const buttonIndex = body.validatedData.tapped_button.index
     const textInput = body.validatedData?.input?.text || ''
@@ -179,9 +184,9 @@ export default async function input(
     // Display relevant page based on UserState (modified above)
     switch (UsersState[fid].pageType) {
         case 'init':
-            return initial(config, newStorage)
+            return initial({ config })
         case 'about':
-            return about(body, config, newStorage, params)
+            return about({ config })
         case 'input':
             return {
                 buttons: [

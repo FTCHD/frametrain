@@ -5,13 +5,12 @@ import { type Config, PRESENTATION_DEFAULTS } from '../'
 import { renderCustomButtons } from '../utils'
 import CoverView from '../views/Cover'
 
-
-
-export default async function initial(config: Config): Promise<BuildFrameData> {
-    let c: Config
-
-    if (Object.keys(config).includes('slides')) c = config
-    else c = PRESENTATION_DEFAULTS
+export default async function initial({
+    config,
+}: {
+    config: Config
+}): Promise<BuildFrameData> {
+    const c = Object.keys(config).includes('slides') ? config : PRESENTATION_DEFAULTS
 
     const contentFont = await loadGoogleFontAllVariants(c.slides[0]?.content?.font || 'Roboto')
     const titleFont = await loadGoogleFontAllVariants(c.slides[0]?.title?.font || 'Inter')

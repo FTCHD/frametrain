@@ -6,12 +6,15 @@ import type { Config } from '../'
 import { renderCustomButtons } from '../utils'
 import CoverView from '../views/Cover'
 
-export default async function page(
-    body: FrameActionPayload,
-    config: Config,
-    storage: {},
+export default async function page({
+    body,
+    config,
+    params,
+}: {
+    body: FrameActionPayload
+    config: Config
     params: any
-): Promise<BuildFrameData> {
+}): Promise<BuildFrameData> {
     const buttonIndex = body?.untrustedData?.buttonIndex
 
     const currentPage: number = params?.page ? Number(params.page) : 0

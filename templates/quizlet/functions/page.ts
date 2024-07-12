@@ -5,12 +5,15 @@ import type { Config, Storage } from '..'
 import QuestionView from '../views/Question'
 import ResultsView from '../views/Results'
 
-export default async function page(
-    body: FrameActionPayload,
-    config: Config,
-    storage: Storage,
-    _params: any
-): Promise<BuildFrameData> {
+export default async function page({
+    body,
+    config,
+    storage,
+}: {
+    body: FrameActionPayload
+    config: Config
+    storage: Storage
+}): Promise<BuildFrameData> {
     const user = body.untrustedData.fid.toString()
     const qna = config.qna[0]
     const fonts = await loadGoogleFontAllVariants(qna.design?.qnaFont ?? 'Roboto')

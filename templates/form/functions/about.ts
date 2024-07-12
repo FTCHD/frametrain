@@ -1,14 +1,13 @@
 'use server'
-import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
-import type { Config, Storage } from '..'
+import type { BuildFrameData } from '@/lib/farcaster'
+import type { Config } from '..'
 import AboutView from '../views/About'
 
-export default async function about(
-    body: FrameActionPayloadValidated,
-    config: Config,
-    storage: Storage,
-    params: any
-): Promise<BuildFrameData> {
+export default async function about({
+    config,
+}: {
+    config: Config
+}): Promise<BuildFrameData> {
     return {
         buttons: [
             {

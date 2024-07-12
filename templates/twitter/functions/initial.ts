@@ -1,10 +1,10 @@
 'use server'
 import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, Storage } from '..'
+import type { Config } from '..'
 import CoverView from '../views/Cover'
 
-export default async function initial(config: Config, storage: Storage): Promise<BuildFrameData> {
+export default async function initial({ config }: { config: Config }): Promise<BuildFrameData> {
     const fonts = []
 
     const roboto = await loadGoogleFontAllVariants('Roboto')

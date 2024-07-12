@@ -11,8 +11,15 @@ export interface BaseStorage {
     [key: string]: boolean | number | string | null | undefined | any
 }
 
+export type BaseFunction = ({
+    body,
+    config,
+    storage,
+    params,
+}: { body: any; config: any; storage: any; params: any }) => Promise<BuildFrameData>
+
 export interface BaseFunctions {
-    [key: string]: (body: any, config: any, storage: any, params: any) => Promise<BuildFrameData>
+    [key: string]: BaseFunction
 }
 
 export interface BaseTemplate {

@@ -1,10 +1,10 @@
 'use server'
 import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, Storage } from '..'
+import type { Config } from '..'
 import CoverView from '../views/Cover'
 
-export default async function initial(config: Config, storage: Storage): Promise<BuildFrameData> {
+export default async function initial({ config }: { config: Config }): Promise<BuildFrameData> {
     const SHARE_FRAME_TEXT = config.shareText
     const SHARE_FRAME_URL = `${process.env.NEXT_PUBLIC_HOST}/f/${config.frameId}`
 

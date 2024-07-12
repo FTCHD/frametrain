@@ -1,4 +1,4 @@
-import type { ButtonConfig, SlideConfig } from './Config'
+import type { ButtonConfig, SlideConfig } from './config'
 
 export const INITIAL_SLIDE_ID = 'initial'
 

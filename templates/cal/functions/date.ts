@@ -8,12 +8,15 @@ import { extractDatesAndSlots } from '../utils/date'
 import PageView from '../views/Date'
 import NextView from '../views/Slot'
 
-export default async function dateHanlder(
-    body: FrameActionPayload,
-    config: Config,
-    storage: Storage,
+export default async function date({
+    body,
+    config,
+    params,
+}: {
+    body: FrameActionPayload
+    config: Config
     params: any
-): Promise<BuildFrameData> {
+}): Promise<BuildFrameData> {
     const fonts = await loadGoogleFontAllVariants(config?.fontFamily ?? 'Roboto')
 
     const buttonIndex = body.untrustedData.buttonIndex

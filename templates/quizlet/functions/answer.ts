@@ -7,12 +7,17 @@ import { choicesRepresentation } from '../utils'
 import QuestionView from '../views/Question'
 import ResultsView from '../views/Results'
 
-export default async function answer(
-    body: FrameActionPayload,
-    config: Config,
-    storage: Storage,
+export default async function answer({
+    body,
+    config,
+    storage,
+    params,
+}: {
+    body: FrameActionPayload
+    config: Config
+    storage: Storage
     params: any
-): Promise<BuildFrameData> {
+}): Promise<BuildFrameData> {
     const student = body.untrustedData.fid.toString()
     const choice = body.untrustedData.buttonIndex - 1
     const pastAnswers = storage.answers?.[student] ?? []

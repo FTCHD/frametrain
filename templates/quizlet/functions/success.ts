@@ -3,11 +3,15 @@ import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/
 import type { Config, Storage } from '..'
 import initial from './initial'
 
-export default async function success(
-    body: FrameActionPayload,
-    config: Config,
+export default async function success({
+    body,
+    config,
+    storage,
+}: {
+    body: FrameActionPayload
+    config: Config
     storage: Storage
-): Promise<BuildFrameData> {
+}): Promise<BuildFrameData> {
     const buttons: FrameButtonMetadata[] = [
         {
             label: 'Create Your Own',
@@ -17,7 +21,7 @@ export default async function success(
     ]
 
     if (!config.success.image || body.untrustedData.buttonIndex === 1) {
-        return initial(config, storage)
+        return initial({ config })
     }
 
     if (config.success.url) {

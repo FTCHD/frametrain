@@ -9,12 +9,13 @@ import { holdsErc721, holdsErc1155 } from '../utils/nft'
 import DateView from '../views/Date'
 import PageView from '../views/Duration'
 
-export default async function duration(
-    body: FrameActionPayloadValidated,
-    config: Config,
-    storage: Storage,
-    _params: any
-): Promise<BuildFrameData> {
+export default async function duration({
+    body,
+    config,
+}: {
+    body: FrameActionPayloadValidated
+    config: Config
+}): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const fonts = [...roboto]
 
