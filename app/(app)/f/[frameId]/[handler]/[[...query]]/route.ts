@@ -109,14 +109,18 @@ export async function POST(
     // Allow for important logic to get processed and don't wait for webhooks to finish
     if (buildParameters.webhooks?.length) {
         try {
-            for (const webhook of buildParameters.webhooks) {
-                const webhookInfo = await getFrameWebhooks(frame.id)
+            const webhookUrls = await getFrameWebhooks(frame.id)
 
-                if (!webhookInfo?.[webhook.event]) {
+            if (!webhookUrls) {
+                return
+            }
+
+            for (const webhook of buildParameters.webhooks) {
+                if (!webhookUrls?.[webhook.event]) {
                     continue
                 }
 
-                fetch(webhookInfo[webhook.event], {
+                fetch(webhookUrls[webhook.event], {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
