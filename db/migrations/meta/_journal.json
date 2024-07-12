@@ -15,6 +15,13 @@
       "when": 1720338903771,
       "tag": "0001_legal_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1720642596252,
+      "tag": "0002_lethal_sprite",
+      "breakpoints": true
     }
   ]
 }

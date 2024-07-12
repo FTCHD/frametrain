@@ -176,6 +176,42 @@ export async function updateFrameLinkedPage(id: string, url?: string) {
     revalidatePath(`/frame/${id}`)
 }
 
+export async function updateFrameWebhooks(id: string, webhook: { event: string; url?: string }) {
+    const sesh = await auth()
+
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frame = await client
+        .select()
+        .from(frameTable)
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .get()
+
+    if (!frame) {
+        notFound()
+    }
+
+    const webhooks = Object.assign({}, frame.webhooks)
+
+    if (webhook.url) {
+        webhooks[webhook.event] = webhook.url
+    } else {
+        delete webhooks[webhook.event]
+    }
+
+    await client
+        .update(frameTable)
+        .set({
+            webhooks,
+        })
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .run()
+
+    revalidatePath(`/frame/${id}`)
+}
+
 export async function revertFrameConfig(id: string) {
     const sesh = await auth()
 

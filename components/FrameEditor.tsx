@@ -25,6 +25,7 @@ import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
+import WebhookEventOptions from './editor/WebhookEventOptions'
 
 export default function FrameEditor({
     frame,
@@ -182,6 +183,24 @@ export default function FrameEditor({
                     {updating && (
                         <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
                     )}
+
+                    {template.events.length ? (
+                        <TooltipProvider delayDuration={0}>
+                            <Tooltip>
+                                <TooltipTrigger asChild={true}>
+                                    <WebhookEventOptions
+                                        id={frame.id}
+                                        events={template.events}
+                                        webhooks={Object.assign({}, frame.webhooks)}
+                                        setUpdating={setUpdating}
+                                    />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-72 flex flex-col gap-2">
+                                    <p>Enable or disable the reception of webhook events.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    ) : null}
 
                     <Popover>
                         <PopoverTrigger asChild={true}>

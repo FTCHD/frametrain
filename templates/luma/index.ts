@@ -40,4 +40,5 @@ export default {
     initialConfig: {
         event: undefined,
     },
+    events: [],
 } satisfies BaseTemplate

@@ -36,48 +36,44 @@ export interface Slide {
     buttons: CustomButtons
 }
 
-
 export interface Config extends BaseConfig {
     slides: Slide[]
 }
 
-const DEFAULT_SLIDE: Slide =  {
-	type: 'text',
-	aspectRatio: '1:1',
-	objectFit: 'fill',
-	background: {
-		type: 'color',
-		value: 'linear-gradient(245deg, rgb(252,136,0), rgb(252,0,162))',
-	},
-	title: {
-		text: '',
-		color: '#1c1c1c',
-		weight: '700',
-		font: 'Inter',
-		style: 'normal',
-	},
-	content: {
-		text: '',
-		color: '#000000',
-		font: 'Roboto',
-		align: 'left',
-		weight: '400',
-	},
-	buttons: [
-		{
-			type: 'navigate',
-			label: 'Navigate',
-			target: '1',
-		},
-	],
-}
-
-export const PRESENTATION_DEFAULTS: Config = {
-    slides: [
-       DEFAULT_SLIDE
+const DEFAULT_SLIDE: Slide = {
+    type: 'text',
+    aspectRatio: '1:1',
+    objectFit: 'fill',
+    background: {
+        type: 'color',
+        value: 'linear-gradient(245deg, rgb(252,136,0), rgb(252,0,162))',
+    },
+    title: {
+        text: '',
+        color: '#1c1c1c',
+        weight: '700',
+        font: 'Inter',
+        style: 'normal',
+    },
+    content: {
+        text: '',
+        color: '#000000',
+        font: 'Roboto',
+        align: 'left',
+        weight: '400',
+    },
+    buttons: [
+        {
+            type: 'navigate',
+            label: 'Navigate',
+            target: '1',
+        },
     ],
 }
 
+export const PRESENTATION_DEFAULTS: Config = {
+    slides: [DEFAULT_SLIDE],
+}
 
 export default {
     name: 'Presentation Template',
@@ -90,4 +86,5 @@ export default {
     Inspector,
     handlers,
     requiresValidation: false,
+    events: [],
 } satisfies BaseTemplate

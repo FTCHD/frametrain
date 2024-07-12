@@ -24,4 +24,5 @@ export default {
     handlers,
     cover,
     requiresValidation: false,
+    events: [],
 } satisfies BaseTemplate

@@ -68,4 +68,5 @@ export default {
         },
     },
     requiresValidation: true,
+    events: [],
 } satisfies BaseTemplate

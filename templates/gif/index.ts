@@ -22,4 +22,5 @@ export default {
     handlers,
     initialConfig: {},
     requiresValidation: false,
+    events: [],
 } satisfies BaseTemplate
