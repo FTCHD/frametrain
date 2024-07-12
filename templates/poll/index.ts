@@ -31,5 +31,5 @@ export default {
     functions,
     cover,
     requiresValidation: true,
-    events: ['vote'],
+    events: [],
 } satisfies BaseTemplate
