@@ -39,8 +39,13 @@ export default async function Home() {
                         <div className="flex flex-row w-full items-center gap-8">
                             <h1 className="text-3xl font-semibold">🖼️ Frames</h1>
                             <NextLink href="/frames">
-                                <p className="text-sm flex flex-row gap-1 items-center text-[#ffffff90]">
-                                    View all <ArrowRightIcon color="#ffffff90" size={16} />
+                                <p className="group text-sm flex flex-row gap-1 items-center text-[#ffffff90] border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90]">
+                                    View all{' '}
+                                    <ArrowRightIcon
+                                        color="#ffffff90"
+                                        size={16}
+                                        className="ml-1 group-hover:m-0 transition-all duration-300"
+                                    />
                                 </p>
                             </NextLink>
                         </div>

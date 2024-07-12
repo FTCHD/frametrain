@@ -52,6 +52,7 @@ export default function Layout(props: { children: React.ReactNode }) {
                         width: '100dvw',
                         margin: 0,
                         padding: 0,
+                        backgroundColor: '#17101f',
                     }}
                 >
                     <ThemeProvider attribute="class" defaultTheme="dark">
