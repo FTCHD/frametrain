@@ -109,7 +109,7 @@ export async function POST(
     // Allow for important logic to get processed and don't wait for webhooks to finish
     if (buildParameters.webhooks?.length) {
         try {
-            const webhookUrls = await getFrameWebhooks(frame.id)
+            const webhookUrls = frame.webhooks
 
             if (!webhookUrls) {
                 return
