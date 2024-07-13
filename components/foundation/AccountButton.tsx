@@ -7,12 +7,14 @@ import {
 } from '@farcaster/auth-kit'
 import '@farcaster/auth-kit/styles.css'
 import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { LogOut } from 'react-feather'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../shadcn/Tooltip'
 
 export default function AccountButton() {
     const sesh = useSession()
+	const router = useRouter()
 
     const { isAuthenticated } = useProfile()
 
@@ -22,15 +24,22 @@ export default function AccountButton() {
         return nonce
     }, [])
 
-    const handleLogin = useCallback((res: StatusAPIResponse) => {
-        signIn('credentials', {
-            message: res.message,
-            signature: res.signature,
-            name: res.username,
-            pfp: res.pfpUrl,
-            redirect: false,
-        })
-    }, [])
+    const handleLogin = useCallback(
+        (res: StatusAPIResponse) => {
+            signIn('credentials', {
+                message: res.message,
+                signature: res.signature,
+                name: res.username,
+                pfp: res.pfpUrl,
+                redirect: false,
+            }).then((r) => {
+                if (!r?.error) {
+                    router.refresh()
+                }
+            })
+        },
+        [router]
+    )
 
     return (
         <AuthKitProvider>

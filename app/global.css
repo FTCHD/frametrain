@@ -72,10 +72,13 @@
 /* farcaster authkit modal does not support dark mode yet */
 .fc-authkit-qrcode-dialog {
 	& > * {
-		background-color: black !important;
+		background-color: #16111c !important;
 		color: white !important;
 	}
 	._1sj0tk82 {
+		display: none !important;
+	}
+	._1n3pr300 {
 		display: none !important;
 	}
 }

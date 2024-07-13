@@ -6,6 +6,7 @@ import TemplateCard from '@/components/home/TemplateCard'
 import { getRecentFrameList } from '@/lib/frame'
 import templates from '@/templates'
 import { ArrowRightIcon } from 'lucide-react'
+import Image from 'next/image'
 import NextLink from 'next/link'
 
 export default async function Home() {
@@ -13,16 +14,20 @@ export default async function Home() {
 
     if (!sesh?.user) {
         return (
-            <div className="flex flex-col p-5 w-full h-full gap-5">
-                <Header />
-                <div className="flex flex-grow justify-center items-center">
-                    <div className="flex flex-col w-full">
-                        <div className="flex flex-col justify-center items-center space-y-4 h-full">
-                            <h1 className="text-4xl font-bold">Welcome to Frametrain!</h1>
-                            <h1 className="text-xl">Sign in with Farcaster to get started.</h1>
-                            <AccountButton />
-                        </div>
-                    </div>
+            <div className="flex flex-col justify-center p-5 w-full h-full gap-10">
+                <div className="relative flex basis-1/4 md:basis-3/4">
+                    <Image
+                        src="/og-transparent.webp"
+                        fill={true}
+                        objectFit="contain"
+                        alt="FrameTrain"
+                    />
+                </div>
+
+                <div className="flex flex-col justify-between items-center space-y-4">
+                    <h1 className="text-4xl font-bold">Welcome to Frametrain!</h1>
+                    <h1 className="text-xl">Sign in with Farcaster to get started.</h1>
+                    <AccountButton />
                 </div>
             </div>
         )
