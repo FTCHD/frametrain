@@ -83,6 +83,8 @@ export async function POST(
                 }
             )
         }
+		
+		console.log(error)
 
         return Response.json(
             { message: 'Unknown error' },
