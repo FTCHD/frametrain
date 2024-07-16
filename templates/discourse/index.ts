@@ -10,7 +10,7 @@ export interface Config extends BaseConfig {
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'Discourse Template',
+    name: 'Discourse',
     description: 'Create a Frame from a Discourse discussion.',
     creatorFid: '368382',
     creatorName: 'Chris',
