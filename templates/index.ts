@@ -12,6 +12,7 @@ import quizlet from './quizlet'
 import sablier from './sablier'
 import twitter from './twitter'
 import presentation from './presentation'
+import meme from './meme'
 
 export default {
     // basic,
@@ -27,5 +28,6 @@ export default {
     medium,
     quizlet,
     luma,
-    presentation
+    presentation,
+    meme,
 }
