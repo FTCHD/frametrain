@@ -22,7 +22,7 @@ export interface Storage extends BaseStorage {
 }
 
 export default {
-    name: 'Poll',
+    name: 'Poll Template',
     description: 'Create your own Poll as a Farcaster Frame.',
     creatorFid: '3',
     creatorName: 'Dan',

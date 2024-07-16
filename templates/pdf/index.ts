@@ -15,7 +15,7 @@ export interface Config extends BaseConfig {
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'PDF',
+    name: 'PDF Template',
     description: 'Upload and convert your PDF into a Frame with multiple slides.',
     creatorFid: '2',
     creatorName: 'Varun',

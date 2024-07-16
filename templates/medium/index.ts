@@ -20,7 +20,7 @@ export interface Config extends BaseConfig {
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'Medium',
+    name: 'Medium Template',
     description: 'Convert any Medium article into a Farcaster Frame.',
     creatorFid: '20417',
     creatorName: 'Q',

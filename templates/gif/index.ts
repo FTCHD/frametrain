@@ -12,7 +12,7 @@ export interface Config extends BaseConfig {
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'GIF',
+    name: 'GIF Template',
     description: 'Create a GIF Frame from any local or Youtube video. Add a link too!',
     creatorFid: '416810',
     creatorName: 'alekcangp',

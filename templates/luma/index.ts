@@ -28,7 +28,7 @@ export interface Config extends BaseConfig {
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'Lu.ma',
+    name: 'Lu.ma Template',
     description: 'Share your Lu.ma event as a Frame.',
     creatorFid: '260812',
     creatorName: 'Steve',

@@ -59,7 +59,7 @@ export default function TemplateCard({
 
             <div className="flex flex-col justify-between w-full h-full">
                 <div className="flex flex-col gap-2 items-start p-4 text-start">
-                    <p className="text-xl font-semibold">{name + ' Template'}</p>
+                    <p className="text-xl font-semibold">{name}</p>
                     <p className="text-md text-[#cdd7e1]">{description}</p>
                 </div>
 

@@ -91,7 +91,7 @@ export interface Storage extends BaseStorage {
 }
 
 export default {
-    name: 'Quizlet',
+    name: 'Quizlet Template',
     description:
         'Create your own multiple choice Quiz as a Farcaster Frame. Show a secret screen if answers are correct.',
     creatorFid: '260812',

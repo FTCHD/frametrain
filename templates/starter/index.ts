@@ -10,7 +10,7 @@ export interface Config extends BaseConfig {
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'Starter',
+    name: 'Starter Template',
     description: 'Copy this template to create your own',
     creatorFid: '0',
     creatorName: 'FrameTrain',

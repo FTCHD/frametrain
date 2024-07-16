@@ -35,7 +35,7 @@ export interface Storage extends BaseStorage {
 }
 
 export default {
-    name: 'Form',
+    name: 'Form Template',
     description: 'Create forms and save the user inputs!',
     creatorFid: '417554',
     creatorName: 'onten.eth',

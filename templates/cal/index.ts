@@ -43,7 +43,7 @@ export interface Config extends BaseConfig {
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'Cal',
+    name: 'Cal Template',
     description: 'Let people book calls with you straight from a Frame. Gating options included.',
     creatorFid: '389273',
     creatorName: 'LeoFrank',

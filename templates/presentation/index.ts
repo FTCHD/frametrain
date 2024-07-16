@@ -76,7 +76,7 @@ export const PRESENTATION_DEFAULTS: Config = {
 }
 
 export default {
-    name: 'Presentation',
+    name: 'Presentation Template',
     description: 'Turn your images and long texts into a slideshow.',
     creatorFid: '661506',
     creatorName: 'oynozan',
