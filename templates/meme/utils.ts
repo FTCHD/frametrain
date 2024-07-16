@@ -39,12 +39,15 @@ export async function getMemes() {
     }
 }
 
-export async function createMeme(text: string, id: string) {
+export async function createMeme(captions: string[], id: string) {
     const url = new URL('https://api.imgflip.com/caption_image')
     url.searchParams.append('template_id', id)
     url.searchParams.append('username', process.env.IMGFLIP_USERNAME!)
     url.searchParams.append('password', process.env.IMGFLIP_PASSWORD!)
-    url.searchParams.append('boxes[0][text]', text)
+
+    captions.forEach((caption, index) => {
+        url.searchParams.append(`boxes[${index}][text]`, caption)
+    })
 
     try {
         const response = await fetch(url.toString(), {
