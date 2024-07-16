@@ -22,7 +22,7 @@ export interface Config extends BaseConfig {
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'Tweet Template',
+    name: 'Tweet',
     description: 'Transform a tweet or multiple tweets into a Frame.',
     creatorFid: '368382',
     creatorName: 'Chris',

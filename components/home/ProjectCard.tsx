@@ -1,21 +1,23 @@
 'use client'
-export default function ProjectCard({
-    frame,
-}: { frame: { id: string; name: string; currentMonthCalls: number } }) {
-    const { id, name, currentMonthCalls } = frame
+
+import type { frameTable } from '@/db/schema'
+import type { InferSelectModel } from 'drizzle-orm'
+
+export default function ProjectCard({ frame }: { frame: InferSelectModel<typeof frameTable> }) {
+    const { id, name, template, currentMonthCalls } = frame
     return (
         <a
             href={`/frame/${id}`}
             style={{ textDecoration: 'none' }}
-            className="w-[370px] h-[130px] bg-[#ffffff09] p-4  border-[#32383E] border rounded-lg hover:drop-shadow-2xl hover:bg-[#ffffff1a] transition-all duration-300"
+            className="w-[330px] h-[130px] bg-[#ffffff09] p-4  border-[#32383E] border rounded-lg hover:drop-shadow-2xl hover:bg-[#ffffff1a] transition-all duration-300"
             key={id}
         >
             <div className="flex flex-row gap-5 justify-center w-full h-full">
-                <div className="w-[180px] h-[95px]">
+                <div className="w-[95px] h-[95px]">
                     <img
                         src={`${process.env.NEXT_PUBLIC_CDN_HOST}/frames/${id}/preview.png`}
                         alt={name}
-                        className="object-cover rounded-md padding-0 space-0 h-full w-full"
+                        className="object-cover object-center rounded-[50px] padding-0 space-0 h-full w-full"
                         onError={(e) => {
                             e.currentTarget.srcset = ''
                             e.currentTarget.src =
@@ -24,10 +26,15 @@ export default function ProjectCard({
                         }}
                     />
                 </div>
-                <div className="flex flex-col gap-4 items-start grow">
-                    <h1 className="font-medium">{name}</h1>
-                    <div className="px-2 py-1 text-xs font-medium rounded-full text-[#c7dff7] border border-[#12467B]">
-                        {currentMonthCalls === 0 ? 'No interactions' : `${currentMonthCalls} calls`}
+                <div className="flex flex-col gap-4 items-start justify-between grow">
+                    <h1 className="font-bold text-lg">{name}</h1>
+                    <div className="flex flex-row  gap-2 w-full">
+                        <div className="px-4 py-1 text-sm font-medium rounded-full text-[#c7dff7] bg-[#12467B]">
+                            {template[0].toUpperCase() + template.slice(1)}
+                        </div>
+                        <div className="px-4 py-1 text-sm font-medium rounded-full text-[#c7dff7] bg-[#12467B]">
+                            {currentMonthCalls === 0 ? 'No taps' : `${currentMonthCalls} taps`}
+                        </div>
                     </div>
                 </div>
             </div>

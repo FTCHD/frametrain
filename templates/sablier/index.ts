@@ -11,7 +11,7 @@ export interface Config extends BaseConfig {
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'Sablier Template',
+    name: 'Sablier',
     description: 'Get the latest details about a Sablier stream.',
     creatorFid: '10677',
     creatorName: 'Paul',
