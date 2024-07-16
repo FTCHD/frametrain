@@ -11,7 +11,7 @@ export interface Config extends BaseConfig {
               id: string
               name: string
               url: string
-              text: string
+              captions: string[]
           }
         | undefined
 }
