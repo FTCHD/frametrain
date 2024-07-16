@@ -10,7 +10,8 @@ import { buildFramePage, validatePayload } from '@/lib/serve'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
 import templates from '@/templates'
-import { eq } from 'drizzle-orm'
+import { waitUntil } from '@vercel/functions'
+import { type InferSelectModel, eq } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 
@@ -83,8 +84,8 @@ export async function POST(
                 }
             )
         }
-		
-		console.log(error)
+
+        console.log(error)
 
         return Response.json(
             { message: 'Unknown error' },
@@ -100,52 +101,54 @@ export async function POST(
         ...(buildParameters as BuildFrameData),
     })
 
-    const storageData = buildParameters.storage as BaseStorage | undefined
-
-    if (storageData) {
-        await updateFrameStorage(frame.id, storageData)
-        console.log('Updated frame storage')
-    }
-    await updateFrameCalls(frame.id, frame.currentMonthCalls + 1)
-
-    // Allow for important logic to get processed and don't wait for webhooks to finish
-    if (buildParameters.webhooks?.length) {
-        try {
-            const webhookUrls = frame.webhooks
-
-            if (!webhookUrls) {
-                return
-            }
-
-            for (const webhook of buildParameters.webhooks) {
-                if (!webhookUrls?.[webhook.event]) {
-                    continue
-                }
-
-                fetch(webhookUrls[webhook.event], {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        event: webhook.event,
-                        data: {
-                            ...webhook.data,
-                            createdAt: new Date().toISOString(),
-                        },
-                    }),
-                })
-                    .then(() => {
-                        console.log('Sent webhook')
-                    })
-                    .catch((e) => {
-                        console.error('Error sending webhook', e)
-                    })
-            }
-        } catch {}
-    }
+    waitUntil(processFrame(frame, buildParameters))
 
     return new Response(renderedFrame, {
         headers: {
             'Content-Type': 'text/html',
         },
     })
+}
+
+async function processFrame(f: InferSelectModel<typeof frameTable>, p: BuildFrameData) {
+    const storageData = p.storage as BaseStorage | undefined
+
+    if (storageData) {
+        await updateFrameStorage(f.id, storageData)
+        console.log('Updated frame storage')
+    }
+
+    await updateFrameCalls(f.id, f.currentMonthCalls + 1)
+
+    if (f.webhooks) {
+        const webhookUrls = f.webhooks
+
+        if (!webhookUrls) {
+            return
+        }
+
+        for (const webhook of p?.webhooks || []) {
+            if (!webhookUrls?.[webhook.event]) {
+                continue
+            }
+
+            fetch(webhookUrls[webhook.event], {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    event: webhook.event,
+                    data: {
+                        ...webhook.data,
+                        createdAt: new Date().toISOString(),
+                    },
+                }),
+            })
+                .then(() => {
+                    console.log('Sent webhook')
+                })
+                .catch((e) => {
+                    console.error('Error sending webhook', e)
+                })
+        }
+    }
 }
