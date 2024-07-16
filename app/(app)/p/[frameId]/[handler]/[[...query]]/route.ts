@@ -90,7 +90,10 @@ export async function POST(
         ...buildParameters,
     })
 
-    if (frame.updatedAt.getTime() < Date.now() - ms('5m')) {
+    if (
+        frame.updatedAt.getTime() < Date.now() - ms('5m') ||
+        frame.updatedAt.getTime() === frame.createdAt.getTime()
+    ) {
         await updateFramePreview(frame.id, renderedFrame)
     }
 
