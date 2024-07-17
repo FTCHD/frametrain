@@ -19,5 +19,6 @@ export default async function initial({
         fonts: roboto,
         component: config.memeUrl ? undefined : CoverView(),
         image: config.memeUrl,
+        aspectRatio: config.aspectRatio,
     }
 }
