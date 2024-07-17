@@ -187,26 +187,11 @@ export default function Inspector() {
             {config.memeUrl ? (
                 <div className="flex flex-col gap-5">
                     <h2 className="text-lg font-semibold">Frame Options</h2>
-                    <div className="flex flex-col gap-4">
-                        <h3 className="text-base font-medium">Aspect Ratio</h3>
-                        <Select
-                            defaultValue={config.aspectRatio}
-                            onValueChange={(aspectRatio) => updateConfig({ aspectRatio })}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select aspect ratio" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="1:1">1:1 (Square)</SelectItem>
-                                <SelectItem value="1.91:1">1.91:1 (Widescreen)</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
 
                     <Button
                         variant="destructive"
                         className="w-full "
-                        onClick={() => updateConfig({ memeUrl: undefined, aspectratio: undefined })}
+                        onClick={() => updateConfig({ memeUrl: undefined, template: undefined })}
                     >
                         Delete
                     </Button>
