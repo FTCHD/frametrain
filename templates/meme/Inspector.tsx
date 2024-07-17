@@ -115,7 +115,7 @@ export default function Inspector() {
             </div>
 
             {selectedMeme ? (
-                <div className="flex flex-col gap-4 h-full">
+                <div className="flex flex-col gap-4">
                     <div className="flex flex-col">
                         <div className="flex flex-row justify-between items-center">
                             <h2 className="text-lg font-semibold">Thumbnail</h2>
@@ -127,7 +127,7 @@ export default function Inspector() {
                     <div className="flex flex-col h-full">
                         <h2 className="text-lg font-semibold">Captions</h2>
 
-                        <div className="flex flex-col gap-2 h-full">
+                        <div className="flex flex-col gap-2">
                             {Array.from({ length: selectedMeme?.positions || 1 }).map((_, i) => (
                                 <Input
                                     key={i}
@@ -142,44 +142,44 @@ export default function Inspector() {
                                     }}
                                 />
                             ))}
-                        </div>
 
-                        <Button
-                            disabled={!selectedMeme || generating}
-                            onClick={async () => {
-                                if (!selectedMeme) return
-                                if (captions.length !== selectedMeme.positions) return
+                            <Button
+                                disabled={!selectedMeme || generating}
+                                onClick={async () => {
+                                    if (!selectedMeme) return
+                                    if (captions.length !== selectedMeme.positions) return
 
-                                setGenerating(true)
+                                    setGenerating(true)
 
-                                createMeme(captions, selectedMeme.id)
-                                    .then(async (memeUrl) => {
-                                        updateConfig({
-                                            memeUrl,
-                                            template: {
-                                                id: selectedMeme.id,
-                                                name: selectedMeme.name,
-                                                url: selectedMeme.url,
-                                                captions,
-                                            },
+                                    createMeme(captions, selectedMeme.id)
+                                        .then(async (memeUrl) => {
+                                            updateConfig({
+                                                memeUrl,
+                                                template: {
+                                                    id: selectedMeme.id,
+                                                    name: selectedMeme.name,
+                                                    url: selectedMeme.url,
+                                                    captions,
+                                                },
+                                            })
+                                            setSelectedMeme(undefined)
+                                            setCaptions([])
                                         })
-                                        setSelectedMeme(undefined)
-                                        setCaptions([])
-                                    })
-                                    .catch((err) => {
-                                        const error = err as Error
-                                        toast.remove()
-                                        toast.error(error.message)
-                                    })
-                                    .finally(() => {
-                                        setGenerating(false)
-                                    })
-                            }}
-                            size="lg"
-                            className="w-full bg-border hover:bg-secondary-border text-primary"
-                        >
-                            {generating ? <LoaderIcon className="animate-spin" /> : 'Create'}
-                        </Button>
+                                        .catch((err) => {
+                                            const error = err as Error
+                                            toast.remove()
+                                            toast.error(error.message)
+                                        })
+                                        .finally(() => {
+                                            setGenerating(false)
+                                        })
+                                }}
+                                size="lg"
+                                className="w-full bg-border hover:bg-secondary-border text-primary"
+                            >
+                                {generating ? <LoaderIcon className="animate-spin" /> : 'Create'}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             ) : null}
@@ -187,26 +187,11 @@ export default function Inspector() {
             {config.memeUrl ? (
                 <div className="flex flex-col gap-5 h-full">
                     <h2 className="text-lg font-semibold">Frame Options</h2>
-                    <div className="flex flex-col gap-4">
-                        <h3 className="text-base font-medium">Aspect Ratio</h3>
-                        <Select
-                            defaultValue={config.aspectRatio}
-                            onValueChange={(aspectRatio) => updateConfig({ aspectRatio })}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select aspect ratio" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="1:1">1:1 (Square)</SelectItem>
-                                <SelectItem value="1.91:1">1.91:1 (Widescreen)</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
 
                     <Button
                         variant="destructive"
                         className="w-full "
-                        onClick={() => updateConfig({ memeUrl: undefined, aspectratio: undefined })}
+                        onClick={() => updateConfig({ memeUrl: undefined, template: undefined })}
                     >
                         Delete
                     </Button>
