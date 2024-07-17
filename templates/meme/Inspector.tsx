@@ -185,7 +185,7 @@ export default function Inspector() {
             ) : null}
 
             {config.memeUrl ? (
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-5 h-full">
                     <h2 className="text-lg font-semibold">Frame Options</h2>
 
                     <Button
