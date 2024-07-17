@@ -3,7 +3,7 @@ import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
 import CoverView from '../views/Cover'
-import { fetchRssFeed, type RssFeedIntro } from '../rss'
+import { fetchRssFeedIntro, type RssFeedIntro } from '../rss'
 import { FrameError } from '@/sdk/error'
 
 export default async function initial({
@@ -18,12 +18,7 @@ export default async function initial({
 
     try {
         if (config.rssUrl) {
-            const rssFeed = await fetchRssFeed(config.rssUrl)
-            feed = {
-                title: rssFeed.title,
-                updatedAt: rssFeed.updatedAt,
-                total: rssFeed.body.length,
-            }
+            feed = await fetchRssFeedIntro(config.rssUrl)
 
             buttons.push({
                 label: 'Read',
@@ -39,5 +34,6 @@ export default async function initial({
         fonts: roboto,
         component: CoverView(feed),
         handler: 'post',
+        params: feed ? { lastUpdated: feed.updatedAt.unix } : undefined,
     }
 }

@@ -20,8 +20,11 @@ function extractText(html: string): string {
 
 export interface RssFeed {
     title: string
-    updatedAt: string
-    body: {
+    updatedAt: {
+        formatted: string
+        unix: number
+    }
+    posts: {
         title: string
         link: string
         description: string
@@ -32,6 +35,33 @@ export interface RssFeed {
 
 export type RssFeedIntro = Pick<RssFeed, 'title' | 'updatedAt'> & {
     total: number
+}
+
+export async function fetchRssFeedIntro(url: string): Promise<RssFeedIntro> {
+    const response = await fetch(url)
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch rss feed')
+    }
+
+    const content = await response.text()
+    const feed = parseFeed(content)
+
+    if (feed === null) {
+        throw new Error('Failed to parse feed')
+    }
+
+    const date = dayjs(feed.updated)
+
+    return {
+        title: extractText(feed.title || ''),
+        updatedAt: {
+            formatted: date.format('dddd, MMMM Do @ LT'),
+            unix: date.unix(),
+        },
+
+        total: Array.isArray(feed.items) ? feed.items.length : 1,
+    }
 }
 
 export async function fetchRssFeed(url: string): Promise<RssFeed> {
@@ -48,7 +78,7 @@ export async function fetchRssFeed(url: string): Promise<RssFeed> {
         throw new Error('Failed to parse feed')
     }
 
-    const body = (Array.isArray(feed.items) ? feed.items : [feed.items]).map((item) => {
+    const posts = (Array.isArray(feed.items) ? feed.items : [feed.items]).map((item) => {
         return {
             title: extractText(item.title || ''),
             link: item.link!,
@@ -58,9 +88,14 @@ export async function fetchRssFeed(url: string): Promise<RssFeed> {
         }
     })
 
+    const date = dayjs(feed.updated)
+
     return {
         title: extractText(feed.title || ''),
-        updatedAt: dayjs(feed.updated).format('dddd, MMMM Do @ LT'),
-        body,
+        updatedAt: {
+            formatted: date.format('dddd, MMMM Do @ LT'),
+            unix: date.unix(),
+        },
+        posts,
     }
 }
