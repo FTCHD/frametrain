@@ -13,6 +13,7 @@ import sablier from './sablier'
 import twitter from './twitter'
 import presentation from './presentation'
 import meme from './meme'
+import rss from './rss'
 
 export default {
     // basic,
@@ -30,4 +31,5 @@ export default {
     luma,
     presentation,
     meme,
+    rss,
 }
