@@ -5,6 +5,7 @@ import handlers from './handlers'
 
 export interface Config extends BaseConfig {
     memeUrl: string | undefined
+    aspectRatio?: '1.91:1' | '1:1'
     template:
         | {
               id: string
