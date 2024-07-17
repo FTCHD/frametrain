@@ -50,10 +50,6 @@ export default async function page({
     return {
         buttons: buttons,
         aspectRatio: '1:1',
-        // component: PageView({
-        //     slideUrl: slideUrl,
-        //     sizes: dimensionsForRatio[config.aspectRatio as keyof typeof dimensionsForRatio],
-        // }),
         image: process.env.NEXT_PUBLIC_CDN_HOST + slideUrl,
         handler: 'page',
         params: {
