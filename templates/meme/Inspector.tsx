@@ -26,18 +26,9 @@ export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const [memeTemplates, setMemeTemplates] = useState<Meme[]>([])
-    const [selectedMeme, setSelectedMeme] = useState<Meme | undefined>(
-        config.template
-            ? {
-                  id: config.template.id,
-                  name: config.template.name,
-                  url: config.template.url,
-                  positions: config.template.captions.length,
-              }
-            : undefined
-    )
+    const [selectedMeme, setSelectedMeme] = useState<Meme | undefined>(undefined)
     const [generating, setGenerating] = useState(false)
-    const [captions, setCaptions] = useState<string[]>(config.template?.captions || [])
+    const [captions, setCaptions] = useState<string[]>([])
 
     useEffect(() => {
         function setLocalStorage(key: string, item: any) {
@@ -185,8 +176,7 @@ export default function Inspector() {
             ) : null}
 
             {config.memeUrl ? (
-                <div className="flex flex-col gap-5 h-full">
-                    <h2 className="text-lg font-semibold">Frame Options</h2>
+                <div className="flex flex-col gap-2">
                     <div className="flex flex-col gap-4">
                         <h3 className="text-base font-medium">Aspect Ratio</h3>
                         <Select
@@ -206,9 +196,15 @@ export default function Inspector() {
                     <Button
                         variant="destructive"
                         className="w-full "
-                        onClick={() => updateConfig({ memeUrl: undefined, aspectratio: undefined })}
+                        onClick={() =>
+                            updateConfig({
+                                memeUrl: undefined,
+                                template: undefined,
+                                aspectratio: undefined,
+                            })
+                        }
                     >
-                        Delete
+                        Reset Meme
                     </Button>
                 </div>
             ) : null}
