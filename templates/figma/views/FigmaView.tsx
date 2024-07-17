@@ -1,7 +1,7 @@
 import { dimensionsForRatio } from '@/sdk/constants'
 import { FrameError } from '@/sdk/error'
 import he from 'he'
-import type { AspectRatio, SlideConfig, TextLayerConfig } from '../config'
+import type { AspectRatio, SlideConfig, TextLayerConfig } from '../Config'
 import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
 
 /*
@@ -36,7 +36,7 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
     const parseCSS = (cssString: string): Record<string, string> => {
         if (!cssString) return {}
 
-        return cssString.split('\n').reduce(
+        return cssString.split(/\n;/).reduce(
             (acc, style) => {
                 if (style.trim()) {
                     const [property, value] = style.split(':')
@@ -76,7 +76,7 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
 
     const baseImagePath = slideConfig.baseImagePaths?.[slideConfig.aspectRatio]
     if (!baseImagePath) return <></>
-
+    
     const dimensions = getDimensionsForAspectRatio(slideConfig.aspectRatio)
     if (!dimensions) throw new FrameError('Unsupported aspect ratio')
 
@@ -148,6 +148,7 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
                     fontFamily: textLayer.fontFamily,
                     fontStyle: textLayer.fontStyle,
                     letterSpacing: textLayer.letterSpacing,
+                    textWrap: 'wrap',
                     ...css,
                 }}
             >
