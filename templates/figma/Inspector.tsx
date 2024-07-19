@@ -110,7 +110,7 @@ export default function Inspector() {
     const canDelete = config.slides.length != 1 // must always be one slide visible
 
     return (
-        <div className="w-full h-full space-y-4 pr-2">
+        <div className="w-full h-full space-y-4 pl-2 pr-2">
             {editingFigmaPAT && (
                 <FigmaTokenEditor
                     figmaPAT={config.figmaPAT}

@@ -26,14 +26,18 @@ import { getFigmaDesign, svgToDataUrl } from '../utils/FigmaApi'
 
 const SVG_TEXT_DEBUG_ENABLED = false
 
-type FigmaTabProps = {
+type PropertiesTabProps = {
     slideConfigId: string
+    title: string
+    description: string
     textLayers: TextLayerConfigs
     aspectRatio: AspectRatio
     figmaPAT: string
     figmaUrl?: string
     figmaMetadata?: FigmaMetadata
-    onUpdate: (
+    onUpdateTitle: (title: string) => void
+    onUpdateDescription: (description: string) => void
+    onUpdateFigma: (
         figmaUrl: string,
         figmaMetadata: FigmaMetadata,
         baseImagePaths: BaseImagePaths,
@@ -42,16 +46,20 @@ type FigmaTabProps = {
     onUpdateAspectRatio: (aspectRatio: AspectRatio) => void
 }
 
-export const FigmaTab = ({
+export const PropertiesTab = ({
     slideConfigId,
+    title,
+    description,
     textLayers,
     aspectRatio,
     figmaPAT,
     figmaUrl,
     figmaMetadata,
-    onUpdate,
+    onUpdateTitle,
+    onUpdateDescription,
+    onUpdateFigma,
     onUpdateAspectRatio,
-}: FigmaTabProps) => {
+}: PropertiesTabProps) => {
     const frameId = useFrameId()
     const uploadImage = useUploadImage()
     const [newUrl, setNewUrl] = useState(figmaUrl)
@@ -125,7 +133,7 @@ export const FigmaTab = ({
         }
 
         // At this point, newUrl is guaranteed valid
-        onUpdate(newUrl!, figmaMetadata, baseImagePaths, updatedTextLayers)
+        onUpdateFigma(newUrl!, figmaMetadata, baseImagePaths, updatedTextLayers)
 
         setIsUpdating(false)
 
@@ -189,75 +197,91 @@ export const FigmaTab = ({
 
     return (
         <div>
-            <div className="flex items-center gap-2">
+            <div className="grid grid-cols-[1fr_2fr] space-y-2">
+                <div className="flex items-center">Title</div>
                 <Input
-                    type="url"
-                    placeholder={
-                        figmaPAT
-                            ? 'Right click on a frame in Figma > Copy as > Copy link'
-                            : 'Configure Figma PAT first'
-                    }
-                    disabled={!figmaPAT}
-                    value={newUrl}
-                    onChange={(e) => setNewUrl(e.target.value)}
+                    placeholder="Title"
+                    defaultValue={title}
+                    onBlur={(e) => onUpdateTitle(e.target.value)}
                 />
-                <Button disabled={isUpdating || !figmaPAT || !newUrl} onClick={updateUrl}>
-                    {isUpdating && (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Please wait
-                        </>
-                    )}
-                    {!isUpdating && (
-                        <>
-                            <CloudDownload className="mr-2 h-4 w-4" />
-                            {figmaUrl ? 'Update' : 'Load'}
-                        </>
-                    )}
-                </Button>
-            </div>
-            {!isUpdating && figmaMetadata && (
-                <div className="grid grid-cols-[1fr_1fr] gap-4 mt-4">
-                    <div className="flex items-center">Name</div>
-                    <div className="flex items-center">{figmaMetadata?.name}</div>
 
-                    <div className="flex items-center">Last Modified</div>
-                    <div className="flex items-center">{figmaMetadata?.lastModified}</div>
-
-                    <div className="flex items-center">Width</div>
-                    <div className="flex items-center">
-                        <Badge>{figmaMetadata?.width}</Badge>
-                        <div className="text-xs ml-4 opacity-80">(recommendation: 1200 or 630)</div>
-                    </div>
-
-                    <div className="flex items-center">Height</div>
-                    <div className="flex items-center">
-                        <Badge>{figmaMetadata?.height}</Badge>
-                        <div className="text-xs ml-4 opacity-80">(recommendation: 630)</div>
-                    </div>
-
-                    <div className="flex items-center">Source Aspect Ratio</div>
-                    <div className="flex items-center">
-                        <Badge>{aspectRatioFormatted}</Badge>
-                    </div>
-
-                    <div className="flex items-center">Frame Aspect Ratio</div>
-                    <div className="flex items-center">
-                        <Select
-                            defaultValue={aspectRatio}
-                            onValueChange={(value) => onUpdateAspectRatio(value as AspectRatio)}
-                        >
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select aspect ratio" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="1:1">1:1 (Square)</SelectItem>
-                                <SelectItem value="1.91:1">1.91:1 (Widescreen)</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                <div className="flex items-center">Description</div>
+                <Input
+                    placeholder="Description"
+                    defaultValue={description}
+                    onBlur={(e) => onUpdateDescription(e.target.value)}
+                />
+                <div className="flex items-center">Figma URL</div>
+                <div className="flex items-center">
+                    <Input
+                        type="url"
+                        placeholder={
+                            figmaPAT
+                                ? 'Right click on a frame in Figma > Copy as > Copy link'
+                                : 'Configure Figma PAT first'
+                        }
+                        disabled={!figmaPAT}
+                        value={newUrl}
+                        onChange={(e) => setNewUrl(e.target.value)}
+                        className="mr-2"
+                    />
+                    <Button disabled={isUpdating || !figmaPAT || !newUrl} onClick={updateUrl}>
+                        {isUpdating && (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Please wait
+                            </>
+                        )}
+                        {!isUpdating && (
+                            <>
+                                <CloudDownload className="mr-2 h-4 w-4" />
+                                {figmaUrl ? 'Update' : 'Load'}
+                            </>
+                        )}
+                    </Button>
                 </div>
-            )}
+
+                {!isUpdating && figmaMetadata && (
+                    <>
+                        <div className="flex items-center">Design Name</div>
+                        <div className="flex items-center">{figmaMetadata?.name}</div>
+
+                        <div className="flex items-center">Last Modified</div>
+                        <div className="flex items-center">{figmaMetadata?.lastModified}</div>
+
+                        <div className="flex items-center">Dimensions</div>
+                        <div className="flex items-center">
+                            <Badge>
+                                {figmaMetadata?.width} x {figmaMetadata?.height}
+                            </Badge>
+                            <div className="text-xs ml-4 opacity-80">
+                                (recommendation: 1200x630 or 630x630)
+                            </div>
+                        </div>
+
+                        <div className="flex items-center">Source Aspect Ratio</div>
+                        <div className="flex items-center">
+                            <Badge>{aspectRatioFormatted}</Badge>
+                        </div>
+
+                        <div className="flex items-center">Frame Aspect Ratio</div>
+                        <div className="flex items-center">
+                            <Select
+                                defaultValue={aspectRatio}
+                                onValueChange={(value) => onUpdateAspectRatio(value as AspectRatio)}
+                            >
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select aspect ratio" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="1:1">1:1 (Square)</SelectItem>
+                                    <SelectItem value="1.91:1">1.91:1 (Widescreen)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </>
+                )}
+            </div>
         </div>
     )
 }
