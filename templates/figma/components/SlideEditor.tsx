@@ -102,13 +102,13 @@ const SlideDesigner = ({ figmaPAT, slideConfig, buttonTargets, onUpdate }: Slide
                 </TabsContent>
                 <TabsContent value="buttons">
                     <div className="grid grid-cols-[min-content_min-content_1fr_min-content_1fr] gap-4">
-                        <div className="flex items-center font-semibold">
+                        <div>
                             <p>#</p>
                         </div>
-                        <div className="flex items-center font-semibold" />
-                        <div className="flex items-center font-semibold">Caption</div>
-                        <div className="flex items-center font-semibold">Target</div>
-                        <div className="flex items-center font-semibold" />
+                        <div/>
+                        <div>Caption</div>
+                        <div>Target</div>
+                        <div/>
                         {slideConfig.buttons.map((buttonConfig) => (
                             <ButtonDesigner
                                 key={buttonConfig.id}
