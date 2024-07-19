@@ -76,23 +76,29 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
 
     const baseImagePath = slideConfig.baseImagePaths?.[slideConfig.aspectRatio]
     if (!baseImagePath) return <></>
-    
+
     const dimensions = getDimensionsForAspectRatio(slideConfig.aspectRatio)
     if (!dimensions) throw new FrameError('Unsupported aspect ratio')
+
+    //const scale = targetWidth / dimensions.width
 
     const baseImageUrl = process.env.NEXT_PUBLIC_CDN_HOST + '/frames/' + baseImagePath
 
     return (
-        <div
-            style={{
-                display: 'flex',
-                width: dimensions.width,
-                height: dimensions.height,
-            }}
-        >
+        <>
             <img src={baseImageUrl} alt={slideConfig.title} />
-            {Object.values(slideConfig.textLayers).map(renderTextLayer)}
-        </div>
+            {/* <div
+                style={{
+                    display: 'flex',
+                    width: dimensions.width,
+                    height: dimensions.height,
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'top left',
+                }}
+            >
+                {Object.values(slideConfig.textLayers).map(renderTextLayer)}
+            </div> */}
+        </>
     )
 
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: invalid

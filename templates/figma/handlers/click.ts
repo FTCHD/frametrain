@@ -10,10 +10,13 @@ export default async function click({
 }: {
     body: FrameActionPayload
     config: FramePressConfig
-    params: { slideId: string }
+    params: any
 }): Promise<BuildFrameData> {
-    const slideId = params.slideId
+    const slideId = params.origin
+    const buttonIndex = body.untrustedData.buttonIndex.toString()
     const slideConfig = config.slides?.find((slide) => slide.id === slideId)
+    const buttonConfig = slideConfig?.buttons.find((button) => button.id === buttonIndex)
+    const targetSlideConfig = config.slides?.find((slide) => slide.id === buttonConfig?.target)
 
-    return buildFigmaFrame(config, slideConfig)
+    return buildFigmaFrame(config, targetSlideConfig)
 }

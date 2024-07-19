@@ -21,12 +21,12 @@ import type {
     FigmaMetadata,
     TextLayerConfig,
     TextLayerConfigs,
-} from '../config'
+} from '../Config'
 import { getFigmaDesign, svgToDataUrl } from '../utils/FigmaApi'
 
 const SVG_TEXT_DEBUG_ENABLED = false
 
-type FigmaDesignerProps = {
+type FigmaTabProps = {
     slideConfigId: string
     textLayers: TextLayerConfigs
     aspectRatio: AspectRatio
@@ -42,7 +42,7 @@ type FigmaDesignerProps = {
     onUpdateAspectRatio: (aspectRatio: AspectRatio) => void
 }
 
-export const FigmaDesigner = ({
+export const FigmaTab = ({
     slideConfigId,
     textLayers,
     aspectRatio,
@@ -51,7 +51,7 @@ export const FigmaDesigner = ({
     figmaMetadata,
     onUpdate,
     onUpdateAspectRatio,
-}: FigmaDesignerProps) => {
+}: FigmaTabProps) => {
     const frameId = useFrameId()
     const uploadImage = useUploadImage()
     const [newUrl, setNewUrl] = useState(figmaUrl)

@@ -3,10 +3,10 @@ import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFont } from '@/sdk/fonts'
 import type { FontStyle, FontWeight } from 'satori'
-import type { FramePressConfig, SlideConfig } from '../config'
+import type { FramePressConfig, SlideConfig } from '../Config'
 import { FigmaView } from '../views/FigmaView'
 
-export default async function buildFrame(
+export default async function buildFigmaFrame(
     config: FramePressConfig,
     slideConfig?: SlideConfig
 ): Promise<BuildFrameData> {
@@ -67,7 +67,7 @@ export default async function buildFrame(
         fonts,
         aspectRatio: slideConfig.aspectRatio,
         component: view,
-        handler: 'slide',
+        handler: 'click',
         params: { origin: slideConfig.id },
     }
 }

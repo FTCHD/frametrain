@@ -1,16 +1,7 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/shadcn/Card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/Card'
 import { Input } from '@/components/shadcn/Input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
-import { MoveDownIcon, MoveUpIcon, Trash2Icon } from 'lucide-react'
 import type {
     AspectRatio,
     BaseImagePaths,
@@ -19,41 +10,20 @@ import type {
     SlideConfig,
     TextLayerConfig,
     TextLayerConfigs,
-} from '../config'
+} from '../Config'
 import { FigmaView, getDimensionsForAspectRatio } from '../views/FigmaView'
 import { ButtonDesigner, type ButtonTarget } from './ButtonDesigner'
-import { FigmaDesigner } from './FigmaDesigner'
+import { FigmaTab } from './FigmaTab'
 import { TextLayerDesigner } from './TextLayerDesigner'
 
 type SlideDesignerProps = {
     figmaPAT: string
-    isFirstSlide: boolean
-    isSecondSlide: boolean
-    isLastSlide: boolean
     slideConfig: SlideConfig
     buttonTargets: ButtonTarget[]
     onUpdate: (updatedSlideConfig: SlideConfig) => void
-    onMoveUp: () => void
-    onMoveDown: () => void
-    onAddAbove: () => void
-    onAddBelow: () => void
-    onDelete: () => void
 }
 
-const SlideDesigner = ({
-    figmaPAT,
-    isFirstSlide,
-    isSecondSlide,
-    isLastSlide,
-    slideConfig,
-    buttonTargets,
-    onUpdate,
-    onMoveUp,
-    onMoveDown,
-    onAddAbove,
-    onAddBelow,
-    onDelete,
-}: SlideDesignerProps) => {
+const SlideDesigner = ({ figmaPAT, slideConfig, buttonTargets, onUpdate }: SlideDesignerProps) => {
     const updateFigma = (
         figmaUrl: string,
         figmaMetadata: FigmaMetadata,
@@ -116,15 +86,15 @@ const SlideDesigner = ({
                     <CardTitle>
                         <Input
                             placeholder="Title"
-                            value={slideConfig.title}
-                            onChange={(e) => onUpdate({ ...slideConfig, title: e.target.value })}
+                            defaultValue={slideConfig.title}
+                            onBlur={(e) => onUpdate({ ...slideConfig, title: e.target.value })}
                         />
                     </CardTitle>
                     <CardDescription>
                         <Input
                             placeholder="Description"
-                            value={slideConfig.description}
-                            onChange={(e) =>
+                            defaultValue={slideConfig.description}
+                            onBlur={(e) =>
                                 onUpdate({ ...slideConfig, description: e.target.value })
                             }
                         />
@@ -143,7 +113,7 @@ const SlideDesigner = ({
                         </TabsTrigger>
                     </TabsList>
                     <TabsContent value="figma">
-                        <FigmaDesigner
+                        <FigmaTab
                             slideConfigId={slideConfig.id}
                             textLayers={slideConfig.textLayers}
                             aspectRatio={slideConfig.aspectRatio}
@@ -186,74 +156,6 @@ const SlideDesigner = ({
                     </TabsContent>
                 </Tabs>
             </CardContent>
-            <CardFooter className="grid grid-cols-5 gap-2">
-                <div className="col-start-1 col-end-2">
-                    <Button
-                        variant="secondary"
-                        className="w-full"
-                        disabled={isFirstSlide || isSecondSlide}
-                        onClick={() => {
-                            onMoveUp()
-                        }}
-                    >
-                        <MoveUpIcon />
-                        Up
-                    </Button>
-                </div>
-
-                <div className="col-start-2 col-end-3">
-                    <Button
-                        variant="secondary"
-                        className="w-full"
-                        disabled={isFirstSlide || isLastSlide}
-                        onClick={() => {
-                            onMoveDown()
-                        }}
-                    >
-                        <MoveDownIcon />
-                        Down
-                    </Button>
-                </div>
-
-                <div className="col-start-3 col-end-4">
-                    <Button
-                        variant="secondary"
-                        className="w-full"
-                        disabled={isFirstSlide}
-                        onClick={() => {
-                            onAddAbove()
-                        }}
-                    >
-                        Add Above
-                    </Button>
-                </div>
-
-                <div className="col-start-4 col-end-5">
-                    <Button
-                        variant="secondary"
-                        className="w-full"
-                        onClick={() => {
-                            onAddBelow()
-                        }}
-                    >
-                        Add Below
-                    </Button>
-                </div>
-
-                <div className="col-start-5 col-end-6">
-                    <Button
-                        variant="destructive"
-                        className="w-full"
-                        disabled={isFirstSlide}
-                        onClick={() => {
-                            onDelete()
-                        }}
-                    >
-                        <Trash2Icon />
-                        Delete
-                    </Button>
-                </div>
-            </CardFooter>
         </Card>
     )
 }

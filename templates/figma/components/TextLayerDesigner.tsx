@@ -17,7 +17,7 @@ import {
     Type,
 } from 'lucide-react'
 import React, { useState } from 'react'
-import type { TextLayerConfig } from '../config'
+import type { TextLayerConfig } from '../Config'
 import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
 
 type TextLayerDesignerProps = {

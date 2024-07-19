@@ -1,18 +1,21 @@
 'use client'
 
 import { Input } from '@/components/shadcn/Input'
-import { useFrameConfig } from '@/sdk/hooks'
-import { InfoIcon } from 'lucide-react'
+import { useFrameConfig, useFramePreview } from '@/sdk/hooks'
+import { ArrowBigLeftDash, ArrowBigRightDash, InfoIcon, Trash2 } from 'lucide-react'
 import Link from 'next/link'
-import SlideDesigner from './components/SlideDesigner'
-import type { FramePressConfig, SlideConfig } from './config'
+import SlideEditor from './components/SlideEditor'
+import type { FramePressConfig, SlideConfig } from './Config'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
-
-const FIGMA_PAT_HELP =
-    'https://help.figma.com/hc/en-us/articles/8085703771159-Manage-personal-access-tokens'
+import FigmaTokenEditor from './components/FigmaTokenEditor'
+import { Button } from '@/components/shadcn/Button'
+import { useMemo, useState } from 'react'
+import { FigmaView } from './views/FigmaView'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
+    const [currentSlideIndex, setSlideIndex] = useState(0)
+    const [previewData, setPreviewData] = useFramePreview()
 
     // Setup default slides if this is a new instance
     if (config.slides === undefined) {
@@ -24,7 +27,13 @@ export default function Inspector() {
         })
     }
 
-    const updateFigmaPAT = (updatedPAT: string) => {
+    // Selected slide
+    const selectedSlide = useMemo(() => {
+        return config.slides[currentSlideIndex]
+    }, [config, currentSlideIndex])
+
+    // Configuration updates
+    function updateFigmaPAT(updatedPAT: string) {
         console.debug('Inspector::updateFigmaPAT()')
         updateConfig({
             ...config,
@@ -32,87 +41,62 @@ export default function Inspector() {
         })
     }
 
-    // REFACTOR using a dictionary would be simpler?
-    const updateSlide = (updatedSlide: SlideConfig) => {
-        console.debug(`Inspector::updateSlide(${updatedSlide.id})`)
+    function updateSlide(updatedSlide: SlideConfig) {
+        console.debug(`Inspector::updateSlide(id=${updatedSlide.id})`)
 
-        const updatedSlides = config.slides?.map((slide) =>
-            slide.id == updatedSlide.id ? updatedSlide : slide
-        )
+        const updatedSlides = config.slides.with(currentSlideIndex, updatedSlide)
 
-        updateConfig({
-            ...config,
-            slides: updatedSlides,
-        })
+        updateConfig({ slides: updatedSlides })
     }
 
-    const addSlide = (index: number, position: 'above' | 'below') => {
-        console.debug(`Inspector::addSlide(${index}, ${position})`)
+    function addSlide() {
+        console.debug('Inspector::addSlide()')
 
         const newSlide: SlideConfig = {
             id: config.nextSlideId.toString(),
+            title: '',
+            description: '',
             aspectRatio: '1:1',
             textLayers: {},
             buttons: INITIAL_BUTTONS,
         }
 
-        const updatedSlides = [...config.slides]
-
-        if (position === 'above') {
-            updatedSlides.splice(index, 0, newSlide)
-        } else if (position === 'below') {
-            updatedSlides.splice(index + 1, 0, newSlide)
-        }
+        const updatedSlides = config.slides.concat(newSlide)
 
         updateConfig({
-            ...config,
             slides: updatedSlides,
             nextSlideId: config.nextSlideId + 1,
         })
+
+        setSlideIndex(updatedSlides.length - 1)
     }
 
-    const removeSlide = (index: number) => {
-        console.debug(`Inspector::removeSlide(${index})`)
+    function removeSlide() {
+        console.debug(`Inspector::removeSlide(${currentSlideIndex})`)
+
+        const updatedSlides = config.slides
+        updatedSlides.splice(currentSlideIndex, 1)
+        setSlideIndex((c) => Math.max(0, c - 1))
+        updateConfig({ slides: updatedSlides })
+    }
+
+    function swapSlide(direction: 'left' | 'right') {
+        console.debug(`Inspector::moveSlide(${currentSlideIndex}, ${direction})`)
 
         const updatedSlides = [...config.slides]
 
-        if (index >= 0 && index < updatedSlides.length) {
-            updatedSlides.splice(index, 1)
-            updateConfig({
-                ...config,
-                slides: updatedSlides,
-            })
-        } else {
-            console.error('Invalid index:', index)
-        }
-    }
-
-    const moveSlide = (index: number, direction: 'up' | 'down') => {
-        console.debug(`Inspector::moveSlide(${index}, ${direction})`)
-
-        const updatedSlides = [...config.slides]
-
-        if (index < 0 || index >= updatedSlides.length) {
-            console.error('Invalid index:', index)
+        if (currentSlideIndex < 0 || currentSlideIndex === updatedSlides.length - 1) {
+            console.error('Invalid index:', currentSlideIndex)
             return
         }
 
-        const swapIndex = direction === 'up' ? index - 1 : index + 1
+        const swapIndex = direction === 'left' ? currentSlideIndex - 1 : currentSlideIndex + 1
 
-        if (swapIndex < 0 || swapIndex >= updatedSlides.length) {
-            console.error('Cannot move slide out of bounds:', swapIndex)
-            return
-        }
-
-        // Swap the slides
-        const temp = updatedSlides[index]
-        updatedSlides[index] = updatedSlides[swapIndex]
+        const temp = updatedSlides[currentSlideIndex]
+        updatedSlides[currentSlideIndex] = updatedSlides[swapIndex]
         updatedSlides[swapIndex] = temp
 
-        updateConfig({
-            ...config,
-            slides: updatedSlides,
-        })
+        updateConfig({ slides: updatedSlides })
     }
 
     const buttonTargets = config.slides
@@ -122,48 +106,69 @@ export default function Inspector() {
             title: slide.title as string,
         }))
 
+    const canMoveLeft = currentSlideIndex != 0 // not the first slide
+    const canMoveRight = currentSlideIndex != config.slides.length - 1 // not the last slide
+    const canDelete = config.slides.length != 1 // must always be one slide visible
+
     return (
         <div className="w-full h-full space-y-4 pr-2">
-            <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold">Figma Personal Access Token (PAT)</h2>
-                <p className="text-sm text-muted-foreground">
-                    A token is required to display your Figma designs.
-                </p>
-                <div className="flex items-center space-x-2">
-                    <div>{config.figmaPAT ? '✅' : '❌'}</div>
-                    <Input
-                        id="token"
-                        type="password"
-                        placeholder={
-                            config.figmaPAT ? 'Figma PAT is saved' : 'Enter your Figma PAT'
-                        }
-                        className="flex-1"
-                        onChange={(e) => updateFigmaPAT(e.target.value)}
-                    />
-                    <Link href={FIGMA_PAT_HELP} className="flex" target="_blank">
-                        <InfoIcon className="mr-2 h-4 w-4 self-center" />
-                        Learn more
-                    </Link>
+            <FigmaTokenEditor figmaPAT={config.figmaPAT} onChange={updateFigmaPAT} />
+
+            <div className="w-full flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Slides</h2>
+                <div className="flex flex-row items-center justify-end gap-2">
+                    <Button onClick={() => swapSlide('left')} disabled={!canMoveLeft}>
+                        <ArrowBigLeftDash /> Move left
+                    </Button>
+                    <Button onClick={() => swapSlide('right')} disabled={!canMoveRight}>
+                        Move right <ArrowBigRightDash />
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        disabled={!canDelete}
+                        onClick={() => removeSlide()}
+                    >
+                        <Trash2 />
+                    </Button>
+                </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+                {config.slides.map((slideConfig, index) => (
+                    <div
+                        key={slideConfig.id}
+                        onClick={() => {
+                            setSlideIndex(index);
+                            setPreviewData({
+                                handler: 'slide',
+                                buttonIndex: 0,
+                                inputText: '',
+                                params: `slideId=${slideConfig.id}`
+                            })
+                        }}
+                        className={`w-40 h-40 flex items-center justify-center p-2 border-[1px] rounded-md cursor-pointer select-none ${
+                            currentSlideIndex === index ? 'border-highlight' : 'border-input'
+                        }`}
+                    >
+                        <FigmaView slideConfig={slideConfig} />
+                    </div>
+                ))}
+                <div
+                    onClick={() => addSlide()}
+                    className="w-40 h-40 flex items-center justify-center p-2 border-input border-[1px] rounded-md cursor-pointer"
+                >
+                    <span className="text-4xl">+</span>
                 </div>
             </div>
 
-            {config.slides?.map((slideConfig, index) => (
-                <SlideDesigner
-                    key={slideConfig.id}
-                    slideConfig={slideConfig}
+            {selectedSlide && (
+                <SlideEditor
+                    key={selectedSlide.id}
+                    slideConfig={selectedSlide}
                     figmaPAT={config.figmaPAT}
-                    isFirstSlide={index == 0}
-                    isSecondSlide={index == 1}
-                    isLastSlide={index == config.slides.length - 1}
                     buttonTargets={buttonTargets}
                     onUpdate={(updatedSlideConfig) => updateSlide(updatedSlideConfig)}
-                    onMoveUp={() => moveSlide(index, 'up')}
-                    onMoveDown={() => moveSlide(index, 'down')}
-                    onAddAbove={() => addSlide(index, 'above')}
-                    onAddBelow={() => addSlide(index, 'below')}
-                    onDelete={() => removeSlide(index)}
                 />
-            ))}
+            )}
         </div>
     )
 }
