@@ -7,13 +7,13 @@ import type { FramePressConfig, SlideConfig } from './Config'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
 import FigmaTokenEditor from './components/FigmaTokenEditor'
 import { Button } from '@/components/shadcn/Button'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FigmaView } from './views/FigmaView'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
     const [editingFigmaPAT, setEditFigmaPAT] = useState(config.figmaPAT === undefined)
-    const [currentSlideIndex, setSlideIndex] = useState(0)
+    const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
     const [_, setPreviewData] = useFramePreview()
 
     // Setup default slides if this is a new instance
@@ -27,9 +27,17 @@ export default function Inspector() {
     }
 
     // Selected slide
-    const selectedSlide = useMemo(() => {
-        return config.slides[currentSlideIndex]
-    }, [config, currentSlideIndex])
+    const selectedSlide = config.slides?.[currentSlideIndex]
+
+    function selectSlide(index: number) {
+        setCurrentSlideIndex(index)
+        setPreviewData({
+            handler: 'slide',
+            buttonIndex: 0,
+            inputText: '',
+            params: `slideId=${config.slides[index].id}`,
+        })
+    }
 
     // Configuration updates
     function updateFigmaPAT(updatedPAT: string) {
@@ -40,10 +48,26 @@ export default function Inspector() {
         })
     }
 
+    function loadGoogleFonts(fontFamily: string) {
+        const link = document.createElement('link');
+        link.href = `https://fonts.googleapis.com/css2?family=${fontFamily}&display=swap`;
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+      }
+
+    useEffect(() => {
+        loadGoogleFonts('Righteous');
+        loadGoogleFonts('Roboto');
+        loadGoogleFonts('Roboto Condensed');
+        loadGoogleFonts('Roboto Mono');
+      }, []);
+
     function updateSlide(updatedSlide: SlideConfig) {
         console.debug(`Inspector::updateSlide(id=${updatedSlide.id})`)
 
         const updatedSlides = config.slides.with(currentSlideIndex, updatedSlide)
+
+        // TODO update fonts correctly
 
         updateConfig({ slides: updatedSlides })
     }
@@ -67,7 +91,7 @@ export default function Inspector() {
             nextSlideId: config.nextSlideId + 1,
         })
 
-        setSlideIndex(updatedSlides.length - 1)
+        selectSlide(updatedSlides.length - 1) // TODO broken :()
     }
 
     function removeSlide() {
@@ -75,7 +99,7 @@ export default function Inspector() {
 
         const updatedSlides = config.slides
         updatedSlides.splice(currentSlideIndex, 1)
-        setSlideIndex((c) => Math.max(0, c - 1))
+        selectSlide(currentSlideIndex - 1)
         updateConfig({ slides: updatedSlides })
     }
 
@@ -84,17 +108,13 @@ export default function Inspector() {
 
         const updatedSlides = [...config.slides]
 
-        if (currentSlideIndex < 0 || currentSlideIndex === updatedSlides.length - 1) {
-            console.error('Invalid index:', currentSlideIndex)
-            return
-        }
-
         const swapIndex = direction === 'left' ? currentSlideIndex - 1 : currentSlideIndex + 1
 
         const temp = updatedSlides[currentSlideIndex]
         updatedSlides[currentSlideIndex] = updatedSlides[swapIndex]
         updatedSlides[swapIndex] = temp
 
+        selectSlide(swapIndex)
         updateConfig({ slides: updatedSlides })
     }
 
@@ -106,8 +126,8 @@ export default function Inspector() {
         }))
 
     const canMoveLeft = currentSlideIndex != 0 // not the first slide
-    const canMoveRight = currentSlideIndex != config.slides.length - 1 // not the last slide
-    const canDelete = config.slides.length != 1 // must always be one slide visible
+    const canMoveRight = currentSlideIndex != config.slides?.length - 1 // not the last slide
+    const canDelete = config.slides?.length != 1 // must always be one slide visible
 
     return (
         <div className="w-full h-full space-y-4 pl-2 pr-2">
@@ -149,13 +169,7 @@ export default function Inspector() {
                             <div
                                 key={slideConfig.id}
                                 onClick={() => {
-                                    setSlideIndex(index)
-                                    setPreviewData({
-                                        handler: 'slide',
-                                        buttonIndex: 0,
-                                        inputText: '',
-                                        params: `slideId=${slideConfig.id}`,
-                                    })
+                                    selectSlide(index)
                                 }}
                                 className={`w-40 h-40 flex items-center justify-center p-2 border-[1px] rounded-md cursor-pointer select-none ${
                                     currentSlideIndex === index
@@ -163,7 +177,9 @@ export default function Inspector() {
                                         : 'border-input'
                                 }`}
                             >
-                                <FigmaView slideConfig={slideConfig} />
+                                <div style={{'transform': 'scale(0.222)'}}>
+                                    <FigmaView slideConfig={slideConfig} />
+                                </div>
                             </div>
                         ))}
                         <div

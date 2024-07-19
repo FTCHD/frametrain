@@ -100,7 +100,7 @@ export const PropertiesTab = ({
                 if (!existingTextLayer)
                     return {
                         ...discoveredTextLayer,
-                        allowFigmaUpdates: false,
+                        allowFigmaUpdates: true,
                         enabled: true,
                     }
 
@@ -200,14 +200,14 @@ export const PropertiesTab = ({
             <div className="grid grid-cols-[1fr_2fr] space-y-2">
                 <div className="flex items-center">Title</div>
                 <Input
-                    placeholder="Title"
+                    placeholder="No title"
                     defaultValue={title}
                     onBlur={(e) => onUpdateTitle(e.target.value)}
                 />
 
                 <div className="flex items-center">Description</div>
                 <Input
-                    placeholder="Description"
+                    placeholder="No description"
                     defaultValue={description}
                     onBlur={(e) => onUpdateDescription(e.target.value)}
                 />
@@ -217,7 +217,7 @@ export const PropertiesTab = ({
                         type="url"
                         placeholder={
                             figmaPAT
-                                ? 'Right click on a frame in Figma > Copy as > Copy link'
+                                ? 'Figma Frame > right click > copy as > copy link'
                                 : 'Configure Figma PAT first'
                         }
                         disabled={!figmaPAT}

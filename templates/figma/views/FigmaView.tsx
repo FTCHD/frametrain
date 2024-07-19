@@ -40,7 +40,8 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
             (acc, style) => {
                 if (style.trim()) {
                     const [property, value] = style.split(':')
-                    acc[property.trim()] = value.trim()
+                    const jsProp = property.trim().replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+                    acc[jsProp] = value.trim()
                 }
                 return acc
             },
@@ -86,18 +87,19 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
 
     return (
         <>
-            <img src={baseImageUrl} alt={slideConfig.title} />
-            {/* <div
+            <div
                 style={{
                     display: 'flex',
+                    position: 'relative',
                     width: dimensions.width,
                     height: dimensions.height,
-                    transform: `scale(${scale})`,
-                    transformOrigin: 'top left',
                 }}
             >
-                {Object.values(slideConfig.textLayers).map(renderTextLayer)}
-            </div> */}
+                <img src={baseImageUrl} alt={slideConfig.title} />
+                <div style={{ position: 'fixed' }}>
+                    {Object.values(slideConfig.textLayers).map(renderTextLayer)}
+                </div>
+            </div>
         </>
     )
 
@@ -154,12 +156,14 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
                     fontFamily: textLayer.fontFamily,
                     fontStyle: textLayer.fontStyle,
                     letterSpacing: textLayer.letterSpacing,
-                    textWrap: 'wrap',
+                    lineHeight: `${textLayer.lineHeightPx}px`,
                     ...css,
                 }}
             >
                 {contentLines.map((line, index) => (
-                    <div key={index}>{line == '' ? '\u00a0' : line}</div>
+                    <div key={index} style={{ textWrap: 'wrap' }}>
+                        {line == '' ? '\u00a0' : line}
+                    </div>
                 ))}
             </div>
         )

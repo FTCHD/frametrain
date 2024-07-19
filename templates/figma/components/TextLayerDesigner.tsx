@@ -12,8 +12,9 @@ import {
     ArrowDownFromLineIcon,
     ArrowUpFromLineIcon,
     CirclePower,
-    CloudDownload,
     FoldVerticalIcon,
+    Lock,
+    LockOpen,
     Type,
 } from 'lucide-react'
 import React, { useState } from 'react'
@@ -42,7 +43,8 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                             onChange({ ...config, allowFigmaUpdates: pressed })
                         }}
                     >
-                        <CloudDownload className="h-6 w-6" />
+                        {config.allowFigmaUpdates && <LockOpen className="h-6 w-6" />}
+                        {!config.allowFigmaUpdates && <Lock className="h-6 w-6" /> }
                     </Toggle>
                     <Toggle
                         variant="outline"
