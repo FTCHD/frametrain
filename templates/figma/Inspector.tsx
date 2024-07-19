@@ -1,9 +1,7 @@
 'use client'
 
-import { Input } from '@/components/shadcn/Input'
 import { useFrameConfig, useFramePreview } from '@/sdk/hooks'
-import { ArrowBigLeftDash, ArrowBigRightDash, InfoIcon, Trash2 } from 'lucide-react'
-import Link from 'next/link'
+import { ArrowBigLeftDash, ArrowBigRightDash, KeySquare, Trash2 } from 'lucide-react'
 import SlideEditor from './components/SlideEditor'
 import type { FramePressConfig, SlideConfig } from './Config'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
@@ -14,8 +12,9 @@ import { FigmaView } from './views/FigmaView'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
+    const [editingFigmaPAT, setEditFigmaPAT] = useState(config.figmaPAT === undefined)
     const [currentSlideIndex, setSlideIndex] = useState(0)
-    const [previewData, setPreviewData] = useFramePreview()
+    const [_, setPreviewData] = useFramePreview()
 
     // Setup default slides if this is a new instance
     if (config.slides === undefined) {
@@ -112,62 +111,79 @@ export default function Inspector() {
 
     return (
         <div className="w-full h-full space-y-4 pr-2">
-            <FigmaTokenEditor figmaPAT={config.figmaPAT} onChange={updateFigmaPAT} />
-
-            <div className="w-full flex items-center justify-between">
-                <h2 className="text-2xl font-bold">Slides</h2>
-                <div className="flex flex-row items-center justify-end gap-2">
-                    <Button onClick={() => swapSlide('left')} disabled={!canMoveLeft}>
-                        <ArrowBigLeftDash /> Move left
-                    </Button>
-                    <Button onClick={() => swapSlide('right')} disabled={!canMoveRight}>
-                        Move right <ArrowBigRightDash />
-                    </Button>
-                    <Button
-                        variant="destructive"
-                        disabled={!canDelete}
-                        onClick={() => removeSlide()}
-                    >
-                        <Trash2 />
-                    </Button>
-                </div>
-            </div>
-            <div className="flex flex-wrap gap-3">
-                {config.slides.map((slideConfig, index) => (
-                    <div
-                        key={slideConfig.id}
-                        onClick={() => {
-                            setSlideIndex(index);
-                            setPreviewData({
-                                handler: 'slide',
-                                buttonIndex: 0,
-                                inputText: '',
-                                params: `slideId=${slideConfig.id}`
-                            })
-                        }}
-                        className={`w-40 h-40 flex items-center justify-center p-2 border-[1px] rounded-md cursor-pointer select-none ${
-                            currentSlideIndex === index ? 'border-highlight' : 'border-input'
-                        }`}
-                    >
-                        <FigmaView slideConfig={slideConfig} />
-                    </div>
-                ))}
-                <div
-                    onClick={() => addSlide()}
-                    className="w-40 h-40 flex items-center justify-center p-2 border-input border-[1px] rounded-md cursor-pointer"
-                >
-                    <span className="text-4xl">+</span>
-                </div>
-            </div>
-
-            {selectedSlide && (
-                <SlideEditor
-                    key={selectedSlide.id}
-                    slideConfig={selectedSlide}
+            {editingFigmaPAT && (
+                <FigmaTokenEditor
                     figmaPAT={config.figmaPAT}
-                    buttonTargets={buttonTargets}
-                    onUpdate={(updatedSlideConfig) => updateSlide(updatedSlideConfig)}
+                    onChange={updateFigmaPAT}
+                    onCancel={() => setEditFigmaPAT(false)}
                 />
+            )}
+
+            {!editingFigmaPAT && (
+                <>
+                    <div className="w-full flex items-center justify-between">
+                        <div className="flex flex-row items-center justify-end gap-2">
+                            <Button onClick={() => setEditFigmaPAT(true)}>
+                                <KeySquare className="mr-1" />
+                                Figma PAT
+                            </Button>
+                        </div>
+                        <div className="flex flex-row items-center justify-end gap-2">
+                            <Button onClick={() => swapSlide('left')} disabled={!canMoveLeft}>
+                                <ArrowBigLeftDash /> Move left
+                            </Button>
+                            <Button onClick={() => swapSlide('right')} disabled={!canMoveRight}>
+                                Move right <ArrowBigRightDash />
+                            </Button>
+                            <Button
+                                variant="destructive"
+                                disabled={!canDelete}
+                                onClick={() => removeSlide()}
+                            >
+                                <Trash2 />
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                        {config.slides.map((slideConfig, index) => (
+                            <div
+                                key={slideConfig.id}
+                                onClick={() => {
+                                    setSlideIndex(index)
+                                    setPreviewData({
+                                        handler: 'slide',
+                                        buttonIndex: 0,
+                                        inputText: '',
+                                        params: `slideId=${slideConfig.id}`,
+                                    })
+                                }}
+                                className={`w-40 h-40 flex items-center justify-center p-2 border-[1px] rounded-md cursor-pointer select-none ${
+                                    currentSlideIndex === index
+                                        ? 'border-highlight'
+                                        : 'border-input'
+                                }`}
+                            >
+                                <FigmaView slideConfig={slideConfig} />
+                            </div>
+                        ))}
+                        <div
+                            onClick={() => addSlide()}
+                            className="w-40 h-40 flex items-center justify-center p-2 border-input border-[1px] rounded-md cursor-pointer"
+                        >
+                            <span className="text-4xl">+</span>
+                        </div>
+                    </div>
+
+                    {selectedSlide && (
+                        <SlideEditor
+                            key={selectedSlide.id}
+                            slideConfig={selectedSlide}
+                            figmaPAT={config.figmaPAT}
+                            buttonTargets={buttonTargets}
+                            onUpdate={(updatedSlideConfig) => updateSlide(updatedSlideConfig)}
+                        />
+                    )}
+                </>
             )}
         </div>
     )
