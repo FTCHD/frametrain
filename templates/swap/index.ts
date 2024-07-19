@@ -3,7 +3,7 @@ import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
 
-type Token = {
+export type PoolToken = {
     address: `0x${string}`
     symbol: string
     decimals: number
@@ -15,12 +15,15 @@ export interface Config extends BaseConfig {
     amounts: string[]
     pool: {
         address: `0x${string}`
-        token0: Token
-        token1: Token
+        token0: PoolToken
+        token1: PoolToken
         network: {
             id: number
             name: string
+            explorerUrl: string
         }
+        // mainly used to determine which token is the primary token for the Inspector
+        primary: 'token0' | 'token1'
     } | null
 }
 
@@ -36,7 +39,9 @@ export default {
     Inspector,
     handlers,
     initialConfig: {
-        text: 'Default Text',
+        amounts: [],
+        enablePredefinedAmounts: false,
+        pool: null,
     },
     requiresValidation: true,
     events: [],

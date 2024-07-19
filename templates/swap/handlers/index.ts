@@ -1,7 +1,9 @@
 import initial from './initial'
-import page from './page'
+import price from './price'
+import swap from './swap'
 
 export default {
     initial,
-    page,
+    swap,
+    price,
 }

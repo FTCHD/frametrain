@@ -69,6 +69,7 @@ export async function getPoolData(address: `0x${string}`) {
     const network = {
         id: client.chain.id,
         name: client.chain.name,
+        explorerUrl: client.chain.blockExplorers.default.url,
     }
 
     return {

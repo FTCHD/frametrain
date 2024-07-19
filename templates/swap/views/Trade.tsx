@@ -1,6 +1,7 @@
 import type { Config } from '..'
 
-export default function PageView({ token0, token1, network }: NonNullable<Config['pool']>) {
+export default function TradeView({ token0, token1, network }: NonNullable<Config['pool']>) {
+    // const token1Symbol = token1.symbol.replace(/(USDT|USDC|DAI)/, '$')
     return (
         <div
             style={{
