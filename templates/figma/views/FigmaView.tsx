@@ -3,6 +3,7 @@ import { FrameError } from '@/sdk/error'
 import he from 'he'
 import type { AspectRatio, SlideConfig, TextLayerConfig } from '../Config'
 import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
+import type { Property } from 'csstype'
 
 /*
 
@@ -39,9 +40,13 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
         return cssString.split(/\n;/).reduce(
             (acc, style) => {
                 if (style.trim()) {
-                    const [property, value] = style.split(':')
-                    const jsProp = property.trim().replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-                    acc[jsProp] = value.trim()
+                    const [propertyRaw, valueRaw] = style.split(':')
+                    const jsProp = propertyRaw
+                        .trim()
+                        .replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+                    const value = valueRaw.trim()
+                    if (jsProp === 'whiteSpace' && value === 'pre') acc[jsProp] = 'pre-wrap'
+                    else acc[jsProp] = value
                 }
                 return acc
             },
@@ -49,7 +54,7 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
         )
     }
 
-    const textAlignHorizontalToCss = (alignment: TextAlignHorizontal): string | undefined => {
+    const horzAlignToFlex = (alignment: TextAlignHorizontal): string | undefined => {
         switch (alignment) {
             case 'LEFT':
                 return 'flex-start'
@@ -62,7 +67,20 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
         }
     }
 
-    const textAlignVerticalToCss = (alignment: TextAlignVertical): string | undefined => {
+    const horzAlignToTextAlign = (alignment: TextAlignHorizontal): Property.TextAlign | undefined => {
+        switch (alignment) {
+            case 'LEFT':
+                return 'left'
+            case 'CENTER':
+                return 'center'
+            case 'RIGHT':
+                return 'right'
+            default:
+                return undefined
+        }
+    }
+
+    const vertAlignToText = (alignment: TextAlignVertical): string | undefined => {
         switch (alignment) {
             case 'TOP':
                 return 'flex-start'
@@ -96,9 +114,7 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
                 }}
             >
                 <img src={baseImageUrl} alt={slideConfig.title} />
-                <div style={{ position: 'fixed' }}>
-                    {Object.values(slideConfig.textLayers).map(renderTextLayer)}
-                </div>
+                {Object.values(slideConfig.textLayers).map(renderTextLayer)}
             </div>
         </>
     )
@@ -113,8 +129,9 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
         // in the SVG. This is a failsafe mode. In general, an alignment will be
         // provided, and we use CSS to align within the rendering bounds extacted
         // from the Figma file.
-        const horizontalAlign = textAlignHorizontalToCss(textLayer?.textAlignHorizontal)
-        const verticalAlign = textAlignVerticalToCss(textLayer?.textAlignVertical)
+        const horizontalAlign = horzAlignToFlex(textLayer.textAlignHorizontal)
+        const textAlign = horzAlignToTextAlign(textLayer.textAlignHorizontal)
+        const verticalAlign = vertAlignToText(textLayer.textAlignVertical)
 
         const x = horizontalAlign ? textLayer.boundsX : textLayer.x
         // y is the text _baseline_ when no vert alignment is specified, but we
@@ -141,7 +158,9 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
                     position: 'absolute',
                     display: 'flex',
                     flexDirection: 'column',
+
                     ...(horizontalAlign ? { justifyContent: verticalAlign } : {}),
+                    ...(textAlign ? { textAlign: textAlign } : {}),
                     ...(verticalAlign ? { alignItems: horizontalAlign } : {}),
                     left: `${x}px`,
                     top: `${y}px`,
@@ -149,7 +168,7 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
                     ...(verticalAlign ? { height: `${height}px` } : {}),
 
                     color: textLayer.fill,
-                    // Not currently supported by satori: https://github.com/vercel/satori/issues/578
+                    // // Not currently supported by satori: https://github.com/vercel/satori/issues/578
                     WebkitTextStroke: textLayer.stroke,
                     fontSize: textLayer.fontSize,
                     fontWeight: textLayer.fontWeight || '400',
@@ -161,7 +180,7 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
                 }}
             >
                 {contentLines.map((line, index) => (
-                    <div key={index} style={{ textWrap: 'wrap' }}>
+                    <div key={index}>
                         {line == '' ? '\u00a0' : line}
                     </div>
                 ))}
