@@ -3,12 +3,30 @@
 import { useFrameConfig, useFramePreview } from '@/sdk/hooks'
 import { ArrowBigLeftDash, ArrowBigRightDash, KeySquare, Trash2 } from 'lucide-react'
 import SlideEditor from './components/SlideEditor'
-import type { FramePressConfig, SlideConfig } from './Config'
+import type { FramePressConfig, SlideConfig, TextLayerConfigs } from './Config'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
 import FigmaTokenEditor from './components/FigmaTokenEditor'
 import { Button } from '@/components/shadcn/Button'
 import { useEffect, useMemo, useState } from 'react'
 import { FigmaView } from './views/FigmaView'
+
+// We need to keep track of which fonts we've loaded into the page <head>
+const loadedFonts = new Set()
+function loadGoogleFont(fontFamily: string) {
+    if (loadedFonts.has(fontFamily)) {
+        console.debug(`loadGoogleFont(${fontFamily}): already loaded`)
+        return
+    }
+    const link = document.createElement('link')
+    link.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(
+        /\s+/g,
+        '+'
+    )}&display=swap`
+    link.rel = 'stylesheet'
+    document.head.appendChild(link)
+    loadedFonts.add(fontFamily)
+    console.debug(`loadGoogleFont(${fontFamily}): loaded`)
+}
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
@@ -48,26 +66,32 @@ export default function Inspector() {
         })
     }
 
-    function loadGoogleFonts(fontFamily: string) {
-        const link = document.createElement('link');
-        link.href = `https://fonts.googleapis.com/css2?family=${fontFamily}&display=swap`;
-        link.rel = 'stylesheet';
-        document.head.appendChild(link);
-      }
+    function loadFonts() {
+        function extractFontFamilies(textLayers: TextLayerConfigs) {
+            const fontFamilies = new Set<string>()
+            for (const layer of Object.values(textLayers)) {
+                if (layer.fontFamily) {
+                    fontFamilies.add(layer.fontFamily)
+                }
+            }
+            return Array.from(fontFamilies)
+        }
 
-    useEffect(() => {
-        loadGoogleFonts('Righteous');
-        loadGoogleFonts('Roboto');
-        loadGoogleFonts('Roboto Condensed');
-        loadGoogleFonts('Roboto Mono');
-      }, []);
+        for (const slide of config.slides) {
+            const fontFamilies = extractFontFamilies(slide.textLayers)
+            for (const font of fontFamilies) {
+                if (!loadedFonts.has(font)) {
+                    loadGoogleFont(font)
+                    loadedFonts.add(font)
+                }
+            }
+        }
+    }
 
     function updateSlide(updatedSlide: SlideConfig) {
         console.debug(`Inspector::updateSlide(id=${updatedSlide.id})`)
 
         const updatedSlides = config.slides.with(currentSlideIndex, updatedSlide)
-
-        // TODO update fonts correctly
 
         updateConfig({ slides: updatedSlides })
     }
@@ -118,6 +142,8 @@ export default function Inspector() {
         updateConfig({ slides: updatedSlides })
     }
 
+    loadFonts()
+
     const buttonTargets = config.slides
         ?.filter((slide) => slide.title !== undefined) // Filter out slides without a title
         .map((slide) => ({
@@ -164,7 +190,7 @@ export default function Inspector() {
                             </Button>
                         </div>
                     </div>
-                    <div className="flex overflow-x-auto" style={{scrollbarWidth: 'auto'}}>
+                    <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'auto' }}>
                         {config.slides.map((slideConfig, index) => (
                             <div
                                 key={slideConfig.id}
@@ -177,7 +203,7 @@ export default function Inspector() {
                                         : 'border-input'
                                 }`}
                             >
-                                <div style={{'transform': 'scale(0.245)'}}>
+                                <div style={{ 'transform': 'scale(0.245)' }}>
                                     <FigmaView slideConfig={slideConfig} />
                                 </div>
                             </div>

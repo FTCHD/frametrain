@@ -240,16 +240,33 @@ export const PropertiesTab = ({
                         )}
                     </Button>
                 </div>
+                <div className="flex items-center">Frame Aspect Ratio</div>
+                <div className="flex items-center">
+                    <Select
+                        defaultValue={aspectRatio}
+                        onValueChange={(value) => onUpdateAspectRatio(value as AspectRatio)}
+                    >
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select aspect ratio" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="1:1">1:1 (Square)</SelectItem>
+                            <SelectItem value="1.91:1">1.91:1 (Widescreen)</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
 
                 {!isUpdating && figmaMetadata && (
                     <>
-                        <div className="flex items-center">Design Name</div>
+                        <hr/>
+                        <hr/>
+                        <div className="flex items-center">Figma Design</div>
                         <div className="flex items-center">{figmaMetadata?.name}</div>
 
-                        <div className="flex items-center">Last Modified</div>
+                        <div className="flex items-center">Figma Last Modified</div>
                         <div className="flex items-center">{figmaMetadata?.lastModified}</div>
 
-                        <div className="flex items-center">Dimensions</div>
+                        <div className="flex items-center">Figma Dimensions</div>
                         <div className="flex items-center">
                             <Badge>
                                 {figmaMetadata?.width} x {figmaMetadata?.height}
@@ -259,25 +276,9 @@ export const PropertiesTab = ({
                             </div>
                         </div>
 
-                        <div className="flex items-center">Source Aspect Ratio</div>
+                        <div className="flex items-center">Figma Aspect Ratio</div>
                         <div className="flex items-center">
                             <Badge>{aspectRatioFormatted}</Badge>
-                        </div>
-
-                        <div className="flex items-center">Frame Aspect Ratio</div>
-                        <div className="flex items-center">
-                            <Select
-                                defaultValue={aspectRatio}
-                                onValueChange={(value) => onUpdateAspectRatio(value as AspectRatio)}
-                            >
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Select aspect ratio" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="1:1">1:1 (Square)</SelectItem>
-                                    <SelectItem value="1.91:1">1.91:1 (Widescreen)</SelectItem>
-                                </SelectContent>
-                            </Select>
                         </div>
                     </>
                 )}
