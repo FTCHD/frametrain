@@ -12,31 +12,32 @@ import {
     avalanche,
 } from 'viem/chains'
 
+/**
+ * Network	Chain ID
+Ethereum	eip155:1
+Arbitrum	eip155:42161
+Base	eip155:8453
+Degen	eip155:666666666
+Gnosis	eip155:100
+Optimism	eip155:10
+Zora	eip155:7777777
+ */
+
 /** Support chains */
-export const chains = [
-    'ethereum',
-    'optimism',
-    'arbitrum',
-    'bsc',
-    'sepolia',
-    'celo',
-    'blast',
-    'avalanche',
-    'base',
-] as const
+export const chains = ['ethereum', 'optimism', 'arbitrum', 'base'] as const
 export type Chain = (typeof chains)[number]
 
+export const supportedChains = chains
+    .map((chain) => `${chain.charAt(0).toUpperCase()}${chain.slice(1)}`)
+    .join(', ')
+
+/** Get client for chain id */
 export function getClientByChainId(chainId: number) {
     const chainIdToChainMap: Record<number, ViewChain> = {
         1: mainnet,
         137: base,
-        56: bsc,
         10: optimism,
         42161: arbitrum,
-        11155111: sepolia,
-        42220: celo,
-        43114: avalanche,
-        81457: blast,
     }
 
     const chain = chainIdToChainMap[chainId]
@@ -73,41 +74,6 @@ export function getClient(chain: Chain) {
         case 'arbitrum':
             return createPublicClient({
                 chain: arbitrum,
-                transport: http(),
-                batch,
-            })
-
-        case 'bsc':
-            return createPublicClient({
-                chain: bsc,
-                transport: http(),
-                batch,
-            })
-
-        case 'sepolia':
-            return createPublicClient({
-                chain: sepolia,
-                transport: http(),
-                batch,
-            })
-
-        case 'celo':
-            return createPublicClient({
-                chain: celo,
-                transport: http(),
-                batch,
-            })
-
-        case 'blast':
-            return createPublicClient({
-                chain: blast,
-                transport: http(),
-                batch,
-            })
-
-        case 'avalanche':
-            return createPublicClient({
-                chain: avalanche,
                 transport: http(),
                 batch,
             })

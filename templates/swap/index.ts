@@ -10,6 +10,12 @@ export type PoolToken = {
     name: string
 }
 
+export type PoolNetwork = {
+    id: number
+    name: string
+    explorerUrl: string
+}
+
 export interface Config extends BaseConfig {
     enablePredefinedAmounts: boolean
     amounts: string[]
@@ -17,11 +23,7 @@ export interface Config extends BaseConfig {
         address: `0x${string}`
         token0: PoolToken
         token1: PoolToken
-        network: {
-            id: number
-            name: string
-            explorerUrl: string
-        }
+        network: PoolNetwork
         // mainly used to determine which token is the primary token for the Inspector
         primary: 'token0' | 'token1'
     } | null

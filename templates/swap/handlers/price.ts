@@ -4,9 +4,11 @@ import type {
     FrameActionPayload,
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
-import type { Config } from '..'
+import type { Config, Storage } from '..'
 import PriceView from '../views/Price'
 import initial from './initial'
+import { FrameError } from '@/sdk/error'
+import { fetchPrice } from '../utils/0x'
 
 export default async function price({
     body,
@@ -23,18 +25,65 @@ export default async function price({
         return initial({ config })
     }
 
+    let amount = 0
     const buttonIndex = body.validatedData.tapped_button.index
-    const textInput = body.validatedData.input.text
 
-    console.info('price', { buttonIndex, textInput })
+    const token0 = config.pool.primary === 'token0' ? config.pool.token0 : config.pool.token1
+    const token1 = config.pool.primary === 'token0' ? config.pool.token1 : config.pool.token0
+
+    switch (buttonIndex) {
+        case 1: {
+            const textInput = body.validatedData.input?.text
+            if (!textInput) {
+                throw new FrameError('An amount must be provided')
+            }
+
+            console.log({ float: Number.parseFloat(textInput), textInput })
+
+            if (isNaN(Number(textInput))) {
+                throw new FrameError('Invalid amount input')
+            }
+
+            amount = Number.parseFloat(textInput)
+
+            break
+        }
+
+        default: {
+            if (config.amounts.length) {
+                amount = +config.amounts[buttonIndex - 2]
+            }
+            break
+        }
+    }
+
+    const price = await fetchPrice({
+        address0: token0.address,
+        address1: token1.address,
+        network: config.pool.network,
+    })
+
+    if (!price) {
+        throw new FrameError('Estimated price not available')
+    }
+
+    console.info('price', { buttonIndex, amount, price, token0, token1 })
 
     return {
         buttons: [
             {
                 label: '←',
             },
+            {
+                label: 'Confirm Swap',
+                action: 'tx',
+                target: '/swap',
+            },
         ],
-        component: PriceView(config.pool),
-        handler: 'swap',
+        component: PriceView({ token0, token1, network: config.pool.network, amount, price }),
+        handler: 'success',
+        params: {
+            amount,
+        },
     }
 }

@@ -1,6 +1,10 @@
 import type { Config } from '..'
 
-export default function PageView({ token0, token1, network }: NonNullable<Config['pool']>) {
+export default function PageView({
+    token0,
+    token1,
+    network,
+}: Pick<NonNullable<Config['pool']>, 'token0' | 'token1' | 'network'>) {
     return (
         <div
             style={{
@@ -28,7 +32,7 @@ export default function PageView({ token0, token1, network }: NonNullable<Config
                     lineHeight: 1,
                 }}
             >
-                Swap ${token0.symbol} for ${token1.symbol} on {network.name}
+                Buy {token1.symbol} using {token0.symbol} on {network.name}
             </span>
         </div>
     )

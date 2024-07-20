@@ -1,7 +1,14 @@
 import type { Config } from '..'
+import { formatSymbol, generateTokenLogoUrl } from '../utils/shared'
 
-export default function PriceView({ token0, token1, network }: NonNullable<Config['pool']>) {
-    // const token1Symbol = token1.symbol.replace(/(USDT|USDC|DAI)/, '$')
+type PriceViewProps = Pick<NonNullable<Config['pool']>, 'token0' | 'token1' | 'network'> & {
+    price: number
+    amount: number
+}
+
+export default function PriceView({ token0, token1, network, price, amount }: PriceViewProps) {
+    const value = formatSymbol(Number(amount).toFixed(2), token1.symbol)
+
     return (
         <div
             style={{
@@ -23,14 +30,63 @@ export default function PriceView({ token0, token1, network }: NonNullable<Confi
             <span
                 style={{
                     fontSize: 50,
-                    fontFamily: 'Nunito',
+                    fontFamily: 'nunito',
                     textAlign: 'center',
-                    fontWeight: 700,
                     lineHeight: 1,
                 }}
             >
-                Swap ${token0.symbol} for ${token1.symbol} on {network.name}
+                Fx Rate: 1 {token0.symbol} =
+                {formatSymbol(`${Number(price).toFixed(7)}`, token1.symbol)}
             </span>
+            <div style={{ display: 'flex', gap: 36 }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '2px solid rgba(15, 36, 56, 0.1)',
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: 32,
+                        gap: 16,
+                        padding: '32px 48px',
+                    }}
+                >
+                    <img
+                        alt={`${token0.symbol} logo`}
+                        src={generateTokenLogoUrl(network.id, token0.address)}
+                        width={54}
+                        height={54}
+                        style={{ borderRadius: 9999 }}
+                    />
+                    <span style={{ color: '#5E6773', fontSize: 50 }}>
+                        {Number(amount / price).toFixed(7)} {token0.symbol}
+                    </span>
+                </div>
+                <span style={{ color: '#5E6773', top: '50%' }}>{'==>'}</span>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '2px solid rgba(15, 36, 56, 0.1)',
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: 32,
+                        gap: 16,
+                        padding: '32px 48px',
+                    }}
+                >
+                    <img
+                        alt={`${token1.symbol} logo`}
+                        src={generateTokenLogoUrl(network.id, token1.address)}
+                        width={54}
+                        height={54}
+                        style={{ borderRadius: 9999 }}
+                    />
+                    <span style={{ color: '#5E6773' }}>{value}</span>
+                </div>
+            </div>
         </div>
     )
 }

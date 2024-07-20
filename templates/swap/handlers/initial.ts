@@ -4,6 +4,7 @@ import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
 import CoverView from '../views/Cover'
 import PageView from '../views/Page'
+import { formatSymbol } from '../utils/shared'
 
 export default async function initial({
     config,
@@ -17,6 +18,8 @@ export default async function initial({
     const buttons: FrameButtonMetadata[] = []
     const fonts = []
 
+    console.log('Initial handler >> config:', config)
+
     if (config.pool) {
         const customFonts = await Promise.all([
             loadGoogleFontAllVariants('Inter'),
@@ -29,17 +32,22 @@ export default async function initial({
             label: 'Swap',
         })
 
+        const token0 = config.pool.primary === 'token0' ? config.pool.token0 : config.pool.token1
+        const token1 = config.pool.primary === 'token0' ? config.pool.token1 : config.pool.token0
+
+        console.log({ token0, token1 })
+
         for (const amount of config.amounts) {
             buttons.push({
-                label: `$${config.pool.token0.symbol} ${amount}`,
+                label: formatSymbol(amount, token1.symbol),
             })
         }
 
         return {
             buttons,
-            inputText: `${config.pool.token0.symbol} amount to swap(eg. 0.1)`,
+            inputText: `${token1.symbol} amount (eg. 0.1)`,
             fonts,
-            component: PageView(config.pool),
+            component: PageView({ token0, token1, network: config.pool.network }),
             handler: 'price',
         }
     }

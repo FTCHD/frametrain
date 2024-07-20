@@ -4,23 +4,17 @@ import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/InputLabel'
 import { Switch } from '@/components/shadcn/Switch'
-import { cn } from '@/lib/shadcn'
 import { useFrameConfig } from '@/sdk/hooks'
-import { ArrowLeftRight, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import Image from 'next/image'
 import type { AnchorHTMLAttributes, FC } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
 import type { Config, PoolToken } from '.'
-import { cloudinaryLogoImageLoader, generateTokenLogoUrl } from './utils/cloudinary'
+import { cloudinaryLogoImageLoader, formatSymbol, generateTokenLogoUrl } from './utils/shared'
 import { getPoolData } from './utils/uniswap'
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/shadcn/Tooltip'
 import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
+import { supportedChains } from './utils/viem'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -125,6 +119,10 @@ export default function Inspector() {
                             }
                         }}
                     />
+
+                    <p className="text-sm text-muted-foreground">
+                        Only the following networks are supported: {supportedChains}
+                    </p>
                 </div>
 
                 {config.pool ? (
@@ -216,7 +214,10 @@ export default function Inspector() {
                                 <div className="flex flex-col gap-2">
                                     <div className="flex flex-col w-full gap-2">
                                         <label className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2">
-                                            New Amount
+                                            Buying Amount in{' '}
+                                            {config.pool.primary === 'token0'
+                                                ? config.pool.token1.symbol
+                                                : config.pool.token0.symbol}
                                         </label>
                                         <div className="flex flex-row w-full items-center gap-2">
                                             <Input
@@ -231,6 +232,7 @@ export default function Inspector() {
                                                 className="px-4 py-2 bg-blue-500 text-white rounded-md"
                                                 onClick={() => {
                                                     if (!amountInputRef.current) return
+                                                    if (config.amounts.length > 3) return
 
                                                     const amount =
                                                         amountInputRef.current.value.trim()
@@ -265,8 +267,13 @@ export default function Inspector() {
                                                     className="flex flex-row items-center justify-between bg-slate-50 bg-opacity-10 p-2 rounded"
                                                 >
                                                     <span>
-                                                        {index + 1}. {amount} $
-                                                        {config.pool?.token0.symbol}
+                                                        {index + 1}.{' '}
+                                                        {formatSymbol(
+                                                            amount,
+                                                            config.pool!.primary === 'token0'
+                                                                ? config.pool!.token1.symbol
+                                                                : config.pool!.token0.symbol
+                                                        )}
                                                     </span>
                                                     <Button
                                                         variant={'destructive'}
