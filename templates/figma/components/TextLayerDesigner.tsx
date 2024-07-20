@@ -57,8 +57,8 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                         <CirclePower className="h-6 w-6" />
                     </Toggle>
                 </div>
-                <div className="grid grid-cols-[1fr_1fr_1fr_1fr] gap-4">
-                    <label className="text-sm font-semibold self-center">Font</label>
+                <div className="grid grid-cols-[1fr_2fr_1fr_2fr] gap-4">
+                    <label className="text-sm font-semibold self-center ">Font</label>
                     <FontFamilyPicker
                         defaultValue={config.fontFamily}
                         onSelect={(newValue) => {
@@ -143,7 +143,7 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
 
                     <label className="text-sm font-semibold self-center">Fill</label>
                     <ColorPicker
-                        className="w-full col-span-1"
+                        className="w-full"
                         background={config.fill}
                         setBackground={(newValue) => {
                             onChange({ ...config, fill: newValue })

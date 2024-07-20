@@ -164,27 +164,27 @@ export default function Inspector() {
                             </Button>
                         </div>
                     </div>
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex overflow-x-auto" style={{scrollbarWidth: 'auto'}}>
                         {config.slides.map((slideConfig, index) => (
                             <div
                                 key={slideConfig.id}
                                 onClick={() => {
                                     selectSlide(index)
                                 }}
-                                className={`w-40 h-40 flex items-center justify-center p-2 border-[1px] rounded-md cursor-pointer select-none ${
+                                className={`w-40 h-40 flex items-center justify-center mr-1 border-[1px] rounded-md cursor-pointer select-none ${
                                     currentSlideIndex === index
                                         ? 'border-highlight'
                                         : 'border-input'
                                 }`}
                             >
-                                <div style={{'transform': 'scale(0.222)'}}>
+                                <div style={{'transform': 'scale(0.245)'}}>
                                     <FigmaView slideConfig={slideConfig} />
                                 </div>
                             </div>
                         ))}
                         <div
                             onClick={() => addSlide()}
-                            className="w-40 h-40 flex items-center justify-center p-2 border-input border-[1px] rounded-md cursor-pointer"
+                            className="w-40 h-40 flex items-center justify-center mr-1 border-input border-[1px] rounded-md cursor-pointer"
                         >
                             <span className="text-4xl">+</span>
                         </div>
