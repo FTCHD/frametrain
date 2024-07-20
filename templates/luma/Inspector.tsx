@@ -38,12 +38,12 @@ export default function Inspector() {
         }
         const geo = eventData?.geo_address_info as {
             obfuscated: boolean
-            citystorage: string
+            city_state: string
         } | null
         let address = 'N/A'
 
         if (eventData?.location_type === 'offline' && geo) {
-            address = `${capitalize(geo.citystorage)} (OFFLINE)`
+            address = `${capitalize(geo.city_state)} (OFFLINE)`
         } else if (eventData?.location_type !== 'offline') {
             address = `${capitalize(eventData.location_type)} (ONLINE)`
         }

@@ -1,8 +1,6 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
-import { dimensionsForRatio } from '@/sdk/constants'
 import type { Config } from '..'
-import PageView from '../views/Page'
 import initial from './initial'
 
 export default async function page({
@@ -52,10 +50,7 @@ export default async function page({
     return {
         buttons: buttons,
         aspectRatio: '1:1',
-        component: PageView({
-            slideUrl: slideUrl,
-            sizes: dimensionsForRatio[config.aspectRatio as keyof typeof dimensionsForRatio],
-        }),
+        image: process.env.NEXT_PUBLIC_CDN_HOST + slideUrl,
         handler: 'page',
         params: {
             currentPage: nextPage,

@@ -4,25 +4,29 @@ import cover from './cover.jpeg'
 import handlers from './handlers'
 
 export interface Config extends BaseConfig {
-    streamId: string
-    shape: string
+    memeUrl: string | undefined
+    aspectRatio?: '1.91:1' | '1:1'
+    template:
+        | {
+              id: string
+              name: string
+              url: string
+              captions: string[]
+          }
+        | undefined
 }
 
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'Sablier',
-    description: 'Get the latest details about a Sablier stream.',
-    creatorFid: '10677',
-    creatorName: 'Paul',
+    name: 'Meme Creator',
+    description: 'Create your own Meme from awesome images.',
+    creatorFid: '260812',
+    creatorName: 'Steve',
+    cover,
     enabled: true,
     Inspector,
     handlers,
-    initialConfig: {
-        streamId: 'LL-1-70',
-        shape: 'Linear',
-    } as Config,
-    cover,
     requiresValidation: false,
     events: [],
 } satisfies BaseTemplate
