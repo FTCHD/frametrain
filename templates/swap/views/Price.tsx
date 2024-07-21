@@ -2,11 +2,14 @@ import type { Config } from '..'
 import { formatSymbol, generateTokenLogoUrl } from '../utils/shared'
 
 type PriceViewProps = Pick<NonNullable<Config['pool']>, 'token0' | 'token1' | 'network'> & {
-    price: number
     amount: number
+    estimates: {
+        price: number
+        rate: string
+    }
 }
 
-export default function PriceView({ token0, token1, network, price, amount }: PriceViewProps) {
+export default function PriceView({ token0, token1, network, estimates, amount }: PriceViewProps) {
     const value = formatSymbol(Number(amount).toFixed(2), token1.symbol)
 
     return (
@@ -35,8 +38,7 @@ export default function PriceView({ token0, token1, network, price, amount }: Pr
                     lineHeight: 1,
                 }}
             >
-                Fx Rate: 1 {token0.symbol} =
-                {formatSymbol(`${Number(price).toFixed(7)}`, token1.symbol)}
+                Fx Rate: 1 {token0.symbol} ={formatSymbol(estimates.rate, token1.symbol)}
             </span>
             <div style={{ display: 'flex', gap: 36 }}>
                 <div
@@ -60,7 +62,7 @@ export default function PriceView({ token0, token1, network, price, amount }: Pr
                         style={{ borderRadius: 9999 }}
                     />
                     <span style={{ color: '#5E6773', fontSize: 50 }}>
-                        {Number(amount / price).toFixed(7)} {token0.symbol}
+                        {Number(estimates.price).toFixed(7)} {token0.symbol}
                     </span>
                 </div>
                 <span style={{ color: '#5E6773', top: '50%' }}>{'==>'}</span>

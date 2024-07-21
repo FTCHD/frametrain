@@ -36,8 +36,8 @@ export default async function swap({
     console.log('Swap handler >> params:', params)
 
     const order = await fetchQuote({
-        address0: token0.address,
-        address1: token1.address,
+        buyToken: token1,
+        sellToken: token0,
         amount: params.amount,
         network: config.pool.network,
     })

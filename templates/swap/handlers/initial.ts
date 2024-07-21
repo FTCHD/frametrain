@@ -18,8 +18,6 @@ export default async function initial({
     const buttons: FrameButtonMetadata[] = []
     const fonts = []
 
-    console.log('Initial handler >> config:', config)
-
     if (config.pool) {
         const customFonts = await Promise.all([
             loadGoogleFontAllVariants('Inter'),
@@ -29,13 +27,11 @@ export default async function initial({
         fonts.push(...customFonts.flat())
 
         buttons.push({
-            label: 'Swap',
+            label: 'Buy',
         })
 
         const token0 = config.pool.primary === 'token0' ? config.pool.token0 : config.pool.token1
         const token1 = config.pool.primary === 'token0' ? config.pool.token1 : config.pool.token0
-
-        console.log({ token0, token1 })
 
         for (const amount of config.amounts) {
             buttons.push({
@@ -45,7 +41,7 @@ export default async function initial({
 
         return {
             buttons,
-            inputText: `${token1.symbol} amount (eg. 0.1)`,
+            inputText: `Buy ${token1.symbol} amount (eg. 0.1)`,
             fonts,
             component: PageView({ token0, token1, network: config.pool.network }),
             handler: 'price',

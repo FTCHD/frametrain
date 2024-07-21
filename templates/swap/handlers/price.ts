@@ -57,17 +57,18 @@ export default async function price({
         }
     }
 
-    const price = await fetchPrice({
-        address0: token0.address,
-        address1: token1.address,
+    const estimates = await fetchPrice({
+        buyToken: token1,
+        sellToken: token0,
         network: config.pool.network,
+        amount: `${amount}`,
     })
 
-    if (!price) {
+    if (!estimates) {
         throw new FrameError('Estimated price not available')
     }
 
-    console.info('price', { buttonIndex, amount, price, token0, token1 })
+    console.info('price handler >>', { buttonIndex, amount, estimates, token0, token1 })
 
     return {
         buttons: [
@@ -80,10 +81,10 @@ export default async function price({
                 target: '/swap',
             },
         ],
-        component: PriceView({ token0, token1, network: config.pool.network, amount, price }),
+        component: PriceView({ token0, token1, network: config.pool.network, amount, estimates }),
         handler: 'success',
         params: {
-            amount,
+            amount: estimates.price,
         },
     }
 }
