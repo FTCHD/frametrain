@@ -108,7 +108,7 @@ export function ColorPicker({
                 </Button>
             </PopoverTrigger>
             {/* set to loosely match the Inspector width of 40% */}
-            <PopoverContent className="w-[30dvw]">
+            <PopoverContent className="w-[30dvw] min-w-[400px]">
                 <Tabs defaultValue={defaultTab} className="w-full">
                     <TabsList className="mb-4 w-full">
                         {enabledPickers.includes('solid') && (
