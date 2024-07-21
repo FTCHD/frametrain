@@ -21,20 +21,22 @@ import { useDebouncedCallback } from 'use-debounce'
 import { FramePreview } from './FramePreview'
 import { InspectorContext } from './editor/Context'
 import MockOptions from './editor/MockOptions'
+import WebhookEventOptions from './editor/WebhookEventOptions'
 import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
-import WebhookEventOptions from './editor/WebhookEventOptions'
 
 export default function FrameEditor({
     frame,
     template,
     fid,
+    // isComposeClient,
 }: {
     frame: InferSelectModel<typeof frameTable>
     template: (typeof templates)[keyof typeof templates]
     fid: string
+    // isComposeClient: boolean
 }) {
     const refreshPreview = useRefreshPreview(frame.id)
 
@@ -179,7 +181,10 @@ export default function FrameEditor({
                         </TooltipProvider>
                     )}
                 </div>
-                <div className="flex flex-row items-center space-x-4">
+
+                {/* TODO: consolidate this, like putting a return after postMessage to not trigger toast */}
+
+                <div className="flex flex-row items-center space-x-4 z-10">
                     {updating && (
                         <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
                     )}
@@ -206,8 +211,8 @@ export default function FrameEditor({
                         <PopoverTrigger asChild={true}>
                             <Button
                                 variant="outline"
-                                className="gap-2 text-lg opacity-0 md:opacity-100"
-                                size={'lg'}
+                                className="gap-2 text-lg hidden md:flex"
+                                size="lg"
                             >
                                 Connect Page
                             </Button>
@@ -237,7 +242,10 @@ export default function FrameEditor({
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
                                 <TooltipTrigger asChild={true}>
-                                    <MockOptions fid={fid} />
+                                    <MockOptions
+                                        fid={fid}
+                                        // isComposeClient={isComposeClient}
+                                    />
                                 </TooltipTrigger>
                                 <TooltipContent className="flex flex-col gap-2 max-w-72">
                                     <p>
@@ -258,7 +266,7 @@ export default function FrameEditor({
                             <TooltipTrigger asChild={true}>
                                 <Button
                                     variant="outline"
-                                    className="gap-2 text-lg opacity-0 md:opacity-100"
+                                    className="gap-2 text-lg hidden md:flex"
                                     size={'lg'}
                                     onClick={async () => {
                                         await revertConfig()
@@ -278,9 +286,9 @@ export default function FrameEditor({
                         <Tooltip>
                             <TooltipTrigger asChild={true}>
                                 <Button
-                                    variant="outline"
+                                    variant="default"
                                     className="gap-2 text-lg"
-                                    size={'lg'}
+                                    size="lg"
                                     onClick={async () => {
                                         await publishConfig()
                                         toast.success('Published!')
@@ -322,7 +330,7 @@ export default function FrameEditor({
                 <div className="flex flex-col justify-center items-center px-12 py-6 w-full md:w-3/5">
                     <FramePreview />
                 </div>
-                <div className="w-full h-full bg-[#0c0c0c] border-[#17101f] border-0 md:border-4 md:w-2/5 flex flex-col p-6 gap-3">
+                <div className="w-full h-full bg-[#0c0c0c] border-[#17101f] border-0 md:border-l-4 md:w-2/5 flex flex-col p-6 gap-3">
                     <h1 className="mb-4 text-4xl font-bold">Configuration</h1>
 
                     <div className="overflow-y-scroll max-h-[calc(100dvh-200px)]">
