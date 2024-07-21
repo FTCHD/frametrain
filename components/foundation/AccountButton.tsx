@@ -63,6 +63,7 @@ export default function AccountButton() {
                     nonce={getNonce}
                     onSuccess={handleLogin}
                     onSignOut={() => signOut()}
+                    hideSignOut={true}
                 />
             )}
         </AuthKitProvider>

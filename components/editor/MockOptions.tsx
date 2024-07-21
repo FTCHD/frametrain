@@ -46,7 +46,7 @@ export default function MockOptions({ fid }: { fid: string }) {
     return (
         <DropdownMenu open={open}>
             <DropdownMenuTrigger asChild={true} onClick={() => setOpen(!open)}>
-                <Button variant="outline" className="text-lg opacity-0 md:opacity-100" size={'lg'}>
+                <Button variant="outline" className="text-lg hidden md:flex" size="lg">
                     Simulate
                 </Button>
             </DropdownMenuTrigger>
