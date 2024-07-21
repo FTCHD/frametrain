@@ -1,9 +1,5 @@
 'use server'
-import type {
-    BuildFrameData,
-    FrameActionPayload,
-    FrameValidatedActionPayload,
-} from '@/lib/farcaster'
+import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import type { Config, Storage } from '..'
 import PriceView from '../views/Price'
 import initial from './initial'
@@ -13,8 +9,6 @@ import { fetchPrice } from '../utils/0x'
 export default async function price({
     body,
     config,
-    storage,
-    params,
 }: {
     body: FrameValidatedActionPayload
     config: Config
@@ -37,8 +31,6 @@ export default async function price({
             if (!textInput) {
                 throw new FrameError('An amount must be provided')
             }
-
-            console.log({ float: Number.parseFloat(textInput), textInput })
 
             if (isNaN(Number(textInput))) {
                 throw new FrameError('Invalid amount input')
@@ -67,8 +59,6 @@ export default async function price({
     if (!estimates) {
         throw new FrameError('Estimated price not available')
     }
-
-    console.info('price handler >>', { buttonIndex, amount, estimates, token0, token1 })
 
     return {
         buttons: [

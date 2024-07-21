@@ -93,7 +93,11 @@ export default function Inspector() {
                             if (poolAddress === config.pool?.address) return
 
                             if (poolAddress === '') {
-                                updateConfig({ pool: null, enablePredefinedAmounts: false })
+                                updateConfig({
+                                    pool: null,
+                                    enablePredefinedAmounts: false,
+                                    amounts: [],
+                                })
                                 return
                             }
 
@@ -101,15 +105,15 @@ export default function Inspector() {
                                 const pool = await getPoolData(poolAddress as `0x${string}`)
 
                                 updateConfig({
-                                    network: pool.network,
                                     pool: {
                                         address: poolAddress,
                                         network: pool.network,
                                         token0: pool.token0,
                                         token1: pool.token1,
+                                        primary: 'token0',
                                     },
                                     enablePredefinedAmounts: false,
-                                    primary: 'token0',
+                                    amounts: [],
                                 })
 
                                 toast.success(`Client found on chain ${pool.chain}`)

@@ -10,7 +10,7 @@ type PriceViewProps = Pick<NonNullable<Config['pool']>, 'token0' | 'token1' | 'n
 }
 
 export default function PriceView({ token0, token1, network, estimates, amount }: PriceViewProps) {
-    const value = formatSymbol(Number(amount).toFixed(2), token1.symbol)
+    const value = formatSymbol(Number(amount).toFixed(7), token1.symbol)
 
     return (
         <div
@@ -38,7 +38,7 @@ export default function PriceView({ token0, token1, network, estimates, amount }
                     lineHeight: 1,
                 }}
             >
-                Fx Rate: 1 {token0.symbol} ={formatSymbol(estimates.rate, token1.symbol)}
+                1 {token0.symbol} = {formatSymbol(estimates.rate, token1.symbol)}
             </span>
             <div style={{ display: 'flex', gap: 36 }}>
                 <div

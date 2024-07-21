@@ -35,7 +35,7 @@ export const supportedChains = chains
 export function getClientByChainId(chainId: number) {
     const chainIdToChainMap: Record<number, ViewChain> = {
         1: mainnet,
-        137: base,
+        8453: base,
         10: optimism,
         42161: arbitrum,
     }

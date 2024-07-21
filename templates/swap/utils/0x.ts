@@ -45,6 +45,13 @@ type ZeroXSwapPrice = Omit<ZeroXSwapQuote, 'orders' | 'guaranteedPrice' | 'to' |
 const FEE_RECIPIENT = '0xeE15d275dbC6392019FCdE476d4A6f000F76F6A9'
 const AFFILIATE_FEE = 0.01
 
+export const ZeroXProxyAddressByChainID: Record<number, Hex> = {
+    1: '0xDef1C0ded9bec7F1a1670819833240f027b25EfF',
+    10: '0xdef1abe32c034e558cdd535791643c58a13acc10',
+    8453: '0xDef1C0ded9bec7F1a1670819833240f027b25EfF',
+    42161: '0xDef1C0ded9bec7F1a1670819833240f027b25EfF',
+}
+
 const get0xApiBase = (networkId: number) => {
     const CHAIN_ID_0X_API_BASE_MAP: Record<number, string> = {
         1: 'api.0x.org',
