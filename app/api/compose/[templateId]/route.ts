@@ -6,6 +6,29 @@ import type { InferInsertModel } from 'drizzle-orm'
 import { encode } from 'next-auth/jwt'
 // import { decode, encode } from 'next-auth/jwt';
 
+export async function GET(
+    request: Request,
+    { params }: { params: { templateId: keyof typeof templates } }
+) {
+    if (params.templateId !== 'cal') {
+        throw new Error('This template is not yet supported')
+    }
+
+    const template = templates[params.templateId]
+
+    return Response.json({
+        'type': 'composer',
+        'name': template.name,
+        'icon': 'task', // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
+        'description': template.shortDescription,
+        // 'aboutUrl': `https://${process.env.NEXT_PUBLIC_HOST}/templates/${template.name}`,
+        'imageUrl': 'https://frametra.in/apple-icon.png',
+        'action': {
+            'type': 'post',
+        },
+    })
+}
+
 export async function POST(
     request: Request,
     { params }: { params: { templateId: keyof typeof templates } }
