@@ -96,7 +96,8 @@ export async function POST(
     }
 
     if (buildParameters.transaction) {
-        waitUntil(processFrame(frame, buildParameters))
+        // delays tx process
+        // waitUntil(processFrame(frame, buildParameters))
 
         return Response.json(buildParameters.transaction)
     }

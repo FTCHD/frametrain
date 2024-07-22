@@ -1,5 +1,6 @@
 import { corsFetch } from '@/sdk/scrape'
 import { formatUnits, parseUnits, type Address, type Hex } from 'viem'
+import { formatSymbol } from './shared'
 
 // https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-quote#response
 type ZeroXSwapQuote = {
@@ -107,8 +108,7 @@ export async function fetchPrice({
     const data = JSON.parse(response) as ZeroXSwapPrice
     const price = formatUnits(BigInt(data.sellAmount), sellToken.decimals)
     console.log(
-        `Price for buying ${buyToken.symbol} with ${sellToken.symbol} is ${price} ${buyToken.symbol}`,
-        data
+        `Price for buying ${formatSymbol(amount, buyToken.symbol)} is ${price} ${sellToken.symbol}`
     )
 
     return {
@@ -143,6 +143,10 @@ export async function fetchQuote({
         return null
     }
 
+    console.log(
+        `Fetching quote for ${formatSymbol(amount, sellToken.symbol)} to ${buyToken.symbol}`
+    )
+
     const url = new URL(`https://${baseURL}/swap/v1/quote`)
     url.searchParams.append('sellToken', sellToken.address)
     url.searchParams.append('buyToken', buyToken.address)
@@ -158,11 +162,15 @@ export async function fetchQuote({
     if (!response) return null
 
     const data = JSON.parse(response) as ZeroXSwapQuote
-    const price = formatUnits(BigInt(data.sellAmount), sellToken.decimals)
+
+    const sellAmount = formatUnits(BigInt(data.sellAmount), sellToken.decimals)
+    const buyAmount = formatUnits(BigInt(data.buyAmount), buyToken.decimals)
 
     console.log(
-        `Quote for selling ${sellToken.symbol} for ${buyToken.symbol} is ${price} ${sellToken.symbol}`,
-        data
+        `Quote for buy ${formatSymbol(buyAmount, buyToken.symbol)} is ${formatSymbol(
+            sellAmount,
+            sellToken.symbol
+        )}`
     )
 
     return data

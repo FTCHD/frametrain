@@ -4,15 +4,22 @@ import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaste
 import type { Config } from '..'
 import initial from './initial'
 import { bytesToHex } from 'viem'
+import price from './price'
 
 export default async function success({
     body,
     config,
+    params,
+    storage,
 }: {
     body: FrameValidatedActionPayload
     config: Config
     storage: Storage
-    params: any
+    params:
+        | {
+              buyAmount: string
+          }
+        | undefined
 }): Promise<BuildFrameData> {
     const transactionId = body.validatedData.transaction
         ? bytesToHex(body.validatedData.transaction.hash)
@@ -20,6 +27,10 @@ export default async function success({
 
     if (!(config.pool && transactionId)) {
         return initial({ config })
+    }
+
+    if (params?.buyAmount) {
+        return price({ body, config, params, storage })
     }
 
     console.info('success', { transactionId })

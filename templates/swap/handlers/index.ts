@@ -1,3 +1,4 @@
+import approve from './approve'
 import initial from './initial'
 import price from './price'
 import success from './success'
@@ -8,4 +9,5 @@ export default {
     swap,
     price,
     success,
+    approve,
 }
