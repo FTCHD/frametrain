@@ -107,7 +107,6 @@ export default function ComposeEditor({
                     onClick={async () => {
                         await publishConfig()
 
-                        // if (isComposeClient) {
                         window.parent.postMessage(
                             {
                                 type: 'createCast',
@@ -117,13 +116,16 @@ export default function ComposeEditor({
                                         text: castState.text,
                                         embeds: [
                                             ...(castState.embeds || []),
-                                            `${process.env.NEXT_PUBLIC_HOST}/f/${frame.id}`,
+                                            // only use domain to occupy less space in the cast
+                                            `${process.env.NEXT_PUBLIC_DOMAIN}/f/${frame.id}`,
                                         ],
                                     },
                                 },
                             },
                             '*'
                         )
+                        // if (isComposeClient) {
+                        // postMessage
                         // return
                         // }
                     }}

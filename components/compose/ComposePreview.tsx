@@ -108,69 +108,6 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
             </div>
         </div>
     )
-
-    return (
-        <div
-            className="flex flex-col w-full h-full	bg-red-500"
-            style={{ borderRadius: '0.48rem', aspectRatio: '1.91/1' }}
-        >
-            {/* <div
-                className="relative border-0 border-b cursor-pointer border-[#4c3a4e80] w-full max-h-[50%]"
-                style={{
-                    aspectRatio: '1.91/1',
-                }}
-            > */}
-            <img
-                className={'object-cover inset-0 max-h-[75%]'}
-                src={image.src}
-                alt=""
-                style={{ aspectRatio: '1.91/1' }}
-            />
-            {/* </div> */}
-
-            <div className="space-y-2 rounded-lg rounded-t-none border border-t-0 px-4 py-2 border-[#4c3a4e80] bg-[#2A2432] min-h-[20%]">
-                {!!input && (
-                    <div>
-                        <input
-                            type="text"
-                            className="p-2 w-full text-sm rounded border bg-input text-[#fff] px-[12px] py-[10px] border-[#4c3a4e80] bg-[#17101f]"
-                            placeholder={input.text}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                )}
-                <div className="flex flex-row w-full items-center gap-[10px] ">
-                    {buttons?.map((button, index) =>
-                        button ? (
-                            <FrameButton
-                                key={button.label}
-                                buttonIndex={index + 1}
-                                button={button}
-                                inputText={inputText}
-                                state={metadata.state}
-                                handler={handler}
-                                params={params}
-                            >
-                                {button.label}
-                            </FrameButton>
-                        ) : undefined
-                    )}
-                </div>
-            </div>
-
-            {/* <div
-                className="pointer-events-none absolute inset-0 overflow-hidden bg-white/30 backdrop-blur-[80px]"
-                style={{ opacity: loadingContainer ? 1 : 0 }}
-            /> */}
-
-            {/* <BorderBeam
-                className={`${loadingContainer ? 'visible' : 'invisible'}`}
-                colorFrom="#7c65c1"
-                colorTo="#7c65c1"
-                borderWidth={4}
-            /> */}
-        </div>
-    )
 }
 
 function FrameButton({
