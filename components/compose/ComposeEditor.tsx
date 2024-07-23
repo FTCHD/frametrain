@@ -130,7 +130,7 @@ export default function ComposeEditor({
                         // }
                     }}
                 >
-                    Add to cast
+                    ADD TO CAST
                 </Button>
 
                 {updating && (
