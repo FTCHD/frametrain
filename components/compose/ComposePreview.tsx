@@ -37,7 +37,7 @@ export function ComposePreview() {
 function PlaceholderFrame() {
     return (
         <div className="flex justify-center items-center w-full h-full">
-            <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
+            <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent z-20 absolute right-4 top-4" />
         </div>
     )
 }
