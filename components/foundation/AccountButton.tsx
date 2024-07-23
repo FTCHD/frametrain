@@ -8,13 +8,15 @@ import {
 import '@farcaster/auth-kit/styles.css'
 import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { LogOut } from 'react-feather'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../shadcn/Tooltip'
 
 export default function AccountButton() {
     const sesh = useSession()
-	const router = useRouter()
+    const router = useRouter()
+    const [isLoggingIn, setIsLoggingIn] = useState(true)
+    const [timeSpent, setTimeSpent] = useState(0)
 
     const { isAuthenticated } = useProfile()
 
@@ -24,8 +26,20 @@ export default function AccountButton() {
         return nonce
     }, [])
 
+    const increaseTimeSpent: () => ReturnType<typeof setTimeout> | undefined = useCallback(() => {
+        if (isLoggingIn) {
+            setTimeSpent((prev) => prev + 1)
+            return setTimeout(increaseTimeSpent, 1000)
+        }
+        return undefined
+    }, [isLoggingIn])
+
     const handleLogin = useCallback(
         (res: StatusAPIResponse) => {
+            setIsLoggingIn(true)
+
+            increaseTimeSpent()
+
             signIn('credentials', {
                 message: res.message,
                 signature: res.signature,
@@ -38,9 +52,9 @@ export default function AccountButton() {
                 }
             })
         },
-        [router]
+        [router, increaseTimeSpent]
     )
-
+	
     return (
         <AuthKitProvider>
             {isAuthenticated || sesh?.status === 'authenticated' ? (
@@ -58,6 +72,11 @@ export default function AccountButton() {
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
+            ) : isLoggingIn ? (
+                <div className="flex flex-col justify-center items-center w-full h-full gap-2">
+                    <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent " />
+                    {timeSpent > 5 && <p className="text-sm">Stuck? Try refreshing the page!</p>}
+                </div>
             ) : (
                 <SignInButton
                     nonce={getNonce}

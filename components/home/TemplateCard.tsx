@@ -38,7 +38,10 @@ export default function TemplateCard({
     return (
         <button
             type="button"
-            className="transition ease-in-out group w-[350px] h-[380px] flex flex-col rounded-md border-[#32383E] border hover:border-[#12467B]"
+            className={`transition ease-in-out group w-[350px] h-[380px] flex flex-col rounded-md border-[#32383E] border hover:border-[#12467B]   ${
+                isLoading ? 'animate-pulse' : ''
+            }`}
+            disabled={isLoading}
             onClick={createAndNavigate}
         >
             <div className="relative w-full h-full">
@@ -48,11 +51,7 @@ export default function TemplateCard({
                     fill={true}
                     className="object-cover h-64 rounded-t-md"
                 />
-                <div
-                    className={`ease-in-out bg-[#0B0D0E] inline-flex absolute right-4 -bottom-8 justify-center items-center w-14 h-14 rounded-full bg-background group-hover:bg-red-600 group-hover:text-white transition duration-150 ${
-                        isLoading ? 'animate-spin' : ''
-                    }`}
-                >
+                <div className="ease-in-out bg-[#0B0D0E] inline-flex absolute right-4 -bottom-8 justify-center items-center w-14 h-14 rounded-full bg-background group-hover:bg-red-600 group-hover:text-white transition duration-150">
                     <Plus size={32} />
                 </div>
             </div>
