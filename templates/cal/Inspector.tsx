@@ -227,7 +227,7 @@ export default function Inspector() {
                         />
                     </div>
 
-                    <p className="text-sm text-muted-foreground max-w-[80%]">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
                         Only allow Farcaster users within your second-degree to book a call. To
                         learn more check out{' '}
                         <Link className="underline" href="https://openrank.com/" target="_blank">
@@ -253,7 +253,7 @@ export default function Inspector() {
                         />
                     </div>
 
-                    <p className="text-sm text-muted-foreground max-w-[80%]">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
                         Only only users users holding a specific NFT to book a call.
                     </p>
                 </div>
@@ -346,7 +346,7 @@ export default function Inspector() {
                             }}
                         />
                     </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%]">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
                         Only allow users who recasted this cast to book a call.
                     </p>
                 </div>
@@ -375,7 +375,7 @@ export default function Inspector() {
                             }}
                         />
                     </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%]">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
                         Only allow users who liked this cast to book a call.
                     </p>
                 </div>
@@ -404,7 +404,7 @@ export default function Inspector() {
                             }}
                         />
                     </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%]">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
                         Only allow users who you follow to book a call.
                     </p>
                 </div>
@@ -433,7 +433,7 @@ export default function Inspector() {
                             }}
                         />
                     </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%]">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
                         Only allow users who follow you to book a call.
                     </p>
                 </div>
