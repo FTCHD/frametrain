@@ -1,5 +1,5 @@
 import { auth } from '@/auth'
-import ComposeEditor from '@/components/ComposeEditor'
+import ComposeEditor from '@/components/compose/ComposeEditor'
 import { getFrame } from '@/lib/frame'
 import templates from '@/templates'
 import type { Metadata } from 'next'
