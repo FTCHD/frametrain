@@ -140,7 +140,7 @@ export default function CoverView(config: Config) {
                     textAlign: 'left',
                 }}
             >
-                Schedule a call with me right from this Frame!
+                Book a call with me right from this Frame!
             </div>
         </div>
     )
