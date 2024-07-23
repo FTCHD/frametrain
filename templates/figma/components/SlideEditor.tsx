@@ -105,10 +105,10 @@ const SlideDesigner = ({ figmaPAT, slideConfig, buttonTargets, onUpdate }: Slide
                         <div>
                             <p>#</p>
                         </div>
-                        <div/>
+                        <div />
                         <div>Caption</div>
                         <div>Target</div>
-                        <div/>
+                        <div />
                         {slideConfig.buttons.map((buttonConfig) => (
                             <ButtonDesigner
                                 key={buttonConfig.id}

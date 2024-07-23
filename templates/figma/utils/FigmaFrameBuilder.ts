@@ -3,7 +3,7 @@ import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFont } from '@/sdk/fonts'
 import type { FramePressConfig, SlideConfig } from '../Config'
-import { FigmaView } from '../views/FigmaView'
+import { FigmaView, NoFigmaView } from '../views/FigmaView'
 import FontConfig from './FontConfig'
 
 export default async function buildFigmaFrame(
@@ -18,23 +18,24 @@ export default async function buildFigmaFrame(
         throw new FrameError('This is no longer a valid slide, reconfigure the button')
     }
 
-    if (!slideConfig.figmaUrl) {
-        throw new FrameError('Please configure the Figma URL for this slide')
-    }
-
-    const view = FigmaView({ slideConfig })
+    const view = slideConfig.figmaUrl ? FigmaView({ slideConfig }) : NoFigmaView()
 
     // We need to merge the fonts in the design with the fonts in the config
     // (fonts in the design may be missing from the config if the Figma was
     // updated without updating the config in the Inspector)
-    const fontsUsed = Object.values(slideConfig.textLayers).map(
-        (textLayerConfig) =>
-            new FontConfig(
-                textLayerConfig.fontFamily,
-                textLayerConfig.fontWeight,
-                textLayerConfig.fontStyle
-            )
-    )
+    const fallbackFont = new FontConfig('Inter', '400', 'Normal')
+
+    const fontsUsed = [
+        fallbackFont,
+        ...Object.values(slideConfig.textLayers).map(
+            (textLayerConfig) =>
+                new FontConfig(
+                    textLayerConfig.fontFamily,
+                    textLayerConfig.fontWeight,
+                    textLayerConfig.fontStyle
+                )
+        )
+    ]
 
     const distinctFontKeys = Array.from(new Set(fontsUsed.map((font) => font.key)))
     const distinctFonts = distinctFontKeys

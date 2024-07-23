@@ -4,18 +4,41 @@ import { useFrameConfig, useFramePreview } from '@/sdk/hooks'
 import { ArrowBigLeftDash, ArrowBigRightDash, KeySquare, Trash2 } from 'lucide-react'
 import SlideEditor from './components/SlideEditor'
 import type { FramePressConfig, SlideConfig, TextLayerConfigs } from './Config'
-import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
+import { DEFAULT_SLIDES, INITIAL_BUTTONS, INITIAL_SLIDE_ID } from './constants'
 import FigmaTokenEditor from './components/FigmaTokenEditor'
 import { Button } from '@/components/shadcn/Button'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FigmaView } from './views/FigmaView'
 import FontConfig from './utils/FontConfig'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
     const [editingFigmaPAT, setEditingFigmaPAT] = useState(config.figmaPAT === undefined)
-    const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
-    const [_, setPreviewData] = useFramePreview()
+    const [previewData, setPreviewData] = useFramePreview()
+
+    const [selectedSlideId, setSelectedSlideId] = useState(INITIAL_SLIDE_ID)
+    const [selectedSlideIndex, selectedSlide] = useMemo(() => {
+        const index = config.slides.findIndex((slide) => slide.id == selectedSlideId)
+        const slide = config.slides[index]
+        console.debug(`selectedSlideIndex updated to ${index} (${selectedSlideId})`)
+        return [index, slide]
+    }, [selectedSlideId, config.slides])
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: wronk
+    useEffect(() => {
+        if (selectedSlide) {
+            console.debug(`setPreviewData(${selectedSlide.id})`)
+            // Don't use selectedSlideId -- it might not be saved in the config
+            // yet due to the delay that debouncing creates. selectedSlide is always
+            // guaranteed to be in the config!
+            setPreviewData({
+                handler: 'slide',
+                buttonIndex: 0,
+                inputText: '',
+                params: `slideId=${selectedSlide.id}`,
+            })
+        }
+    }, [selectedSlide])
 
     // Setup default slides if this is a new instance
     if (config.slides === undefined) {
@@ -27,17 +50,10 @@ export default function Inspector() {
         })
     }
 
-    // Selected slide
-    const selectedSlide = config.slides?.[currentSlideIndex]
-
-    function selectSlide(index: number) {
-        setCurrentSlideIndex(index)
-        setPreviewData({
-            handler: 'slide',
-            buttonIndex: 0,
-            inputText: '',
-            params: `slideId=${config.slides[index].id}`,
-        })
+    // Slide selection
+    function selectSlide(id: string) {
+        console.debug(`selectSlide(${id})`)
+        setSelectedSlideId(id)
     }
 
     // Configuration updates
@@ -50,33 +66,12 @@ export default function Inspector() {
         })
     }
 
-    function loadFonts() {
-        function identifyFontsUsed(textLayers: TextLayerConfigs): FontConfig[] {
-            const fonts = new Set<FontConfig>()
-            for (const layer of Object.values(textLayers)) {
-                if (layer.fontFamily) {
-                    const fontConfig = new FontConfig(layer.fontFamily, layer.fontWeight, layer.fontStyle)
-                    fonts.add(fontConfig)
-                }
-            }
-            return Array.from(fonts)
-        }
-
-        for (const slide of config.slides) {
-            const fonts = identifyFontsUsed(slide.textLayers)
-            for (const fontConfig of fonts) {
-                if (!loadedFonts.has(fontConfig.key)) {
-                    loadGoogleFont(fontConfig)
-                    loadedFonts.add(fontConfig.key)
-                }
-            }
-        }
-    }
-
     function updateSlide(updatedSlide: SlideConfig) {
-        console.debug(`Inspector::updateSlide(id=${updatedSlide.id})`)
+        console.debug(`Inspector::updateSlide(${updatedSlide.id})`)
 
-        const updatedSlides = config.slides.with(currentSlideIndex, updatedSlide)
+        const updatedSlides = config.slides.map((existingSlide) =>
+            existingSlide.id == updatedSlide.id ? updatedSlide : existingSlide
+        )
 
         updateConfig({ slides: updatedSlides })
     }
@@ -100,34 +95,63 @@ export default function Inspector() {
             nextSlideId: config.nextSlideId + 1,
         })
 
-        selectSlide(updatedSlides.length - 1) // TODO broken :()
+        selectSlide(newSlide.id)
     }
 
     function removeSlide() {
-        console.debug(`Inspector::removeSlide(${currentSlideIndex})`)
+        console.debug(`Inspector::removeSlide(${selectedSlideId})`)
 
         const updatedSlides = config.slides
-        updatedSlides.splice(currentSlideIndex, 1)
-        selectSlide(currentSlideIndex - 1)
+        updatedSlides.splice(selectedSlideIndex, 1)
+
+        const newCurrentSlide = config.slides[selectedSlideIndex - 1]
+        selectSlide(newCurrentSlide.id)
         updateConfig({ slides: updatedSlides })
     }
 
     function swapSlide(direction: 'left' | 'right') {
-        console.debug(`Inspector::moveSlide(${currentSlideIndex}, ${direction})`)
+        console.debug(`Inspector::moveSlide(${selectedSlideIndex}, ${direction})`)
 
         const updatedSlides = [...config.slides]
 
-        const swapIndex = direction === 'left' ? currentSlideIndex - 1 : currentSlideIndex + 1
+        const swapIndex = direction === 'left' ? selectedSlideIndex - 1 : selectedSlideIndex + 1
 
-        const temp = updatedSlides[currentSlideIndex]
-        updatedSlides[currentSlideIndex] = updatedSlides[swapIndex]
+        const temp = updatedSlides[selectedSlideIndex]
+        updatedSlides[selectedSlideIndex] = updatedSlides[swapIndex]
         updatedSlides[swapIndex] = temp
 
-        selectSlide(swapIndex)
+        const newCurrentSlide = updatedSlides[swapIndex]
+        selectSlide(newCurrentSlide.id)
         updateConfig({ slides: updatedSlides })
     }
 
-    //loadFonts()
+    // Accurate font previews require us to identify & load fonts used into <head>
+    function identifyFontsUsed(textLayers: TextLayerConfigs): FontConfig[] {
+        const fonts = new Set<FontConfig>()
+        for (const layer of Object.values(textLayers)) {
+            if (layer.fontFamily) {
+                const fontConfig = new FontConfig(
+                    layer.fontFamily,
+                    layer.fontWeight,
+                    layer.fontStyle
+                )
+                fonts.add(fontConfig)
+            }
+        }
+        return Array.from(fonts)
+    }
+
+    useEffect(() => {
+        for (const slide of config.slides) {
+            const fonts = identifyFontsUsed(slide.textLayers)
+            for (const fontConfig of fonts) {
+                if (!loadedFonts.has(fontConfig.key)) {
+                    addGoogleFontIntoHtmlHead(fontConfig)
+                    loadedFonts.add(fontConfig.key)
+                }
+            }
+        }
+    })
 
     const buttonTargets = config.slides
         ?.filter((slide) => slide.title !== undefined) // Filter out slides without a title
@@ -136,8 +160,8 @@ export default function Inspector() {
             title: slide.title as string,
         }))
 
-    const canMoveLeft = currentSlideIndex != 0 // not the first slide
-    const canMoveRight = currentSlideIndex != config.slides?.length - 1 // not the last slide
+    const canMoveLeft = selectedSlideIndex != 0 // not the first slide
+    const canMoveRight = selectedSlideIndex != config.slides?.length - 1 // not the last slide
     const canDelete = config.slides?.length != 1 // must always be one slide visible
 
     return (
@@ -180,10 +204,10 @@ export default function Inspector() {
                             <div
                                 key={slideConfig.id}
                                 onClick={() => {
-                                    selectSlide(index)
+                                    selectSlide(slideConfig.id)
                                 }}
                                 className={`w-40 h-40 flex items-center justify-center mr-1 border-[1px] rounded-md cursor-pointer select-none ${
-                                    currentSlideIndex === index
+                                    selectedSlideIndex === index
                                         ? 'border-highlight'
                                         : 'border-input'
                                 }`}
@@ -222,14 +246,18 @@ export default function Inspector() {
  * We need to load Google fonts into the page otherwise the text on the slide
  * preview will be wrong. An alternative would be to render the preview via the
  * frame handler, but this has performance and complexity trade-offs.
- * 
+ *
+ * We keep track of which fonts we've already added into <head> to avoid the
+ * list of <meta> growing uncontrollably.
+ *
  */
 const loadedFonts = new Set<string>()
-function loadGoogleFont(fontConfig: FontConfig) {
+function addGoogleFontIntoHtmlHead(fontConfig: FontConfig) {
     if (loadedFonts.has(fontConfig.key)) {
         console.debug(`loadGoogleFont(${fontConfig.key}): already loaded`)
         return
     }
+
     const link = document.createElement('link')
     const requestFontName = fontConfig.fontFamily.replace(' ', '+')
     const fontWeightValue = fontConfig.fontWeight as number
@@ -238,6 +266,5 @@ function loadGoogleFont(fontConfig: FontConfig) {
     link.rel = 'stylesheet'
     document.head.appendChild(link)
     loadedFonts.add(fontConfig.key)
-    console.debug(`loadGoogleFont(${fontConfig.key}): loaded`)
+    console.debug(`addGoogleFontIntoHtmlHead(${fontConfig.key}): loaded`)
 }
-

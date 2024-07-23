@@ -1,3 +1,5 @@
+'use client'
+
 import { Input } from '@/components/shadcn/Input'
 import { Info, Save, X } from 'lucide-react'
 import { Button } from '@/components/shadcn/Button'

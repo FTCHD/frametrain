@@ -198,7 +198,7 @@ export const PropertiesTab = ({
     return (
         <div>
             <div className="grid grid-cols-[1fr_2fr] space-y-2">
-                <div className="flex items-center">Title</div>
+                <div className="flex items-center">Title<span className='text-red-500'>*</span></div>
                 <Input
                     placeholder="No title"
                     defaultValue={title}
@@ -211,7 +211,7 @@ export const PropertiesTab = ({
                     defaultValue={description}
                     onBlur={(e) => onUpdateDescription(e.target.value)}
                 />
-                <div className="flex items-center">Figma URL</div>
+                <div className="flex items-center">Figma URL<span className='text-red-500'>*</span></div>
                 <div className="flex items-center">
                     <Input
                         type="url"
@@ -240,7 +240,7 @@ export const PropertiesTab = ({
                         )}
                     </Button>
                 </div>
-                <div className="flex items-center">Frame Aspect Ratio</div>
+                <div className="flex items-center">Frame Aspect Ratio<span className='text-red-500'>*</span></div>
                 <div className="flex items-center">
                     <Select
                         defaultValue={aspectRatio}

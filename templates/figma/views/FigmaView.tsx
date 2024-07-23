@@ -33,6 +33,12 @@ export function getDimensionsForAspectRatio(aspectRatio: AspectRatio) {
           : undefined
 }
 
+export function NoFigmaView() {
+    return (
+        <div style={{color: 'white'}}>No Figma URL configured for this slide</div>
+    )
+}
+
 export function FigmaView({ slideConfig }: FigmaViewProps) {
     const parseCSS = (cssString: string): Record<string, string> => {
         if (!cssString) return {}
