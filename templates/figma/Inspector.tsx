@@ -7,30 +7,13 @@ import type { FramePressConfig, SlideConfig, TextLayerConfigs } from './Config'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
 import FigmaTokenEditor from './components/FigmaTokenEditor'
 import { Button } from '@/components/shadcn/Button'
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { FigmaView } from './views/FigmaView'
-
-// We need to keep track of which fonts we've loaded into the page <head>
-const loadedFonts = new Set()
-function loadGoogleFont(fontFamily: string) {
-    if (loadedFonts.has(fontFamily)) {
-        console.debug(`loadGoogleFont(${fontFamily}): already loaded`)
-        return
-    }
-    const link = document.createElement('link')
-    link.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(
-        /\s+/g,
-        '+'
-    )}&display=swap`
-    link.rel = 'stylesheet'
-    document.head.appendChild(link)
-    loadedFonts.add(fontFamily)
-    console.debug(`loadGoogleFont(${fontFamily}): loaded`)
-}
+import FontConfig from './utils/FontConfig'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
-    const [editingFigmaPAT, setEditFigmaPAT] = useState(config.figmaPAT === undefined)
+    const [editingFigmaPAT, setEditingFigmaPAT] = useState(config.figmaPAT === undefined)
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
     const [_, setPreviewData] = useFramePreview()
 
@@ -60,6 +43,7 @@ export default function Inspector() {
     // Configuration updates
     function updateFigmaPAT(updatedPAT: string) {
         console.debug('Inspector::updateFigmaPAT()')
+        setEditingFigmaPAT(false)
         updateConfig({
             ...config,
             figmaPAT: updatedPAT,
@@ -67,22 +51,23 @@ export default function Inspector() {
     }
 
     function loadFonts() {
-        function extractFontFamilies(textLayers: TextLayerConfigs) {
-            const fontFamilies = new Set<string>()
+        function identifyFontsUsed(textLayers: TextLayerConfigs): FontConfig[] {
+            const fonts = new Set<FontConfig>()
             for (const layer of Object.values(textLayers)) {
                 if (layer.fontFamily) {
-                    fontFamilies.add(layer.fontFamily)
+                    const fontConfig = new FontConfig(layer.fontFamily, layer.fontWeight, layer.fontStyle)
+                    fonts.add(fontConfig)
                 }
             }
-            return Array.from(fontFamilies)
+            return Array.from(fonts)
         }
 
         for (const slide of config.slides) {
-            const fontFamilies = extractFontFamilies(slide.textLayers)
-            for (const font of fontFamilies) {
-                if (!loadedFonts.has(font)) {
-                    loadGoogleFont(font)
-                    loadedFonts.add(font)
+            const fonts = identifyFontsUsed(slide.textLayers)
+            for (const fontConfig of fonts) {
+                if (!loadedFonts.has(fontConfig.key)) {
+                    loadGoogleFont(fontConfig)
+                    loadedFonts.add(fontConfig.key)
                 }
             }
         }
@@ -142,7 +127,7 @@ export default function Inspector() {
         updateConfig({ slides: updatedSlides })
     }
 
-    loadFonts()
+    //loadFonts()
 
     const buttonTargets = config.slides
         ?.filter((slide) => slide.title !== undefined) // Filter out slides without a title
@@ -161,7 +146,7 @@ export default function Inspector() {
                 <FigmaTokenEditor
                     figmaPAT={config.figmaPAT}
                     onChange={updateFigmaPAT}
-                    onCancel={() => setEditFigmaPAT(false)}
+                    onCancel={() => setEditingFigmaPAT(false)}
                 />
             )}
 
@@ -169,7 +154,7 @@ export default function Inspector() {
                 <>
                     <div className="w-full flex items-center justify-between">
                         <div className="flex flex-row items-center justify-end gap-2">
-                            <Button onClick={() => setEditFigmaPAT(true)}>
+                            <Button onClick={() => setEditingFigmaPAT(true)}>
                                 <KeySquare className="mr-1" />
                                 Figma PAT
                             </Button>
@@ -230,3 +215,29 @@ export default function Inspector() {
         </div>
     )
 }
+
+/*
+ * Fonts
+ *
+ * We need to load Google fonts into the page otherwise the text on the slide
+ * preview will be wrong. An alternative would be to render the preview via the
+ * frame handler, but this has performance and complexity trade-offs.
+ * 
+ */
+const loadedFonts = new Set<string>()
+function loadGoogleFont(fontConfig: FontConfig) {
+    if (loadedFonts.has(fontConfig.key)) {
+        console.debug(`loadGoogleFont(${fontConfig.key}): already loaded`)
+        return
+    }
+    const link = document.createElement('link')
+    const requestFontName = fontConfig.fontFamily.replace(' ', '+')
+    const fontWeightValue = fontConfig.fontWeight as number
+    const italicValue = fontConfig.fontStyle === 'italic' ? '1' : '0'
+    link.href = `https://fonts.googleapis.com/css2?family=${requestFontName}:ital,wght@${italicValue},${fontWeightValue}&display=swap`
+    link.rel = 'stylesheet'
+    document.head.appendChild(link)
+    loadedFonts.add(fontConfig.key)
+    console.debug(`loadGoogleFont(${fontConfig.key}): loaded`)
+}
+

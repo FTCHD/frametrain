@@ -2,9 +2,9 @@
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFont } from '@/sdk/fonts'
-import type { FontStyle, FontWeight } from 'satori'
 import type { FramePressConfig, SlideConfig } from '../Config'
 import { FigmaView } from '../views/FigmaView'
+import FontConfig from './FontConfig'
 
 export default async function buildFigmaFrame(
     config: FramePressConfig,
@@ -44,7 +44,10 @@ export default async function buildFigmaFrame(
         const result = await loadGoogleFont(fontFamily, fontWeight, fontStyle)
         return result
     })
-    const fonts = await Promise.all(fontPromises)
+
+    // We use allSettled so that font loads don't crash the frame
+    const fontResults = await Promise.allSettled(fontPromises)
+    const fonts = fontResults.filter((r) => r.status == 'fulfilled').map((r) => r.value)
 
     const buttons = slideConfig?.buttons
         .filter((button) => button.enabled)
@@ -69,47 +72,5 @@ export default async function buildFigmaFrame(
         component: view,
         handler: 'click',
         params: { origin: slideConfig.id },
-    }
-}
-
-class FontConfig {
-    fontFamily: string
-    fontWeight: FontWeight
-    fontStyle: FontStyle
-    key: string
-
-    constructor(fontFamily: string, fontWeight: string, fontStyle: string) {
-        this.fontFamily = fontFamily
-        this.fontWeight = this.mapFontWeight(fontWeight)
-        this.fontStyle = (fontStyle as FontStyle) || 'normal'
-        this.key = `${this.fontFamily}::${this.fontWeight}:${this.fontStyle}`
-    }
-
-    private mapFontWeight(fontWeight: string): FontWeight {
-        const weightMap: { [key: string]: FontWeight } = {
-            'normal': 400,
-            'bold': 700,
-            'bolder': 900,
-            'lighter': 100,
-            '100': 100,
-            '200': 200,
-            '300': 300,
-            '400': 400,
-            '500': 500,
-            '600': 600,
-            '700': 700,
-            '800': 800,
-            '900': 900,
-            'thin': 100,
-            'extra-light': 200,
-            'light': 300,
-            'regular': 400,
-            'medium': 500,
-            'semi-bold': 600,
-            'extra-bold': 800,
-            'black': 900,
-            'heavy': 900,
-        }
-        return weightMap[fontWeight] || 400 // Default to 400 if not found
     }
 }
