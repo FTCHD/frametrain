@@ -15,9 +15,6 @@ export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
     const [editingFigmaPAT, setEditingFigmaPAT] = useState(config.figmaPAT === undefined)
     const [_, setPreviewData] = useFramePreview()
-
-    const [selectedSlideId, setSelectedSlideId] = useState(INITIAL_SLIDE_ID)
-    const [selectedSlide, setSelectedSlide] = useState<SlideConfig>()
     const [selectedSlideIndex, setSelectedSlideIndex] = useState(0)
 
     // Setup default slides if this is a new instance
@@ -31,30 +28,22 @@ export default function Inspector() {
     }
 
     // Slide selection
-    function selectSlide(id: string) {
-        console.debug(`selectSlide(${id})`)
-
-        const index = findSlide(id)
-        const slide = index >= 0 ? config.slides[index] : undefined
-
-        setSelectedSlideId(id)
-        setSelectedSlideIndex(index)
-        setSelectedSlide(slide)
-
-        console.debug(`selectedSlideIndex updated to ${index} (${id})`)
-        if (slide) {
-            console.debug(`setPreviewData(${id})`)
-            // Don't use selectedSlideId -- it might not be saved in the config
-            // yet due to the delay that debouncing creates. selectedSlide is always
-            // guaranteed to be in the config!
-            setPreviewData({
-                handler: 'slide',
-                buttonIndex: 0,
-                inputText: '',
-                params: `slideId=${id}`,
-            })
-        }
+    function previewSlide(id: string) {
+        console.debug(`previewSlide(${id})`)
+        setPreviewData({
+            handler: 'slide',
+            buttonIndex: 0,
+            inputText: '',
+            params: `slideId=${id}`,
+        })
     }
+
+    // const [selectedSlideIndex, selectedSlide] = useMemo(() => {
+    //     const index = findSlide(selectedSlideId)
+    //     const slide = index >= 0 ? config.slides[index] : undefined
+    //     console.debug(`selectedSlideIndex updated to ${index} (${selectedSlideId})`)
+    //     return [index, slide]
+    // }, [selectedSlideId, config.slides])
 
     function findSlide(id: string) {
         return config.slides ? config?.slides.findIndex((slide) => slide.id == id) : -1
@@ -99,17 +88,19 @@ export default function Inspector() {
             nextSlideId: config.nextSlideId + 1,
         })
 
-        selectSlide(newSlide.id)
+        // We don't update the selected slide because there is a delay
+        // between the config being updated on the backend, which
+        // makes the preview out of sync.
     }
 
     function removeSlide() {
-        console.debug(`Inspector::removeSlide(${selectedSlideId})`)
+        console.debug(`Inspector::removeSlide(${selectedSlideIndex})`)
 
         const updatedSlides = config.slides
         updatedSlides.splice(selectedSlideIndex, 1)
 
         const newCurrentSlide = config.slides[selectedSlideIndex - 1]
-        selectSlide(newCurrentSlide.id)
+        previewSlide(newCurrentSlide.id)
         updateConfig({ slides: updatedSlides })
     }
 
@@ -125,7 +116,7 @@ export default function Inspector() {
         updatedSlides[swapIndex] = temp
 
         const newCurrentSlide = updatedSlides[swapIndex]
-        selectSlide(newCurrentSlide.id)
+        previewSlide(newCurrentSlide.id)
         updateConfig({ slides: updatedSlides })
     }
 
@@ -155,20 +146,6 @@ export default function Inspector() {
                     addGoogleFontIntoHtmlHead(fontConfig)
                     loadedFonts.add(fontConfig.key)
                 }
-            }
-        }
-    })
-
-    // Handle the case of a new slide - we have to wait until the slide is in the config
-    // selectedSlideId will be something other than the INITIAL_SLIDE_ID, and
-    // selectedSlideIndex will be -1 indicating that the slide wasn't available
-    // the last time we tried. This must run after the render since it changes state.
-    // Also handle the case of a new template instance.
-    useEffect(() => {
-        if (config.figmaPAT && (selectedSlideIndex == -1 || selectedSlide === undefined)) {
-            // If we can find the slide, that means we can now properly identify the index
-            if (findSlide(selectedSlideId) >= 0) {
-                selectSlide(selectedSlideId)
             }
         }
     })
@@ -226,7 +203,8 @@ export default function Inspector() {
                             <div
                                 key={slideConfig.id}
                                 onClick={() => {
-                                    selectSlide(slideConfig.id)
+                                    setSelectedSlideIndex(index)
+                                    previewSlide(slideConfig.id)
                                 }}
                                 className={`w-40 h-40 flex items-center justify-center mr-1 border-[1px] rounded-md cursor-pointer select-none ${
                                     selectedSlideIndex === index
@@ -247,10 +225,10 @@ export default function Inspector() {
                         </div>
                     </div>
 
-                    {selectedSlide && (
+                    {config.slides && (
                         <SlideEditor
-                            key={selectedSlide.id}
-                            slideConfig={selectedSlide}
+                            key={config.slides[selectedSlideIndex].id}
+                            slideConfig={config.slides[selectedSlideIndex]}
                             figmaPAT={config.figmaPAT}
                             buttonTargets={buttonTargets}
                             onUpdate={(updatedSlideConfig) => updateSlide(updatedSlideConfig)}
