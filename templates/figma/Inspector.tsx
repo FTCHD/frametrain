@@ -7,38 +7,18 @@ import type { FramePressConfig, SlideConfig, TextLayerConfigs } from './Config'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS, INITIAL_SLIDE_ID } from './constants'
 import FigmaTokenEditor from './components/FigmaTokenEditor'
 import { Button } from '@/components/shadcn/Button'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FigmaView } from './views/FigmaView'
 import FontConfig from './utils/FontConfig'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
     const [editingFigmaPAT, setEditingFigmaPAT] = useState(config.figmaPAT === undefined)
-    const [previewData, setPreviewData] = useFramePreview()
+    const [_, setPreviewData] = useFramePreview()
 
     const [selectedSlideId, setSelectedSlideId] = useState(INITIAL_SLIDE_ID)
-    const [selectedSlideIndex, selectedSlide] = useMemo(() => {
-        const index = config.slides.findIndex((slide) => slide.id == selectedSlideId)
-        const slide = config.slides[index]
-        console.debug(`selectedSlideIndex updated to ${index} (${selectedSlideId})`)
-        return [index, slide]
-    }, [selectedSlideId, config.slides])
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: wronk
-    useEffect(() => {
-        if (selectedSlide) {
-            console.debug(`setPreviewData(${selectedSlide.id})`)
-            // Don't use selectedSlideId -- it might not be saved in the config
-            // yet due to the delay that debouncing creates. selectedSlide is always
-            // guaranteed to be in the config!
-            setPreviewData({
-                handler: 'slide',
-                buttonIndex: 0,
-                inputText: '',
-                params: `slideId=${selectedSlide.id}`,
-            })
-        }
-    }, [selectedSlide])
+    const [selectedSlide, setSelectedSlide] = useState<SlideConfig>()
+    const [selectedSlideIndex, setSelectedSlideIndex] = useState(0)
 
     // Setup default slides if this is a new instance
     if (config.slides === undefined) {
@@ -53,7 +33,31 @@ export default function Inspector() {
     // Slide selection
     function selectSlide(id: string) {
         console.debug(`selectSlide(${id})`)
+
+        const index = findSlide(id)
+        const slide = index >= 0 ? config.slides[index] : undefined
+
         setSelectedSlideId(id)
+        setSelectedSlideIndex(index)
+        setSelectedSlide(slide)
+
+        console.debug(`selectedSlideIndex updated to ${index} (${id})`)
+        if (slide) {
+            console.debug(`setPreviewData(${id})`)
+            // Don't use selectedSlideId -- it might not be saved in the config
+            // yet due to the delay that debouncing creates. selectedSlide is always
+            // guaranteed to be in the config!
+            setPreviewData({
+                handler: 'slide',
+                buttonIndex: 0,
+                inputText: '',
+                params: `slideId=${id}`,
+            })
+        }
+    }
+
+    function findSlide(id: string) {
+        return config.slides ? config?.slides.findIndex((slide) => slide.id == id) : -1
     }
 
     // Configuration updates
@@ -141,7 +145,9 @@ export default function Inspector() {
         return Array.from(fonts)
     }
 
+    // Must run after rendering as it modifies the document <head>
     useEffect(() => {
+        if (!config.slides) return
         for (const slide of config.slides) {
             const fonts = identifyFontsUsed(slide.textLayers)
             for (const fontConfig of fonts) {
@@ -153,6 +159,21 @@ export default function Inspector() {
         }
     })
 
+    // Handle the case of a new slide - we have to wait until the slide is in the config
+    // selectedSlideId will be something other than the INITIAL_SLIDE_ID, and
+    // selectedSlideIndex will be -1 indicating that the slide wasn't available
+    // the last time we tried. This must run after the render since it changes state.
+    // Also handle the case of a new template instance.
+    useEffect(() => {
+        if (config.figmaPAT && (selectedSlideIndex == -1 || selectedSlide === undefined)) {
+            // If we can find the slide, that means we can now properly identify the index
+            if (findSlide(selectedSlideId) >= 0) {
+                selectSlide(selectedSlideId)
+            }
+        }
+    })
+
+    // Button targets == slides with a Title
     const buttonTargets = config.slides
         ?.filter((slide) => slide.title !== undefined) // Filter out slides without a title
         .map((slide) => ({
@@ -160,6 +181,7 @@ export default function Inspector() {
             title: slide.title as string,
         }))
 
+    // Slide operation buttons
     const canMoveLeft = selectedSlideIndex != 0 // not the first slide
     const canMoveRight = selectedSlideIndex != config.slides?.length - 1 // not the last slide
     const canDelete = config.slides?.length != 1 // must always be one slide visible

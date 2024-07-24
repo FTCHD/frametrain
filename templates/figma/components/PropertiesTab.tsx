@@ -66,7 +66,7 @@ export const PropertiesTab = ({
     const [isUpdating, setIsUpdating] = useState(false)
 
     const updateUrl = async () => {
-        console.debug(`FigmaDesigner[${slideConfigId}]::updateFigmaUrl()`)
+        console.debug(`updateFigmaUrl(${slideConfigId})`)
 
         setIsUpdating(true)
 

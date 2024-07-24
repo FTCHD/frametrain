@@ -34,9 +34,7 @@ export function getDimensionsForAspectRatio(aspectRatio: AspectRatio) {
 }
 
 export function NoFigmaView() {
-    return (
-        <div style={{color: 'white'}}>No Figma URL configured for this slide</div>
-    )
+    return <div />
 }
 
 export function FigmaView({ slideConfig }: FigmaViewProps) {
@@ -73,7 +71,9 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
         }
     }
 
-    const horzAlignToTextAlign = (alignment: TextAlignHorizontal): Property.TextAlign | undefined => {
+    const horzAlignToTextAlign = (
+        alignment: TextAlignHorizontal
+    ): Property.TextAlign | undefined => {
         switch (alignment) {
             case 'LEFT':
                 return 'left'
@@ -186,9 +186,7 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
                 }}
             >
                 {contentLines.map((line, index) => (
-                    <div key={index}>
-                        {line == '' ? '\u00a0' : line}
-                    </div>
+                    <div key={index}>{line == '' ? '\u00a0' : line}</div>
                 ))}
             </div>
         )

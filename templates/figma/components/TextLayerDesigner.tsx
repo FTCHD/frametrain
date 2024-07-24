@@ -103,7 +103,7 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                             onChange({ ...config, centerHorizontally: checked === true })
                         }}
                     /> */}
-                    <div className="col-span-2">
+                    <div className="col-span-2 flex justify-evenly">
                         <ToggleGroup
                             type="single"
                             variant="outline"
