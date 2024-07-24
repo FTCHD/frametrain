@@ -8,9 +8,9 @@ import type { InferSelectModel } from 'drizzle-orm'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
-import { FramePreview } from './FramePreview'
-import { InspectorContext } from './editor/Context'
-import { Button } from './shadcn/Button'
+import { InspectorContext } from '../editor/Context'
+import { Button } from '../shadcn/Button'
+import { ComposePreview } from './ComposePreview'
 
 export default function ComposeEditor({
     frame,
@@ -81,11 +81,11 @@ export default function ComposeEditor({
     const { Inspector } = template as any
 
     return (
-        <div className="flex w-full h-full flex-col relative">
-            <div className="flex flex-col w-full min-h-[45%]  bg-transparent bg-[url('/dots.svg')] justify-center items-center px-12 py-6 ">
-                <FramePreview />
-            </div>
-            <div className="flex flex-col w-full bg-transparent px-4 overflow-scroll">
+        <div className="flex w-full h-full flex-col">
+            {/* <div className="w-full h-[200px] bg-blue-500 p-1 "> */}
+            <ComposePreview />
+            {/* </div> */}
+            <div className="flex flex-col w-full  pt-[225px] px-3 pb-3 bg-[#0c0c0c]">
                 <InspectorContext.Provider
                     value={{
                         frameId: frame.id,
@@ -98,14 +98,15 @@ export default function ComposeEditor({
                     <Inspector />
                 </InspectorContext.Provider>
             </div>
-            <div className="w-full min-h-[10px] bg-transparent" />
-            <div className="flex flex-row justify-between items-center p-4 bg-transparent border-t border-t-white">
+            {/* <div className="w-full min-h-[10px] bg-transparent" /> */}
+            <div className="flex flex-row justify-between items-center p-3 bg-[#0c0c0c]">
                 <Button
-                    className="rounded-lg font-semibold border border-transparent bg-[#7c65c1] hover:bg-[#6944ba] text-light active:border-[#ffffff4d]  px-[0.9333rem] py-[0.4333rem] text-sm"
+                    // className="rounded-lg font-semibold border border-transparent bg-[#7c65c1] hover:bg-[#6944ba] text-light active:border-[#ffffff4d]  px-[0.9333rem] py-[0.4333rem] text-sm"
+                    variant={'default'}
+                    className="w-full"
                     onClick={async () => {
                         await publishConfig()
 
-                        // if (isComposeClient) {
                         window.parent.postMessage(
                             {
                                 type: 'createCast',
@@ -115,22 +116,25 @@ export default function ComposeEditor({
                                         text: castState.text,
                                         embeds: [
                                             ...(castState.embeds || []),
-                                            `${process.env.NEXT_PUBLIC_HOST}/f/${frame.id}`,
+                                            // only use domain to occupy less space in the cast
+                                            `${process.env.NEXT_PUBLIC_DOMAIN}/f/${frame.id}`,
                                         ],
                                     },
                                 },
                             },
                             '*'
                         )
+                        // if (isComposeClient) {
+                        // postMessage
                         // return
                         // }
                     }}
                 >
-                    Add to cast
+                    ADD TO CAST
                 </Button>
 
                 {updating && (
-                    <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
+                    <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent z-20 absolute right-4 top-4" />
                 )}
             </div>
         </div>
