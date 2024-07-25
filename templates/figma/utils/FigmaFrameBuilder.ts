@@ -25,16 +25,21 @@ export default async function buildFigmaFrame(
     const buttons = slideConfig?.buttons
         .filter((button) => button.enabled)
         .map((button) => {
+            const caption =
+                !button.caption || button.caption.length == 0
+                ? '(no label)'
+                : button.caption
+
             if (button.target == 'URL') {
                 return {
-                    label: button.caption,
+                    label: caption,
                     action: 'link',
                     target: button.link,
                 } as FrameButtonMetadata
             }
 
             return {
-                label: button.caption,
+                label: caption,
             } as FrameButtonMetadata
         })
 
