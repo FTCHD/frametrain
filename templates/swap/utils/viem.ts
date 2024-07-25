@@ -1,16 +1,6 @@
 import { createPublicClient, http } from 'viem'
 import type { Chain as ViewChain } from 'viem'
-import {
-    base,
-    mainnet,
-    optimism,
-    arbitrum,
-    bsc,
-    sepolia,
-    celo,
-    blast,
-    avalanche,
-} from 'viem/chains'
+import { base, mainnet, optimism, arbitrum } from 'viem/chains'
 
 /**
  * Network	Chain ID
@@ -26,6 +16,12 @@ Zora	eip155:7777777
 /** Support chains */
 export const chains = ['ethereum', 'optimism', 'arbitrum', 'base'] as const
 export type Chain = (typeof chains)[number]
+export const chainsByChainId: Record<number, string> = {
+    1: 'eth',
+    10: 'optimism',
+    42161: 'arbitrum',
+    8453: 'base',
+}
 
 export const supportedChains = chains
     .map((chain) => `${chain.charAt(0).toUpperCase()}${chain.slice(1)}`)

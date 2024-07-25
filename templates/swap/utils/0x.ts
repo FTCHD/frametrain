@@ -1,5 +1,5 @@
 import { corsFetch } from '@/sdk/scrape'
-import { type Address, type Hex, formatUnits, parseEther, parseUnits } from 'viem'
+import { type Address, type Hex, formatUnits, parseUnits } from 'viem'
 import { formatSymbol } from './shared'
 
 // https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-quote#response
@@ -40,8 +40,10 @@ type ZeroXSwapQuote = {
         l1GasEstimate: number
     }
 }
+type ZeroXSwapQuoteResponse = ZeroXSwapQuote | { code: number; reason: string }
 // https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-price#response
 type ZeroXSwapPrice = Omit<ZeroXSwapQuote, 'orders' | 'guaranteedPrice' | 'to' | 'data'>
+type ZeroXSwapPriceResponse = ZeroXSwapPrice | { code: number; reason: string }
 
 const FEE_RECIPIENT = '0xeE15d275dbC6392019FCdE476d4A6f000F76F6A9'
 const AFFILIATE_FEE = 0.01
@@ -91,6 +93,14 @@ export async function fetchPrice({
         return null
     }
 
+    if (sellToken.symbol.toLowerCase() === 'weth') {
+        sellToken.symbol = 'ETH'
+        sellToken.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+    } else if (buyToken.symbol.toLowerCase() === 'weth') {
+        buyToken.symbol = 'ETH'
+        buyToken.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+    }
+
     const url = new URL(`https://${baseURL}/swap/v1/price`)
     url.searchParams.append('sellToken', sellToken.address)
     url.searchParams.append('buyToken', buyToken.address)
@@ -105,15 +115,21 @@ export async function fetchPrice({
 
     if (!response) return null
 
-    const data = JSON.parse(response) as ZeroXSwapPrice
+    const data = JSON.parse(response) as ZeroXSwapPriceResponse
+
+    if ('code' in data) {
+        throw new Error(data.reason)
+    }
+
     const price = formatUnits(BigInt(data.sellAmount), sellToken.decimals)
     console.log(
-        `Price for buying ${formatSymbol(amount, buyToken.symbol)} is ${price} ${sellToken.symbol}`
+        `Price for buying ${formatSymbol(amount, buyToken.symbol)} is ${price} ${sellToken.symbol}`,
+        data
     )
 
     return {
         price: +price,
-        rate: data.buyTokenToEthRate,
+        rate: data.sellTokenToEthRate,
     }
 }
 
@@ -144,17 +160,26 @@ export async function fetchQuote({
     }
 
     console.log(
-        `Fetching quote for ${formatSymbol(amount, sellToken.symbol)} to ${buyToken.symbol}`
+        `Fetching quote for ${formatSymbol(amount, buyToken.symbol)} to ${sellToken.symbol}`
     )
+
+    if (sellToken.symbol.toLowerCase() === 'weth') {
+        sellToken.symbol = 'ETH'
+        sellToken.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+    } else if (buyToken.symbol.toLowerCase() === 'weth') {
+        buyToken.symbol = 'ETH'
+        buyToken.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+    }
 
     const url = new URL(`https://${baseURL}/swap/v1/quote`)
     url.searchParams.append('sellToken', sellToken.address)
     url.searchParams.append('buyToken', buyToken.address)
-    // sellAmount is the value received from the /price endpoint of the same name
-    url.searchParams.append('sellAmount', parseEther(amount).toString())
+    url.searchParams.append('buyAmount', parseUnits(amount, buyToken.decimals).toString())
     url.searchParams.append('feeRecipient', FEE_RECIPIENT)
     url.searchParams.append('buyTokenPercentageFee', AFFILIATE_FEE.toString())
     url.searchParams.append('feeRecipientTradeSurplus', FEE_RECIPIENT)
+
+    console.log(url.searchParams.entries())
 
     const response = await corsFetch(url.toString(), {
         headers: { '0x-api-key': process.env.ZEROX_API_KEY || '' },
@@ -162,13 +187,19 @@ export async function fetchQuote({
 
     if (!response) return null
 
-    const data = JSON.parse(response) as ZeroXSwapQuote
+    const data = JSON.parse(response) as ZeroXSwapQuoteResponse
+
+    if ('code' in data) {
+        console.log(`Error fetching quote: ${data.reason}`, data)
+
+        throw new Error(data.reason)
+    }
 
     const sellAmount = formatUnits(BigInt(data.sellAmount), sellToken.decimals)
     const buyAmount = formatUnits(BigInt(data.buyAmount), buyToken.decimals)
 
     console.log(
-        `Quote for buy ${formatSymbol(buyAmount, buyToken.symbol)} is ${formatSymbol(
+        `Quote for buying ${formatSymbol(buyAmount, buyToken.symbol)} is ${formatSymbol(
             sellAmount,
             sellToken.symbol
         )}`

@@ -1,15 +1,11 @@
 'use server'
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
-import { erc20Abi, formatUnits, type Hex } from 'viem'
 import type { Config } from '..'
-import { fetchQuote, ZeroXProxyAddressByChainID } from '../utils/0x'
-import { getClientByChainId } from '../utils/viem'
+import { fetchQuote } from '../utils/0x'
 import initial from './initial'
-import { formatSymbol } from '../utils/shared'
 
 export default async function swap({
-    body,
     config,
     params,
 }: {
@@ -18,12 +14,10 @@ export default async function swap({
     storage: Storage
     params:
         | {
-              sellAmount: string
+              buyAmount: string
           }
         | undefined
 }): Promise<BuildFrameData> {
-    const userAddress = body.validatedData.address as Hex
-
     if (!(params && config.pool)) {
         return initial({ config })
     }
@@ -31,51 +25,36 @@ export default async function swap({
     const token0 = config.pool.primary === 'token0' ? config.pool.token0 : config.pool.token1
     const token1 = config.pool.primary === 'token0' ? config.pool.token1 : config.pool.token0
 
-    const client = getClientByChainId(config.pool.network.id)
+    try {
+        const order = await fetchQuote({
+            buyToken: token1,
+            sellToken: token0,
+            amount: params.buyAmount,
+            network: config.pool.network,
+        })
 
-    const allowance = await client.readContract({
-        address: token0.address,
-        abi: erc20Abi,
-        functionName: 'allowance',
-        args: [userAddress, ZeroXProxyAddressByChainID[config.pool.network.id]],
-    })
+        if (!order) {
+            throw new Error('Failed to fetch quote')
+        }
 
-    console.log(
-        'Swap handler >> allowance info:',
-        formatSymbol(formatUnits(allowance, token0.decimals), token0.symbol)
-    )
-    console.log('Swap handler >> sellAmount:', formatSymbol(params.sellAmount, token0.symbol))
+        const transaction = {
+            chainId: `eip155:${config.pool.network.id}`,
+            method: 'eth_sendTransaction',
+            params: {
+                to: order.to,
+                value: order.value,
+                data: order.data,
+                abi: [],
+            },
+        } as BuildFrameData['transaction']
 
-    if (Number(allowance) < Number(params.sellAmount)) {
-        throw new FrameError('Requires approval!')
-    }
-
-    const order = await fetchQuote({
-        buyToken: token1,
-        sellToken: token0,
-        amount: params.sellAmount,
-        network: config.pool.network,
-    })
-
-    if (!order) {
-        throw new FrameError('Failed to fetch quote')
-    }
-
-    console.log('Swap handler >> order:', order)
-
-    const transaction = {
-        chainId: `eip155:${config.pool.network.id}`,
-        method: 'eth_sendTransaction',
-        params: {
-            to: order.to,
-            value: order.value,
-            data: order.data,
-            abi: [],
-        },
-    } as BuildFrameData['transaction']
-
-    return {
-        buttons: [],
-        transaction,
+        return {
+            buttons: [],
+            transaction,
+        }
+    } catch (e) {
+        const error = e as Error
+        console.error('Swap handler >> error:', error)
+        throw new FrameError(error.message)
     }
 }

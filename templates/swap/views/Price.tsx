@@ -10,7 +10,10 @@ type PriceViewProps = Pick<NonNullable<Config['pool']>, 'token0' | 'token1' | 'n
 }
 
 export default function PriceView({ token0, token1, estimates, amount }: PriceViewProps) {
-    const value = formatSymbol(Number(amount).toFixed(7), token1.symbol)
+    const value = formatSymbol(amount, token1.symbol)
+    const fxRate = ['USDC', 'USDT', 'DAI'].includes(token0.symbol)
+        ? 1
+        : Number(1 / +estimates.rate).toFixed(11)
 
     return (
         <div
@@ -38,7 +41,7 @@ export default function PriceView({ token0, token1, estimates, amount }: PriceVi
                     lineHeight: 1,
                 }}
             >
-                1 {token0.symbol} = {formatSymbol(estimates.rate, token1.symbol)}
+                1 {token0.symbol} = {formatSymbol(fxRate, token1.symbol)}
             </span>
             <div style={{ display: 'flex', gap: 36 }}>
                 <div
@@ -62,7 +65,7 @@ export default function PriceView({ token0, token1, estimates, amount }: PriceVi
                         style={{ borderRadius: 9999 }}
                     />
                     <span style={{ color: '#5E6773', fontSize: 50 }}>
-                        {Number(estimates.price).toFixed(7)} {token0.symbol}
+                        {formatSymbol(Number(estimates.price).toFixed(7), token0.symbol)}
                     </span>
                 </div>
                 <span style={{ color: '#5E6773', top: '50%' }}>{'==>'}</span>

@@ -85,11 +85,6 @@ export default async function price({
                 label: '←',
             },
             {
-                label: 'Approve',
-                action: 'tx',
-                target: '/approve',
-            },
-            {
                 label: 'Buy Now',
                 action: 'tx',
                 target: '/swap',
@@ -98,7 +93,6 @@ export default async function price({
         component: PriceView({ token0, token1, network: config.pool.network, amount, estimates }),
         handler: 'success',
         params: {
-            sellAmount: estimates.price,
             buyAmount: amount,
         },
     }
