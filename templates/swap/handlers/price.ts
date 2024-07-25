@@ -1,9 +1,5 @@
 'use server'
-import type {
-    BuildFrameData,
-    FrameButtonMetadata,
-    FrameValidatedActionPayload,
-} from '@/lib/farcaster'
+import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import type { Config, Storage } from '..'
 import { fetchPrice } from '../utils/0x'
@@ -29,7 +25,6 @@ export default async function price({
     }
 
     let amount = 0
-    const buttons: FrameButtonMetadata[] = []
 
     const token0 = config.pool.primary === 'token0' ? config.pool.token0 : config.pool.token1
     const token1 = config.pool.primary === 'token0' ? config.pool.token1 : config.pool.token0
@@ -84,20 +79,22 @@ export default async function price({
         throw new FrameError('Estimated price not available')
     }
 
-    buttons.push({
-        label: 'Approve',
-        action: 'tx',
-        target: '/approve',
-    })
-
-    buttons.push({
-        label: 'Buy Now',
-        action: 'tx',
-        target: '/swap',
-    })
-
     return {
-        buttons,
+        buttons: [
+            {
+                label: '←',
+            },
+            {
+                label: 'Approve',
+                action: 'tx',
+                target: '/approve',
+            },
+            {
+                label: 'Buy Now',
+                action: 'tx',
+                target: '/swap',
+            },
+        ],
         component: PriceView({ token0, token1, network: config.pool.network, amount, estimates }),
         handler: 'success',
         params: {

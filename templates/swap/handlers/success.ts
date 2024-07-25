@@ -24,8 +24,9 @@ export default async function success({
     const transactionId = body.validatedData.transaction
         ? bytesToHex(body.validatedData.transaction.hash)
         : undefined
+    const buttonIndex = body.validatedData.tapped_button?.index || 1
 
-    if (!(config.pool && transactionId)) {
+    if (!(config.pool && transactionId) || buttonIndex === 1) {
         return initial({ config })
     }
 

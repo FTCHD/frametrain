@@ -1,7 +1,7 @@
 'use server'
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
-import { encodeFunctionData, erc20Abi, formatUnits, type Hex, parseUnits } from 'viem'
+import { encodeFunctionData, erc20Abi, formatUnits, type Hex, parseEther } from 'viem'
 import type { Config } from '..'
 import { ZeroXProxyAddressByChainID } from '../utils/0x'
 import { ERC20_ABI } from '../utils/abis'
@@ -43,7 +43,7 @@ export default async function approve({
         })
         const allowance = formatUnits(allowanceRaw, token0.decimals)
 
-        const approvalValue = parseUnits(params.sellAmount, token0.decimals)
+        const approvalValue = parseEther(params.sellAmount)
 
         console.log('Approve handler >> allowance info:', {
             allowance: {

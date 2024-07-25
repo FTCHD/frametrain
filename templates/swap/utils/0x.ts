@@ -1,5 +1,5 @@
 import { corsFetch } from '@/sdk/scrape'
-import { formatUnits, parseUnits, type Address, type Hex } from 'viem'
+import { type Address, type Hex, formatUnits, parseEther, parseUnits } from 'viem'
 import { formatSymbol } from './shared'
 
 // https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-quote#response
@@ -150,7 +150,8 @@ export async function fetchQuote({
     const url = new URL(`https://${baseURL}/swap/v1/quote`)
     url.searchParams.append('sellToken', sellToken.address)
     url.searchParams.append('buyToken', buyToken.address)
-    url.searchParams.append('sellAmount', parseUnits(amount, sellToken.decimals).toString())
+    // sellAmount is the value received from the /price endpoint of the same name
+    url.searchParams.append('sellAmount', parseEther(amount).toString())
     url.searchParams.append('feeRecipient', FEE_RECIPIENT)
     url.searchParams.append('buyTokenPercentageFee', AFFILIATE_FEE.toString())
     url.searchParams.append('feeRecipientTradeSurplus', FEE_RECIPIENT)
