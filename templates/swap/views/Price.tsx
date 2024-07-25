@@ -1,5 +1,5 @@
 import type { Config } from '..'
-import { formatSymbol, generateTokenLogoUrl } from '../utils/shared'
+import { formatSymbol } from '../utils/shared'
 
 type PriceViewProps = Pick<NonNullable<Config['pool']>, 'token0' | 'token1' | 'network'> & {
     amount: number
@@ -9,7 +9,7 @@ type PriceViewProps = Pick<NonNullable<Config['pool']>, 'token0' | 'token1' | 'n
     }
 }
 
-export default function PriceView({ token0, token1, network, estimates, amount }: PriceViewProps) {
+export default function PriceView({ token0, token1, estimates, amount }: PriceViewProps) {
     const value = formatSymbol(Number(amount).toFixed(7), token1.symbol)
 
     return (
@@ -56,7 +56,7 @@ export default function PriceView({ token0, token1, network, estimates, amount }
                 >
                     <img
                         alt={`${token0.symbol} logo`}
-                        src={generateTokenLogoUrl(network.id, token0.address)}
+                        src={token0.logo}
                         width={54}
                         height={54}
                         style={{ borderRadius: 9999 }}
@@ -81,7 +81,7 @@ export default function PriceView({ token0, token1, network, estimates, amount }
                 >
                     <img
                         alt={`${token1.symbol} logo`}
-                        src={generateTokenLogoUrl(network.id, token1.address)}
+                        src={token1.logo}
                         width={54}
                         height={54}
                         style={{ borderRadius: 9999 }}

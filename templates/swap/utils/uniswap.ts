@@ -1,7 +1,7 @@
 'use server'
 
 import { getContract } from 'viem'
-import { chains, getClient } from './viem'
+import { chains, chainsByChainId, getClient } from './viem'
 import { ERC20_ABI, UNI_V3_POOL_ABI } from './abis'
 
 export const getPoolClient = async (address: `0x${string}`) => {
@@ -36,17 +36,42 @@ async function getTokenData({
         const name = await token.read.name()
         const symbol = await token.read.symbol()
         const decimals = await token.read.decimals()
+        const logo = await getTokenLogo(client.chain.id, address)
 
         return {
             name,
             symbol,
             decimals,
             address,
+            logo,
         }
     } catch (error) {
         console.error(error)
     }
     return null
+}
+
+async function getTokenLogo(network: number, address: string) {
+    const url = `https://api.geckoterminal.com/api/v2/networks/${chainsByChainId[network]}/tokens/${address}`
+
+    const response = await fetch(url)
+    const data = (await response.json()) as {
+        'data': {
+            'id': 'string'
+            'type': 'string'
+            'attributes': {
+                'name': string
+                'address': string
+                'symbol': string
+                'decimals': number
+                image_url: string
+            }
+        }
+    }
+
+    console.log(`Token logo for ${address}: ${data.data.attributes.image_url}`)
+
+    return data.data.attributes.image_url
 }
 
 export async function getPoolData(address: `0x${string}`) {

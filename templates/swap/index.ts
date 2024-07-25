@@ -8,6 +8,8 @@ export type PoolToken = {
     symbol: string
     decimals: number
     name: string
+    logo: string
+    id: number
 }
 
 export type PoolNetwork = {

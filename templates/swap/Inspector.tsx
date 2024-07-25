@@ -11,7 +11,7 @@ import type { AnchorHTMLAttributes, FC } from 'react'
 import { useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
 import type { Config, PoolToken } from '.'
-import { cloudinaryLogoImageLoader, formatSymbol, generateTokenLogoUrl } from './utils/shared'
+import { coingeckoImageLoader, formatSymbol } from './utils/shared'
 import { getPoolData } from './utils/uniswap'
 import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
 import { supportedChains } from './utils/viem'
@@ -49,11 +49,9 @@ export default function Inspector() {
 
     const TokenImage = ({
         token,
-        networkId,
         isLast = false,
     }: {
         token: PoolToken
-        networkId: number
         isLast?: boolean
     }) => {
         return (
@@ -62,14 +60,11 @@ export default function Inspector() {
                 style={{ marginLeft: isLast ? -36 / 3 : 0 }}
             >
                 <Avatar style={{ width: 36, height: 36 }}>
-                    <AvatarImage
-                        src={generateTokenLogoUrl(networkId, token.address)}
-                        asChild={true}
-                    >
+                    <AvatarImage src={token.logo} asChild={true}>
                         <Image
-                            loader={cloudinaryLogoImageLoader}
+                            loader={coingeckoImageLoader}
                             alt="avatar"
-                            src={`tokens/${networkId}/${token.address}.jpg`}
+                            src={token.logo}
                             width={36}
                             height={36}
                         />
@@ -142,15 +137,8 @@ export default function Inspector() {
                                 >
                                     <div className="flex items-center">
                                         <div className="inline-flex">
-                                            <TokenImage
-                                                token={config.pool.token0}
-                                                networkId={config.pool.network.id}
-                                            />
-                                            <TokenImage
-                                                token={config.pool.token1}
-                                                networkId={config.pool.network.id}
-                                                isLast={true}
-                                            />
+                                            <TokenImage token={config.pool.token0} />
+                                            <TokenImage token={config.pool.token1} isLast={true} />
                                         </div>
                                     </div>
                                 </LinkExternal>
