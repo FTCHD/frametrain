@@ -181,7 +181,7 @@ export function FigmaView({ slideConfig }: FigmaViewProps) {
                     fontFamily: textLayer.fontFamily,
                     fontStyle: textLayer.fontStyle,
                     letterSpacing: textLayer.letterSpacing,
-                    lineHeight: `${textLayer.lineHeightPx}px`,
+                    ...(textLayer.lineHeightPx ? { lineHeight: `${textLayer.lineHeightPx}px` } : {}),
                     ...css,
                 }}
             >
