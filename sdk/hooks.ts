@@ -66,9 +66,7 @@ export function useUploadImage() {
 }
 
 export function useFramePreview() {
-    const [previewData, setPreviewData] = useAtom(previewParametersAtom)
-
-    return [previewData, setPreviewData]
+    return useAtom(previewParametersAtom)
 }
 
 export function useResetPreview() {

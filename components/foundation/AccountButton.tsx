@@ -15,7 +15,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../sha
 export default function AccountButton() {
     const sesh = useSession()
     const router = useRouter()
-    const [isLoggingIn, setIsLoggingIn] = useState(true)
+    const [isLoggingIn, setIsLoggingIn] = useState(false)
     const [timeSpent, setTimeSpent] = useState(0)
 
     const { isAuthenticated } = useProfile()
