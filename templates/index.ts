@@ -14,6 +14,7 @@ import twitter from './twitter'
 import presentation from './presentation'
 import meme from './meme'
 import rss from './rss'
+import fundraiser from './fundraiser'
 
 export default {
     // basic,
@@ -32,4 +33,5 @@ export default {
     presentation,
     meme,
     rss,
+    fundraiser,
 }
