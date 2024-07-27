@@ -187,13 +187,9 @@ export default function Inspector() {
                                         <Switch
                                             id="predefined-amounts"
                                             checked={config.enablePredefinedAmounts}
-                                            onCheckedChange={(checked) => {
-                                                const enablePredefinedAmounts = checked
+                                            onCheckedChange={(enablePredefinedAmounts) => {
                                                 updateConfig({
                                                     enablePredefinedAmounts,
-                                                    ...(!enablePredefinedAmounts
-                                                        ? { amounts: [] }
-                                                        : {}),
                                                 })
                                             }}
                                         />
@@ -212,40 +208,42 @@ export default function Inspector() {
                                                         className="text-lg border rounded py-2 px-4 w-full"
                                                         type="number"
                                                     />
-                                                    <Button
-                                                        type="button"
-                                                        disabled={disableAmountsField}
-                                                        className="px-4 py-2 rounded-md"
-                                                        onClick={() => {
-                                                            if (
-                                                                !amountInputRef.current ||
-                                                                amounts.length > 3
-                                                            )
-                                                                return
+                                                    {!disableAmountsField ? (
+                                                        <Button
+                                                            type="button"
+                                                            disabled={disableAmountsField}
+                                                            className="px-4 py-2 rounded-md"
+                                                            onClick={() => {
+                                                                if (
+                                                                    !amountInputRef.current ||
+                                                                    amounts.length > 3
+                                                                )
+                                                                    return
 
-                                                            const amount =
-                                                                amountInputRef.current.value.trim()
+                                                                const amount =
+                                                                    amountInputRef.current.value.trim()
 
-                                                            if (
-                                                                isNaN(Number(amount)) ||
-                                                                Number(number) < 0
-                                                            ) {
-                                                                toast.error('Invalid amount')
-                                                                return
-                                                            }
+                                                                if (
+                                                                    isNaN(Number(amount)) ||
+                                                                    Number(number) < 0
+                                                                ) {
+                                                                    toast.error('Invalid amount')
+                                                                    return
+                                                                }
 
-                                                            updateConfig({
-                                                                amounts: [
-                                                                    ...amounts,
-                                                                    Number(amount),
-                                                                ],
-                                                            })
+                                                                updateConfig({
+                                                                    amounts: [
+                                                                        ...amounts,
+                                                                        Number(amount),
+                                                                    ],
+                                                                })
 
-                                                            amountInputRef.current.value = ''
-                                                        }}
-                                                    >
-                                                        Add amount
-                                                    </Button>
+                                                                amountInputRef.current.value = ''
+                                                            }}
+                                                        >
+                                                            Add amount
+                                                        </Button>
+                                                    ) : null}
                                                 </div>
                                             </div>
 

@@ -1,11 +1,11 @@
-import fundraise from './fundraise'
 import initial from './initial'
-import page from './page'
+import transaction from './transaction'
+import status from './status'
 import success from './success'
 
 export default {
     initial,
-    page,
-    fundraise,
+    transaction,
     success,
+    status,
 }

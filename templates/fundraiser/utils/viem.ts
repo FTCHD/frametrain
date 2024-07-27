@@ -56,7 +56,6 @@ export const supportedChains: {
 export type ChainKey = (typeof supportedChains)[number]['key']
 
 export function getClient(chainKey: ChainKey) {
-    console.log('getClient', chainKey)
     const chainKeyToChain: Record<ChainKey, Chain> = {
         'base': base,
         'arbitrum': arbitrum,
@@ -79,7 +78,11 @@ export function getClient(chainKey: ChainKey) {
     })
 }
 
-export async function EnsToHex(name: string, client: ReturnType<typeof getClient>) {
+export async function getAddressFromEns(name: string) {
+    const client = createPublicClient({
+        chain: mainnet,
+        transport: http(),
+    })
     const hex = await client.getEnsAddress({ name })
     if (!hex) {
         throw new Error('Invalid ENS name')
@@ -87,7 +90,7 @@ export async function EnsToHex(name: string, client: ReturnType<typeof getClient
 
     console.log(`address for ens ${name} is ${hex} on ${client.chain.name}`)
 
-    return hex
+    return hex.toLowerCase() as `0x${string}`
 }
 
 export async function getTokenSymbol(address: Hex, chainKey: ChainKey) {
