@@ -191,6 +191,10 @@ function buildFrame({
     if (!(version === 'vNext' || /^\d{4}-\d{2}-\d{2}$/.test(version))) {
         throw new Error('Invalid version.')
     }
+    const url = new URL(postUrl)
+    const qs = url.search.slice(1)
+
+    const postUrlMatch = postUrl.match(/(https?:\/\/[^/]+\/[fp]\/[^/]+)/)
 
     const metadata: Record<string, string> = {
         'fc:frame': version,
@@ -225,7 +229,16 @@ function buildFrame({
                 metadata[`fc:frame:button:${index + 1}:action`] = 'post' // Default action
             }
             if (button.target) {
-                metadata[`fc:frame:button:${index + 1}:target`] = button.target
+                metadata[`fc:frame:button:${index + 1}:target`] =
+                    postUrlMatch && button.target.startsWith('/')
+                        ? `${postUrlMatch[1]}/${button.target.slice(1)}?${qs}`
+                        : button.target
+            }
+
+            if (postUrlMatch && button.action === 'tx' && button.postUrl?.startsWith('/')) {
+                metadata[`fc:frame:button:${index + 1}:post_url`] = `${
+                    postUrlMatch[1]
+                }/${button.postUrl.slice(1)}?${qs}`
             }
         })
     }
