@@ -1,4 +1,4 @@
-export default function RefreshView() {
+export default function ConfirmationView({ amount }: { amount: string }) {
     return (
         <div
             style={{
@@ -23,12 +23,12 @@ export default function RefreshView() {
                     flexGrow: 1,
                     padding: 32,
                     textAlign: 'center',
-                    color: 'rgb(32,32,32)',
+                    color: 'rgb(131,131,131)',
                     fontWeight: 600,
-                    fontSize: 24,
+                    fontSize: 50,
                 }}
             >
-                Waiting for payment confirmation..
+                You are about to donate {amount}
             </div>
         </div>
     )

@@ -1,4 +1,5 @@
 'use server'
+
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
@@ -15,7 +16,6 @@ export default async function initial({
 }): Promise<BuildFrameData> {
     const buttons: FrameButtonMetadata[] = []
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    console.log({ config })
 
     if (config.token?.symbol && config.enablePredefinedAmounts && config.amounts.length) {
         for (const amount of config.amounts) {
@@ -37,13 +37,9 @@ export default async function initial({
         inputText: config.token?.symbol
             ? `Donate custom ${config.token?.symbol} amount`
             : undefined,
-        buttons: buttons.map((button) => ({
-            ...button,
-            action: 'tx',
-            target: '/transaction',
-        })),
+        buttons,
         fonts: roboto,
         component: CoverView(config),
-        handler: 'status',
+        handler: 'confirmation',
     }
 }

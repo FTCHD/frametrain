@@ -2,12 +2,12 @@
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import type { Config } from '..'
 import SuccessView from '../views/Success'
-import { getSessionByPaymentTransaction, waitForSession } from '@paywithglide/glide-js'
+import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
 import { FrameError } from '@/sdk/error'
 import { getClient } from '../utils/viem'
 import { getGlideConfig } from '../utils/shared'
-import { bytesToHex } from 'viem'
 import RefreshView from '../views/Refresh'
+import initial from './initial'
 
 export default async function status({
     body,
@@ -17,38 +17,51 @@ export default async function status({
     body: FrameValidatedActionPayload
     config: Config
     storage: Storage
-    params: { transactionId?: string }
+    params: { transactionId?: string; sessionId?: string }
 }): Promise<BuildFrameData> {
     if (!config.address) {
-        throw new FrameError('Fundraise address not found.')
+        throw new FrameError('Fundraiser address not found.')
     }
 
     if (!(config.token?.chain && config.token.symbol)) {
-        throw new FrameError('Fundraise token not found.')
+        throw new FrameError('Fundraiser token not found.')
     }
 
-    const txHash = body.validatedData.transaction
-        ? body.validatedData.transaction.hash
-        : params.transactionId
+    console.log('status handler >> tapped buttons:', body.validatedData.tapped_button)
 
-    console.log(`status handler >> txHash: ${txHash}`, {
+    if (!body.validatedData.transaction && body.validatedData.tapped_button) {
+        return initial({ config, body, storage: undefined })
+    }
+
+    console.log(`status handler >> tx info for sessionId: ${params.sessionId}`, {
         transaction: body.validatedData.transaction,
+        params,
     })
 
-    if (!txHash) {
+    if (!(body.validatedData.transaction?.hash || params.transactionId)) {
         throw new FrameError('Transaction Hash is missing')
     }
+
+    if (!params.sessionId) {
+        throw new FrameError('Session Id is missing')
+    }
+
+    const txHash = (
+        body.validatedData.transaction ? body.validatedData.transaction.hash : params.transactionId
+    ) as `0x${string}`
 
     const client = getClient(config.token.chain)
     const glideConfig = getGlideConfig(client.chain)
 
     try {
-        let session = await getSessionByPaymentTransaction(glideConfig, {
-            chainId: client.chain.id,
-            hash: txHash as `0x${string}`,
+        // Get the status of the payment transaction
+        const updatedTx = await updatePaymentTransaction(glideConfig, {
+            sessionId: params.sessionId,
+            hash: txHash,
         })
+        console.log('status handler >> updatedTx:', updatedTx)
         // Wait for the session to complete. It can take a few seconds
-        session = await waitForSession(glideConfig, session.sessionId)
+        const session = await waitForSession(glideConfig, params.sessionId)
 
         console.log('status handler >> Session:', session)
 
@@ -79,6 +92,8 @@ export default async function status({
             handler: 'status',
             params: {
                 transactionId: txHash,
+                sessionId: params.sessionId,
+                isFresh: false,
             },
         }
     }
