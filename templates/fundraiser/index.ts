@@ -6,7 +6,7 @@ import type { ChainKey } from './utils/viem'
 
 type Styles = {
     color?: string
-    size?: string
+    size?: number
     weight?: string
     position?: string
     family?: string
@@ -23,10 +23,11 @@ export interface Config extends BaseConfig {
     }
     enablePredefinedAmounts: boolean
     amounts: number[]
-    cover: {
+    cover?: {
         title: string
         description: string
         background?: string
+        barColor?: string
         titleStyles?: Styles
         descriptionStyles?: Styles
     }

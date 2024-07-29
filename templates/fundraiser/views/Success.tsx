@@ -8,6 +8,7 @@ export default function SuccessView(config: Config) {
                 height: '100%',
                 backgroundColor: 'black',
                 display: 'flex',
+                flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
@@ -16,7 +17,36 @@ export default function SuccessView(config: Config) {
                 color: '#ffffff',
             }}
         >
-            {config.success?.title || 'Success'}
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '20px',
+                    padding: '30px',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'relative',
+                }}
+            >
+                <span style={{ textAlign: 'center', fontSize: '20px' }}>
+                    {config.success?.title || 'Thank you!'}
+                </span>
+                <span style={{ textAlign: 'center', fontSize: '10px' }}>
+                    {config.success?.description ||
+                        'We appreciate your contribution to this fundraise!'}
+                </span>
+            </div>
+
+            <div
+                style={{
+                    height: '10',
+                    width: `${(3 / 3) * 100}%`,
+                    top: 0,
+                    position: 'absolute',
+                    left: 0,
+                    backgroundColor: config.cover?.barColor || 'yellow',
+                }}
+            />
         </div>
     )
 }

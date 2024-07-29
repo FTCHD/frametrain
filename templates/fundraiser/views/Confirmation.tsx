@@ -1,4 +1,6 @@
-export default function ConfirmationView({ amount }: { amount: string }) {
+import type { Config } from '..'
+
+export default function ConfirmationView({ amount, config }: { amount: string; config: Config }) {
     return (
         <div
             style={{
@@ -30,6 +32,16 @@ export default function ConfirmationView({ amount }: { amount: string }) {
             >
                 You are about to donate {amount}
             </div>
+            <div
+                style={{
+                    height: '10',
+                    width: `${(2 / 3) * 100}%`,
+                    top: 0,
+                    position: 'absolute',
+                    left: 0,
+                    backgroundColor: config.cover?.barColor || 'yellow',
+                }}
+            />
         </div>
     )
 }

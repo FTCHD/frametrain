@@ -76,8 +76,9 @@ export default async function status({
                     target: 'https://www.frametra.in',
                 },
             ],
-            component: SuccessView(config),
+            component: config.success?.image ? undefined : SuccessView(config),
             handler: 'success',
+            image: config.success?.image,
         }
     } catch (error) {
         console.error('Error fetching session', error)

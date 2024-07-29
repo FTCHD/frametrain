@@ -18,8 +18,10 @@ import { Label } from '@/components/shadcn/InputLabel'
 import { Trash } from 'lucide-react'
 import { formatSymbol } from './utils/shared'
 import toast from 'react-hot-toast'
-import { number } from 'zod'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import { Textarea } from '@/components/shadcn/Textarea'
+import { Slider } from '@/components/shadcn/Slider'
+import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
 type MenuItem = {
     title: string
     description: string
@@ -48,12 +50,12 @@ function sidebarNavItems(obj: {
         {
             title: 'Cover Screen',
             key: 'cover',
-            description: 'Configure what shows up on your Cover screen.',
+            description: 'Configure what shows up on the cover screen of your Frame.',
         },
         {
             title: 'Success Screen',
             key: 'success',
-            description: 'Configure what shows up on your Success screen.',
+            description: 'Configure what shows up after a Donation was successful.',
         },
     ]
 
@@ -83,6 +85,21 @@ export default function Inspector() {
 
     const amountInputRef = useRef<HTMLInputElement>(null)
     const uploadImage = useUploadImage()
+    const [coverTitleFontSize, setCoverTitleFontSize] = useState(
+        config.cover?.titleStyles?.size || 20
+    )
+    const [coverDescriptionFontSize, setCoverDescriptionFontSize] = useState(
+        config.cover?.descriptionStyles?.size || 10
+    )
+    const [successTitleFontSize, setSuccessTitleFontSize] = useState(
+        config.success?.titleStyles?.size || 20
+    )
+    const [successDescriptionFontSize, setSuccessDescriptionFontSize] = useState(
+        config.success?.descriptionStyles?.size || 10
+    )
+    const [descriptionType, setDescriptionType] = useState<'text' | 'image'>(
+        config.success?.image ? 'image' : 'text'
+    )
 
     const renderTabSection = (): ReactNode => {
         switch (tab.key) {
@@ -225,7 +242,7 @@ export default function Inspector() {
 
                                                                 if (
                                                                     isNaN(Number(amount)) ||
-                                                                    Number(number) < 0
+                                                                    Number(amount) < 0
                                                                 ) {
                                                                     toast.error('Invalid amount')
                                                                     return
@@ -301,37 +318,499 @@ export default function Inspector() {
             }
 
             case 'success': {
-                return <div>Success</div>
+                return (
+                    <div className="flex flex-col gap-5 w-full">
+                        <div className="flex flex-col gap-4 w-full">
+                            <div className="flex flex-col gap-2 w-full">
+                                <h2 className="text-lg font-semibold">Screen Type</h2>
+                                <RadioGroup
+                                    defaultValue={descriptionType}
+                                    className="flex flex-row"
+                                    onValueChange={(val) => {
+                                        const value = val as 'image' | 'text'
+                                        setDescriptionType(value as typeof descriptionType)
+                                    }}
+                                >
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="text" id="text" />
+                                        <Label htmlFor="text">Text</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="image" id="image" />
+                                        <Label htmlFor="image">Image</Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
+                            <div className="flex flex-col gap-4 w-full">
+                                {descriptionType === 'image' ? (
+                                    <div className="flex flex-col gap-2 w-full">
+                                        <label
+                                            htmlFor="success-image"
+                                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                        >
+                                            {config.success?.image ? 'Update' : 'Upload'} Image
+                                        </label>
+                                        <Input
+                                            accept="image/png, image/jpeg, image/gif, image/webp"
+                                            type="file"
+                                            id="success-image"
+                                            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                                            onChange={async (e) => {
+                                                if (e.target.files?.[0]) {
+                                                    const reader = new FileReader()
+                                                    reader.readAsDataURL(e.target.files[0])
+
+                                                    const base64String = (await new Promise(
+                                                        (resolve) => {
+                                                            reader.onload = () => {
+                                                                const base64String = (
+                                                                    reader.result as string
+                                                                ).split(',')[1]
+                                                                resolve(base64String)
+                                                            }
+                                                        }
+                                                    )) as string
+
+                                                    const contentType = e.target.files[0].type as
+                                                        | 'image/png'
+                                                        | 'image/jpeg'
+                                                        | 'image/gif'
+                                                        | 'image/webp'
+
+                                                    const filePath = await uploadImage({
+                                                        base64String,
+                                                        contentType,
+                                                    })
+
+                                                    if (filePath) {
+                                                        const imageUrl = `${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath}`
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                image: imageUrl,
+                                                            },
+                                                        })
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                        {config.success?.image ? (
+                                            <Button
+                                                variant="destructive"
+                                                onClick={() => {
+                                                    updateConfig({
+                                                        cover: { ...config.cover, image: null },
+                                                    })
+                                                }}
+                                                className="w-full"
+                                            >
+                                                Remove
+                                            </Button>
+                                        ) : null}
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="flex flex-col gap-2 w-full">
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg">Title</h2>
+                                                <Input
+                                                    defaultValue={config.success?.title}
+                                                    onChange={(e) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                title: e.target.value,
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-2">
+                                                <h2 className="text-lg">Description (Optional)</h2>
+                                                <Textarea
+                                                    className="w-full"
+                                                    defaultValue={config.success?.description}
+                                                    onChange={(e) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                description: e.target.value,
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Styles config */}
+                                        <div className="flex flex-col gap-4">
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Background
+                                                </h2>
+                                                <ColorPicker
+                                                    className="w-full"
+                                                    enabledPickers={['solid', 'gradient', 'image']}
+                                                    background={
+                                                        config.success?.background || '#09203f'
+                                                    }
+                                                    setBackground={(value) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                background: value,
+                                                            },
+                                                        })
+                                                    }}
+                                                    uploadBackground={async (
+                                                        base64String,
+                                                        contentType
+                                                    ) => {
+                                                        const { filePath } = await uploadImage({
+                                                            base64String: base64String,
+                                                            contentType: contentType,
+                                                        })
+
+                                                        return filePath
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Title Color
+                                                </h2>
+                                                <ColorPicker
+                                                    className="w-full"
+                                                    background={
+                                                        config.success?.titleStyles?.color ||
+                                                        '#1c1c1c'
+                                                    }
+                                                    setBackground={(color) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                titleStyles: {
+                                                                    ...config.success?.titleStyles,
+                                                                    color,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <label className="text-lg font-semibold">
+                                                    Title Size ({successTitleFontSize}px)
+                                                </label>
+
+                                                <Slider
+                                                    defaultValue={[successTitleFontSize]}
+                                                    max={140}
+                                                    step={2}
+                                                    onValueChange={(newRange) => {
+                                                        const size = newRange[0]
+                                                        setSuccessTitleFontSize(size)
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                titleStyles: {
+                                                                    ...config.success?.titleStyles,
+                                                                    size,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Title Font
+                                                </h2>
+                                                <FontFamilyPicker
+                                                    defaultValue={
+                                                        config.success?.titleStyles?.family ||
+                                                        'Roboto'
+                                                    }
+                                                    onSelect={(family) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                titleStyles: {
+                                                                    ...config.success?.titleStyles,
+                                                                    family,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Title Style
+                                                </h2>
+                                                <FontStylePicker
+                                                    currentFont={
+                                                        config.success?.titleStyles?.family ||
+                                                        'Roboto'
+                                                    }
+                                                    defaultValue={
+                                                        config.success?.titleStyles?.style ||
+                                                        'normal'
+                                                    }
+                                                    onSelect={(style: string) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                titleStyles: {
+                                                                    ...config.success?.titleStyles,
+                                                                    style,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Title Weight
+                                                </h2>
+                                                <FontWeightPicker
+                                                    currentFont={
+                                                        config.success?.titleStyles?.family ||
+                                                        'Roboto'
+                                                    }
+                                                    defaultValue={
+                                                        config.success?.titleStyles?.weight ||
+                                                        'normal'
+                                                    }
+                                                    onSelect={(weight) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                titleStyles: {
+                                                                    ...config.success?.titleStyles,
+                                                                    weight,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Title Alignment
+                                                </h2>{' '}
+                                                <Select
+                                                    defaultValue={
+                                                        config.success?.titleStyles?.position ||
+                                                        'center'
+                                                    }
+                                                    onValueChange={(
+                                                        position: 'left' | 'center' | 'right'
+                                                    ) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                titleStyles: {
+                                                                    ...config.success?.titleStyles,
+                                                                    position,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Left" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value={'left'}>Left</SelectItem>
+                                                        <SelectItem value={'center'}>
+                                                            Center
+                                                        </SelectItem>
+                                                        <SelectItem value={'right'}>
+                                                            Right
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Description Color
+                                                </h2>
+                                                <ColorPicker
+                                                    className="w-full"
+                                                    background={
+                                                        config.success?.descriptionStyles?.color ||
+                                                        '#1c1c1c'
+                                                    }
+                                                    setBackground={(color) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                descriptionStyles: {
+                                                                    ...config.success
+                                                                        ?.descriptionStyles,
+                                                                    color,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <label className="text-lg font-semibold">
+                                                    Description Size ({successDescriptionFontSize}
+                                                    px)
+                                                </label>
+                                                <Slider
+                                                    defaultValue={[successDescriptionFontSize]}
+                                                    max={140}
+                                                    step={2}
+                                                    onValueChange={(newRange) => {
+                                                        const size = newRange[0]
+                                                        setSuccessDescriptionFontSize(size)
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                titleStyles: {
+                                                                    ...config.success
+                                                                        ?.descriptionStyles,
+                                                                    size,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Description Font
+                                                </h2>
+                                                <FontFamilyPicker
+                                                    defaultValue={
+                                                        config.success?.titleStyles?.family ||
+                                                        'Roboto'
+                                                    }
+                                                    onSelect={(family) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                descriptionStyles: {
+                                                                    ...config.success
+                                                                        ?.descriptionStyles,
+                                                                    family,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Description Style
+                                                </h2>
+                                                <FontStylePicker
+                                                    currentFont={
+                                                        config.success?.titleStyles?.family ||
+                                                        'Roboto'
+                                                    }
+                                                    defaultValue={
+                                                        config.success?.titleStyles?.style ||
+                                                        'normal'
+                                                    }
+                                                    onSelect={(style) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                descriptionStyles: {
+                                                                    ...config.success
+                                                                        ?.descriptionStyles,
+                                                                    style,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Description Weight
+                                                </h2>
+                                                <FontWeightPicker
+                                                    currentFont={
+                                                        config.success?.titleStyles?.family ||
+                                                        'Roboto'
+                                                    }
+                                                    defaultValue={
+                                                        config.success?.titleStyles?.weight ||
+                                                        'normal'
+                                                    }
+                                                    onSelect={(weight) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                descriptionStyles: {
+                                                                    ...config.success
+                                                                        ?.descriptionStyles,
+                                                                    weight,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full">
+                                                <h2 className="text-lg font-semibold">
+                                                    Description Alignment
+                                                </h2>{' '}
+                                                <Select
+                                                    defaultValue={
+                                                        config.success?.titleStyles?.position ||
+                                                        'center'
+                                                    }
+                                                    onValueChange={(
+                                                        position: 'left' | 'center' | 'right'
+                                                    ) => {
+                                                        updateConfig({
+                                                            success: {
+                                                                ...config.success,
+                                                                descriptionStyles: {
+                                                                    ...config.success
+                                                                        ?.descriptionStyles,
+                                                                    position,
+                                                                },
+                                                            },
+                                                        })
+                                                    }}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Left" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value={'left'}>Left</SelectItem>
+                                                        <SelectItem value={'center'}>
+                                                            Center
+                                                        </SelectItem>
+                                                        <SelectItem value={'right'}>
+                                                            Right
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )
             }
 
             default: {
                 return (
                     <div className="flex flex-col gap-5 w-full">
                         <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg font-semibold">Background</h2>
-                            <ColorPicker
-                                className="w-full"
-                                enabledPickers={['solid', 'gradient', 'image']}
-                                background={config.cover?.background || '#09203f'}
-                                setBackground={(value) => {
-                                    updateConfig({
-                                        cover: {
-                                            ...config.cover,
-                                            background: value,
-                                        },
-                                    })
-                                }}
-                                uploadBackground={async (base64String, contentType) => {
-                                    const { filePath } = await uploadImage({
-                                        base64String: base64String,
-                                        contentType: contentType,
-                                    })
-
-                                    return filePath
-                                }}
-                            />
-                        </div>
-                        <div className="flex flex-col gap-4">
                             <div className="flex flex-col gap-2 w-full">
                                 <h2 className="text-lg">Title</h2>
                                 <Input
@@ -347,25 +826,110 @@ export default function Inspector() {
                                 />
                             </div>
 
+                            <div className="flex flex-col gap-2">
+                                <h2 className="text-lg">Description</h2>
+                                <Textarea
+                                    className="w-full"
+                                    defaultValue={config.cover?.description}
+                                    onChange={(e) => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                description: e.target.value,
+                                            },
+                                        })
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        {/* Styles config */}
+                        <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-2 w-full">
+                                <h2 className="text-lg font-semibold">Background</h2>
+                                <ColorPicker
+                                    className="w-full"
+                                    enabledPickers={['solid', 'gradient', 'image']}
+                                    background={config.cover?.background || '#09203f'}
+                                    setBackground={(value) => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                background: value,
+                                            },
+                                        })
+                                    }}
+                                    uploadBackground={async (base64String, contentType) => {
+                                        const { filePath } = await uploadImage({
+                                            base64String: base64String,
+                                            contentType: contentType,
+                                        })
+
+                                        return filePath
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 w-full">
+                                <h2 className="text-lg font-semibold">Progress bar Color</h2>
+                                <ColorPicker
+                                    className="w-full"
+                                    background={config.cover?.barColor || 'yellow'}
+                                    setBackground={(barColor) => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                barColor,
+                                            },
+                                        })
+                                    }}
+                                    uploadBackground={async (base64String, contentType) => {
+                                        const { filePath } = await uploadImage({
+                                            base64String: base64String,
+                                            contentType: contentType,
+                                        })
+
+                                        return filePath
+                                    }}
+                                />
+                            </div>
                             <div className="flex flex-col gap-2 w-full">
                                 <h2 className="text-lg font-semibold">Title Color</h2>
                                 <ColorPicker
                                     className="w-full"
                                     background={config.cover?.titleStyles?.color || '#1c1c1c'}
-                                    setBackground={(value) => {
-                                        // updateConfig({
-                                        // })
+                                    setBackground={(color) => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                titleStyles: {
+                                                    ...config.cover?.titleStyles,
+                                                    color,
+                                                },
+                                            },
+                                        })
                                     }}
                                 />
                             </div>
                             <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Title Size</h2>
-                                <Input
-                                    defaultValue={config.cover?.titleStyles?.size}
-                                    placeholder="20px"
-                                    className="text-lg"
-                                    onChange={(e) => {
-                                        updateConfig({})
+                                <label className="text-lg font-semibold">
+                                    Title Size ({coverTitleFontSize}px)
+                                </label>
+
+                                <Slider
+                                    defaultValue={[coverTitleFontSize]}
+                                    max={140}
+                                    step={2}
+                                    onValueChange={(newRange) => {
+                                        const size = newRange[0]
+                                        setCoverTitleFontSize(size)
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                titleStyles: {
+                                                    ...config.cover?.titleStyles,
+                                                    size,
+                                                },
+                                            },
+                                        })
                                     }}
                                 />
                             </div>
@@ -373,8 +937,16 @@ export default function Inspector() {
                                 <h2 className="text-lg font-semibold">Title Font</h2>
                                 <FontFamilyPicker
                                     defaultValue={config.cover?.titleStyles?.family || 'Roboto'}
-                                    onSelect={(font) => {
-                                        //
+                                    onSelect={(family) => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                titleStyles: {
+                                                    ...config.cover?.titleStyles,
+                                                    family,
+                                                },
+                                            },
+                                        })
                                     }}
                                 />
                             </div>
@@ -384,7 +956,15 @@ export default function Inspector() {
                                     currentFont={config.cover?.titleStyles?.family || 'Roboto'}
                                     defaultValue={config.cover?.titleStyles?.style || 'normal'}
                                     onSelect={(style: string) => {
-                                        //
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                titleStyles: {
+                                                    ...config.cover?.titleStyles,
+                                                    style,
+                                                },
+                                            },
+                                        })
                                     }}
                                 />
                             </div>
@@ -393,8 +973,16 @@ export default function Inspector() {
                                 <FontWeightPicker
                                     currentFont={config.cover?.titleStyles?.family || 'Roboto'}
                                     defaultValue={config.cover?.titleStyles?.weight || 'normal'}
-                                    onSelect={(weight: string) => {
-                                        //
+                                    onSelect={(weight) => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                titleStyles: {
+                                                    ...config.cover?.titleStyles,
+                                                    weight,
+                                                },
+                                            },
+                                        })
                                     }}
                                 />
                             </div>
@@ -402,8 +990,16 @@ export default function Inspector() {
                                 <h2 className="text-lg font-semibold">Title Alignment</h2>{' '}
                                 <Select
                                     defaultValue={config.cover?.titleStyles?.position || 'center'}
-                                    onValueChange={(value: 'left' | 'center' | 'right') => {
-                                        //
+                                    onValueChange={(position: 'left' | 'center' | 'right') => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                titleStyles: {
+                                                    ...config.cover?.titleStyles,
+                                                    position,
+                                                },
+                                            },
+                                        })
                                     }}
                                 >
                                     <SelectTrigger>
@@ -416,21 +1012,126 @@ export default function Inspector() {
                                     </SelectContent>
                                 </Select>
                             </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <h2 className="text-lg">Description</h2>
-                            <Input
-                                defaultValue={config.cover?.description}
-                                onChange={(e) => {
-                                    updateConfig({
-                                        cover: {
-                                            ...config.cover,
-                                            description: e.target.value,
-                                        },
-                                    })
-                                }}
-                            />
+                            <div className="flex flex-col gap-2 w-full">
+                                <h2 className="text-lg font-semibold">Description Color</h2>
+                                <ColorPicker
+                                    className="w-full"
+                                    background={config.cover?.descriptionStyles?.color || '#1c1c1c'}
+                                    setBackground={(color) => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                descriptionStyles: {
+                                                    ...config.cover?.descriptionStyles,
+                                                    color,
+                                                },
+                                            },
+                                        })
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 w-full">
+                                <label className="text-lg font-semibold">
+                                    Description Size ({coverDescriptionFontSize}px)
+                                </label>
+                                <Slider
+                                    defaultValue={[coverDescriptionFontSize]}
+                                    max={140}
+                                    step={2}
+                                    onValueChange={(newRange) => {
+                                        const size = newRange[0]
+                                        setCoverDescriptionFontSize(size)
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                titleStyles: {
+                                                    ...config.cover?.descriptionStyles,
+                                                    size,
+                                                },
+                                            },
+                                        })
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 w-full">
+                                <h2 className="text-lg font-semibold">Description Font</h2>
+                                <FontFamilyPicker
+                                    defaultValue={config.cover?.titleStyles?.family || 'Roboto'}
+                                    onSelect={(family) => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                descriptionStyles: {
+                                                    ...config.cover?.descriptionStyles,
+                                                    family,
+                                                },
+                                            },
+                                        })
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 w-full">
+                                <h2 className="text-lg font-semibold">Description Style</h2>
+                                <FontStylePicker
+                                    currentFont={config.cover?.titleStyles?.family || 'Roboto'}
+                                    defaultValue={config.cover?.titleStyles?.style || 'normal'}
+                                    onSelect={(style) => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                descriptionStyles: {
+                                                    ...config.cover?.descriptionStyles,
+                                                    style,
+                                                },
+                                            },
+                                        })
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 w-full">
+                                <h2 className="text-lg font-semibold">Description Weight</h2>
+                                <FontWeightPicker
+                                    currentFont={config.cover?.titleStyles?.family || 'Roboto'}
+                                    defaultValue={config.cover?.titleStyles?.weight || 'normal'}
+                                    onSelect={(weight) => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                descriptionStyles: {
+                                                    ...config.cover?.descriptionStyles,
+                                                    weight,
+                                                },
+                                            },
+                                        })
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 w-full">
+                                <h2 className="text-lg font-semibold">Description Alignment</h2>{' '}
+                                <Select
+                                    defaultValue={config.cover?.titleStyles?.position || 'center'}
+                                    onValueChange={(position: 'left' | 'center' | 'right') => {
+                                        updateConfig({
+                                            cover: {
+                                                ...config.cover,
+                                                descriptionStyles: {
+                                                    ...config.cover?.descriptionStyles,
+                                                    position,
+                                                },
+                                            },
+                                        })
+                                    }}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Left" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value={'left'}>Left</SelectItem>
+                                        <SelectItem value={'center'}>Center</SelectItem>
+                                        <SelectItem value={'right'}>Right</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
                     </div>
                 )

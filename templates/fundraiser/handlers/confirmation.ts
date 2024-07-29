@@ -89,7 +89,7 @@ export default async function confirmation({
             },
         ],
         fonts: roboto,
-        component: ConfirmationView({ amount: formatSymbol(amount, config.token.symbol) }),
+        component: ConfirmationView({ config, amount: formatSymbol(amount, config.token.symbol) }),
         handler: 'status',
         params: { sessionId: session.sessionId },
     }
