@@ -4,7 +4,7 @@ import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import type { Config } from '.'
 import { Textarea } from '@/components/shadcn/Textarea'
 import { Checkbox } from '@/components/shadcn/Checkbox'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { Label } from '@/components/shadcn/InputLabel'
 import { Input } from '@/components/shadcn/Input'
 import {
@@ -17,7 +17,13 @@ import {
 import { Button } from '@/components/shadcn/Button'
 import { Slider } from '@/components/shadcn/Slider'
 import Link from 'next/link'
-import { Trash } from 'lucide-react'
+import { LoaderIcon, Trash } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { useDebouncedCallback } from 'use-debounce'
+import { corsFetch } from '@/sdk/scrape'
+import { getFarcasterChannelbyName } from '@/sdk/neynar'
+
+const warpcastBaseApiUrl = 'https://api.warpcast.com/v2'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -25,7 +31,9 @@ export default function Inspector() {
         config.requirements
             ? {
                   ...config.requirements.basic,
-                  channels: (config.requirements.channels || []).length > 0,
+                  channels:
+                      config.requirements.channels.data.length > 0 ||
+                      config.requirements.channels.checked,
                   fid: (config.requirements.maxFid || 0) > 0,
                   score: config.requirements.score > 0,
                   erc721: Boolean(config.requirements.erc721),
@@ -48,17 +56,85 @@ export default function Inspector() {
               }
     )
     const [messageType, setMessageType] = useState<'text' | 'image'>('text')
+    const [addingChannel, setAddingChannel] = useState(false)
     const disableLinksField = config.links?.length >= 4
     const linkInputRef = useRef<HTMLInputElement>(null)
+    const channelInputRef = useRef<HTMLInputElement>(null)
 
     const uploadImage = useUploadImage()
+
+    const onChangeLabel = useDebouncedCallback(async (label: string) => {
+        if (label === config.label) {
+            return
+        }
+        updateConfig({
+            label: label === '' ? null : label,
+        })
+    }, 1000)
+
+    const onChangeUsername = useDebouncedCallback(async (username: string) => {
+        if (username === '' || username === config.owner?.username) {
+            return
+        }
+
+        try {
+            const response = await corsFetch(
+                `${warpcastBaseApiUrl}/user-by-username?username=${username}`,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        'content-type': 'application/json',
+                    },
+                }
+            )
+
+            if (!response) return
+
+            const data = JSON.parse(response) as unknown as
+                | {
+                      result: { user: { fid: number; username: string } }
+                  }
+                | { errors: unknown[] }
+
+            if ('errors' in data) {
+                toast.error(`No FID associated with username ${username}`)
+                return
+            }
+            updateConfig({
+                owner: {
+                    fid: data.result.user.fid,
+                    username: data.result.user.username,
+                },
+            })
+        } catch (e) {
+            console.error('Failed to fetch FID', e)
+
+            toast.error('Failed to fetch FID')
+        }
+    }, 1000)
 
     const TokenGating = ({
         onChange,
         defaultValues,
+        loading = false,
+        id,
     }: {
-        onChange: (v: unknown) => void
-        defaultValues: Record<string, string | number | undefined>
+        onChange: (v: {
+            network: string | null | undefined
+            address: string | null | undefined
+            balance: number | null | undefined
+            tokenId: string | null | undefined
+            collection: string | null | undefined
+        }) => void
+        defaultValues: {
+            network: string | undefined
+            address: string | undefined
+            balance: number
+            tokenId: string | undefined
+            collection: string | undefined
+        }
+        loading?: boolean
+        id: 'erc721' | 'erc1155' | 'erc20'
     }) => {
         return (
             <>
@@ -76,8 +152,8 @@ export default function Inspector() {
                             <SelectValue placeholder="Select network" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="ethereum">Ethereum MainNet</SelectItem>
-                            <SelectItem value="solana">Base</SelectItem>
+                            <SelectItem value="ETH">Ethereum MainNet</SelectItem>
+                            <SelectItem value="BASE">Base</SelectItem>
                             <SelectItem value="OP">Optimism</SelectItem>
                             <SelectItem value="ZORA">Zora</SelectItem>
                             <SelectItem value="BLAST">Blast</SelectItem>
@@ -94,30 +170,85 @@ export default function Inspector() {
                     </Label>
                     <Input
                         id="address"
+                        disabled={loading || !defaultValues.network}
                         type="text"
                         placeholder="0x8c678ghybv...."
                         defaultValue={defaultValues.address}
                         onChange={(e) => {
-                            onChange({ ...defaultValues, address: e.target.value })
+                            const address = e.target.value
+                            onChange({
+                                ...defaultValues,
+                                address: address.length === 0 ? null : address,
+                            })
                         }}
                     />
                 </div>
                 <div className="flex flex-row items-center w-full gap-2">
                     <Label htmlFor="balance" className="text-sm font-medium leading-none">
-                        Minimum Balance
+                        Minimum Balance <br /> (optional)
                     </Label>
                     <Input
                         id="balance"
                         type="number"
-                        placeholder="0"
+                        placeholder="300"
+                        disabled={!(defaultValues.address && defaultValues.network)}
                         defaultValue={defaultValues.balance}
                         onChange={(e) => {
                             const value = e.target.value
-                            const balance = value === '' ? 0 : Number(value)
-                            onChange({ ...defaultValues, balance })
+                            const balance = value === '' ? 0 : Number.parseFloat(value)
+                            if (isNaN(balance)) {
+                                toast.error('Please enter a valid amount')
+                                return
+                            }
+                            onChange({ ...defaultValues, balance: balance === 0 ? null : balance })
                         }}
                     />
                 </div>
+                {id === 'erc1155' ? (
+                    <div className="flex flex-row items-center w-full gap-2">
+                        <Label htmlFor="tokenId" className="text-sm font-medium leading-none">
+                            Token ID
+                        </Label>
+                        <Input
+                            id="tokenId"
+                            type="text"
+                            placeholder="1"
+                            disabled={!(defaultValues.address && defaultValues.network)}
+                            defaultValue={defaultValues.tokenId}
+                            onChange={(e) => {
+                                const tokenId = e.target.value
+
+                                onChange({
+                                    ...defaultValues,
+                                    tokenId: tokenId.length === 0 ? null : tokenId,
+                                })
+                            }}
+                        />
+                    </div>
+                ) : null}
+
+                {id !== 'erc20' ? (
+                    <div className="flex flex-row items-center w-full gap-2">
+                        <Label htmlFor="collection" className="text-sm font-medium leading-none">
+                            Collection URL
+                        </Label>
+                        <Input
+                            id="collection"
+                            type="text"
+                            placeholder="https://opensea.io/collection/xyz"
+                            disabled={!(defaultValues.address && defaultValues.network)}
+                            defaultValue={defaultValues.collection}
+                            onChange={(e) => {
+                                const collection = e.target.value
+
+                                onChange({
+                                    ...defaultValues,
+                                    collection: collection.length === 0 ? null : collection,
+                                })
+                            }}
+                        />
+                    </div>
+                ) : null}
             </>
         )
     }
@@ -168,38 +299,118 @@ export default function Inspector() {
             key: 'channels',
             label: 'Must be a member of channel(s)',
             isBasic: false,
-            onChange: (value: boolean) => {
-                if (!value) {
-                    updateConfig({
-                        channels: [],
-                    })
-                }
+            onChange: (checked: boolean) => {
+                updateConfig({
+                    ...config,
+                    requirements: {
+                        ...config.requirements,
+                        channels: {
+                            ...config.requirements.channels,
+                            checked,
+                        },
+                    },
+                })
             },
             children: (
                 <>
-                    <div className="flex flex-row items-center w-full gap-2">
-                        <Label htmlFor="channels" className="text-sm font-medium leading-none">
-                            Channel(s):
-                        </Label>
+                    <div className="flex flex-row justify-center gap-2 w-full items-center">
                         <Input
-                            id="channels"
-                            type="text"
-                            placeholder='e.g. "fc-devs,frames" for multiple channels'
-                            className="w-full"
-                            onChange={(e) => {
-                                const value = e.target.value
-                                const channels = value.split(',').map((channel) => channel.trim())
-                                setSelectedOptions({
-                                    ...selectedOptions,
-                                    channels: channels.length > 0,
-                                })
-                                updateConfig({ channels })
-                            }}
+                            disabled={
+                                addingChannel || config.requirements.channels.data.length >= 4
+                            }
+                            ref={channelInputRef}
+                            className="text-lg border rounded py-2 px-4 w-full"
                         />
+                        <Button
+                            type="button"
+                            disabled={addingChannel}
+                            className="px-4 py-2 rounded-md"
+                            onClick={async () => {
+                                if (!channelInputRef.current) return
+
+                                const channel = channelInputRef.current.value.trim()
+
+                                if (channel.length < 3) return
+                                setAddingChannel(true)
+
+                                try {
+                                    const channelInfo = await getFarcasterChannelbyName(channel)
+                                    console.log(`Channel Info for ${channel}`, channelInfo)
+
+                                    if (!channelInfo) {
+                                        toast.error(`No channel found with name ${channel}`)
+                                        return
+                                    }
+
+                                    updateConfig({
+                                        requirements: {
+                                            ...config.requirements,
+                                            channels: {
+                                                ...config.requirements.channels,
+                                                data: [
+                                                    ...(config.requirements.channels.data || []),
+                                                    channel,
+                                                ],
+                                            },
+                                        },
+                                    })
+
+                                    channelInputRef.current.value = ''
+                                } catch (error) {
+                                    console.error('Failed to fetch channel', error)
+
+                                    toast.error('Failed to fetch channel')
+                                } finally {
+                                    setAddingChannel(false)
+                                }
+                            }}
+                        >
+                            {addingChannel ? (
+                                <LoaderIcon className="animate-spin" />
+                            ) : (
+                                'Add Channel'
+                            )}
+                        </Button>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                        Separate multiple channel IDs with a comma
-                    </p>
+
+                    {config.requirements.channels.data.length ? (
+                        <div className="flex flex-col gap-1 w-full">
+                            {config.requirements.channels.data.map((channel, index) => (
+                                <div
+                                    key={index}
+                                    className="flex flex-row items-center justify-between bg-slate-50 bg-opacity-10 p-2 rounded"
+                                >
+                                    <span>
+                                        {index + 1}. {channel}
+                                    </span>
+                                    <Button
+                                        variant={'destructive'}
+                                        onClick={() =>
+                                            updateConfig({
+                                                requirements: {
+                                                    ...config.requirements,
+                                                    channels: {
+                                                        ...config.requirements.channels,
+                                                        data: [
+                                                            ...config.requirements.channels.data.slice(
+                                                                0,
+                                                                index
+                                                            ),
+                                                            ...config.requirements.channels.data.slice(
+                                                                index + 1
+                                                            ),
+                                                        ],
+                                                    },
+                                                },
+                                            })
+                                        }
+                                    >
+                                        <Trash />
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    ) : null}
                 </>
             ),
         },
@@ -287,10 +498,13 @@ export default function Inspector() {
             },
             children: (
                 <TokenGating
+                    id="erc721"
                     defaultValues={{
-                        network: config.requirements?.erc721?.network,
-                        address: config.requirements?.erc721?.address,
-                        balance: config.requirements?.erc721?.balance,
+                        network: config.requirements.erc721?.network,
+                        address: config.requirements.erc721?.address as string | undefined,
+                        balance: config.requirements.erc721?.balance || 0,
+                        collection: config.requirements.erc721?.collection as string | undefined,
+                        tokenId: undefined,
                     }}
                     onChange={(erc721) => {
                         updateConfig({
@@ -319,10 +533,13 @@ export default function Inspector() {
             },
             children: (
                 <TokenGating
+                    id="erc1155"
                     defaultValues={{
-                        network: config.requirements?.erc1155?.network,
-                        address: config.requirements?.erc1155?.address,
-                        balance: config.requirements?.erc1155?.balance,
+                        network: config.requirements.erc1155?.network,
+                        address: config.requirements.erc1155?.address as string | undefined,
+                        balance: config.requirements.erc1155?.balance || 0,
+                        tokenId: config.requirements.erc1155?.tokenId as string | undefined,
+                        collection: config.requirements.erc1155?.collection as string | undefined,
                     }}
                     onChange={(erc1155) => {
                         updateConfig({
@@ -351,10 +568,13 @@ export default function Inspector() {
             },
             children: (
                 <TokenGating
+                    id="erc20"
                     defaultValues={{
-                        network: config.requirements?.erc20?.network,
-                        address: config.requirements?.erc20?.address,
-                        balance: config.requirements?.erc20?.balance,
+                        network: config.requirements.erc20?.network,
+                        address: config.requirements.erc20?.address as string | undefined,
+                        balance: config.requirements.erc20?.balance || 0,
+                        tokenId: undefined,
+                        collection: config.requirements.erc20?.collection as string | undefined,
                     }}
                     onChange={(erc20) => {
                         updateConfig({
@@ -373,15 +593,23 @@ export default function Inspector() {
         <div className="flex flex-col gap-5 w-full h-full">
             <p>{JSON.stringify(config)}</p>
             <div className="flex flex-col gap-2 w-full">
+                <h2 className="text-lg font-semibold">Button Label</h2>
+                <Input
+                    className="w-full"
+                    placeholder="View"
+                    defaultValue={config.label || ''}
+                    onChange={async (e) => {
+                        onChangeLabel(e.target.value)
+                    }}
+                />
+            </div>
+            <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-lg font-semibold">Your Farcaster username</h2>
                 <Input
                     className="w-full"
                     placeholder="eg. vitalik.eth"
-                    defaultValue={config.username || ''}
-                    onChange={(e) => {
-                        const value = e.target.value
-                        updateConfig({ username: value === '' ? null : value })
-                    }}
+                    defaultValue={config.owner?.username}
+                    onChange={async (e) => onChangeUsername(e.target.value)}
                 />
             </div>
             <div className="flex flex-col gap-2 w-full">
@@ -581,6 +809,8 @@ export default function Inspector() {
                                                 },
                                             },
                                         })
+                                    } else {
+                                        requirement.onChange?.(checked)
                                     }
                                 }}
                             />

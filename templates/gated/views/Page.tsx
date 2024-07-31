@@ -1,5 +1,4 @@
 import type { Config } from '..'
-import template from '../'
 
 export default function CoverView(config: Config) {
     return (
@@ -17,7 +16,7 @@ export default function CoverView(config: Config) {
                 color: '#ffffff',
             }}
         >
-            {config.text || 'Page not found'}
+            {config.rewardMessage || 'You made it!'}
         </div>
     )
 }

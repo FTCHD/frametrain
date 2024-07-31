@@ -5,13 +5,19 @@ import handlers from './handlers'
 
 type ERC = {
     network: string
-    address: string
+    address: string | null
     balance: number | null
+    tokenId: string | null
+    collection: string | null
 }
 
 export interface Config extends BaseConfig {
-    username: string | null
+    owner: {
+        username: string
+        fid: number
+    } | null
     welcomeText: string | null
+    label: string | null
     rewardMessage: string | null
     rewardImage: string | null
     links: string[]
@@ -25,7 +31,7 @@ export interface Config extends BaseConfig {
             sol: boolean
             power: boolean
         }
-        channels: string[]
+        channels: { checked: boolean; data: string[] }
         maxFid: number
         score: number
         erc20: ERC | null
@@ -49,6 +55,7 @@ export default {
         username: null,
         welcomeText: null,
         rewardMessage: null,
+        label: null,
         rewardImage: null,
         links: [],
         requirements: {
@@ -61,7 +68,10 @@ export default {
                 sol: false,
                 power: false,
             },
-            channels: [],
+            channels: {
+                checked: false,
+                data: [],
+            },
             maxFid: 0,
             score: 0,
             erc20: null,

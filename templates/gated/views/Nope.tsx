@@ -1,28 +1,40 @@
-import type { Config } from '..'
-
-export default function NopeView({
-    config,
-    errors,
-}: { config: Config; errors: { message: string; type: string; basic: boolean }[] }) {
+export default function NopeView({ errors }: { errors: { message: string; type: string }[] }) {
     const error = errors[0]
+
     let message = 'Must '
+    let withSuffix = true
 
-    if (error.basic) {
-        switch (error.type) {
-            case 'ctx': {
-                message += `${error.message} this frame`
-                break
-            }
+    switch (error.type) {
+        case 'ctx': {
+            message += `${error.message} this frame`
+            break
+        }
 
-            case 'wallets': {
-                message += `have ${error.message} wallet connected`
-                break
-            }
+        case 'wallets': {
+            message += `have ${error.message} wallet connected`
+            break
+        }
 
-            default: {
-                message += `${error.message}`
-                break
-            }
+        case 'have': {
+            message += `have ${error.message}`
+            break
+        }
+
+        case 'nft': {
+            message = `${error.message} holders only`
+            withSuffix = false
+            break
+        }
+
+        case 'error': {
+            message = `Failed to check validate requirements for ${error.message}`
+            withSuffix = false
+            break
+        }
+
+        default: {
+            message += `${error.message}`
+            break
         }
     }
 
@@ -41,7 +53,7 @@ export default function NopeView({
                 color: '#ffffff',
             }}
         >
-            {message} to reveal
+            {message} {withSuffix ? ' to reveal' : ''}
         </div>
     )
 }
