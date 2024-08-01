@@ -55,6 +55,7 @@
         "@vercel/functions": "^1.4.0",
         "@vercel/og": "^0.6.2",
         "@vercel/speed-insights": "^1.0.11",
+        "abitype": "^1.0.5",
         "bignumber.js": "^9.1.2",
         "canvas-confetti": "^1.9.3",
         "class-variance-authority": "^0.7.0",
