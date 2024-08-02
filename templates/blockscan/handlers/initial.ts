@@ -21,6 +21,6 @@ export default async function initial({
         buttons,
         fonts: roboto,
         component: CoverView(config),
-        handler: 'simulate',
+        handler: 'function',
     }
 }

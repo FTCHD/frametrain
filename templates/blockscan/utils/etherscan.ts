@@ -2,35 +2,16 @@
 
 import type { Abi, FormatAbi } from 'abitype'
 import { formatAbi } from 'abitype'
-import type { Chain } from 'viem/chains'
-import { apiKeyByChainId, chains, isAddress } from './viem'
+import { apiKeyByChainId, chainExplorerByHostname, isAddress } from './viem'
 
 type Address = `0x${string}`
-type ChainExplorer = {
-    name: string
-    id: number
-    explorer: NonNullable<Chain['blockExplorers']>[string]
-}
 
 export type SerializableConfig = {
     abis: FormatAbi<Abi>[]
-    address: string
+    address: Address
     network: string
     link: string
     chainId: number
-}
-
-const chainExplorerByHostname: Record<string, ChainExplorer> = {}
-
-for (const [name, chain] of Object.entries(chains)) {
-    for (const explorer of Object.values((chain as Chain).blockExplorers ?? {})) {
-        const hostname = new URL(explorer.url).hostname
-        chainExplorerByHostname[hostname] = {
-            name,
-            id: (chain as Chain).id,
-            explorer,
-        }
-    }
 }
 
 export async function getContractData(etherscanLink: string) {

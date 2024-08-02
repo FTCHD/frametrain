@@ -1,11 +1,10 @@
-export default function PageView({
-    result,
+export default function FunctionView({
+    signature,
     index,
-    name,
+    args,
     total,
-}: { result: string | null; index: number; name: string; total: number }) {
+}: { signature: string; index: number; args: string[]; total: number }) {
     const percentage = (index / total) * 100
-
     return (
         <div
             style={{
@@ -23,8 +22,8 @@ export default function PageView({
         >
             <div
                 style={{
-                    fontSize: '50px',
                     width: '100%',
+                    fontSize: '50px',
                     height: '100%',
                     display: 'flex',
                     gap: '20px',
@@ -35,8 +34,19 @@ export default function PageView({
                     position: 'relative',
                 }}
             >
-                <span tw="my-2 p-2 ">{name}</span>
-                <span style={{ fontSize: '30px', color: '#A9A9A9' }}>{result || 'No result'}</span>
+                <span>Function #{index}</span>
+                <span tw="rounded-md my-2 p-2 text-gray-100" style={{ fontSize: '30px' }}>
+                    {signature}
+                </span>
+                {args.length === 0 ? (
+                    <span style={{ fontSize: '30px' }}>No arguments</span>
+                ) : (
+                    <>
+                        <span style={{ fontSize: '30px' }}>
+                            Enter the values of the arguments separated by commas
+                        </span>
+                    </>
+                )}
             </div>
             <div
                 style={{
