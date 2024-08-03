@@ -14,6 +14,7 @@ import twitter from './twitter'
 import presentation from './presentation'
 import meme from './meme'
 import rss from './rss'
+import fundraiser from './fundraiser'
 import gated from './gated'
 
 import blockscan from './blockscan'
@@ -35,6 +36,7 @@ export default {
     presentation,
     meme,
     rss,
+    fundraiser,
     gated,
     blockscan,
 }
