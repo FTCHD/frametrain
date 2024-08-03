@@ -96,10 +96,13 @@ export async function POST(
     }
 
     if (buildParameters.transaction) {
-        // delays tx process
-        // waitUntil(processFrame(frame, buildParameters))
+        waitUntil(processFrame(frame, buildParameters))
 
-        return Response.json(buildParameters.transaction)
+        return new Response(JSON.stringify(buildParameters.transaction), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
     }
 
     const renderedFrame = await buildFramePage({

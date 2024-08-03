@@ -233,6 +233,11 @@ function buildFrame({
                     postUrlMatch && button.target.startsWith('/')
                         ? `${postUrlMatch[1]}/${button.target.slice(1)}?${qs}`
                         : button.target
+
+            if (postUrlMatch && button.action === 'tx' && button.postUrl?.startsWith('/')) {
+                metadata[`fc:frame:button:${index + 1}:post_url`] = `${
+                    postUrlMatch[1]
+                }/${button.postUrl.slice(1)}?${qs}`
             }
         })
     }
