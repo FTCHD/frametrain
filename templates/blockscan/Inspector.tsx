@@ -20,8 +20,8 @@ export default function Inspector() {
 
         try {
             //
-            const result = await getContractData(link)
-            updateConfig({ etherscan: result })
+            const etherscan = await getContractData(link)
+            updateConfig({ etherscan })
 
             toast.success('Contract data fetched successfully')
         } catch (e) {
@@ -32,7 +32,6 @@ export default function Inspector() {
 
     return (
         <div className="flex flex-col w-full h-full gap-4">
-            <p>{JSON.stringify(config)}</p>
             <div className="flex flex-col gap-2 ">
                 <h2 className="text-lg font-semibold">Contract Url:</h2>
                 <Input

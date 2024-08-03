@@ -8,7 +8,13 @@ export interface Config extends BaseConfig {
     etherscan: SerializableConfig | null
 }
 
-export interface Storage extends BaseStorage {}
+export interface Storage extends BaseStorage {
+    [fid: string]: {
+        functionName: string
+        index: number
+        args: unknown[]
+    }[]
+}
 
 export default {
     name: 'Smart Contract',

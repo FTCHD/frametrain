@@ -51,22 +51,19 @@ export async function getContractData(etherscanLink: string) {
 
     const abi = formatAbi(rawAbi)
 
-    console.log('getContractData >> rawAbi', rawAbi)
-
     const abis: FormatAbi<Abi>[] = [abi]
     // If the contract is an EIP-1967 proxy, get the implementation contract ABIs.
     if (isAddress(abiResult.proxy)) {
         console.log('getContractData >> abiResult.proxy', abiResult.proxy)
         const implAbiResult = await getContractAbi(abiResult.proxy, apiUrl, apiKey)
         const implAbi = formatAbi(implAbiResult.abi)
-        console.log('getContractData >> implAbi', implAbiResult.abi)
         abis.push(implAbi)
     }
 
     // Build and return the partial ponder config.
     const config: SerializableConfig = {
         abis,
-        address: contractAddress,
+        address: contractAddress as Address,
         network: name,
         chainId,
         link: etherscanLink,
@@ -133,7 +130,7 @@ const getContractAbi = async (contractAddress: string, apiUrl: string, apiKey: s
             throw new Error(`Contract ${contractAddress} is unverified or has an empty ABI.`)
         }
         const parsedAbi = JSON.parse(data.abi) as Abi
-        const abi = parsedAbi.filter((a) => a.type === 'function')
+        const abi = parsedAbi //.filter((a) => a.type === 'function')
         result = { abi, proxy: data.proxy }
     } catch (e) {
         const error = e as Error

@@ -31,17 +31,14 @@ type ChainExplorer = {
 export const chainExplorerByHostname: Record<string, ChainExplorer> = {}
 export const chainByChainId: Record<number, Chain> = {}
 
-if (Object.keys(chainByChainId).length === 0) {
-    for (const [name, chain] of Object.entries(chains)) {
-        chainByChainId[chain.id] = chain
-        if (Object.keys(chain.blockExplorers).length > 0) break
-        for (const explorer of Object.values((chain as Chain).blockExplorers ?? {})) {
-            const hostname = new URL(explorer.url).hostname
-            chainExplorerByHostname[hostname] = {
-                name,
-                id: (chain as Chain).id,
-                explorer,
-            }
+for (const [name, chain] of Object.entries(chains)) {
+    chainByChainId[chain.id] = chain
+    for (const explorer of Object.values((chain as Chain).blockExplorers ?? {})) {
+        const hostname = new URL(explorer.url).hostname
+        chainExplorerByHostname[hostname] = {
+            name,
+            id: (chain as Chain).id,
+            explorer,
         }
     }
 }
