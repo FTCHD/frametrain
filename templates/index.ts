@@ -16,6 +16,8 @@ import meme from './meme'
 import rss from './rss'
 import gated from './gated'
 
+import blockscan from './blockscan'
+
 export default {
     // basic,
     pdf,
@@ -34,4 +36,5 @@ export default {
     meme,
     rss,
     gated,
+    blockscan,
 }
