@@ -28,5 +28,10 @@ export default {
     Inspector,
     handlers,
     requiresValidation: false,
+    initialConfig: {
+        memeUrl: null,
+        template: null,
+        aspectRatio: '1.91:1',
+    },
     events: [],
 } satisfies BaseTemplate

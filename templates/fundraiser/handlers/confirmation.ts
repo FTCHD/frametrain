@@ -28,7 +28,6 @@ export default async function confirmation({
     }
 
     const buttonIndex = body.validatedData.tapped_button.index as number
-    const verifiedAddresses = body.validatedData.interactor.verified_addresses
     const amounts = config.enablePredefinedAmounts ? config.amounts : []
     const lastButtonIndex = amounts.length + 1
     const isCustomAmount = buttonIndex === lastButtonIndex
@@ -60,7 +59,6 @@ export default async function confirmation({
 
     const client = getClient(config.token.chain)
     const glideConfig = getGlideConfig(client.chain)
-    const account = verifiedAddresses?.eth_addresses[0] || ''
 
     const chain =
         Object.keys(chains).find((chain) => (chains as any)[chain].id === client.chain.id) || 'base'
@@ -74,7 +72,6 @@ export default async function confirmation({
         chainId: client.chain.id,
         paymentCurrency: paymentCurrencyOnChain,
         address,
-        account,
     })
 
     return {

@@ -34,7 +34,7 @@ export interface Config extends BaseConfig {
 export interface Storage extends BaseStorage {}
 
 export default {
-    name: 'FrameSwap',
+    name: 'TokenSwap',
     description: 'Create your own Token Swap Frame',
     creatorFid: '260812',
     creatorName: 'Steve',
