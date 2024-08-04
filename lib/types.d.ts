@@ -24,6 +24,8 @@ export interface BaseHandlers {
 export interface BaseTemplate {
     name: string
     description: string
+    //! define a string with max 20 characters "length"
+    shortDescription?: string | undefined
     creatorFid: string // must be a farcaster fid
     creatorName: string
     enabled: boolean

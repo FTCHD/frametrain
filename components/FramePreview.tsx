@@ -89,7 +89,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
 
     return (
         <>
-            <div className="flex flex-col justify-center relative h-full bg-transparent p-[1.5px]">
+            <div className="flex flex-col justify-center relative h-full bg-transparent p-[1.5px] max-sm:justify-end max-sm:w-[75%]">
                 <div
                     className="relative overflow-hidden border-2 bg-[#2A2432] border-[#4c3a4e80]"
                     style={{ borderRadius: '0.48rem' }}
