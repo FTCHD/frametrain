@@ -1,8 +1,8 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
+import type { SerializableConfig } from './common/etherscan'
 import cover from './cover.jpeg'
 import handlers from './handlers'
-import type { SerializableConfig } from './utils/etherscan'
 
 export interface Config extends BaseConfig {
     etherscan: SerializableConfig | null

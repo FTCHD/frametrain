@@ -1,7 +1,5 @@
-import { http, createPublicClient, type Chain, isAddress } from 'viem'
-import { base, mainnet, optimism, arbitrum, fantom, polygon, bsc } from 'viem/chains'
-
-export { isAddress }
+import type { Chain } from 'viem'
+import { arbitrum, base, bsc, fantom, mainnet, optimism, polygon } from 'viem/chains'
 
 export const chains = {
     base,
@@ -41,18 +39,4 @@ for (const [name, chain] of Object.entries(chains)) {
             explorer,
         }
     }
-}
-
-export function getViemClient(chainId: number) {
-    const chain = chainByChainId[chainId]
-
-    if (!chain) {
-        throw new Error('Unsupported chain')
-    }
-
-    return createPublicClient({
-        chain,
-        transport: http(),
-        batch: { multicall: { wait: 10, batchSize: 1000 } },
-    })
 }

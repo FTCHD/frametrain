@@ -1,16 +1,16 @@
 'use server'
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
-import type { Config, Storage } from '..'
 import { FrameError } from '@/sdk/error'
 import {
     type AbiFunction,
+    type GetAbiItemParameters,
     encodeFunctionData,
     getAbiItem,
-    type GetAbiItemParameters,
     parseAbi,
 } from 'viem'
+import type { Config, Storage } from '..'
 
-export default async function contract({
+export default async function txData({
     config,
     params,
     body,
@@ -54,7 +54,6 @@ export default async function contract({
     })
 
     return {
-        buttons: [],
         transaction: {
             chainId: `eip155:${config.etherscan.chainId}`,
             method: 'eth_sendTransaction',

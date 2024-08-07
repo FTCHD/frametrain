@@ -1,10 +1,10 @@
 import finish from './finish'
+import functionHandler from './function'
 import initial from './initial'
 import page from './page'
 import simulate from './simulate'
-import functionHandler from './function'
-import contract from './contract'
 import success from './success'
+import txData from './txData'
 
 export default {
     initial,
@@ -12,6 +12,6 @@ export default {
     simulate,
     finish,
     function: functionHandler,
-    contract,
+    txData,
     success,
 }

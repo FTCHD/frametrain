@@ -4,13 +4,13 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
-import type { Config, Storage } from '..'
-import PageView from '../views/Page'
 import { FrameError } from '@/sdk/error'
-import { parseAbi, type AbiFunction } from 'abitype'
-import { getViemClient } from '../utils/viem'
-import functionHandler from './function'
-import { BaseError, ContractFunctionRevertedError } from 'viem'
+import { type AbiFunction, parseAbi } from 'abitype'
+import { http, BaseError, ContractFunctionRevertedError, createPublicClient } from 'viem'
+import type { Config, Storage } from '..'
+import { chainByChainId } from '../common/constants'
+import PageView from '../views/Page'
+import handlerFunction from './function'
 
 export default async function simulate({
     body,
@@ -105,7 +105,17 @@ export default async function simulate({
 
     switch (buttonIndex) {
         case 2: {
-            const client = getViemClient(config.etherscan.chainId)
+            const chain = chainByChainId[config.etherscan.chainId]
+
+            if (!chain) {
+                throw new Error('Unsupported chain')
+            }
+
+            const client = createPublicClient({
+                chain,
+                transport: http(),
+                batch: { multicall: { wait: 10, batchSize: 1000 } },
+            })
             try {
                 const simulation = await client.simulateContract({
                     abi: parseAbi(rawAbiString),
@@ -123,7 +133,7 @@ export default async function simulate({
                 buttons.push({
                     label: functionName,
                     action: 'tx',
-                    target: '/contract',
+                    target: '/txData',
                     postUrl: '/success',
                 })
                 action = 'write'
@@ -151,7 +161,7 @@ export default async function simulate({
             } else {
                 nextIndex = signatureIndex === abiString.length - 1 ? 0 : signatureIndex + 1
             }
-            return functionHandler({
+            return handlerFunction({
                 config,
                 body,
                 storage: newStorage,

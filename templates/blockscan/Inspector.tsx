@@ -2,10 +2,10 @@
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { useFrameConfig } from '@/sdk/hooks'
-import type { Config } from '.'
-import { useDebouncedCallback } from 'use-debounce'
-import { getContractData } from './utils/etherscan'
 import toast from 'react-hot-toast'
+import { useDebouncedCallback } from 'use-debounce'
+import type { Config } from '.'
+import { getContractData } from './common/etherscan'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
