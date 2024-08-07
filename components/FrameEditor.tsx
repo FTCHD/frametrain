@@ -62,8 +62,6 @@ export default function FrameEditor({
 
     const updateLinkedPage = useDebouncedCallback(async (e: ChangeEvent<HTMLInputElement>) => {
         const url = e.target.value
-        if (!url || url === '') return
-        if (url && url.split('.').length < 2) return
         setUpdating(true)
         await updateFrameLinkedPage(frame.id, url)
         setUpdating(false)
