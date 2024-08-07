@@ -1,10 +1,10 @@
-import type { RssFeed } from '../rss'
+import type { RssFeed } from '../common'
 
 export default function PostView({
     post,
     postIndex,
     total,
-}: { post: RssFeed['body'][number]; postIndex: number; total: number }) {
+}: { post: RssFeed['posts'][number]; postIndex: number; total: number }) {
     const description = (post?.content || post.description).trim()
     return (
         <div
@@ -80,21 +80,14 @@ export default function PostView({
                     style={{
                         display: 'flex',
                         flexDirection: 'row',
+                        justifyContent: 'space-between',
                         width: '100%',
                         fontSize: '12px',
                         fontWeight: 'bold',
                         opacity: '0.8',
                     }}
                 >
-                    <div
-                        style={{
-                            width: '100%',
-                            display: 'flex',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        {post.pubDate}
-                    </div>
+                    <div>{post.pubDate}</div>
 
                     <div
                         style={{

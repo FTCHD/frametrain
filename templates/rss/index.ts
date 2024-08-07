@@ -1,15 +1,16 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
+import type { RssFeed } from './common'
 import cover from './cover.jpeg'
 import handlers from './handlers'
-import type { RssFeed } from './rss'
 
 export interface Config extends BaseConfig {
     rssUrl: string | undefined
 }
 
 export interface Storage extends BaseStorage {
-    [fid: string]: Record<string, RssFeed> | undefined
+    feed: RssFeed | undefined
+    lastUpdated: number | undefined
 }
 
 export default {

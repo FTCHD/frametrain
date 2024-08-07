@@ -1,4 +1,4 @@
-import type { RssFeedIntro } from '../rss'
+import type { RssFeedIntro } from '../common'
 
 export default function CoverView(info: RssFeedIntro | null) {
     if (info) {
@@ -45,7 +45,7 @@ export default function CoverView(info: RssFeedIntro | null) {
                         fontWeight: 'medium',
                     }}
                 >
-                    Last updated: {info.updatedAt.formatted}
+                    Last updated: {info.updatedAt}
                 </span>
             </div>
         )

@@ -1,15 +1,14 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
+import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
+import { type RssFeedIntro, fetchRssFeedIntro } from '../common'
 import CoverView from '../views/Cover'
-import { fetchRssFeedIntro, type RssFeedIntro } from '../rss'
-import { FrameError } from '@/sdk/error'
 
 export default async function initial({
     config,
 }: {
-    // GET requests don't have a body.
     config: Config
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
@@ -34,6 +33,5 @@ export default async function initial({
         fonts: roboto,
         component: CoverView(feed),
         handler: 'post',
-        params: feed ? { lastUpdated: feed.updatedAt.unix } : undefined,
     }
 }

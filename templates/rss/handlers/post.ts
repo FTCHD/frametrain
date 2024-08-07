@@ -1,11 +1,12 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import ms from 'ms'
 import type { Config, Storage } from '..'
-import { fetchRssFeed, fetchRssFeedIntro, type RssFeed } from '../rss'
+import { type RssFeed, fetchRssFeed } from '../common'
 import PostView from '../views/Post'
 import initial from './initial'
-import { FrameError } from '@/sdk/error'
 
 export default async function post({
     body,
@@ -19,52 +20,30 @@ export default async function post({
     params: any
 }): Promise<BuildFrameData> {
     const fonts = await loadGoogleFontAllVariants('Roboto')
-    const fid = body.untrustedData.fid.toString()
 
     const buttonIndex = body.untrustedData.buttonIndex
     let newStorage = storage
 
     let nextPage: number
-    let lastUpdated: number | null =
-        params?.lastUpdated === undefined ? null : Number.parseInt(params.lastUpdated)
+    const lastUpdated: number = newStorage.lastUpdated || 0
 
     if (!config.rssUrl || (buttonIndex === 1 && params?.currentPage)) {
         return initial({ config })
     }
 
-    const existingPosts = storage[fid]?.[config.rssUrl]
+    const existingPosts = storage?.feed
 
     let feed: RssFeed
 
     try {
-        if (!existingPosts) {
+        if (!existingPosts || Date.now() - lastUpdated > ms('10m')) {
             feed = await fetchRssFeed(config.rssUrl)
             newStorage = {
-                ...newStorage,
-                [fid]: {
-                    ...(newStorage[fid] ?? {}),
-                    [config.rssUrl]: feed,
-                },
+                feed: feed,
+                lastUpdated: Date.now(),
             }
-            lastUpdated = feed.updatedAt.unix
         } else {
-            // making sure to not fetch the feed again if it hasn't been updated
-            if (
-                !(Number.isNaN(lastUpdated) && Number.isNaN(existingPosts.updatedAt?.unix)) &&
-                lastUpdated === existingPosts.updatedAt.unix
-            ) {
-                feed = existingPosts
-            } else {
-                feed = await fetchRssFeed(config.rssUrl)
-                newStorage = {
-                    ...newStorage,
-                    [fid]: {
-                        ...(newStorage[fid] ?? {}),
-                        [config.rssUrl]: feed,
-                    },
-                }
-                lastUpdated = feed.updatedAt.unix
-            }
+            feed = existingPosts
         }
     } catch {
         throw new FrameError('Failed to fetch RSS feed')
@@ -104,6 +83,6 @@ export default async function post({
         handler: 'post',
         fonts,
         storage: newStorage,
-        params: { currentPage: nextPage, lastUpdated },
+        params: { currentPage: nextPage },
     }
 }

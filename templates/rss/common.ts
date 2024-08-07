@@ -1,7 +1,7 @@
-import { parseFeed, Parser } from 'htmlparser2'
 import dayjs from 'dayjs'
-import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
+import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+import { Parser, parseFeed } from 'htmlparser2'
 
 dayjs.extend(LocalizedFormat)
 dayjs.extend(advancedFormat)
@@ -20,10 +20,7 @@ function extractText(html: string): string {
 
 export interface RssFeed {
     title: string
-    updatedAt: {
-        formatted: string
-        unix: number
-    }
+    updatedAt: string
     posts: {
         title: string
         link: string
@@ -51,15 +48,9 @@ export async function fetchRssFeedIntro(url: string): Promise<RssFeedIntro> {
         throw new Error('Failed to parse feed')
     }
 
-    const date = dayjs(feed.updated)
-
     return {
         title: extractText(feed.title || ''),
-        updatedAt: {
-            formatted: date.format('dddd, MMMM Do @ LT'),
-            unix: date.unix(),
-        },
-
+        updatedAt: dayjs(feed.updated).format('dddd, MMMM Do @ LT'),
         total: Array.isArray(feed.items) ? feed.items.length : 1,
     }
 }
@@ -88,14 +79,9 @@ export async function fetchRssFeed(url: string): Promise<RssFeed> {
         }
     })
 
-    const date = dayjs(feed.updated)
-
     return {
         title: extractText(feed.title || ''),
-        updatedAt: {
-            formatted: date.format('dddd, MMMM Do @ LT'),
-            unix: date.unix(),
-        },
+        updatedAt: dayjs(feed.updated).format('dddd, MMMM Do @ LT'),
         posts,
     }
 }
