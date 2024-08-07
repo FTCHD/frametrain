@@ -1,31 +1,21 @@
 'use client'
 
+import { Button } from '@/components/shadcn/Button'
 import { useFrameConfig, useFramePreview } from '@/sdk/hooks'
 import { ArrowBigLeftDash, ArrowBigRightDash, KeySquare, Trash2 } from 'lucide-react'
-import SlideEditor from './components/SlideEditor'
-import type { FramePressConfig, SlideConfig, TextLayerConfigs } from './Config'
-import { DEFAULT_SLIDES, INITIAL_BUTTONS, INITIAL_SLIDE_ID } from './constants'
-import FigmaTokenEditor from './components/FigmaTokenEditor'
-import { Button } from '@/components/shadcn/Button'
 import { useEffect, useState } from 'react'
-import { FigmaView } from './views/FigmaView'
+import type { FramePressConfig, SlideConfig, TextLayerConfigs } from './Config'
+import FigmaTokenEditor from './components/FigmaTokenEditor'
+import SlideEditor from './components/SlideEditor'
+import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
 import FontConfig from './utils/FontConfig'
+import { FigmaView } from './views/FigmaView'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
     const [editingFigmaPAT, setEditingFigmaPAT] = useState(config.figmaPAT === undefined)
     const [_, setPreviewData] = useFramePreview()
     const [selectedSlideIndex, setSelectedSlideIndex] = useState(0)
-
-    // Setup default slides if this is a new instance
-    if (config.slides === undefined) {
-        console.debug('Initializing slides...')
-        updateConfig({
-            ...config,
-            slides: DEFAULT_SLIDES,
-            nextSlideId: DEFAULT_SLIDES.length,
-        })
-    }
 
     // Slide selection
     function previewSlide(id: string) {
@@ -38,23 +28,11 @@ export default function Inspector() {
         })
     }
 
-    // const [selectedSlideIndex, selectedSlide] = useMemo(() => {
-    //     const index = findSlide(selectedSlideId)
-    //     const slide = index >= 0 ? config.slides[index] : undefined
-    //     console.debug(`selectedSlideIndex updated to ${index} (${selectedSlideId})`)
-    //     return [index, slide]
-    // }, [selectedSlideId, config.slides])
-
-    function findSlide(id: string) {
-        return config.slides ? config?.slides.findIndex((slide) => slide.id == id) : -1
-    }
-
     // Configuration updates
     function updateFigmaPAT(updatedPAT: string) {
         console.debug('Inspector::updateFigmaPAT()')
         setEditingFigmaPAT(false)
         updateConfig({
-            ...config,
             figmaPAT: updatedPAT,
         })
     }
@@ -150,6 +128,17 @@ export default function Inspector() {
         }
     }, [config.slides])
 
+    // Setup default slides if this is a new instance
+    useEffect(() => {
+        if (config.slides === undefined) {
+            console.debug('Initializing slides...')
+            updateConfig({
+                slides: DEFAULT_SLIDES,
+                nextSlideId: DEFAULT_SLIDES.length,
+            })
+        }
+    }, [config, updateConfig])
+
     // Button targets == slides with a Title
     const buttonTargets = config.slides
         ?.filter((slide) => slide.title !== undefined) // Filter out slides without a title
@@ -177,7 +166,7 @@ export default function Inspector() {
                 <>
                     <div className="w-full flex items-center justify-between">
                         <div className="flex flex-row items-center justify-end gap-2">
-                            <Button onClick={() => setEditingFigmaPAT(true)}>
+                            <Button onClick={() => setEditingFigmaPAT(true)} variant={'secondary'}>
                                 <KeySquare className="mr-1" />
                                 Figma PAT
                             </Button>
@@ -192,7 +181,7 @@ export default function Inspector() {
                             <Button
                                 variant="destructive"
                                 disabled={!canDelete}
-                                onClick={() => removeSlide()}
+                                onClick={removeSlide}
                             >
                                 <Trash2 />
                             </Button>
@@ -218,7 +207,7 @@ export default function Inspector() {
                             </div>
                         ))}
                         <div
-                            onClick={() => addSlide()}
+                            onClick={addSlide}
                             className="w-40 h-40 flex items-center justify-center mr-1 border-input border-[1px] rounded-md cursor-pointer"
                         >
                             <span className="text-4xl">+</span>
