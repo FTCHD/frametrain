@@ -34,6 +34,7 @@ export type FigmaTextLayer = {
     fontWeight: string
     fontStyle: string
     letterSpacing: string
+    lineHeightPx: number
     cssStyle: string
     textAlignHorizontal: TextAlignHorizontal
     textAlignVertical: TextAlignVertical
@@ -91,6 +92,7 @@ export type FigmaNode = {
 export type FigmaStyle = {
     textAlignHorizontal: TextAlignHorizontal
     textAlignVertical: TextAlignVertical
+    lineHeightPx: number
 }
 
 export type FigmaTextNode = {
@@ -144,6 +146,7 @@ export async function getFigmaDesign(
                     fontWeight: svg.fontWeight,
                     fontStyle: svg.fontStyle,
                     letterSpacing: svg.letterSpacing,
+                    lineHeightPx: figma.style.lineHeightPx,
                     cssStyle: svg.style,
                     textAlignHorizontal: figma.style.textAlignHorizontal,
                     textAlignVertical: figma.style.textAlignVertical,

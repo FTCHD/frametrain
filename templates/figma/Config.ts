@@ -11,8 +11,8 @@ export type AspectRatio = '1.91:1' | '1:1'
 export type SlideConfig = {
     id: string
     aspectRatio: AspectRatio
-    title?: string
-    description?: string
+    title: string
+    description: string
     figmaUrl?: string
     figmaMetadata?: FigmaMetadata
     baseImagePaths?: BaseImagePaths
