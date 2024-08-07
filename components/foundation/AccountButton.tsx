@@ -27,18 +27,15 @@ export default function AccountButton() {
     }, [])
 
     const increaseTimeSpent: () => ReturnType<typeof setTimeout> | undefined = useCallback(() => {
-        if (isLoggingIn) {
-            setTimeSpent((prev) => prev + 1)
-            return setTimeout(increaseTimeSpent, 1000)
-        }
-        return undefined
-    }, [isLoggingIn])
+        setTimeSpent((prev) => prev + 1)
+        return setTimeout(increaseTimeSpent, 1000)
+    }, [])
 
     const handleLogin = useCallback(
         (res: StatusAPIResponse) => {
             setIsLoggingIn(true)
 
-            increaseTimeSpent()
+            const ref = increaseTimeSpent()
 
             signIn('credentials', {
                 message: res.message,
@@ -51,10 +48,16 @@ export default function AccountButton() {
                     router.refresh()
                 }
             })
+
+            return () => {
+                if (ref) {
+                    clearTimeout(ref)
+                }
+            }
         },
         [router, increaseTimeSpent]
     )
-	
+
     return (
         <AuthKitProvider>
             {isAuthenticated || sesh?.status === 'authenticated' ? (
