@@ -7,18 +7,22 @@ import CoverView from '../views/Cover'
 export default async function initial({
     config,
 }: {
-    // GET requests don't have a body.
     body: undefined
     config: Config
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    return {
+    const buildData: Record<string, unknown> = {
         buttons: [{ label: 'Create your own meme with FrameTrain' }],
-        fonts: roboto,
-        component: config.memeUrl ? undefined : CoverView(),
-        image: config.memeUrl,
         aspectRatio: config.aspectRatio,
     }
+
+    if (config.memeUrl) {
+        buildData.image = config.memeUrl
+    } else {
+        buildData.component = CoverView()
+        buildData.fonts = await loadGoogleFontAllVariants('Roboto')
+    }
+
+    return buildData as BuildFrameData
 }

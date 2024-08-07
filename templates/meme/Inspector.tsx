@@ -1,9 +1,6 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { useFrameConfig, useFrameId } from '@/sdk/hooks'
-import { useEffect, useState } from 'react'
-import type { Config } from '.'
 import {
     Select,
     SelectContent,
@@ -11,9 +8,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
+import { useFrameConfig, useFrameId } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { createMeme, getMemes } from './utils'
+import type { Config } from '.'
+import { createMeme, getMemeTemplates } from './common'
 
 type Meme = {
     id: string
@@ -42,23 +42,26 @@ export default function Inspector() {
         }
 
         function fetchMemeTemplatesFromLocalStorage() {
-            const cachePeriod = getLocalStorage<number>('imgflip-cache-time')
-            const cachedMemes = getLocalStorage<Meme[]>('imgflip-memes')
+            const cacheLastUpdated = getLocalStorage<number>('memeLastUpdated')
+            const cachedMemeTemplates = getLocalStorage<Meme[]>('memeTemplates')
 
-            if (!(cachePeriod && cachedMemes) || Date.now() - cachePeriod > 1000 * 60 * 60 * 24) {
+            if (
+                !(cacheLastUpdated && cachedMemeTemplates) ||
+                Date.now() - cacheLastUpdated > 1000 * 60 * 60 * 24
+            ) {
                 return null
             }
-            return cachedMemes
+            return cachedMemeTemplates
         }
 
         async function fetchMemeTemplates() {
             try {
-                const cachedMemes = fetchMemeTemplatesFromLocalStorage()
-                if (cachedMemes) {
-                    setMemeTemplates(cachedMemes)
+                const cachedMemeTemplates = fetchMemeTemplatesFromLocalStorage()
+                if (cachedMemeTemplates) {
+                    setMemeTemplates(cachedMemeTemplates)
                     return
                 }
-                const result = await getMemes()
+                const result = await getMemeTemplates()
                 const memes = result.map((meme) => ({
                     id: meme.id,
                     name: meme.name,
@@ -66,8 +69,8 @@ export default function Inspector() {
                     positions: meme.box_count,
                 }))
                 setMemeTemplates(memes)
-                setLocalStorage('imgflip-cache-time', Date.now())
-                setLocalStorage('imgflip-memes', memes)
+                setLocalStorage('memeLastUpdated', Date.now())
+                setLocalStorage('memeTemplates', memes)
             } catch (e) {
                 const error = e as Error
                 toast.remove()
@@ -88,6 +91,8 @@ export default function Inspector() {
                     defaultValue={selectedMeme?.id}
                     onValueChange={(e) => {
                         const meme = memeTemplates.find((meme) => meme.id === e)
+
+                        console.log(meme)
 
                         if (meme) setSelectedMeme(meme)
                     }}
@@ -115,10 +120,10 @@ export default function Inspector() {
                             <img src={selectedMeme.url} width={200} height={200} alt="PDF Slide" />
                         </div>
                     </div>
-                    <div className="flex flex-col h-full">
+                    <div className="flex flex-col gap-2">
                         <h2 className="text-lg font-semibold">Captions</h2>
 
-                        <div className="flex flex-col gap-2 h-full">
+                        <div className="flex flex-col gap-2">
                             {Array.from({ length: selectedMeme?.positions || 1 }).map((_, i) => (
                                 <Input
                                     key={i}
@@ -200,7 +205,7 @@ export default function Inspector() {
                             updateConfig({
                                 memeUrl: undefined,
                                 template: undefined,
-                                aspectratio: undefined,
+                                aspectRatio: undefined,
                             })
                         }
                     >

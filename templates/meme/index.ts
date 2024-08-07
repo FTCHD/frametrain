@@ -31,7 +31,7 @@ export default {
     initialConfig: {
         memeUrl: null,
         template: null,
-        aspectRatio: '1.91:1',
+        aspectRatio: '1:1',
     },
     events: [],
 } satisfies BaseTemplate
