@@ -1,9 +1,9 @@
 'use server'
 
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import { bytesToHex } from 'viem'
 import type { Config } from '..'
 import initial from './initial'
-import { bytesToHex } from 'viem'
 import price from './price'
 
 export default async function success({

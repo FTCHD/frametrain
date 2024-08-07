@@ -2,9 +2,9 @@
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
+import { formatSymbol } from '../common/shared'
 import CoverView from '../views/Cover'
 import PageView from '../views/Page'
-import { formatSymbol } from '../utils/shared'
 
 export default async function initial({
     config,
@@ -46,7 +46,7 @@ export default async function initial({
             component: PageView({ token0, token1, network: config.pool.network }),
             handler: 'price',
         }
-    }
+    } 
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
@@ -54,5 +54,6 @@ export default async function initial({
         buttons,
         fonts: roboto,
         component: CoverView(config),
+        handler: 'price',
     }
 }

@@ -2,7 +2,7 @@
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import type { Config } from '..'
-import { fetchQuote } from '../utils/0x'
+import { fetchQuote } from '../common/0x'
 import initial from './initial'
 
 export default async function swap({
@@ -37,20 +37,17 @@ export default async function swap({
             throw new Error('Failed to fetch quote')
         }
 
-        const transaction = {
-            chainId: `eip155:${config.pool.network.id}`,
-            method: 'eth_sendTransaction',
-            params: {
-                to: order.to,
-                value: order.value,
-                data: order.data,
-                abi: [],
-            },
-        } as BuildFrameData['transaction']
-
         return {
-            buttons: [],
-            transaction,
+            transaction: {
+                chainId: `eip155:${config.pool.network.id}`,
+                method: 'eth_sendTransaction',
+                params: {
+                    to: order.to,
+                    value: order.value,
+                    data: order.data,
+                    abi: [],
+                },
+            },
         }
     } catch (e) {
         const error = e as Error
