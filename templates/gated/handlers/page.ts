@@ -4,13 +4,13 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
-import type { Config } from '..'
-import PageView from '../views/Page'
 import { FrameError } from '@/sdk/error'
-import NopeView from '../views/Nope'
 import { getFarcasterUserChannels } from '@/sdk/neynar'
-import { holdsToken } from '../utils/nft'
 import { formatUnits, parseUnits } from 'viem'
+import type { Config } from '..'
+import { holdsToken } from '../common/checks'
+import NopeView from '../views/Nope'
+import PageView from '../views/Page'
 
 export default async function page({
     body,
@@ -278,9 +278,14 @@ export default async function page({
         })
     }
 
-    return {
+    const buildData: Record<string, unknown> = {
         buttons,
-        component: config.rewardImage ? undefined : PageView(config),
-        image: config.rewardImage || undefined,
     }
+    if (config.rewardImage) {
+        buildData.image = config.rewardImage
+    } else {
+        buildData.component = PageView(config)
+    }
+
+    return buildData as BuildFrameData
 }

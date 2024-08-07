@@ -1,12 +1,9 @@
 'use client'
 
-import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import type { Config } from '.'
-import { Textarea } from '@/components/shadcn/Textarea'
+import { Button } from '@/components/shadcn/Button'
 import { Checkbox } from '@/components/shadcn/Checkbox'
-import { useRef, useState, type ReactNode } from 'react'
-import { Label } from '@/components/shadcn/InputLabel'
 import { Input } from '@/components/shadcn/Input'
+import { Label } from '@/components/shadcn/InputLabel'
 import {
     Select,
     SelectContent,
@@ -14,252 +11,38 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
-import { Button } from '@/components/shadcn/Button'
 import { Slider } from '@/components/shadcn/Slider'
-import Link from 'next/link'
+import { Textarea } from '@/components/shadcn/Textarea'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { getFarcasterChannelbyName } from '@/sdk/neynar'
+import { corsFetch } from '@/sdk/scrape'
 import { LoaderIcon, Trash } from 'lucide-react'
+import Link from 'next/link'
+import { type ForwardedRef, type ReactNode, useMemo, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
-import { corsFetch } from '@/sdk/scrape'
-import { getFarcasterChannelbyName } from '@/sdk/neynar'
+import type { Config } from '.'
+import TokenGating from './components/TokenGating'
 
 const warpcastBaseApiUrl = 'https://api.warpcast.com/v2'
 
-export default function Inspector() {
-    const [config, updateConfig] = useFrameConfig<Config>()
-    const [selectedOptions, setSelectedOptions] = useState<Record<string, boolean>>(
-        config.requirements
-            ? {
-                  ...config.requirements.basic,
-                  channels:
-                      config.requirements.channels.data.length > 0 ||
-                      config.requirements.channels.checked,
-                  fid: (config.requirements.maxFid || 0) > 0,
-                  score: config.requirements.score > 0,
-                  erc721: Boolean(config.requirements.erc721),
-                  erc1155: Boolean(config.requirements.erc1155),
-                  erc20: Boolean(config.requirements.erc20),
-              }
-            : {
-                  liked: false,
-                  recasted: false,
-                  follower: false,
-                  following: false,
-                  power: false,
-                  eth: false,
-                  sol: false,
-                  channels: false,
-                  fid: false,
-                  score: false,
-                  erc721: false,
-                  erc1155: false,
-              }
-    )
-    const [messageType, setMessageType] = useState<'text' | 'image'>('text')
-    const [addingChannel, setAddingChannel] = useState(false)
-    const disableLinksField = config.links?.length >= 4
-    const linkInputRef = useRef<HTMLInputElement>(null)
-    const channelInputRef = useRef<HTMLInputElement>(null)
 
-    const uploadImage = useUploadImage()
-
-    const onChangeLabel = useDebouncedCallback(async (label: string) => {
-        if (label === config.label) {
-            return
-        }
-        updateConfig({
-            label: label === '' ? null : label,
-        })
-    }, 1000)
-
-    const onChangeUsername = useDebouncedCallback(async (username: string) => {
-        if (username === '' || username === config.owner?.username) {
-            return
-        }
-
-        try {
-            const response = await corsFetch(
-                `${warpcastBaseApiUrl}/user-by-username?username=${username}`,
-                {
-                    headers: {
-                        accept: 'application/json',
-                        'content-type': 'application/json',
-                    },
-                }
-            )
-
-            if (!response) return
-
-            const data = JSON.parse(response) as unknown as
-                | {
-                      result: { user: { fid: number; username: string } }
-                  }
-                | { errors: unknown[] }
-
-            if ('errors' in data) {
-                toast.error(`No FID associated with username ${username}`)
-                return
-            }
-            updateConfig({
-                owner: {
-                    fid: data.result.user.fid,
-                    username: data.result.user.username,
-                },
-            })
-        } catch (e) {
-            console.error('Failed to fetch FID', e)
-
-            toast.error('Failed to fetch FID')
-        }
-    }, 1000)
-
-    const TokenGating = ({
-        onChange,
-        defaultValues,
-        loading = false,
-        id,
-    }: {
-        onChange: (v: {
-            network: string | null | undefined
-            address: string | null | undefined
-            balance: number | null | undefined
-            tokenId: string | null | undefined
-            collection: string | null | undefined
-        }) => void
-        defaultValues: {
-            network: string | undefined
-            address: string | undefined
-            balance: number
-            tokenId: string | undefined
-            collection: string | undefined
-        }
-        loading?: boolean
-        id: 'erc721' | 'erc1155' | 'erc20'
-    }) => {
-        return (
-            <>
-                <div className="flex flex-row items-center w-full gap-2">
-                    <Label htmlFor="network" className="text-sm font-medium leading-none">
-                        Network
-                    </Label>
-                    <Select
-                        defaultValue={defaultValues.network as string | undefined}
-                        onValueChange={(network) => {
-                            onChange({ ...defaultValues, network })
-                        }}
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select network" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="ETH">Ethereum MainNet</SelectItem>
-                            <SelectItem value="BASE">Base</SelectItem>
-                            <SelectItem value="OP">Optimism</SelectItem>
-                            <SelectItem value="ZORA">Zora</SelectItem>
-                            <SelectItem value="BLAST">Blast</SelectItem>
-                            <SelectItem value="POLYGON">Polygon</SelectItem>
-                            <SelectItem value="FANTOM">Fantom</SelectItem>
-                            <SelectItem value="ARBITRUM">Arbitrum</SelectItem>
-                            <SelectItem value="BNB">Bnb</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="flex flex-row items-center w-full gap-2">
-                    <Label htmlFor="address" className="text-sm font-medium leading-none">
-                        Address
-                    </Label>
-                    <Input
-                        id="address"
-                        disabled={loading || !defaultValues.network}
-                        type="text"
-                        placeholder="0x8c678ghybv...."
-                        defaultValue={defaultValues.address}
-                        onChange={(e) => {
-                            const address = e.target.value
-                            onChange({
-                                ...defaultValues,
-                                address: address.length === 0 ? null : address,
-                            })
-                        }}
-                    />
-                </div>
-                <div className="flex flex-row items-center w-full gap-2">
-                    <Label htmlFor="balance" className="text-sm font-medium leading-none">
-                        Minimum Balance <br /> (optional)
-                    </Label>
-                    <Input
-                        id="balance"
-                        type="number"
-                        placeholder="300"
-                        disabled={!(defaultValues.address && defaultValues.network)}
-                        defaultValue={defaultValues.balance}
-                        onChange={(e) => {
-                            const value = e.target.value
-                            const balance = value === '' ? 0 : Number.parseFloat(value)
-                            if (isNaN(balance)) {
-                                toast.error('Please enter a valid amount')
-                                return
-                            }
-                            onChange({ ...defaultValues, balance: balance === 0 ? null : balance })
-                        }}
-                    />
-                </div>
-                {id === 'erc1155' ? (
-                    <div className="flex flex-row items-center w-full gap-2">
-                        <Label htmlFor="tokenId" className="text-sm font-medium leading-none">
-                            Token ID
-                        </Label>
-                        <Input
-                            id="tokenId"
-                            type="text"
-                            placeholder="1"
-                            disabled={!(defaultValues.address && defaultValues.network)}
-                            defaultValue={defaultValues.tokenId}
-                            onChange={(e) => {
-                                const tokenId = e.target.value
-
-                                onChange({
-                                    ...defaultValues,
-                                    tokenId: tokenId.length === 0 ? null : tokenId,
-                                })
-                            }}
-                        />
-                    </div>
-                ) : null}
-
-                {id !== 'erc20' ? (
-                    <div className="flex flex-row items-center w-full gap-2">
-                        <Label htmlFor="collection" className="text-sm font-medium leading-none">
-                            Collection URL
-                        </Label>
-                        <Input
-                            id="collection"
-                            type="text"
-                            placeholder="https://opensea.io/collection/xyz"
-                            disabled={!(defaultValues.address && defaultValues.network)}
-                            defaultValue={defaultValues.collection}
-                            onChange={(e) => {
-                                const collection = e.target.value
-
-                                onChange({
-                                    ...defaultValues,
-                                    collection: collection.length === 0 ? null : collection,
-                                })
-                            }}
-                        />
-                    </div>
-                ) : null}
-            </>
-        )
-    }
-
-    const requirements: {
-        key: string
-        label: string
-        isBasic: boolean
-        children?: ReactNode
-        onChange?: (value: boolean) => void
-    }[] = [
+function getRequirementsCheckboxes(
+    config: Config,
+    updateConfig: any,
+    setSelectedOptions: any,
+    selectedOptions: any,
+    addingChannel: any,
+    setAddingChannel: any,
+    channelInputRef: ForwardedRef<HTMLInputElement>
+): {
+    key: string
+    label: string
+    isBasic: boolean
+    children?: ReactNode
+    onChange?: (value: boolean) => void
+}[] {
+    return [
         {
             key: 'liked',
             label: 'Must Like',
@@ -326,9 +109,9 @@ export default function Inspector() {
                             disabled={addingChannel}
                             className="px-4 py-2 rounded-md"
                             onClick={async () => {
-                                if (!channelInputRef.current) return
+                                if (!channelInputRef?.current) return
 
-                                const channel = channelInputRef.current.value.trim()
+                                const channel = channelInputRef?.current.value.trim()
 
                                 if (channel.length < 3) return
                                 setAddingChannel(true)
@@ -588,6 +371,109 @@ export default function Inspector() {
             ),
         },
     ]
+}
+
+export default function Inspector() {
+    const [config, updateConfig] = useFrameConfig<Config>()
+    const [selectedOptions, setSelectedOptions] = useState<Record<string, boolean>>(
+        config.requirements
+            ? {
+                  ...config.requirements.basic,
+                  channels:
+                      config.requirements.channels.data.length > 0 ||
+                      config.requirements.channels.checked,
+                  fid: (config.requirements.maxFid || 0) > 0,
+                  score: config.requirements.score > 0,
+                  erc721: Boolean(config.requirements.erc721),
+                  erc1155: Boolean(config.requirements.erc1155),
+                  erc20: Boolean(config.requirements.erc20),
+              }
+            : {
+                  liked: false,
+                  recasted: false,
+                  follower: false,
+                  following: false,
+                  power: false,
+                  eth: false,
+                  sol: false,
+                  channels: false,
+                  fid: false,
+                  score: false,
+                  erc721: false,
+                  erc1155: false,
+              }
+    )
+    const [messageType, setMessageType] = useState<'text' | 'image'>('text')
+    const [addingChannel, setAddingChannel] = useState(false)
+    const disableLinksField = config.links?.length >= 4
+    const linkInputRef = useRef<HTMLInputElement>(null)
+    const channelInputRef = useRef<HTMLInputElement>(null)
+
+    const uploadImage = useUploadImage()
+
+    const onChangeLabel = useDebouncedCallback(async (label: string) => {
+        if (label === config.label) {
+            return
+        }
+        updateConfig({
+            label: label === '' ? null : label,
+        })
+    }, 1000)
+
+    const onChangeUsername = useDebouncedCallback(async (username: string) => {
+        if (username === '' || username === config.owner?.username) {
+            return
+        }
+
+        try {
+            const response = await corsFetch(
+                `${warpcastBaseApiUrl}/user-by-username?username=${username}`,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        'content-type': 'application/json',
+                    },
+                }
+            )
+
+            if (!response) return
+
+            const data = JSON.parse(response) as unknown as
+                | {
+                      result: { user: { fid: number; username: string } }
+                  }
+                | { errors: unknown[] }
+
+            if ('errors' in data) {
+                toast.error(`No FID associated with username ${username}`)
+                return
+            }
+            updateConfig({
+                owner: {
+                    fid: data.result.user.fid,
+                    username: data.result.user.username,
+                },
+            })
+        } catch (e) {
+            console.error('Failed to fetch FID', e)
+
+            toast.error('Failed to fetch FID')
+        }
+    }, 1000)
+
+    const requirements = useMemo(
+        () =>
+            getRequirementsCheckboxes(
+                config,
+                updateConfig,
+                setSelectedOptions,
+                selectedOptions,
+                addingChannel,
+                setAddingChannel,
+                channelInputRef
+            ),
+        [config, selectedOptions, addingChannel, updateConfig]
+    )
 
     return (
         <div className="flex flex-col gap-5 w-full h-full">

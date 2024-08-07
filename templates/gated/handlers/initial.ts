@@ -10,7 +10,6 @@ export default async function initial({
     storage,
     params,
 }: {
-    // GET requests don't have a body.
     body: undefined
     config: Config
     storage: Storage
