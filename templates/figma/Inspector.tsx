@@ -148,7 +148,7 @@ export default function Inspector() {
                 }
             }
         }
-    })
+    }, [config.slides])
 
     // Button targets == slides with a Title
     const buttonTargets = config.slides
