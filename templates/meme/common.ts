@@ -1,6 +1,8 @@
 'use server'
 
-type Meme = {
+import ms from 'ms'
+
+type MemeTemplate = {
     id: string
     name: string
     url: string
@@ -10,14 +12,16 @@ type Meme = {
     captions: number
 }
 
-export async function getMemes() {
+export async function getMemeTemplates() {
     try {
-        const response = await fetch('https://api.imgflip.com/get_memes')
+        const response = await fetch('https://api.imgflip.com/get_memes', {
+            next: { revalidate: ms('1h') },
+        })
         const data = (await response.json()) as
             | {
                   success: true
                   data: {
-                      memes: Meme[]
+                      memes: MemeTemplate[]
                   }
               }
             | {
@@ -26,6 +30,8 @@ export async function getMemes() {
               }
 
         if (!data.success) {
+            console.error(`[imgFlip.getMemes] >> ${data.error_message}`, data)
+
             throw new Error(data.error_message)
         }
 

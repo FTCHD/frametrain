@@ -95,6 +95,16 @@ export async function POST(
         )
     }
 
+    if (buildParameters.transaction) {
+        waitUntil(processFrame(frame, buildParameters))
+
+        return new Response(JSON.stringify(buildParameters.transaction), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+    }
+
     const renderedFrame = await buildFramePage({
         id: frame.id,
         linkedPage: frame.linkedPage || undefined,

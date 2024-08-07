@@ -1,9 +1,13 @@
 import type { FrameButtonMetadata as OnchainKitFrameButtonMetadata } from '@coinbase/onchainkit/frame'
 import type {
+    Channel as NeynarChannel,
     User as NeynarUser,
     ValidatedFrameActionResponse as NeynarValidatedFrameActionResponse,
 } from '@neynar/nodejs-sdk/build/neynar-api/v2'
-import type { FrameActionPayload as FramesJSFrameActionPayload } from 'frames.js'
+import type {
+    FrameActionPayload as FramesJSFrameActionPayload,
+    TransactionTargetResponse,
+} from 'frames.js'
 import type { ReactElement } from 'react'
 import type { BaseStorage } from './types'
 
@@ -16,24 +20,45 @@ export type FrameActionPayload = FramesJSFrameActionPayload
 export type FrameValidatedActionPayload = NeynarValidatedFrameActionResponse
 
 export type FarcasterUserInfo = NeynarUser
+export type FarcasterChannel = NeynarChannel
 
 export type FrameActionPayloadValidated = FrameActionPayload & {
     validatedData: FrameValidatedActionPayload['validatedData']
 }
 
-export interface BuildFrameData {
-    buttons: FrameButtonMetadata[]
-    aspectRatio?: '1.91:1' | '1:1' | undefined
-    inputText?: string
-    refreshPeriod?: number
-    params?: any
-    storage?: BaseStorage
-    fonts?: any[]
-    component?: ReactElement
-    image?: string
-    handler?: string
-    webhooks?: {
-        event: string
-        data: Record<string, unknown>
-    }[]
-}
+export type BuildFrameData =
+    | {
+          buttons: FrameButtonMetadata[]
+          aspectRatio?: '1.91:1' | '1:1' | undefined
+          inputText?: string
+          refreshPeriod?: number
+          params?: any
+          storage?: BaseStorage
+          fonts?: any[]
+          component: ReactElement
+          handler: string
+          webhooks?: {
+              event: string
+              data: Record<string, unknown>
+          }[]
+      }
+    | {
+          buttons: FrameButtonMetadata[]
+          aspectRatio?: '1.91:1' | '1:1' | undefined
+          inputText?: string
+          refreshPeriod?: number
+          params?: any
+          storage?: BaseStorage
+          image: string
+          handler: string
+          webhooks?: {
+              event: string
+              data: Record<string, unknown>
+          }[]
+      }
+    | {
+          transaction: TransactionTargetResponse
+      }
+    | {
+          data: any
+      }
