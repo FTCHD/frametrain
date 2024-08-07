@@ -1,4 +1,4 @@
-import { type Chain, createPublicClient, erc20Abi, type Hex, http } from 'viem'
+import { http, type Chain, type Hex, createPublicClient, erc20Abi } from 'viem'
 import { arbitrum, base, degen, gnosis, mainnet, optimism, zora } from 'viem/chains'
 
 /**
@@ -79,10 +79,8 @@ export function getClient(chainKey: ChainKey) {
 }
 
 export async function getAddressFromEns(name: string) {
-    const client = createPublicClient({
-        chain: mainnet,
-        transport: http(),
-    })
+    const client = getClient('mainnet')
+
     const hex = await client.getEnsAddress({ name })
     if (!hex) {
         throw new Error('Invalid ENS name')

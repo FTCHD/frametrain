@@ -1,12 +1,12 @@
+import confirmation from './confirmation'
 import initial from './initial'
-import transaction from './transaction'
 import status from './status'
 import success from './success'
-import confirmation from './confirmation'
+import txData from './txData'
 
 export default {
     initial,
-    transaction,
+    txData,
     success,
     status,
     confirmation,

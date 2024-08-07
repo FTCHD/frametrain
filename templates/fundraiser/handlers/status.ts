@@ -1,16 +1,13 @@
 'use server'
-import type {
-    BuildFrameData,
-    FrameButtonMetadata,
-    FrameValidatedActionPayload,
-} from '@/lib/farcaster'
-import type { Config } from '..'
-import SuccessView from '../views/Success'
-import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
+import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
-import { getClient } from '../utils/viem'
-import { getGlideConfig } from '../utils/shared'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
+import type { Config } from '..'
+import { getClient } from '../common/onchain'
+import { getGlideConfig } from '../common/shared'
 import RefreshView from '../views/Refresh'
+import SuccessView from '../views/Success'
 import initial from './initial'
 
 export default async function status({
@@ -56,21 +53,21 @@ export default async function status({
     const glideConfig = getGlideConfig(client.chain)
 
     try {
-        await updatePaymentTransaction(glideConfig, {
+        // Get the status of the payment transaction
+        const updatedTx = await updatePaymentTransaction(glideConfig, {
             sessionId: params.sessionId,
             hash: txHash,
         })
+        console.log('status handler >> updatedTx:', updatedTx)
         // Wait for the session to complete. It can take a few seconds
         const session = await waitForSession(glideConfig, params.sessionId)
 
         console.log('status handler >> Session:', session)
 
-        return {
+        const buildData: Record<string, any> = {
             buttons: [
                 {
-                    label: `View on ${client.chain.blockExplorers?.default.name}`,
-                    action: 'link',
-                    target: `https://${client.chain.blockExplorers?.default.url}/tx/${txHash}`,
+                    label: 'Back',
                 },
                 {
                     label: 'Create Your Own',
@@ -78,46 +75,32 @@ export default async function status({
                     target: 'https://www.frametra.in',
                 },
             ],
-            component: config.success?.image ? undefined : SuccessView(config),
             handler: 'success',
-            image: config.success?.image,
         }
-    } catch (e) {
-        const buttons: FrameButtonMetadata[] = []
-        const error = e as Error
-        // updatePaymentTransaction throws an error if the transaction is already paid
-        const paid = error.message.toLowerCase().includes('session is already paid')
 
-        if (paid) {
-            buttons.push(
-                {
-                    label: 'Donate again',
-                },
-                {
-                    label: `View on ${client.chain.blockExplorers?.default.name}`,
-                    action: 'link',
-                    target: `https://${client.chain.blockExplorers?.default.url}/tx/${txHash}`,
-                },
-                {
-                    label: 'Create Your Own',
-                    action: 'link',
-                    target: 'https://www.frametra.in',
-                }
-            )
+        if (config.success?.image) {
+            buildData['image'] = config.success?.image
         } else {
-            buttons.push({
-                label: 'Refresh',
-            })
+            buildData['component'] = SuccessView(config)
+            buildData['fonts'] = await loadGoogleFontAllVariants('Roboto')
         }
+
+        return buildData as BuildFrameData
+    } catch (error) {
+        console.error('Error fetching session', error)
 
         return {
-            buttons,
-            image: paid ? config.success?.image : undefined,
-            component: paid ? undefined : RefreshView(),
-            handler: paid ? 'success' : 'status',
+            buttons: [
+                {
+                    label: 'Refresh',
+                },
+            ],
+            component: RefreshView(),
+            handler: 'status',
             params: {
                 transactionId: txHash,
                 sessionId: params.sessionId,
+                isFresh: false,
             },
         }
     }

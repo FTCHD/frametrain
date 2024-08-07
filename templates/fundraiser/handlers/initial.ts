@@ -3,13 +3,12 @@
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
+import { formatSymbol } from '../common/shared'
 import CoverView from '../views/Cover'
-import { formatSymbol } from '../utils/shared'
 
 export default async function initial({
     config,
 }: {
-    // GET requests don't have a body.
     body: undefined
     config: Config
     storage: undefined
