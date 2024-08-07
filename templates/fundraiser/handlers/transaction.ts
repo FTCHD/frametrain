@@ -7,7 +7,7 @@ import { getGlideConfig } from '../utils/shared'
 import { getSessionById } from '@paywithglide/glide-js'
 import { getClient } from '../utils/viem'
 
-export default async function page({
+export default async function transaction({
     config,
     params,
 }: {
@@ -30,21 +30,25 @@ export default async function page({
 
     const glideConfig = getGlideConfig(client.chain)
 
-    const { unsignedTransaction } = await getSessionById(glideConfig, params.sessionId)
+    const session = await getSessionById(glideConfig, params.sessionId)
 
-    if (!unsignedTransaction) {
+    if (session.paymentStatus === 'paid') {
+        throw new FrameError('Payment already made')
+    }
+
+    if (!session.unsignedTransaction) {
         throw new FrameError('missing unsigned transaction')
     }
 
     return {
         buttons: [],
         transaction: {
-            chainId: unsignedTransaction.chainId,
+            chainId: session.unsignedTransaction.chainId,
             method: 'eth_sendTransaction',
             params: {
-                to: unsignedTransaction.to,
-                value: unsignedTransaction.value,
-                data: unsignedTransaction.input,
+                to: session.unsignedTransaction.to,
+                value: session.unsignedTransaction.value,
+                data: session.unsignedTransaction.input,
                 abi: [],
             },
         },

@@ -1,5 +1,9 @@
 'use server'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type {
+    BuildFrameData,
+    FrameButtonMetadata,
+    FrameValidatedActionPayload,
+} from '@/lib/farcaster'
 import type { Config } from '..'
 import SuccessView from '../views/Success'
 import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
@@ -27,8 +31,6 @@ export default async function status({
         throw new FrameError('Fundraiser token not found.')
     }
 
-    console.log('status handler >> tapped buttons:', body.validatedData.tapped_button)
-
     if (!body.validatedData.transaction && body.validatedData.tapped_button) {
         return initial({ config, body, storage: undefined })
     }
@@ -54,12 +56,10 @@ export default async function status({
     const glideConfig = getGlideConfig(client.chain)
 
     try {
-        // Get the status of the payment transaction
-        const updatedTx = await updatePaymentTransaction(glideConfig, {
+        await updatePaymentTransaction(glideConfig, {
             sessionId: params.sessionId,
             hash: txHash,
         })
-        console.log('status handler >> updatedTx:', updatedTx)
         // Wait for the session to complete. It can take a few seconds
         const session = await waitForSession(glideConfig, params.sessionId)
 
@@ -68,7 +68,9 @@ export default async function status({
         return {
             buttons: [
                 {
-                    label: 'Back',
+                    label: `View on ${client.chain.blockExplorers?.default.name}`,
+                    action: 'link',
+                    target: `https://${client.chain.blockExplorers?.default.url}/tx/${txHash}`,
                 },
                 {
                     label: 'Create Your Own',
@@ -80,21 +82,42 @@ export default async function status({
             handler: 'success',
             image: config.success?.image,
         }
-    } catch (error) {
-        console.error('Error fetching session', error)
+    } catch (e) {
+        const buttons: FrameButtonMetadata[] = []
+        const error = e as Error
+        // updatePaymentTransaction throws an error if the transaction is already paid
+        const paid = error.message.toLowerCase().includes('session is already paid')
+
+        if (paid) {
+            buttons.push(
+                {
+                    label: 'Donate again',
+                },
+                {
+                    label: `View on ${client.chain.blockExplorers?.default.name}`,
+                    action: 'link',
+                    target: `https://${client.chain.blockExplorers?.default.url}/tx/${txHash}`,
+                },
+                {
+                    label: 'Create Your Own',
+                    action: 'link',
+                    target: 'https://www.frametra.in',
+                }
+            )
+        } else {
+            buttons.push({
+                label: 'Refresh',
+            })
+        }
 
         return {
-            buttons: [
-                {
-                    label: 'Refresh',
-                },
-            ],
-            component: RefreshView(),
-            handler: 'status',
+            buttons,
+            image: paid ? config.success?.image : undefined,
+            component: paid ? undefined : RefreshView(),
+            handler: paid ? 'success' : 'status',
             params: {
                 transactionId: txHash,
                 sessionId: params.sessionId,
-                isFresh: false,
             },
         }
     }
