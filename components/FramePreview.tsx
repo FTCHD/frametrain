@@ -13,6 +13,7 @@ import { type ChangeEvent, type PropsWithChildren, useCallback, useMemo, useStat
 import { Delete, ExternalLink, PlusCircle } from 'react-feather'
 import toast from 'react-hot-toast'
 import { BorderBeam } from './BorderBeam'
+import BaseSpinner from './shadcn/BaseSpinner'
 import { Button } from './shadcn/Button'
 import {
     Dialog,
@@ -46,7 +47,7 @@ export function FramePreview() {
 function PlaceholderFrame() {
     return (
         <div className="flex justify-center items-center w-full h-full">
-            <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
+            <BaseSpinner />
         </div>
     )
 }

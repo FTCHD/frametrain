@@ -9,6 +9,7 @@ import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { InspectorContext } from '../editor/Context'
+import BaseSpinner from '../shadcn/BaseSpinner'
 import { Button } from '../shadcn/Button'
 import { ComposePreview } from './ComposePreview'
 
@@ -134,7 +135,9 @@ export default function ComposeEditor({
                 </Button>
 
                 {updating && (
-                    <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent z-20 absolute right-4 top-4" />
+                    <div className="fixed right-6 bottom-6 z-20 p-3 rounded-full bg-secondary">
+                        <BaseSpinner />
+                    </div>
                 )}
             </div>
         </div>

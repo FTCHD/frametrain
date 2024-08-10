@@ -18,6 +18,7 @@ import {
 } from 'react'
 import { Delete, ExternalLink, PlusCircle } from 'react-feather'
 import toast from 'react-hot-toast'
+import BaseSpinner from '../shadcn/BaseSpinner'
 
 export function ComposePreview() {
     const preview = useAtomValue(previewStateAtom)
@@ -36,8 +37,8 @@ export function ComposePreview() {
 
 function PlaceholderFrame() {
     return (
-        <div className="flex justify-center items-center w-full h-full">
-            <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent z-20 absolute right-4 top-4" />
+        <div className="flex fixed right-5 bottom-5 z-10 justify-center items-center p-4 rounded-full bg-secondary">
+            <BaseSpinner />
         </div>
     )
 }

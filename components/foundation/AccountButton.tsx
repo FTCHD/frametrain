@@ -10,6 +10,7 @@ import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { LogOut } from 'react-feather'
+import BaseSpinner from '../shadcn/BaseSpinner'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../shadcn/Tooltip'
 
 export default function AccountButton() {
@@ -77,7 +78,7 @@ export default function AccountButton() {
                 </TooltipProvider>
             ) : isLoggingIn ? (
                 <div className="flex flex-col justify-center items-center w-full h-full gap-2">
-                    <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent " />
+                    <BaseSpinner />
                     {timeSpent > 5 && <p className="text-sm">Stuck? Try refreshing the page!</p>}
                 </div>
             ) : (
