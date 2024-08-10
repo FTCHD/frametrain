@@ -24,6 +24,8 @@ export interface Storage extends BaseStorage {}
 export default {
     name: 'Tweet',
     description: 'Transform a tweet or multiple tweets into a Frame.',
+    shortDescription: 'Unroll on Farcaster',
+    icon: 'north-star',
     creatorFid: '368382',
     creatorName: 'Chris',
     enabled: true,

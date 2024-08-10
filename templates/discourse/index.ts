@@ -11,7 +11,9 @@ export interface Storage extends BaseStorage {}
 
 export default {
     name: 'Discourse',
-    description: 'Create a Frame from a Discourse discussion.',
+    description: 'Create a Frame from a Discourse forum thread.',
+    shortDescription: 'Threads as Frames',
+    icon: 'people',
     creatorFid: '368382',
     creatorName: 'Chris',
     enabled: true,

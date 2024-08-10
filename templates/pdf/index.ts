@@ -17,6 +17,8 @@ export interface Storage extends BaseStorage {}
 export default {
     name: 'PDF',
     description: 'Upload and convert your PDF into a Frame with multiple slides.',
+    shortDescription: 'Upload Your PDF',
+    icon: 'stack',
     creatorFid: '2',
     creatorName: 'Varun',
     enabled: true,

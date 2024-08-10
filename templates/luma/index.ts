@@ -30,6 +30,8 @@ export interface Storage extends BaseStorage {}
 export default {
     name: 'Lu.ma',
     description: 'Share your Lu.ma event as a Frame.',
+    shortDescription: 'Events as Frames',
+    icon: 'star',
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,

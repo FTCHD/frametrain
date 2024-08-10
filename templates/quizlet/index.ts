@@ -94,6 +94,8 @@ export default {
     name: 'Quizlet',
     description:
         'Create your own multiple choice Quiz as a Farcaster Frame. Show a secret screen if answers are correct.',
+    shortDescription: 'Reward Your Fans!',
+    icon: 'gift',
     creatorFid: '260812',
     creatorName: 'Steve',
     enabled: true,

@@ -14,6 +14,8 @@ export interface Storage extends BaseStorage {}
 export default {
     name: 'GIF',
     description: 'Create a GIF Frame from any local or Youtube video. Add a link too!',
+    shortDescription: 'Video to GIF',
+    icon: 'play',
     creatorFid: '416810',
     creatorName: 'alekcangp',
     cover,

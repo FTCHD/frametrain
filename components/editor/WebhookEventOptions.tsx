@@ -10,10 +10,10 @@ import {
     DropdownMenuTrigger,
 } from '@/components/shadcn/DropdownMenu'
 import { Switch } from '@/components/shadcn/Switch'
-import { useState } from 'react'
-import { Input } from '../shadcn/Input'
-import { useDebouncedCallback } from 'use-debounce'
 import { updateFrameWebhooks } from '@/lib/frame'
+import { useState } from 'react'
+import { useDebouncedCallback } from 'use-debounce'
+import { Input } from '../shadcn/Input'
 
 export default function WebhookEventOptions({
     events,
@@ -48,7 +48,7 @@ export default function WebhookEventOptions({
     return (
         <DropdownMenu open={open}>
             <DropdownMenuTrigger asChild={true} onClick={() => setOpen(!open)}>
-                <Button variant="outline" className="text-lg" size={'lg'}>
+                <Button variant="secondary" className="text-lg" size={'lg'}>
                     Webhooks
                 </Button>
             </DropdownMenuTrigger>

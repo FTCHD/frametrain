@@ -1,30 +1,27 @@
 'use client'
 import { useRefreshPreview } from '@/components/editor/useRefreshPreview'
 import type { frameTable } from '@/db/schema'
-import {
-    publishFrameConfig,
-    revertFrameConfig,
-    updateFrameConfig,
-    updateFrameLinkedPage,
-    updateFrameName,
-} from '@/lib/frame'
+import { updateFrameConfig, updateFrameLinkedPage, updateFrameName } from '@/lib/frame'
 import { previewParametersAtom } from '@/lib/store'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
 import { useAtom } from 'jotai'
-import { ImageUp, Undo2 } from 'lucide-react'
+import { Play, Wallpaper } from 'lucide-react'
 import NextLink from 'next/link'
 import { type ChangeEvent, useEffect, useRef, useState } from 'react'
-import { ArrowLeft, Copy } from 'react-feather'
-import { toast } from 'react-hot-toast'
+import { ArrowLeft } from 'react-feather'
 import { useDebouncedCallback } from 'use-debounce'
+import { useOnClickOutside, useWindowSize } from 'usehooks-ts'
 import { FramePreview } from './FramePreview'
 import { InspectorContext } from './editor/Context'
 import MockOptions from './editor/MockOptions'
+import PublishMenu from './editor/PublishMenu'
 import WebhookEventOptions from './editor/WebhookEventOptions'
+import BaseSpinner from './shadcn/BaseSpinner'
 import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
+import { Toggle } from './shadcn/Toggle'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
 
 export default function FrameEditor({
@@ -44,26 +41,16 @@ export default function FrameEditor({
     const [currentName, setCurrentName] = useState(frame.name)
     const [temporaryConfig, setTemporaryConfig] = useState(frame.draftConfig)
     const [updating, setUpdating] = useState(false)
+    const [previewOpen, setPreviewOpen] = useState(true)
+
+    const { width } = useWindowSize()
+
     const [, setPreviewData] = useAtom(previewParametersAtom)
 
     const tempNameRef = useRef<HTMLInputElement>(null)
 
-    async function publishConfig() {
-        setUpdating(true)
-        await publishFrameConfig(frame.id)
-        setUpdating(false)
-    }
-
-    async function revertConfig() {
-        setUpdating(true)
-        await revertFrameConfig(frame.id)
-        setUpdating(false)
-    }
-
     const updateLinkedPage = useDebouncedCallback(async (e: ChangeEvent<HTMLInputElement>) => {
         const url = e.target.value
-        if (!url || url === '') return
-        if (url && url.split('.').length < 2) return
         setUpdating(true)
         await updateFrameLinkedPage(frame.id, url)
         setUpdating(false)
@@ -109,6 +96,12 @@ export default function FrameEditor({
         await updateFrameName(frame.id, temporaryName)
         setUpdating(false)
     }
+	
+    useEffect(() => {
+        if (width < 760) {
+            setPreviewOpen(false)
+        }
+    }, [width])
 
     useEffect(() => {
         async function handleEnter(e: KeyboardEvent) {
@@ -124,6 +117,8 @@ export default function FrameEditor({
             window.removeEventListener('keydown', handleEnter)
         }
     })
+	
+	useOnClickOutside(tempNameRef, async () => await updateName())
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <>
     useEffect(() => {
@@ -138,12 +133,13 @@ export default function FrameEditor({
         [writeConfig]
     )
 
+    
     const { Inspector } = template as any
 
     return (
-        <div className="flex flex-col-reverse w-full h-full md:flex-col">
-            <div className="flex justify-between items-center p-4 bg-[#17101f]">
-                <div className="flex gap-4 items-center">
+        <div className="flex flex-col-reverse w-full h-full md:flex-col bg-[#0c0c0c] md:bg-[url('/dots.svg')]">
+            <div className="flex justify-between items-center p-2 md:m-4 md:mb-0 md:p-3 md:rounded-xl bg-[#17101f]">
+                <div className="flex items-center md:gap-4">
                     <NextLink style={{ textDecoration: 'none' }} href={'/'}>
                         <div className="p-2 hover:bg-[#636b74] rounded-md">
                             <ArrowLeft />
@@ -156,14 +152,14 @@ export default function FrameEditor({
                             onBlur={async () => {
                                 await updateName()
                             }}
-                            className="text-4xl font-bold focus:bg-transparent hover:bg-transparent"
+                            className="text-4xl font-bold max-sm:hidden focus:bg-transparent hover:bg-transparent"
                         />
                     ) : (
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
-                                <TooltipTrigger className="hidden md:block">
+                                <TooltipTrigger>
                                     <h1
-                                        className="text-4xl font-bold cursor-pointer"
+                                        className="text-4xl font-bold cursor-pointer max-sm:hidden"
                                         onClick={() => setEditingName(true)}
                                         onKeyUp={(e) => {
                                             if (e.key === 'Enter') {
@@ -184,11 +180,7 @@ export default function FrameEditor({
 
                 {/* TODO: consolidate this, like putting a return after postMessage to not trigger toast */}
 
-                <div className="flex flex-row items-center space-x-4 z-10">
-                    {updating && (
-                        <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
-                    )}
-
+                <div className="flex z-10 flex-row items-center space-x-2">
                     {template.events.length ? (
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
@@ -200,24 +192,33 @@ export default function FrameEditor({
                                         setUpdating={setUpdating}
                                     />
                                 </TooltipTrigger>
-                                <TooltipContent className="max-w-72 flex flex-col gap-2">
+                                <TooltipContent className="flex flex-col gap-2 max-w-72">
                                     <p>Enable or disable the reception of webhook events.</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
                     ) : null}
 
+                    <Toggle
+                        size={'lg'}
+                        variant={'outline'}
+                        onClick={() => {
+                            console.log('clicked')
+                            setPreviewOpen((prev) => !prev)
+                        }}
+                        className="md:hidden"
+                    >
+                        <Play className="w-4 h-4" />
+                    </Toggle>
+
                     <Popover>
                         <PopoverTrigger asChild={true}>
-                            <Button
-                                variant="outline"
-                                className="gap-2 text-lg hidden md:flex"
-                                size="lg"
-                            >
-                                Connect Page
+                            <Button variant="outline" size="lg">
+                                <span className="hidden md:block">Connect Page</span>
+                                <Wallpaper className="hidden w-4 h-4 max-md:inline" />
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-80">
+                        <PopoverContent className="w-80 max-md:w-screen">
                             <div className="grid gap-4">
                                 <div className="space-y-2">
                                     <h4 className="font-medium leading-none">Connect your page</h4>
@@ -261,91 +262,42 @@ export default function FrameEditor({
                         </TooltipProvider>
                     )}
 
-                    <TooltipProvider delayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild={true}>
-                                <Button
-                                    variant="outline"
-                                    className="gap-2 text-lg hidden md:flex"
-                                    size={'lg'}
-                                    onClick={async () => {
-                                        await revertConfig()
-                                        toast.success('Reverted!')
-                                    }}
-                                >
-                                    Revert <Undo2 size={18} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="mr-8 max-w-72">
-                                <p>Goes back to the published version.</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider delayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild={true}>
-                                <Button
-                                    variant="default"
-                                    className="gap-2 text-lg"
-                                    size="lg"
-                                    onClick={async () => {
-                                        await publishConfig()
-                                        toast.success('Published!')
-                                    }}
-                                >
-                                    Publish <ImageUp size={18} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="mr-8 max-w-72">
-                                <p>Publishes the current changes.</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider delayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild={true}>
-                                <Button
-                                    size={'lg'}
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(
-                                            `${process.env.NEXT_PUBLIC_HOST}/f/${frame.id}`
-                                        )
-                                        toast.success('Copied to clipboard!')
-                                    }}
-                                    className="gap-4 px-6 py-3 bg-transparent rounded-md border border-border text-primary hover:bg-secondary-border"
-                                >
-                                    <span className="text-lg">URL</span> <Copy size={18} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="mr-8 max-w-72">
-                                <p>Copies the shareable Frame URL to your clipboard.</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <PublishMenu frame={frame} />
                 </div>
             </div>
-            <div className="flex flex-col md:flex-row  bg-secondary-background w-full h-full bg-[url('/dots.svg')]">
-                <div className="flex flex-col justify-center items-center px-12 py-6 w-full md:w-3/5">
-                    <FramePreview />
-                </div>
-                <div className="w-full h-full bg-[#0c0c0c] border-[#17101f] border-0 md:border-l-4 md:w-2/5 flex flex-col p-6 gap-3">
-                    <h1 className="mb-4 text-4xl font-bold">Configuration</h1>
+            <div className="flex flex-col-reverse md:flex-row bg-secondary-background w-full h-full md:bg-[url('/dots.svg')] ">
+                {previewOpen && (
+                    <div className="flex flex-col justify-center items-center w-full md:px-12 md:py-6 md:w-3/5">
+                        <FramePreview />
+                    </div>
+                )}
+                <div className="p-4 pb-0 w-full h-full md:w-2/5 md:p-6">
+                    <div className="h-full w-full flex flex-col gap-3 bg-[#0c0c0c] md:border-[#17101f] md:border-4 md:rounded-xl md:p-4">
+                        <div className="flex flex-row gap-2 justify-between items-center">
+                            <h1 className="mb-4 text-4xl font-bold">Configuration</h1>
+                            {updating && <BaseSpinner />}
+                        </div>
 
-                    <div className="overflow-y-scroll max-h-[calc(100dvh-200px)]">
-                        <InspectorContext.Provider
-                            value={{
-                                frameId: frame.id,
-                                config: temporaryConfig as typeof template.initialConfig,
-                                storage: frame.storage!,
-                                update: updateConfig,
-                                fid: fid,
-                                // setLoading
-                            }}
+                        <div
+                            className={`overflow-y-scroll ${
+                                previewOpen
+                                    ? 'max-h-[calc(100dvh-360px)]'
+                                    : 'max-h-[calc(100dvh-150px)]'
+                            } md:max-h-[calc(100dvh-240px)]`}
                         >
-                            <Inspector />
-                        </InspectorContext.Provider>
+                            <InspectorContext.Provider
+                                value={{
+                                    frameId: frame.id,
+                                    config: temporaryConfig as typeof template.initialConfig,
+                                    storage: frame.storage!,
+                                    update: updateConfig,
+                                    fid: fid,
+                                    // setLoading
+                                }}
+                            >
+                                <Inspector />
+                            </InspectorContext.Provider>
+                        </div>
                     </div>
                 </div>
             </div>
