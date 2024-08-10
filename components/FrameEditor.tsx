@@ -12,7 +12,7 @@ import { previewParametersAtom } from '@/lib/store'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
 import { useAtom } from 'jotai'
-import { ImageUp, Undo2 } from 'lucide-react'
+import { Play, Wallpaper } from 'lucide-react'
 import NextLink from 'next/link'
 import { type ChangeEvent, useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Copy } from 'react-feather'
@@ -205,6 +205,18 @@ export default function FrameEditor({
                             </Tooltip>
                         </TooltipProvider>
                     ) : null}
+
+                    <Toggle
+                        size={'lg'}
+                        variant={'outline'}
+                        onClick={() => {
+                            console.log('clicked')
+                            setPreviewOpen((prev) => !prev)
+                        }}
+                        className="md:hidden"
+                    >
+                        <Play className="w-4 h-4" />
+                    </Toggle>
 
                     <Popover>
                         <PopoverTrigger asChild={true}>
