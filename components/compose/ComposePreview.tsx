@@ -27,13 +27,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '../shadcn/Popover'
 export function ComposePreview() {
     const preview = useAtomValue(previewStateAtom)
     const error = useAtomValue(previewErrorAtom)
-    const loading = useAtomValue(previewLoadingAtom)
 
     if (error) {
         return null
     }
 
-    if (!preview || loading) {
+    if (!preview) {
         return <PlaceholderFrame />
     }
 
@@ -48,16 +47,8 @@ function PlaceholderFrame() {
     )
 }
 
-function ErrorFrame() {
-    return (
-        <div className="flex justify-center items-center w-full h-full">
-            Edit your template configuration on the rigth side.
-        </div>
-    )
-}
-
 function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
-    const [parent] = useAutoAnimate()
+    const [parent, toggleEnabled] = useAutoAnimate()
 
     const { image, input, buttons, postUrl } = metadata
 
@@ -82,6 +73,10 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
     useEffect(() => {
         console.log(image)
     }, [image])
+	
+	useEffect(() => {
+    toggleEnabled(!loadingContainer)
+}, [toggleEnabled, loadingContainer])
 
     return (
         <Popover open={isOpen}>
@@ -93,7 +88,9 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                     className="flex overflow-hidden relative justify-center items-center p-1 w-16 h-16 rounded-full bg-secondary"
                     ref={parent}
                 >
-                    {isOpen ? (
+                    {loadingContainer ? (
+                        <BaseSpinner />
+                    ) : isOpen ? (
                         <Button variant="secondary">
                             <X className="text-stone-900 dark:text-white" size={28} />
                         </Button>
