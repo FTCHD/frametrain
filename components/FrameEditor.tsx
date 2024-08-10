@@ -21,6 +21,7 @@ import { useDebouncedCallback } from 'use-debounce'
 import { FramePreview } from './FramePreview'
 import { InspectorContext } from './editor/Context'
 import MockOptions from './editor/MockOptions'
+import PublishMenu from './editor/PublishMenu'
 import WebhookEventOptions from './editor/WebhookEventOptions'
 import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
@@ -259,69 +260,7 @@ export default function FrameEditor({
                         </TooltipProvider>
                     )}
 
-                    <TooltipProvider delayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild={true}>
-                                <Button
-                                    variant="outline"
-                                    className="gap-2 text-lg hidden md:flex"
-                                    size={'lg'}
-                                    onClick={async () => {
-                                        await revertConfig()
-                                        toast.success('Reverted!')
-                                    }}
-                                >
-                                    Revert <Undo2 size={18} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="mr-8 max-w-72">
-                                <p>Goes back to the published version.</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider delayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild={true}>
-                                <Button
-                                    variant="default"
-                                    className="gap-2 text-lg"
-                                    size="lg"
-                                    onClick={async () => {
-                                        await publishConfig()
-                                        toast.success('Published!')
-                                    }}
-                                >
-                                    Publish <ImageUp size={18} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="mr-8 max-w-72">
-                                <p>Publishes the current changes.</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider delayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild={true}>
-                                <Button
-                                    size={'lg'}
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(
-                                            `${process.env.NEXT_PUBLIC_HOST}/f/${frame.id}`
-                                        )
-                                        toast.success('Copied to clipboard!')
-                                    }}
-                                    className="gap-4 px-6 py-3 bg-transparent rounded-md border border-border text-primary hover:bg-secondary-border"
-                                >
-                                    <span className="text-lg">URL</span> <Copy size={18} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="mr-8 max-w-72">
-                                <p>Copies the shareable Frame URL to your clipboard.</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <PublishMenu frame={frame} />
                 </div>
             </div>
             <div className="flex flex-col md:flex-row  bg-secondary-background w-full h-full bg-[url('/dots.svg')]">
