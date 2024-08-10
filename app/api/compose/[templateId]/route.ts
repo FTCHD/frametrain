@@ -25,7 +25,7 @@ export async function GET(
     return Response.json({
         'type': 'composer',
         'name': template.name,
-        'icon': 'task', // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
+        'icon': template.icon, // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
         'description': template.shortDescription,
         // 'aboutUrl': `https://${process.env.NEXT_PUBLIC_HOST}/templates/${template.name}`,
         // 'imageUrl': 'https://frametra.in/apple-icon.png',
