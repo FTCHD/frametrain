@@ -37,8 +37,6 @@ export default function ComposeEditor({
     }
 
     const writeConfig = useDebouncedCallback(async (props: Record<string, any>) => {
-        // const props = temporaryConfig
-
         if (!props || Object.keys(props).length === 0) {
             return
         }
@@ -82,29 +80,29 @@ export default function ComposeEditor({
     const { Inspector } = template as any
 
     return (
-        <div className="flex w-full h-full flex-col">
-            {/* <div className="w-full h-[200px] bg-blue-500 p-1 "> */}
+        <div className="flex flex-col items-center w-full h-full">
             <ComposePreview />
-            {/* </div> */}
-            <div className="flex flex-col w-full  pt-[225px] px-3 pb-3 bg-[#0c0c0c]">
-                <InspectorContext.Provider
-                    value={{
-                        frameId: frame.id,
-                        config: temporaryConfig as typeof template.initialConfig,
-                        storage: frame.storage!,
-                        update: updateConfig,
-                        fid: fid,
-                    }}
-                >
-                    <Inspector />
-                </InspectorContext.Provider>
+
+            <div className="w-full p-4 dark:bg-[#17101f] bg-white">
+                <div className="flex flex-col w-full p-3 px-4  bg-stone-100 dark:bg-[#0c0c0c] rounded-xl">
+                    <InspectorContext.Provider
+                        value={{
+                            frameId: frame.id,
+                            config: temporaryConfig as typeof template.initialConfig,
+                            storage: frame.storage!,
+                            update: updateConfig,
+                            fid: fid,
+                        }}
+                    >
+                        <Inspector />
+                    </InspectorContext.Provider>
+                </div>
             </div>
-            {/* <div className="w-full min-h-[10px] bg-transparent" /> */}
-            <div className="flex flex-row justify-between items-center p-3 bg-[#0c0c0c]">
+
+            <div className="flex flex-row justify-center items-center w-full pb-5 dark:bg-[#17101f] bg-white">
                 <Button
-                    // className="rounded-lg font-semibold border border-transparent bg-[#7c65c1] hover:bg-[#6944ba] text-light active:border-[#ffffff4d]  px-[0.9333rem] py-[0.4333rem] text-sm"
+                    className="w-[50%] rounded-lg font-semibold border border-transparent bg-[#7c65c1] hover:bg-[#6944ba] active:border-[#ffffff4d] dark:text-white"
                     variant={'default'}
-                    className="w-full"
                     onClick={async () => {
                         await publishConfig()
 
