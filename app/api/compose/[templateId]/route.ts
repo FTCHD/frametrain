@@ -6,15 +6,21 @@ import type { InferInsertModel } from 'drizzle-orm'
 import { encode } from 'next-auth/jwt'
 // import { decode, encode } from 'next-auth/jwt';
 
+const SUPPORTED_TEMPLATES = ['cal', 'discourse']
+
 export async function GET(
     request: Request,
     { params }: { params: { templateId: keyof typeof templates } }
 ) {
-    if (params.templateId !== 'cal') {
+    if (!SUPPORTED_TEMPLATES.includes(params.templateId)) {
         throw new Error('This template is not yet supported')
     }
 
     const template = templates[params.templateId]
+
+    if (!template?.shortDescription) {
+        throw new Error('This template is not yet supported')
+    }
 
     return Response.json({
         'type': 'composer',
@@ -22,7 +28,8 @@ export async function GET(
         'icon': 'task', // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
         'description': template.shortDescription,
         // 'aboutUrl': `https://${process.env.NEXT_PUBLIC_HOST}/templates/${template.name}`,
-        'imageUrl': 'https://frametra.in/apple-icon.png',
+        // 'imageUrl': 'https://frametra.in/apple-icon.png',
+        'imageUrl': process.env.NEXT_PUBLIC_HOST + template.cover.src,
         'action': {
             'type': 'post',
         },
@@ -33,57 +40,57 @@ export async function POST(
     request: Request,
     { params }: { params: { templateId: keyof typeof templates } }
 ) {
-    if (params.templateId !== 'cal') {
-        throw new Error('This template is not yet supported')
-    }
+	if (!SUPPORTED_TEMPLATES.includes(params.templateId)) {
+    throw new Error('This template is not yet supported')
+}
 
-    const body = await request.json()
+const body = await request.json()
 
-    const validatedData = await validatePayload(body)
+const validatedData = await validatePayload(body)
 
-    const templateId = params.templateId
+const templateId = params.templateId
 
-    const serializedState = validatedData.action.state.serialized
+const serializedState = validatedData.action.state.serialized
 
-    const { fid, username, pfp_url } = validatedData.action.interactor
+const { fid, username, pfp_url } = validatedData.action.interactor
 
-    const args: InferInsertModel<typeof frameTable> = {
-        owner: fid.toString(),
-        name: 'New Frame',
-        description: undefined,
-        config: templates[templateId].initialConfig,
-        draftConfig: templates[templateId].initialConfig,
-        storage: {},
-        template: templateId,
-    }
+const args: InferInsertModel<typeof frameTable> = {
+    owner: fid.toString(),
+    name: 'New Frame',
+    description: undefined,
+    config: templates[templateId].initialConfig,
+    draftConfig: templates[templateId].initialConfig,
+    storage: {},
+    template: templateId,
+}
 
-    const frame = await client.insert(frameTable).values(args).returning().get()
+const frame = await client.insert(frameTable).values(args).returning().get()
 
-    const token = {
-        token: {
-            name: username,
-            picture: pfp_url,
-            sub: fid.toString(),
-            user: {
-                'id': fid.toString(),
-                'name': username,
-                'image': pfp_url,
-            },
-            uid: fid.toString(),
+const token = {
+    token: {
+        name: username,
+        picture: pfp_url,
+        sub: fid.toString(),
+        user: {
+            'id': fid.toString(),
+            'name': username,
+            'image': pfp_url,
         },
-        secret: process.env.AUTH_SECRET!,
-        salt: process.env.AUTH_SESSION_COOKIE_NAME!,
-    }
+        uid: fid.toString(),
+    },
+    secret: process.env.AUTH_SECRET!,
+    salt: process.env.AUTH_SESSION_COOKIE_NAME!,
+}
 
-    const encodedToken = await encode(token)
+const encodedToken = await encode(token)
 
-    return Response.json({
-        type: 'form',
-        title: `Create a ${templateId[0].toUpperCase() + templateId.slice(1)} Frame`,
-        url:
-            `${process.env.NEXT_PUBLIC_HOST}/api/compose/${templateId}/${frame.id}?t=` +
-            encodedToken +
-            '&s=' +
-            serializedState,
-    })
+return Response.json({
+    type: 'form',
+    title: `Create a ${templateId[0].toUpperCase() + templateId.slice(1)} Frame`,
+    url:
+        `${process.env.NEXT_PUBLIC_HOST}/api/compose/${templateId}/${frame.id}?t=` +
+        encodedToken +
+        '&s=' +
+        serializedState,
+})
 }
