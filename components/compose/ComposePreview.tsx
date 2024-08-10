@@ -23,12 +23,13 @@ import BaseSpinner from '../shadcn/BaseSpinner'
 export function ComposePreview() {
     const preview = useAtomValue(previewStateAtom)
     const error = useAtomValue(previewErrorAtom)
+    const loading = useAtomValue(previewLoadingAtom)
 
     if (error) {
         return <ErrorFrame />
     }
 
-    if (!preview) {
+    if (!preview || loading) {
         return <PlaceholderFrame />
     }
 
