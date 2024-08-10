@@ -7,7 +7,9 @@ import {
     previewParametersAtom,
     previewStateAtom,
 } from '@/lib/store'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useAtom, useAtomValue } from 'jotai'
+import { X } from 'lucide-react'
 import {
     type ChangeEvent,
     type PropsWithChildren,
@@ -19,6 +21,8 @@ import {
 import { Delete, ExternalLink, PlusCircle } from 'react-feather'
 import toast from 'react-hot-toast'
 import BaseSpinner from '../shadcn/BaseSpinner'
+import { Button } from '../shadcn/Button'
+import { Popover, PopoverContent, PopoverTrigger } from '../shadcn/Popover'
 
 export function ComposePreview() {
     const preview = useAtomValue(previewStateAtom)
@@ -26,14 +30,14 @@ export function ComposePreview() {
     const loading = useAtomValue(previewLoadingAtom)
 
     if (error) {
-        return <ErrorFrame />
+        return null
     }
 
     if (!preview || loading) {
         return <PlaceholderFrame />
     }
 
-    return <ValidFrame key={preview.metadata.image.src} metadata={preview.metadata} />
+    return <ValidFrame metadata={preview.metadata} />
 }
 
 function PlaceholderFrame() {
@@ -53,6 +57,8 @@ function ErrorFrame() {
 }
 
 function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
+    const [parent] = useAutoAnimate()
+
     const { image, input, buttons, postUrl } = metadata
 
     const params = useMemo(() => postUrl?.split('?')[1], [postUrl])
@@ -63,6 +69,8 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
     )
 
     const [inputText, setInputText] = useState('')
+
+    const [isOpen, setIsOpen] = useState(false)
 
     const loadingContainer = useAtomValue(previewLoadingAtom)
 
@@ -76,39 +84,77 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
     }, [image])
 
     return (
-        <div className="flex flex-col h-[220px] justify-center items-center w-full p-2 fixed z-10  bg-[#202325] bg-[url('/dots.svg')]">
-            <div
-                className="relative h-[75%] overflow-hidden"
-                // overflow-hidden needed for the border-radius
-                style={{ borderRadius: '0.48rem 0.48rem 0 0' }}
+        <Popover open={isOpen}>
+            <PopoverTrigger
+                className="fixed bottom-5 right-5 z-[1]"
+                onClick={() => setIsOpen(!isOpen)}
             >
-                <img
-                    className={'inset-0 h-full'}
-                    src={image.src}
-                    alt=""
-                    style={{ aspectRatio: '1.91/1' }}
-                />
-            </div>
-            <div className="space-y-2 rounded-lg rounded-t-none border border-t-0 px-4 border-[#4c3a4e80] bg-[#2A2432] min-h-[25%] w-[292px]">
-                <div className="flex flex-row w-full h-full justify-center items-center gap-[10px]">
-                    {buttons?.map((button, index) =>
-                        button ? (
-                            <FrameButton
-                                key={button.label}
-                                buttonIndex={index + 1}
-                                button={button}
-                                inputText={inputText}
-                                state={metadata.state}
-                                handler={handler}
-                                params={params}
-                            >
-                                {button.label}
-                            </FrameButton>
-                        ) : undefined
+                <div
+                    className="flex overflow-hidden relative justify-center items-center p-1 w-16 h-16 rounded-full bg-secondary"
+                    ref={parent}
+                >
+                    {isOpen ? (
+                        <Button variant="secondary">
+                            <X className="text-stone-900 dark:text-white" size={28} />
+                        </Button>
+                    ) : (
+                        <img
+                            className={'inset-0 h-full rounded-full'}
+                            src={image.src}
+                            alt=""
+                            style={{
+                                aspectRatio: image.aspectRatio?.replace(':', '/') || '1.91/1',
+                                objectFit: 'cover',
+                            }}
+                        />
                     )}
                 </div>
-            </div>
-        </div>
+            </PopoverTrigger>
+            <PopoverContent
+                onPointerDownOutside={(e) => e.preventDefault()}
+                onFocusOutside={(e) => e.preventDefault()}
+            >
+                <div
+                    className={`flex flex-col h-[${
+                        image.aspectRatio === '1:1' ? '360px' : '220px'
+                    }] justify-center items-center z-10 fixed bottom-0 right-0 min-w-[320px] mr-2`}
+                >
+                    <div
+                        className="relative h-[75%] overflow-hidden"
+                        // overflow-hidden needed for the border-radius
+                        style={{ borderRadius: '0.48rem 0.48rem 0 0' }}
+                    >
+                        <img
+                            className={'inset-0 h-full'}
+                            src={image.src}
+                            alt=""
+                            style={{
+                                aspectRatio: image.aspectRatio?.replace(':', '/') || '1.91/1',
+                            }}
+                        />
+                    </div>
+                    <div className="py-2 rounded-lg rounded-t-none border border-t-0 px-4 border-[#4c3a4e80] bg-[#2A2432] min-h-[25%] w-full">
+                        <div className="flex flex-row w-full h-full justify-center items-center gap-[10px]">
+                            {buttons?.map((button, index) =>
+                                button ? (
+                                    <FrameButton
+                                        key={button.label}
+                                        buttonIndex={index + 1}
+                                        button={button}
+                                        inputText={inputText}
+                                        state={metadata.state}
+                                        handler={handler}
+                                        params={params}
+                                    >
+                                        {button.label}
+                                    </FrameButton>
+                                ) : undefined
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </PopoverContent>
+        </Popover>
     )
 }
 
