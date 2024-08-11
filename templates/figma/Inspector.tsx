@@ -1,5 +1,16 @@
 'use client'
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/shadcn/AlertDialog'
 import { Button } from '@/components/shadcn/Button'
 import { useFrameConfig, useFramePreview } from '@/sdk/hooks'
 import { ArrowBigLeftDash, ArrowBigRightDash, KeySquare, Trash2 } from 'lucide-react'
@@ -206,12 +217,28 @@ export default function Inspector() {
                                 </div>
                             </div>
                         ))}
-                        <div
-                            onClick={addSlide}
-                            className="w-40 h-40 flex items-center justify-center mr-1 border-input border-[1px] rounded-md cursor-pointer"
-                        >
-                            <span className="text-4xl">+</span>
-                        </div>
+                        <AlertDialog>
+                            <AlertDialogTrigger>
+                                <div className="w-40 h-40 flex items-center justify-center mr-1 border-input border-[1px] rounded-md cursor-pointer">
+                                    <span className="text-4xl">+</span>
+                                </div>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Resolution Notice</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        The Figma URL entered must lead to an artboard/section that
+                                        is either 630x630 or 1200x630 pixels in size.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Back</AlertDialogCancel>
+                                    <AlertDialogAction onClick={addSlide}>
+                                        Understood
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
 
                     {config.slides && (
