@@ -138,7 +138,7 @@ export default function FrameEditor({
 
     return (
         <div className="flex flex-col-reverse w-full h-full md:flex-col bg-[#0c0c0c] md:bg-[url('/dots.svg')]">
-            <div className="flex justify-between items-center p-2 md:m-4 md:mb-0 md:p-3 md:rounded-xl bg-[#17101f]">
+            <div className="flex justify-between items-center p-2 md:m-4 md:mb-0 md:p-3 md:rounded-2xl bg-[#0c0c0c] md:border-[#4c3a4e70] md:border ">
                 <div className="flex items-center md:gap-4">
                     <NextLink style={{ textDecoration: 'none' }} href={'/'}>
                         <div className="p-2 hover:bg-[#636b74] rounded-md">
@@ -152,14 +152,14 @@ export default function FrameEditor({
                             onBlur={async () => {
                                 await updateName()
                             }}
-                            className="text-4xl font-bold max-sm:hidden focus:bg-transparent hover:bg-transparent"
+                            className="text-3xl font-bold max-sm:hidden focus:bg-transparent hover:bg-transparent"
                         />
                     ) : (
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
                                 <TooltipTrigger>
                                     <h1
-                                        className="text-4xl font-bold cursor-pointer max-sm:hidden"
+                                        className="text-3xl font-bold cursor-pointer max-sm:hidden"
                                         onClick={() => setEditingName(true)}
                                         onKeyUp={(e) => {
                                             if (e.key === 'Enter') {
@@ -180,7 +180,7 @@ export default function FrameEditor({
 
                 {/* TODO: consolidate this, like putting a return after postMessage to not trigger toast */}
 
-                <div className="flex z-10 flex-row items-center space-x-2">
+                <div className="flex z-10 flex-row items-center gap-3">
                     {template.events.length ? (
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
@@ -213,7 +213,7 @@ export default function FrameEditor({
 
                     <Popover>
                         <PopoverTrigger asChild={true}>
-                            <Button variant="outline" size="lg">
+                            <Button variant="outline">
                                 <span className="hidden md:block">Connect Page</span>
                                 <Wallpaper className="hidden w-4 h-4 max-md:inline" />
                             </Button>
@@ -272,7 +272,7 @@ export default function FrameEditor({
                     </div>
                 )}
                 <div className="p-4 pb-0 w-full h-full md:w-2/5 md:p-6">
-                    <div className="h-full w-full flex flex-col gap-3 bg-[#0c0c0c] md:border-[#17101f] md:border-4 md:rounded-xl md:p-4">
+                    <div className="h-full w-full flex flex-col gap-3 bg-[#0c0c0c] md:border-[#4c3a4e80] md:border-2 md:rounded-xl md:p-4">
                         <div className="flex flex-row gap-2 justify-between items-center">
                             <h1 className="mb-4 text-4xl font-bold">Configuration</h1>
                             {updating && <BaseSpinner />}
