@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/shadcn/Button'
 import { useFrameConfig, useFramePreview } from '@/sdk/hooks'
 import { ArrowBigLeftDash, ArrowBigRightDash, KeySquare, Trash2 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { FramePressConfig, SlideConfig, TextLayerConfigs } from './Config'
 import FigmaTokenEditor from './components/FigmaTokenEditor'
 import SlideEditor from './components/SlideEditor'
@@ -137,7 +137,7 @@ export default function Inspector() {
                 }
             }
         }
-    }, [config.slides])
+    }, [config.slides, identifyFontsUsed])
 
     // Setup default slides if this is a new instance
     useEffect(() => {
@@ -151,12 +151,16 @@ export default function Inspector() {
     }, [config, updateConfig])
 
     // Button targets == slides with a Title
-    const buttonTargets = config.slides
-        ?.filter((slide) => slide.title !== undefined) // Filter out slides without a title
-        .map((slide) => ({
-            id: slide.id,
-            title: slide.title as string,
-        }))
+    const buttonTargets = useMemo(
+        () =>
+            config.slides
+                ?.filter((slide) => slide.title !== undefined) // Filter out slides without a title
+                .map((slide) => ({
+                    id: slide.id,
+                    title: slide.title as string,
+                })),
+        [config.slides]
+    )
 
     // Slide operation buttons
     const canMoveLeft = selectedSlideIndex != 0 // not the first slide
