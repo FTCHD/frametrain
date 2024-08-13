@@ -21,16 +21,10 @@ export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
 	const uploadImage = useUploadImage()
 
-    const [responseData, setResponseData] = useState<string[]>([])
+    const [responseData, setResponseData] = useState<string[]>(config.slideUrls || [])
     const [file, setFile] = useState<File>()
 
     const [loading, setLoading] = useState(false)
-
-    useEffect(() => {
-        if (!config.slideUrls) return
-
-        setResponseData(config.slideUrls)
-    }, [config.slideUrls])
 
     async function renderPdf(url: string) {
         setLoading(true)
@@ -208,7 +202,7 @@ export default function Inspector() {
             <div className="flex flex-col gap-5">
                 <h2 className="text-lg font-semibold">Aspect Ratio</h2>
                 <Select
-                    defaultValue={'1/1'}
+                    defaultValue={config.aspectRatio}
                     onValueChange={(value) => updateConfig({ aspectRatio: value })}
                 >
                     <SelectTrigger>

@@ -147,7 +147,7 @@ export async function publishFrameConfig(id: string) {
         .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
-    revalidatePath(`/frame/${id}`)
+    // revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFrameLinkedPage(id: string, url?: string) {
@@ -235,7 +235,7 @@ export async function revertFrameConfig(id: string) {
         .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 
-    revalidatePath(`/frame/${id}`)
+    // revalidatePath(`/frame/${id}`)
 }
 
 export async function updateFrameStorage(id: string, storage: any) {

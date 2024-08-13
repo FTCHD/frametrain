@@ -91,7 +91,7 @@ export default function CoverView(config: Config) {
                     textAlign: 'left',
                 }}
             >
-                Choose the duration of your call.
+                Choose the duration of our call.
             </div>
         </div>
     )

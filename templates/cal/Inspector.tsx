@@ -96,11 +96,11 @@ export default function Inspector() {
     }
 
     return (
-        <div className="w-full h-full flex flex-col gap-5 max-sm:gap-3">
-            <div className="flex flex-col gap-2 max-sm:gap-1">
-                <h2 className="text-2xl font-semibold max-sm:text-lg">Username</h2>
+        <div className="flex flex-col gap-5 w-full h-full max-md:gap-3">
+            <div className="flex flex-col gap-2 max-md:gap-1">
+                <h2 className="text-2xl font-semibold max-md:text-lg">Username</h2>
                 <Input
-                    className="text-lg max-sm:text-base"
+                    className="text-lg max-md:text-base"
                     placeholder="Your Cal.com username"
                     defaultValue={config.username}
                     onChange={(e) => {
@@ -108,8 +108,8 @@ export default function Inspector() {
                     }}
                 />
             </div>
-            <div className="flex flex-col gap-4 w-full max-sm:gap-2">
-                <h2 className="text-2xl font-bold max-sm:text-lg">Event Slugs</h2>
+            <div className="flex flex-col gap-4 w-full max-md:gap-2">
+                <h2 className="text-2xl font-bold max-md:text-lg">Event Slugs</h2>
 
                 {events.length < 4 && (
                     <div className="flex gap-2 items-center">
@@ -209,10 +209,10 @@ export default function Inspector() {
             </div>
 
             <div className="flex flex-col gap-2">
-                <h2 className="text-2xl font-semibold max-sm:text-lg">Gating Options</h2>
-                <div className="flex flex-col gap-2 w-full md:w-auto max-sm:gap-0">
+                <h2 className="text-2xl font-semibold max-md:text-lg">Gating Options</h2>
+                <div className="flex flex-col gap-2 w-full md:w-auto max-md:gap-0">
                     <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-sm:text-base">Karma Gating</h2>
+                        <h2 className="text-lg font-semibold max-md:text-base">Karma Gating</h2>
 
                         <Switch
                             checked={config.gatingOptions.karmaGating}
@@ -227,7 +227,7 @@ export default function Inspector() {
                         />
                     </div>
 
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
                         Only allow Farcaster users within your second-degree to book a call. To
                         learn more check out{' '}
                         <Link className="underline" href="https://openrank.com/" target="_blank">
@@ -236,9 +236,9 @@ export default function Inspector() {
                         .
                     </p>
                 </div>
-                <div className="flex flex-col gap-2 w-full md:w-auto max-sm:gap-0">
+                <div className="flex flex-col gap-2 w-full md:w-auto max-md:gap-0">
                     <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-sm:text-base">NFT Gating</h2>
+                        <h2 className="text-lg font-semibold max-md:text-base">NFT Gating</h2>
 
                         <Switch
                             checked={config.gatingOptions.nftGating}
@@ -253,14 +253,14 @@ export default function Inspector() {
                         />
                     </div>
 
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
-                        Only only users users holding a specific NFT to book a call.
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
+                        Only allow users users holding a specific NFT to book a call.
                     </p>
                 </div>
                 {config.gatingOptions.nftGating && (
                     <>
-                        <div className="flex flex-col gap-2 w-full ">
-                            <h2 className="text-lg font-semibold max-sm:text-base">Choose Chain</h2>
+                        <div className="flex flex-col gap-2 w-full">
+                            <h2 className="text-lg font-semibold max-md:text-base">Choose Chain</h2>
                             <Select
                                 onValueChange={handleChainChange}
                                 defaultValue={config.nftOptions.nftChain}
@@ -282,7 +282,7 @@ export default function Inspector() {
                             </Select>
                         </div>
                         <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg font-semibold max-sm:text-base">
+                            <h2 className="text-lg font-semibold max-md:text-base">
                                 Choose NFT Type
                             </h2>
                             <Select
@@ -300,9 +300,9 @@ export default function Inspector() {
                         </div>
 
                         <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg font-semibold max-sm:text-base">NFT address</h2>
+                            <h2 className="text-lg font-semibold max-md:text-base">NFT address</h2>
                             <Input
-                                className="text-lg max-sm:text-base"
+                                className="text-lg max-md:text-base"
                                 placeholder="Enter your NFT address"
                                 onChange={async (e) => {
                                     await handleNFT(e.target.value)
@@ -311,9 +311,9 @@ export default function Inspector() {
                         </div>
                         {config.nftOptions.nftType === 'ERC1155' && (
                             <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold max-sm:text-base">Token ID</h2>
+                                <h2 className="text-lg font-semibold max-md:text-base">Token ID</h2>
                                 <Input
-                                    className="text-lg max-sm:text-base"
+                                    className="text-lg max-md:text-base"
                                     placeholder="Enter your NFT token ID"
                                     onChange={handleTokenIdChange}
                                 />
@@ -321,9 +321,9 @@ export default function Inspector() {
                         )}
                     </>
                 )}
-                <div className="flex flex-col gap-2 w-full max-sm:gap-0">
+                <div className="flex flex-col gap-2 w-full max-md:gap-0">
                     <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-sm:text-base">Recasted</h2>
+                        <h2 className="text-lg font-semibold max-md:text-base">Recasted</h2>
 
                         <Switch
                             checked={config.gatingOptions.recasted}
@@ -346,13 +346,13 @@ export default function Inspector() {
                             }}
                         />
                     </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
                         Only allow users who recasted this cast to book a call.
                     </p>
                 </div>
-                <div className="flex flex-col gap-2 w-full max-sm:gap-0">
+                <div className="flex flex-col gap-2 w-full max-md:gap-0">
                     <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-sm:text-base">Liked</h2>
+                        <h2 className="text-lg font-semibold max-md:text-base">Liked</h2>
 
                         <Switch
                             checked={config.gatingOptions.liked}
@@ -375,13 +375,13 @@ export default function Inspector() {
                             }}
                         />
                     </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
                         Only allow users who liked this cast to book a call.
                     </p>
                 </div>
-                <div className="flex flex-col gap-2 w-full max-sm:gap-0">
+                <div className="flex flex-col gap-2 w-full max-md:gap-0">
                     <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-sm:text-base">Follower</h2>
+                        <h2 className="text-lg font-semibold max-md:text-base">Follower</h2>
 
                         <Switch
                             checked={config.gatingOptions.follower}
@@ -404,13 +404,13 @@ export default function Inspector() {
                             }}
                         />
                     </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
                         Only allow users who you follow to book a call.
                     </p>
                 </div>
-                <div className="flex flex-col gap-2 w-full max-sm:gap-0">
+                <div className="flex flex-col gap-2 w-full max-md:gap-0">
                     <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-sm:text-base">Following</h2>
+                        <h2 className="text-lg font-semibold max-md:text-base">Following</h2>
 
                         <Switch
                             checked={config.gatingOptions.following}
@@ -433,15 +433,15 @@ export default function Inspector() {
                             }}
                         />
                     </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-sm:text-xs">
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
                         Only allow users who follow you to book a call.
                     </p>
                 </div>
             </div>
-            <div className="flex flex-col gap-2 max-sm:gap-1">
-                <h2 className="text-2xl font-semibold max-sm:text-lg">Customization</h2>
-                <div className="flex flex-col gap-2 w-full max-sm:gap-0">
-                    <h2 className="text-lg font-semibold max-sm:text-base">Font</h2>
+            <div className="flex flex-col gap-2 max-md:gap-1">
+                <h2 className="text-2xl font-semibold max-md:text-lg">Customization</h2>
+                <div className="flex flex-col gap-2 w-full max-md:gap-0">
+                    <h2 className="text-lg font-semibold max-md:text-base">Font</h2>
                     <FontFamilyPicker
                         defaultValue={config.fontFamily || 'Roboto'}
                         onSelect={(font) => {
@@ -451,8 +451,8 @@ export default function Inspector() {
                         }}
                     />
                 </div>
-                <div className="flex flex-col gap-2 w-full max-sm:gap-0">
-                    <h2 className="text-lg font-semibold max-sm:text-base">Primary Color</h2>
+                <div className="flex flex-col gap-2 w-full max-md:gap-0">
+                    <h2 className="text-lg font-semibold max-md:text-base">Primary Color</h2>
                     <ColorPicker
                         className="w-full"
                         background={config.primaryColor || '#ffffff'}
@@ -463,8 +463,8 @@ export default function Inspector() {
                         }
                     />
                 </div>
-                <div className="flex flex-col gap-2 w-full max-sm:gap-0">
-                    <h2 className="text-lg font-semibold max-sm:text-base">Secondary Color</h2>
+                <div className="flex flex-col gap-2 w-full max-md:gap-0">
+                    <h2 className="text-lg font-semibold max-md:text-base">Secondary Color</h2>
                     <ColorPicker
                         className="w-full"
                         background={config.secondaryColor || '#000000'}
@@ -475,8 +475,8 @@ export default function Inspector() {
                         }
                     />
                 </div>
-                <div className="flex flex-col gap-2 w-full max-sm:gap-0">
-                    <h2 className="text-lg font-semibold max-sm:text-base">Title Style</h2>
+                <div className="flex flex-col gap-2 w-full max-md:gap-0">
+                    <h2 className="text-lg font-semibold max-md:text-base">Title Style</h2>
                     <FontStylePicker
                         currentFont={config?.fontFamily || 'Roboto'}
                         defaultValue={config?.titleStyle || 'normal'}
@@ -487,8 +487,8 @@ export default function Inspector() {
                         }
                     />
                 </div>
-                <div className="flex flex-col gap-2 w-full max-sm:gap-0">
-                    <h2 className="text-lg font-semibold max-sm:text-base">Title Weight</h2>
+                <div className="flex flex-col gap-2 w-full max-md:gap-0">
+                    <h2 className="text-lg font-semibold max-md:text-base">Title Weight</h2>
                     <FontWeightPicker
                         currentFont={config.fontFamily || 'Roboto'}
                         defaultValue={config.titleWeight}
@@ -499,8 +499,8 @@ export default function Inspector() {
                         }
                     />
                 </div>
-                <div className="flex flex-col gap-2 w-full max-sm:gap-0">
-                    <h2 className="text-lg font-semibold max-sm:text-base">Background</h2>
+                <div className="flex flex-col gap-2 w-full max-md:gap-0">
+                    <h2 className="text-lg font-semibold max-md:text-base">Background</h2>
                     <ColorPicker
                         className="w-full"
                         enabledPickers={['solid', 'gradient', 'image']}

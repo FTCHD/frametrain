@@ -1,3 +1,5 @@
+'use client'
+
 import { Slider } from '@/components/shadcn/Slider'
 import { Textarea } from '@/components/shadcn/Textarea'
 import { Toggle } from '@/components/shadcn/Toggle'
@@ -12,12 +14,13 @@ import {
     ArrowDownFromLineIcon,
     ArrowUpFromLineIcon,
     CirclePower,
-    CloudDownload,
     FoldVerticalIcon,
+    Lock,
+    LockOpen,
     Type,
 } from 'lucide-react'
 import React, { useState } from 'react'
-import type { TextLayerConfig } from '../config'
+import type { TextLayerConfig } from '../Config'
 import type { TextAlignHorizontal, TextAlignVertical } from '../utils/FigmaApi'
 
 type TextLayerDesignerProps = {
@@ -42,7 +45,8 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                             onChange({ ...config, allowFigmaUpdates: pressed })
                         }}
                     >
-                        <CloudDownload className="h-6 w-6" />
+                        {config.allowFigmaUpdates && <LockOpen className="h-6 w-6" />}
+                        {!config.allowFigmaUpdates && <Lock className="h-6 w-6" />}
                     </Toggle>
                     <Toggle
                         variant="outline"
@@ -55,8 +59,8 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                         <CirclePower className="h-6 w-6" />
                     </Toggle>
                 </div>
-                <div className="grid grid-cols-[1fr_1fr_1fr_1fr] gap-4">
-                    <label className="text-sm font-semibold self-center">Font</label>
+                <div className="grid grid-cols-[1fr_3fr_1fr_3fr] gap-4">
+                    <label className="text-sm font-semibold self-center ">Font</label>
                     <FontFamilyPicker
                         defaultValue={config.fontFamily}
                         onSelect={(newValue) => {
@@ -99,49 +103,54 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                             onChange({ ...config, centerHorizontally: checked === true })
                         }}
                     /> */}
-                    <ToggleGroup
-                        type="single"
-                        variant="outline"
-                        defaultValue={config.textAlignHorizontal}
-                        onValueChange={(value) => {
-                            onChange({
-                                ...config,
-                                textAlignHorizontal: value as TextAlignHorizontal,
-                            })
-                        }}
-                    >
-                        <ToggleGroupItem value="LEFT" aria-label="Left Align">
-                            <AlignLeftIcon className="h-4 w-4" />
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="CENTER" aria-label="Center Align">
-                            <AlignCenterIcon className="h-4 w-4" />
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="RIGHT" aria-label="Right Align">
-                            <AlignRightIcon className="h-4 w-4" />
-                        </ToggleGroupItem>
-                    </ToggleGroup>
-                    <ToggleGroup
-                        type="single"
-                        variant="outline"
-                        defaultValue={config.textAlignVertical}
-                        onValueChange={(value) => {
-                            onChange({ ...config, textAlignVertical: value as TextAlignVertical })
-                        }}
-                    >
-                        <ToggleGroupItem value="TOP" aria-label="Top Align">
-                            <ArrowUpFromLineIcon className="h-4 w-4" />
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="CENTER" aria-label="Middle Align">
-                            <FoldVerticalIcon className="h-4 w-4" />
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="BOTTOM" aria-label="Bottom Align">
-                            <ArrowDownFromLineIcon className="h-4 w-4" />
-                        </ToggleGroupItem>
-                    </ToggleGroup>
+                    <div className="col-span-2 flex justify-evenly">
+                        <ToggleGroup
+                            type="single"
+                            variant="outline"
+                            defaultValue={config.textAlignHorizontal}
+                            onValueChange={(value) => {
+                                onChange({
+                                    ...config,
+                                    textAlignHorizontal: value as TextAlignHorizontal,
+                                })
+                            }}
+                        >
+                            <ToggleGroupItem value="LEFT" aria-label="Left Align">
+                                <AlignLeftIcon className="h-4 w-4" />
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="CENTER" aria-label="Center Align">
+                                <AlignCenterIcon className="h-4 w-4" />
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="RIGHT" aria-label="Right Align">
+                                <AlignRightIcon className="h-4 w-4" />
+                            </ToggleGroupItem>
+                        </ToggleGroup>
+                        <ToggleGroup
+                            type="single"
+                            variant="outline"
+                            defaultValue={config.textAlignVertical}
+                            onValueChange={(value) => {
+                                onChange({
+                                    ...config,
+                                    textAlignVertical: value as TextAlignVertical,
+                                })
+                            }}
+                        >
+                            <ToggleGroupItem value="TOP" aria-label="Top Align">
+                                <ArrowUpFromLineIcon className="h-4 w-4" />
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="CENTER" aria-label="Middle Align">
+                                <FoldVerticalIcon className="h-4 w-4" />
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="BOTTOM" aria-label="Bottom Align">
+                                <ArrowDownFromLineIcon className="h-4 w-4" />
+                            </ToggleGroupItem>
+                        </ToggleGroup>
+                    </div>
 
                     <label className="text-sm font-semibold self-center">Fill</label>
                     <ColorPicker
-                        className="w-full col-span-1"
+                        className="w-full"
                         background={config.fill}
                         setBackground={(newValue) => {
                             onChange({ ...config, fill: newValue })

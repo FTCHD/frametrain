@@ -172,6 +172,7 @@ export default function Inspector() {
                             />
                             <Button
                                 size={'lg'}
+                                variant={'primary'}
                                 disabled={loading}
                                 onClick={async () => {
                                     if (!tweetInputRef.current?.value) return

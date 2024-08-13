@@ -22,6 +22,8 @@ export interface Storage extends BaseStorage {}
 export default {
     name: 'Medium',
     description: 'Convert any Medium article into a Farcaster Frame.',
+    shortDescription: 'Medium To Article',
+    icon: 'log',
     creatorFid: '20417',
     creatorName: 'Q',
     enabled: true,
