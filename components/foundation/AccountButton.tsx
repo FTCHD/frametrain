@@ -10,6 +10,7 @@ import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { LogOut } from 'react-feather'
+import BaseSpinner from '../shadcn/BaseSpinner'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../shadcn/Tooltip'
 
 export default function AccountButton() {
@@ -27,18 +28,15 @@ export default function AccountButton() {
     }, [])
 
     const increaseTimeSpent: () => ReturnType<typeof setTimeout> | undefined = useCallback(() => {
-        if (isLoggingIn) {
-            setTimeSpent((prev) => prev + 1)
-            return setTimeout(increaseTimeSpent, 1000)
-        }
-        return undefined
-    }, [isLoggingIn])
+        setTimeSpent((prev) => prev + 1)
+        return setTimeout(increaseTimeSpent, 1000)
+    }, [])
 
     const handleLogin = useCallback(
         (res: StatusAPIResponse) => {
             setIsLoggingIn(true)
 
-            increaseTimeSpent()
+            const ref = increaseTimeSpent()
 
             signIn('credentials', {
                 message: res.message,
@@ -51,10 +49,16 @@ export default function AccountButton() {
                     router.refresh()
                 }
             })
+
+            return () => {
+                if (ref) {
+                    clearTimeout(ref)
+                }
+            }
         },
         [router, increaseTimeSpent]
     )
-	
+
     return (
         <AuthKitProvider>
             {isAuthenticated || sesh?.status === 'authenticated' ? (
@@ -74,7 +78,7 @@ export default function AccountButton() {
                 </TooltipProvider>
             ) : isLoggingIn ? (
                 <div className="flex flex-col justify-center items-center w-full h-full gap-2">
-                    <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent " />
+                    <BaseSpinner />
                     {timeSpent > 5 && <p className="text-sm">Stuck? Try refreshing the page!</p>}
                 </div>
             ) : (

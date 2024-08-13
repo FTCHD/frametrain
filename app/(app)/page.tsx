@@ -17,7 +17,7 @@ export default async function Home() {
             <div className="flex flex-col justify-center p-5 w-full h-full gap-10">
                 <div className="relative flex basis-1/4 md:basis-3/4">
                     <Image
-                        src="/og-transparent.webp"
+                        src="/og-transparent.png"
                         fill={true}
                         objectFit="contain"
                         alt="FrameTrain"

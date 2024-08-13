@@ -10,7 +10,7 @@ import {
     SelectValue,
 } from '@/components/shadcn/Select'
 import React, { useState } from 'react'
-import type { ButtonConfig } from '../config'
+import type { ButtonConfig } from '../Config'
 
 type ButtonTarget = {
     id: string

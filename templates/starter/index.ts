@@ -12,6 +12,8 @@ export interface Storage extends BaseStorage {}
 export default {
     name: 'Starter',
     description: 'Copy this template to create your own',
+    shortDescription: 'Appears as composer action description (max 20 characters)',
+    icon: 'number',
     creatorFid: '0',
     creatorName: 'FrameTrain',
     cover,

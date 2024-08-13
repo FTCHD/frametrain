@@ -20,44 +20,46 @@ export default function Inspector() {
     const questionInputRef = useRef<HTMLInputElement>(null)
 
     return (
-        <div className="w-full h-full flex flex-col gap-5">
-            <div className="flex flex-col gap-2 ">
+        <div className="flex flex-col gap-5 w-full h-full">
+            <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold">Question</h2>
                 <Input
                     placeholder="The poll question"
                     defaultValue={config.question}
                     onChange={(e) => updateConfig({ question: e.target.value })}
-                    className=" py-2 text-lg"
+                    className="py-2 text-lg"
                 />
             </div>
 
-            <div className="flex flex-col gap-2 ">
-                {options?.map((option, index) => (
-                    <div className="flex flex-row justify-between items-center" key={index}>
-                        <h2 className="text-lg font-semibold p-2 bg-secondary rounded-md">
-                            {option.displayLabel}
-                        </h2>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                                updateConfig({
-                                    options: [
-                                        ...options.slice(0, index),
-                                        ...options.slice(index + 1),
-                                    ],
-                                })
-                            }
-                        >
-                            <X />
-                        </Button>
-                    </div>
-                ))}
-            </div>
+            {options && (
+                <div className="flex flex-col gap-2">
+                    {options.map((option, index) => (
+                        <div className="flex flex-row justify-between items-center" key={index}>
+                            <h2 className="p-2 text-lg font-semibold rounded-md bg-secondary">
+                                {option.displayLabel}
+                            </h2>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                    updateConfig({
+                                        options: [
+                                            ...options.slice(0, index),
+                                            ...options.slice(index + 1),
+                                        ],
+                                    })
+                                }
+                            >
+                                <X />
+                            </Button>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {(!options || options.length < 4) && (
-                <div className="flex flex-col gap-2 ">
-                    <div className="flex flex-col gap-2 ">
+                <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2">
                         <h1 className="text-lg font-semibold">Voting Options</h1>
                         <Input
                             className="text-lg"
@@ -93,14 +95,15 @@ export default function Inspector() {
                             displayLabelInputRef.current.value = ''
                             buttonLabelInputRef.current.value = ''
                         }}
-                        className="w-full bg-border hover:bg-secondary-border text-primary"
+                        className="w-full"
+                        variant={'primary'}
                     >
                         Add Option
                     </Button>
                 </div>
             )}
 
-            <div className="flex flex-col gap-2 ">
+            <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold">Background Color</h2>
                 <ColorPicker
                     className="w-full"
@@ -120,7 +123,7 @@ export default function Inspector() {
                 />
             </div>
 
-            <div className="flex flex-col gap-2 ">
+            <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold">Text Color</h2>
                 <ColorPicker
                     className="w-full"
@@ -129,7 +132,7 @@ export default function Inspector() {
                 />
             </div>
 
-            <div className="flex flex-col gap-2 ">
+            <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold">Bar Line Color</h2>
                 <ColorPicker
                     className="w-full"

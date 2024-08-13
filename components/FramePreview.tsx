@@ -13,6 +13,7 @@ import { type ChangeEvent, type PropsWithChildren, useCallback, useMemo, useStat
 import { Delete, ExternalLink, PlusCircle } from 'react-feather'
 import toast from 'react-hot-toast'
 import { BorderBeam } from './BorderBeam'
+import BaseSpinner from './shadcn/BaseSpinner'
 import { Button } from './shadcn/Button'
 import {
     Dialog,
@@ -46,7 +47,7 @@ export function FramePreview() {
 function PlaceholderFrame() {
     return (
         <div className="flex justify-center items-center w-full h-full">
-            <div className="w-8 h-8 rounded-full border-4 border-blue-500 animate-spin border-r-transparent" />
+            <BaseSpinner />
         </div>
     )
 }
@@ -89,7 +90,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
 
     return (
         <>
-            <div className="flex flex-col justify-center relative h-full bg-transparent p-[1.5px] max-sm:justify-end max-sm:w-[75%]">
+            <div className="flex flex-col justify-center relative h-full  md:p-[1.5px] max-md:justify-end max-md:w-[75%]">
                 <div
                     className="relative overflow-hidden border-2 bg-[#2A2432] border-[#4c3a4e80]"
                     style={{ borderRadius: '0.48rem' }}

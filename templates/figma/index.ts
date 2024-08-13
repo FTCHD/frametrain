@@ -12,6 +12,8 @@ export interface Storage extends BaseStorage {}
 export default {
     name: 'Figma',
     description: 'Transform your Figma designs into interactive Frame experiences!',
+    shortDescription: 'Figma Frame Builder',
+    icon: 'paintbrush',
     creatorFid: '426045',
     creatorName: 'rjs',
     cover,
