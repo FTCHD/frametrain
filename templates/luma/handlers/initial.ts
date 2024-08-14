@@ -19,7 +19,11 @@ export default async function initial({ config }: { config: Config }): Promise<B
             target: `https://lu.ma/${event.id}`,
         })
 
-        if (event.endsAt && Date.now() < new Date(event.endsAt).getTime()) {
+        if (
+            event.endsAt &&
+            Date.now() < new Date(event.endsAt).getTime() &&
+            event.price.toLowerCase().includes('free')
+        ) {
             buttons.push({ label: 'Register' })
         }
     }
