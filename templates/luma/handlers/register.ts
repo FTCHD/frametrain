@@ -20,7 +20,7 @@ export async function register({
     const email = body.validatedData.input?.text as string | undefined
 
     if (!email) throw new FrameError('Please enter your email to register.')
-    const fid = body.validatedData.interactor.fid
+    const fid = body.validatedData.interactor.fid as number
     const registeredUsers = storage.registeredUsers ?? []
     const guest = registeredUsers.find((u) => u.fid === fid)
 
@@ -49,29 +49,32 @@ export async function register({
     }
 
     let newStorage = storage
+    const data = {
+        name: body.validatedData.interactor.display_name,
+        ticket_type_to_selection: { [ticketTypeId]: { count: 1, amount: 0 } },
+        email,
+        event_api_id: eventId,
+        timezone: config.event.timezone,
+    }
 
     const request = await fetch('https://api.lu.ma/event/independent/register', {
         method: 'POST',
         headers: {
+            'accept': 'application/json, text/plain, */*',
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            event: config.event,
-            name: body.validatedData.interactor.display_name,
-            ticket_type_to_selection: { [ticketTypeId]: { count: 1, amount: 0 } },
-            email,
-            event_api_id: eventId,
-        }),
+        body: JSON.stringify(data),
     })
-
     const response = await request.json()
 
-    if (response.status !== 'success') {
-        throw new FrameError('Failed to register')
-    }
+    console.log('Register response', response, { email, data })
 
     if ('message' in response) {
         throw new FrameError(response.message)
+    }
+
+    if (response.status !== 'success') {
+        throw new FrameError('Failed to register')
     }
 
     registeredUsers.push({
