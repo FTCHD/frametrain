@@ -10,13 +10,15 @@ export interface Config extends BaseConfig {
         backgroundImage: string
         hosts: string[]
         startsAt: string
-        endsAt?: string | null
+        endsAt: string
         timezone: string
         title: string
-        address?: string
-        image?: string
+        address: string
+        image: string
         approvalRequired?: boolean
         remainingSpots?: number | null
+        ticketTypeId: string | null
+        eventId: string | null
     }
     backgroundColor?: string
     textColor?: string
@@ -25,7 +27,9 @@ export interface Config extends BaseConfig {
     infoColor?: string
 }
 
-export interface Storage extends BaseStorage {}
+export interface Storage extends BaseStorage {
+    registeredUsers: { fid: number; email: string }[]
+}
 
 export default {
     name: 'Lu.ma',
@@ -38,9 +42,9 @@ export default {
     enabled: true,
     Inspector,
     handlers,
-    requiresValidation: false,
+    requiresValidation: true,
     initialConfig: {
         event: undefined,
     },
-    events: [],
+    events: ['register'],
 } satisfies BaseTemplate
