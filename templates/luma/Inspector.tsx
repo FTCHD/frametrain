@@ -1,14 +1,8 @@
 'use client'
 
 import { Input } from '@/components/shadcn/Input'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
 import { ColorPicker } from '@/sdk/components'
+import { Select } from '@/sdk/components/Select'
 import { useFrameConfig } from '@/sdk/hooks'
 import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
@@ -110,7 +104,7 @@ export default function Inspector() {
                     </p>
                     <Select
                         defaultValue={config.event?.timezone ?? 'Europe/London'}
-                        onValueChange={async (value) => {
+                        onChange={async (value) => {
                             if (!config.event) return
 
                             const initialData = await getLumaData(config.event.id)
@@ -133,16 +127,11 @@ export default function Inspector() {
                             })
                         }}
                     >
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {timezoneOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
+                        {timezoneOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
                     </Select>
                 </div>
                 <div className="flex flex-col gap-2">
