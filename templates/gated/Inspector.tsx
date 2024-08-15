@@ -53,6 +53,7 @@ export default function Inspector() {
                   score: false,
                   erc721: false,
                   erc1155: false,
+                  erc20: false,
               }
     )
     const [messageType, setMessageType] = useState<'text' | 'image'>('text')
@@ -190,7 +191,7 @@ export default function Inspector() {
                     <Input
                         id="balance"
                         type="number"
-                        placeholder="300"
+                        placeholder="300 for 300 USDC or Token value"
                         disabled={!(defaultValues.address && defaultValues.network)}
                         defaultValue={defaultValues.balance}
                         onChange={(e) => {
