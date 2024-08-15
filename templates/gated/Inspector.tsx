@@ -53,7 +53,7 @@ function getRequirementsCheckboxes(
             isBasic: true,
         },
         {
-            key: 'follower',
+            key: 'followed',
             label: 'Must Follow Me',
             isBasic: true,
         },

@@ -2,6 +2,9 @@ import { getFarcasterUserChannels } from '@/sdk/neynar'
 import { http, createPublicClient, parseAbi, getAddress, formatUnits } from 'viem'
 import type { Abi, Chain } from 'viem'
 import { base, mainnet, optimism, zora, blast, arbitrum, fantom, polygon, bsc } from 'viem/chains'
+import type { FarcasterUserInfo } from './farcaster'
+
+const neynarApiBaseUrl = 'https://api.neynar.com/v2'
 
 function getViemClient(network: string) {
     const networkToChainMap: Record<string, Chain> = {
@@ -147,4 +150,35 @@ export async function checkFarcasterChannelsMembership(fid: number, channels: st
         .map((channel) => `/${channel}`)
 
     return channelsToJoin
+}
+
+export async function checkFollowStatus(userFid: number, viewerFid: number) {
+    try {
+        const response = (await fetch(
+            `${neynarApiBaseUrl}/farcaster/user/bulk?fids=${userFid}&viewer_fids=${viewerFid}`,
+            {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json',
+                    api_key: `${process.env.NEYNAR_API_KEY}`,
+                    'content-type': 'application/json',
+                },
+            }
+        )
+            .then((response) => response.json())
+            .catch((err) => {
+                console.error(err)
+                return {
+                    isValid: false,
+                    message: undefined,
+                }
+            })) as { users: FarcasterUserInfo[] }
+
+        return response.users[0].viewer_context!
+    } catch {
+        return {
+            'following': false,
+            'followed_by': false,
+        }
+    }
 }
