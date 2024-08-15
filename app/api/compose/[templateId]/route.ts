@@ -6,7 +6,7 @@ import type { InferInsertModel } from 'drizzle-orm'
 import { encode } from 'next-auth/jwt'
 // import { decode, encode } from 'next-auth/jwt';
 
-const SUPPORTED_TEMPLATES = ['cal', 'discourse']
+const SUPPORTED_TEMPLATES = ['cal', 'discourse', 'luma']
 
 export async function GET(
     request: Request,
