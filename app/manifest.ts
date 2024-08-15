@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
             'Post your Frames to Warpcast, Supercast, or Nook with the no-code Frames builder from the future. Now available with integrated Neynar Frame Validation.',
         start_url: '/',
         display: 'standalone',
-        background_color: '#e64225',
-        theme_color: '#e64225',
+        background_color: '#201629',
+        theme_color: '#201629',
         icons: [
             {
                 'src': '/favicons/icon-192.png',
