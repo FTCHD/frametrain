@@ -99,7 +99,7 @@ export default function ComposeEditor({
                 </div>
             </div>
 
-            <div className="flex flex-row justify-center items-center w-full p-4 pb-5 dark:bg-[#17101f] bg-white">
+            <div className="flex flex-row justify-center items-center w-full p-2 pb-5 dark:bg-[#201629] bg-white">
                 <Button
                     className="w-[50%] rounded-lg font-semibold border border-transparent bg-[#7c65c1] hover:bg-[#6944ba] active:border-[#ffffff4d] dark:text-white"
                     variant={'default'}
