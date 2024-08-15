@@ -30,7 +30,7 @@ const Select = forwardRef<
                 // backgroundPosition: 'right .7em top 50%, 0 0',
                 // backgroundSize: '.65em auto, 100%',
             }}
-            value={props.defaultValue}
+            defaultValue={props.defaultValue}
         >
             {children}
         </select>
