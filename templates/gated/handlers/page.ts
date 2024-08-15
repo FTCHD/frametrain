@@ -39,7 +39,6 @@ export default async function page({
     if (!config.owner) {
         throw new FrameError('Frame not configured')
     }
-    let minimumBalance: number | null = null
 
     if (config.requirements?.basic) {
         if (config.requirements.basic.casted && !cast.viewer_context.recasted) {
@@ -113,16 +112,15 @@ export default async function page({
                     chain: config.requirements.erc20.network,
                     contractAddress: config.requirements.erc20.address,
                     erc: '20',
+                    minAmount: config.requirements.erc20.balance,
                 })
 
-                minimumBalance = config.requirements.erc20.balance
-
                 if (!tokenInfo.isHolding) {
-                    if (!minimumBalance) {
+                    if (!config.requirements.erc20.balance) {
                         errors.push({ message: tokenInfo.name, type: 'nft' })
                     } else {
                         errors.push({
-                            message: `${minimumBalance} ${tokenInfo.name}`,
+                            message: `${config.requirements.erc20.balance} ${tokenInfo.name}`,
                             type: 'nft',
                         })
                     }
@@ -148,16 +146,15 @@ export default async function page({
                     contractAddress: config.requirements.erc1155.address,
                     erc: '1155',
                     tokenId: config.requirements.erc1155.tokenId,
+                    minAmount: config.requirements.erc1155.balance,
                 })
 
-                minimumBalance = config.requirements.erc1155.balance
-
                 if (!tokenInfo.isHolding) {
-                    if (!minimumBalance) {
+                    if (!config.requirements.erc1155.balance) {
                         errors.push({ message: tokenInfo.name, type: 'nft' })
                     } else {
                         errors.push({
-                            message: `${minimumBalance} ${tokenInfo.name}`,
+                            message: `${config.requirements.erc1155.balance} ${tokenInfo.name}`,
                             type: 'nft',
                         })
                     }
@@ -180,16 +177,15 @@ export default async function page({
                     chain: config.requirements.erc721.network,
                     contractAddress: config.requirements.erc721.address,
                     erc: '721',
+                    minAmount: config.requirements.erc721.balance,
                 })
 
-                minimumBalance = config.requirements.erc721.balance
-
                 if (!tokenInfo.isHolding) {
-                    if (!minimumBalance) {
+                    if (!config.requirements.erc721.balance) {
                         errors.push({ message: tokenInfo.name, type: 'nft' })
                     } else {
                         errors.push({
-                            message: `${minimumBalance} ${tokenInfo.name}`,
+                            message: `${config.requirements.erc721.balance} ${tokenInfo.name}`,
                             type: 'nft',
                         })
                     }
