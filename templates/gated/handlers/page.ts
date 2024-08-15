@@ -4,13 +4,15 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
-import type { Config } from '..'
-import PageView from '../views/Page'
+import {
+    checkErcTokenOwnership,
+    checkFarcasterChannelsMembership,
+    checkOpenRankScore,
+} from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
+import type { Config } from '..'
 import NopeView from '../views/Nope'
-import { getFarcasterUserChannels } from '@/sdk/neynar'
-import { holdsToken } from '../utils/nft'
-import { formatUnits, parseUnits } from 'viem'
+import PageView from '../views/Page'
 
 export default async function page({
     body,
@@ -36,6 +38,7 @@ export default async function page({
     if (!config.owner) {
         throw new FrameError('Frame not configured')
     }
+    let minimumBalance: number | null = null
 
     if (config.requirements?.basic) {
         if (config.requirements.basic.casted && !cast.viewer_context.recasted) {
@@ -64,29 +67,11 @@ export default async function page({
                 type: 'have',
             })
         } else if (config.requirements.score > 0) {
-            const fetchScore = async (fid: number) => {
-                const url =
-                    'https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=1&limit=1000&lite=true'
-                const options = {
-                    method: 'POST',
-                    headers: { 'content-type': 'application/json' },
-                    body: JSON.stringify([config.owner?.fid]),
-                }
-
-                try {
-                    const response = await fetch(url, options)
-                    const data = (await response.json()) as {
-                        result: { fid: number; score: number }[]
-                    }
-
-                    const containsUserFID = data.result.some((item) => item.fid === fid)
-
-                    return containsUserFID
-                } catch {
-                    return false
-                }
-            }
-            const containsUserFID = await fetchScore(user.fid)
+            const containsUserFID = await checkOpenRankScore(
+                user.fid,
+                config.owner.fid,
+                config.requirements.score
+            )
 
             if (!containsUserFID) {
                 errors.push({
@@ -98,42 +83,30 @@ export default async function page({
             config.requirements.channels.checked &&
             config.requirements.channels.data.length
         ) {
-            const channels = await getFarcasterUserChannels(user.fid)
-
-            const missingChannels = config.requirements.channels.data.filter(
-                (channel) => !channels.map((c) => c.id).includes(channel)
+            const channels = await checkFarcasterChannelsMembership(
+                user.fid,
+                config.requirements.channels.data
             )
 
-            if (missingChannels.length) {
-                // prefix channels with /
-                missingChannels.forEach((channel, index) => {
-                    missingChannels[index] = `/${channel}`
-                })
+            if (channels.length) {
                 errors.push({
-                    message: `joined "${missingChannels.join(', ')}" channels`,
+                    message: `joined "${channels.join(', ')}" channels`,
                     type: 'have',
                 })
             }
         } else if (config.requirements.erc20?.address && config.requirements.erc20.network) {
             //
             try {
-                const tokenInfo = await holdsToken({
+                const tokenInfo = await checkErcTokenOwnership({
                     addresses: user.verified_addresses.eth_addresses,
                     chain: config.requirements.erc20.network,
                     contractAddress: config.requirements.erc20.address,
                     erc: '20',
                 })
 
-                const balances = tokenInfo.balances.map((balance) =>
-                    Number(formatUnits(BigInt(balance), tokenInfo.decimals))
-                )
-                const minimumBalance = config.requirements.erc20.balance
+                minimumBalance = config.requirements.erc20.balance
 
-                const isHolding = minimumBalance
-                    ? balances.some((balance) => balance >= minimumBalance)
-                    : true
-
-                if (!isHolding) {
+                if (!tokenInfo.isHolding) {
                     if (!minimumBalance) {
                         errors.push({ message: tokenInfo.name, type: 'nft' })
                     } else {
@@ -158,7 +131,7 @@ export default async function page({
         ) {
             //
             try {
-                const tokenInfo = await holdsToken({
+                const tokenInfo = await checkErcTokenOwnership({
                     addresses: user.verified_addresses.eth_addresses,
                     chain: config.requirements.erc1155.network,
                     contractAddress: config.requirements.erc1155.address,
@@ -166,19 +139,9 @@ export default async function page({
                     tokenId: config.requirements.erc1155.tokenId,
                 })
 
-                const balances = tokenInfo.balances.map((balance) =>
-                    Number(formatUnits(BigInt(balance), tokenInfo.decimals))
-                )
-                const minimumBalance = config.requirements.erc1155.balance
-                    ? Number(
-                          parseUnits(`${config.requirements.erc1155.balance}`, tokenInfo.decimals)
-                      )
-                    : null
-                const isHolding = minimumBalance
-                    ? balances.some((balance) => balance >= minimumBalance)
-                    : true
+                minimumBalance = config.requirements.erc1155.balance
 
-                if (!isHolding) {
+                if (!tokenInfo.isHolding) {
                     if (!minimumBalance) {
                         errors.push({ message: tokenInfo.name, type: 'nft' })
                     } else {
@@ -195,36 +158,22 @@ export default async function page({
                         })
                     }
                 }
-            } catch (error) {
-                console.error(
-                    `Error checking ERC-1155 on ${config.requirements.erc1155.network}`,
-                    error
-                )
-
+            } catch {
                 errors.push({ message: 'ERC-1155 token', type: 'error' })
             }
         } else if (config.requirements.erc721?.address && config.requirements.erc721.network) {
             //
             try {
-                const tokenInfo = await holdsToken({
+                const tokenInfo = await checkErcTokenOwnership({
                     addresses: user.verified_addresses.eth_addresses,
                     chain: config.requirements.erc721.network,
                     contractAddress: config.requirements.erc721.address,
                     erc: '721',
                 })
-                const balances = tokenInfo.balances.map((balance) =>
-                    Number(formatUnits(BigInt(balance), tokenInfo.decimals))
-                )
-                const minimumBalance = config.requirements.erc721.balance
-                    ? Number(
-                          parseUnits(`${config.requirements.erc721.balance}`, tokenInfo.decimals)
-                      )
-                    : null
-                const isHolding = minimumBalance
-                    ? balances.some((balance) => balance >= minimumBalance)
-                    : true
 
-                if (!isHolding) {
+                minimumBalance = config.requirements.erc721.balance
+
+                if (!tokenInfo.isHolding) {
                     if (!minimumBalance) {
                         errors.push({ message: tokenInfo.name, type: 'nft' })
                     } else {
@@ -241,12 +190,7 @@ export default async function page({
                         })
                     }
                 }
-            } catch (error) {
-                console.error(
-                    `Error checking ERC-721 on ${config.requirements.erc721.network}`,
-                    error
-                )
-
+            } catch {
                 errors.push({ message: 'an ERC-721', type: 'nft' })
             }
         }
