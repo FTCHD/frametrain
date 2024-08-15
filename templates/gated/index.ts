@@ -2,14 +2,7 @@ import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
-
-type ERC = {
-    network: string
-    address: string | null
-    balance: number | null
-    tokenId: string | null
-    collection: string | null
-}
+import type { GatingERCType } from '@/sdk/components/GatingOptions'
 
 export interface Config extends BaseConfig {
     owner: {
@@ -34,9 +27,9 @@ export interface Config extends BaseConfig {
         channels: { checked: boolean; data: string[] }
         maxFid: number
         score: number
-        erc20: ERC | null
-        erc721: ERC | null
-        erc1155: ERC | null
+        erc20: GatingERCType | null
+        erc721: GatingERCType | null
+        erc1155: GatingERCType | null
     }
 }
 
