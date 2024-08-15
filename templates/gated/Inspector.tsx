@@ -18,14 +18,13 @@ import { getFarcasterChannelbyName } from '@/sdk/neynar'
 import { corsFetch } from '@/sdk/scrape'
 import { LoaderIcon, Trash } from 'lucide-react'
 import Link from 'next/link'
-import { type ForwardedRef, type ReactNode, useMemo, useRef, useState } from 'react'
+import { type MutableRefObject, type ReactNode, useMemo, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
 import TokenGating from './components/TokenGating'
 
 const warpcastBaseApiUrl = 'https://api.warpcast.com/v2'
-
 
 function getRequirementsCheckboxes(
     config: Config,
@@ -34,7 +33,7 @@ function getRequirementsCheckboxes(
     selectedOptions: any,
     addingChannel: any,
     setAddingChannel: any,
-    channelInputRef: ForwardedRef<HTMLInputElement>
+    channelInputRef: MutableRefObject<HTMLInputElement | null>
 ): {
     key: string
     label: string
