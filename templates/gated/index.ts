@@ -23,7 +23,7 @@ export interface Config extends BaseConfig {
     links: string[]
     requirements: {
         basic: {
-            follower: boolean
+            followed: boolean
             following: boolean
             liked: boolean
             casted: boolean
@@ -60,7 +60,7 @@ export default {
         links: [],
         requirements: {
             basic: {
-                follower: false,
+                followed: false,
                 following: false,
                 liked: false,
                 casted: false,

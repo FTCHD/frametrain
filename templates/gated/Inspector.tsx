@@ -20,7 +20,6 @@ import Link from 'next/link'
 import { LoaderIcon, Trash } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
-import { corsFetch } from '@/sdk/scrape'
 import { getFarcasterChannelbyName } from '@/sdk/neynar'
 
 const warpcastBaseApiUrl = 'https://api.warpcast.com/v2'
@@ -43,7 +42,7 @@ export default function Inspector() {
             : {
                   liked: false,
                   recasted: false,
-                  follower: false,
+                  followed: false,
                   following: false,
                   power: false,
                   eth: false,
@@ -79,19 +78,13 @@ export default function Inspector() {
         }
 
         try {
-            const response = await corsFetch(
-                `${warpcastBaseApiUrl}/user-by-username?username=${username}`,
-                {
-                    headers: {
-                        accept: 'application/json',
-                        'content-type': 'application/json',
-                    },
-                }
+            const response = await fetch(
+                `${warpcastBaseApiUrl}/user-by-username?username=${username}`
             )
 
-            if (!response) return
+            if (!response.ok) return
 
-            const data = JSON.parse(response) as unknown as
+            const data = (await response.json()) as
                 | {
                       result: { user: { fid: number; username: string } }
                   }
@@ -272,7 +265,7 @@ export default function Inspector() {
             isBasic: true,
         },
         {
-            key: 'follower',
+            key: 'followed',
             label: 'Must Follow Me',
             isBasic: true,
         },

@@ -7,6 +7,7 @@ import type {
 import {
     checkErcTokenOwnership,
     checkFarcasterChannelsMembership,
+    checkFollowStatus,
     checkOpenRankScore,
 } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
@@ -23,7 +24,7 @@ export default async function page({
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
-    const user = body.validatedData.interactor
+    const viewer = body.validatedData.interactor
     const cast = body.validatedData.cast
     const errors: {
         message: string
@@ -45,30 +46,40 @@ export default async function page({
             errors.push({ message: 'recast', type: 'ctx' })
         } else if (config.requirements.basic.liked && !cast.viewer_context.liked) {
             errors.push({ message: 'like', type: 'ctx' })
-        } else if (config.requirements.basic.following && !user.viewer_context.following) {
+        } else if (config.requirements.basic.following || config.requirements.basic.followed) {
+            const status = await checkFollowStatus(config.owner.fid, viewer.fid)
+            if (config.requirements.basic.following && !status.following) {
+                errors.push({ message: `follow @${config.username}`, type: 'follow' })
+            } else if (config.requirements.basic.followed && !status.followed_by) {
+                errors.push({
+                    message: `be followed by @${config.owner.username}`,
+                    type: 'follow',
+                })
+            }
             errors.push({ message: `follow @${config.username}`, type: 'follow' })
-        } else if (config.requirements.basic.follower && !user.viewer_context.followed_by) {
-            errors.push({
-                message: `be a follower of @${config.owner.username}`,
-                type: 'follow',
-            })
-        } else if (config.requirements.basic.power && !user.power_badge) {
+        } else if (config.requirements.basic.power && !viewer.power_badge) {
             errors.push({ message: 'power badge user', type: 'be' })
-        } else if (config.requirements.basic.eth && !user.verified_addresses.eth_addresses.length) {
+        } else if (
+            config.requirements.basic.eth &&
+            !viewer.verified_addresses.eth_addresses.length
+        ) {
             errors.push({ message: 'an ethereum', type: 'wallets' })
-        } else if (config.requirements.basic.sol && !user.verified_addresses.sol_addresses.length) {
+        } else if (
+            config.requirements.basic.sol &&
+            !viewer.verified_addresses.sol_addresses.length
+        ) {
             errors.push({ message: 'a solana', type: 'wallets' })
         }
     }
     if (!errors.length) {
-        if (config.requirements.maxFid > 0 && user.fid >= config.requirements.maxFid) {
+        if (config.requirements.maxFid > 0 && viewer.fid >= config.requirements.maxFid) {
             errors.push({
                 message: `an FID less than ${config.requirements.maxFid}`,
                 type: 'have',
             })
         } else if (config.requirements.score > 0) {
             const containsUserFID = await checkOpenRankScore(
-                user.fid,
+                viewer.fid,
                 config.owner.fid,
                 config.requirements.score
             )
@@ -84,7 +95,7 @@ export default async function page({
             config.requirements.channels.data.length
         ) {
             const channels = await checkFarcasterChannelsMembership(
-                user.fid,
+                viewer.fid,
                 config.requirements.channels.data
             )
 
@@ -98,7 +109,7 @@ export default async function page({
             //
             try {
                 const tokenInfo = await checkErcTokenOwnership({
-                    addresses: user.verified_addresses.eth_addresses,
+                    addresses: viewer.verified_addresses.eth_addresses,
                     chain: config.requirements.erc20.network,
                     contractAddress: config.requirements.erc20.address,
                     erc: '20',
@@ -132,7 +143,7 @@ export default async function page({
             //
             try {
                 const tokenInfo = await checkErcTokenOwnership({
-                    addresses: user.verified_addresses.eth_addresses,
+                    addresses: viewer.verified_addresses.eth_addresses,
                     chain: config.requirements.erc1155.network,
                     contractAddress: config.requirements.erc1155.address,
                     erc: '1155',
@@ -165,7 +176,7 @@ export default async function page({
             //
             try {
                 const tokenInfo = await checkErcTokenOwnership({
-                    addresses: user.verified_addresses.eth_addresses,
+                    addresses: viewer.verified_addresses.eth_addresses,
                     chain: config.requirements.erc721.network,
                     contractAddress: config.requirements.erc721.address,
                     erc: '721',
