@@ -4,17 +4,11 @@ import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/InputLabel'
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
 import { Switch } from '@/components/shadcn/Switch'
 import { Textarea } from '@/components/shadcn/Textarea'
 import { cn } from '@/lib/shadcn'
 import { ColorPicker, FontFamilyPicker, FontStylePicker } from '@/sdk/components'
+import { Select } from '@/sdk/components/Select'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useState } from 'react'
 import type { Config } from '../..'
@@ -132,15 +126,10 @@ export default function QnaForm({ qna, className, ...props }: Props) {
 
                 <Select
                     defaultValue={choicesType}
-                    onValueChange={(v: 'alpha' | 'numeric') => setChoicesType(v)}
+                    onChange={(v: 'alpha' | 'numeric') => setChoicesType(v)}
                 >
-                    <SelectTrigger>
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="alpha">Alphabets</SelectItem>
-                        <SelectItem value="numeric">Numbers</SelectItem>
-                    </SelectContent>
+                    <option value="alpha">Alphabets</option>
+                    <option value="numeric">Numbers</option>
                 </Select>
             </div>
             {qna.answers.length >= 2 && (

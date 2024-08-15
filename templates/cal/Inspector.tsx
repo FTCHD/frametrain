@@ -1,15 +1,9 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
 import { Switch } from '@/components/shadcn/Switch'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import { Select } from '@/sdk/components/Select'
 import { useFarcasterId, useFrameConfig, useResetPreview, useUploadImage } from '@/sdk/hooks'
 import { corsFetch } from '@/sdk/scrape'
 import { LoaderIcon, Trash } from 'lucide-react'
@@ -262,23 +256,18 @@ export default function Inspector() {
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold max-md:text-base">Choose Chain</h2>
                             <Select
-                                onValueChange={handleChainChange}
+                                onChange={handleChainChange}
                                 defaultValue={config.nftOptions.nftChain}
                             >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Chain" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="ETH">ETH</SelectItem>
-                                    <SelectItem value="BASE">BASE</SelectItem>
-                                    <SelectItem value="OP">OP</SelectItem>
-                                    <SelectItem value="ZORA">ZORA</SelectItem>
-                                    <SelectItem value="BLAST">BLAST</SelectItem>
-                                    <SelectItem value="POLYGON">POLYGON</SelectItem>
-                                    <SelectItem value="FANTOM">FANTOM</SelectItem>
-                                    <SelectItem value="ARBITRUM">ARBITRUM</SelectItem>
-                                    <SelectItem value="BNB">BNB</SelectItem>
-                                </SelectContent>
+                                <option value="ETH">ETH</option>
+                                <option value="BASE">BASE</option>
+                                <option value="OP">OP</option>
+                                <option value="ZORA">ZORA</option>
+                                <option value="BLAST">BLAST</option>
+                                <option value="POLYGON">POLYGON</option>
+                                <option value="FANTOM">FANTOM</option>
+                                <option value="ARBITRUM">ARBITRUM</option>
+                                <option value="BNB">BNB</option>
                             </Select>
                         </div>
                         <div className="flex flex-col gap-2 w-full">
@@ -287,15 +276,10 @@ export default function Inspector() {
                             </h2>
                             <Select
                                 defaultValue={config.nftOptions.nftType}
-                                onValueChange={handleNftTypeChange}
+                                onChange={handleNftTypeChange}
                             >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select NFT type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="ERC721">ERC721</SelectItem>
-                                    <SelectItem value="ERC1155">ERC1155</SelectItem>
-                                </SelectContent>
+                                <option value="ERC721">ERC721</option>
+                                <option value="ERC1155">ERC1155</option>
                             </Select>
                         </div>
 

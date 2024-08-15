@@ -1,12 +1,7 @@
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
+import {} from '@/components/shadcn/Select'
 import { useEffect, useMemo, useState } from 'react'
 import { getGoogleFonts } from '../fonts'
+import { Select } from './Select'
 
 export function FontFamilyPicker({
     defaultValue = 'Roboto',
@@ -143,19 +138,14 @@ export function FontFamilyPicker({
     }, [])
 
     const fontNames = useMemo(() => fonts.map((font) => font.name), [fonts])
-
+	
     return (
-        <Select defaultValue={defaultValue} onValueChange={onSelect}>
-            <SelectTrigger className="w-full">
-                <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-                {fontNames.map((font) => (
-                    <SelectItem key={font} value={font}>
-                        {font}
-                    </SelectItem>
-                ))}
-            </SelectContent>
+        <Select onChange={onSelect} defaultValue={defaultValue}>
+            {fontNames.map((font) => (
+                <option key={font} value={font}>
+                    {font}
+                </option>
+            ))}
         </Select>
     )
 }

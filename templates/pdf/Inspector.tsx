@@ -1,14 +1,8 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
 import { ColorPicker } from '@/sdk/components'
+import { Select } from '@/sdk/components/Select'
 import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
 import type { PDFPageProxy } from 'pdfjs-dist/types/web/interfaces'
@@ -203,15 +197,10 @@ export default function Inspector() {
                 <h2 className="text-lg font-semibold">Aspect Ratio</h2>
                 <Select
                     defaultValue={config.aspectRatio}
-                    onValueChange={(value) => updateConfig({ aspectRatio: value })}
+                    onChange={(value) => updateConfig({ aspectRatio: value })}
                 >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Aspect Ratio" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value={'1/1'}>Square</SelectItem>
-                        <SelectItem value={'1.91/1'}>Wide</SelectItem>
-                    </SelectContent>
+                    <option value={'1/1'}>Square</option>
+                    <option value={'1.91/1'}>Wide</option>
                 </Select>
             </div>
         </div>
