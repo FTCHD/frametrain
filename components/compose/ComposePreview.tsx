@@ -112,9 +112,12 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                 onFocusOutside={(e) => e.preventDefault()}
             >
                 <div
-                    className={`flex flex-col h-[${
-                        image.aspectRatio === '1:1' ? '360px' : '220px'
-                    }] justify-center items-center z-10 fixed bottom-0 right-0 min-w-[320px] mr-2`}
+                    className={
+                        'flex flex-col justify-center items-center z-10 fixed bottom-0 right-0 min-w-[320px] mr-2'
+                    }
+                    style={{
+                        height: image.aspectRatio === '1:1' ? '360px' : '220px',
+                    }}
                 >
                     <div
                         className="relative h-[75%] overflow-hidden"
