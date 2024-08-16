@@ -63,7 +63,7 @@ export async function buildFramePage({
                   .join('&')
             : ''
 
-    const metadata = buildFrame({
+    const metadata = await buildFrame({
         buttons,
         image: imageData,
         aspectRatio,
@@ -145,7 +145,7 @@ export async function buildPreviewFramePage({
                   .join('&')
             : ''
 
-    const metadata = buildFrame({
+    const metadata = await buildFrame({
         buttons,
         image: imageData,
         aspectRatio,
@@ -170,7 +170,7 @@ export async function buildPreviewFramePage({
     return frame
 }
 
-function buildFrame({
+export async function buildFrame({
     buttons,
     image,
     aspectRatio = '1.91:1',
@@ -194,7 +194,7 @@ function buildFrame({
 
     const metadata: Record<string, string> = {
         'fc:frame': version,
-        'og:image': image,
+        // 'og:image': image,
         'fc:frame:image': image,
         'fc:frame:image:aspect_ratio': aspectRatio,
         'fc:frame:post_url': postUrl,
