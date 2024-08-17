@@ -37,39 +37,32 @@ export default async function page({
     ]
 
     if (!config.owner) {
-        throw new FrameError('Frame not configured')
+        throw new FrameError('Frame Owner not configured')
     }
 
-    if (config.requirements?.basic) {
-        if (config.requirements.basic.casted && !cast.viewer_context.recasted) {
-            errors.push({ message: 'recast', type: 'ctx' })
-        } else if (config.requirements.basic.liked && !cast.viewer_context.liked) {
-            errors.push({ message: 'like', type: 'ctx' })
-        } else if (config.requirements.basic.following || config.requirements.basic.followed) {
-            const status = await checkFollowStatus(config.owner.fid, viewer.fid)
-            if (config.requirements.basic.following && !status.following) {
-                errors.push({ message: `follow @${config.username}`, type: 'follow' })
-            } else if (config.requirements.basic.followed && !status.followed_by) {
-                errors.push({
-                    message: `be followed by @${config.owner.username}`,
-                    type: 'follow',
-                })
-            }
+    if (config.requirements.recasted && !cast.viewer_context.recasted) {
+        errors.push({ message: 'recast', type: 'ctx' })
+    } else if (config.requirements.liked && !cast.viewer_context.liked) {
+        errors.push({ message: 'like', type: 'ctx' })
+    } else if (config.requirements.following || config.requirements.followedBy) {
+        const status = await checkFollowStatus(config.owner.fid, viewer.fid)
+        if (config.requirements.following && !status.following) {
             errors.push({ message: `follow @${config.username}`, type: 'follow' })
-        } else if (config.requirements.basic.power && !viewer.power_badge) {
-            errors.push({ message: 'power badge user', type: 'be' })
-        } else if (
-            config.requirements.basic.eth &&
-            !viewer.verified_addresses.eth_addresses.length
-        ) {
-            errors.push({ message: 'an ethereum', type: 'wallets' })
-        } else if (
-            config.requirements.basic.sol &&
-            !viewer.verified_addresses.sol_addresses.length
-        ) {
-            errors.push({ message: 'a solana', type: 'wallets' })
+        } else if (config.requirements.followedBy && !status.followed_by) {
+            errors.push({
+                message: `be followed by @${config.owner.username}`,
+                type: 'follow',
+            })
         }
+        errors.push({ message: `follow @${config.username}`, type: 'follow' })
+    } else if (config.requirements.powerBadge && !viewer.power_badge) {
+        errors.push({ message: 'power badge user', type: 'be' })
+    } else if (config.requirements.eth && !viewer.verified_addresses.eth_addresses.length) {
+        errors.push({ message: 'an ethereum', type: 'wallets' })
+    } else if (config.requirements.sol && !viewer.verified_addresses.sol_addresses.length) {
+        errors.push({ message: 'a solana', type: 'wallets' })
     }
+
     if (!errors.length) {
         if (config.requirements.maxFid > 0 && viewer.fid >= config.requirements.maxFid) {
             errors.push({
@@ -125,12 +118,7 @@ export default async function page({
                         })
                     }
                 }
-            } catch (error) {
-                console.error(
-                    `Error checking ERC-20 on ${config.requirements.erc20.network}`,
-                    error
-                )
-
+            } catch {
                 errors.push({ message: 'ERC-20 token', type: 'nft' })
             }
         } else if (

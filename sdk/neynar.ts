@@ -31,7 +31,7 @@ export async function getFarcasterProfiles(fids: string[]): Promise<FarcasterUse
     return users
 }
 
-export async function getFarcasterChannelbyName(id: string): Promise<FarcasterChannel | undefined> {
+export async function getFarcasterChannelbyName(id: string): Promise<FarcasterChannel> {
     const options = {
         method: 'GET',
         headers: {
@@ -41,17 +41,19 @@ export async function getFarcasterChannelbyName(id: string): Promise<FarcasterCh
         },
     }
 
-    const r = (await fetch(`${neynarApiBaseUrl}/farcaster/channel/search?q=${id}`, options)
+    const response = (await fetch(`${neynarApiBaseUrl}/farcaster/channel?id=${id}&type=id`, options)
         .then((response) => response.json())
-        .catch((err) => {
-            console.error(err)
+        .catch((_) => {
             return {
-                isValid: false,
-                message: undefined,
+                message: 'Error fetching channel',
             }
-        })) as { channels: FarcasterChannel[] }
+        })) as { channel: FarcasterChannel } | { message: string }
 
-    return r.channels.find((channel) => channel.id === id)
+    if ('message' in response) {
+        throw new Error(response.message)
+    }
+
+    return response.channel
 }
 
 export async function getFarcasterUserChannels(fid: number): Promise<FarcasterChannel[]> {
