@@ -269,7 +269,6 @@ export default function Inspector() {
             <div className="flex flex-col gap-4 w-full">
                 <h2 className="text-lg font-semibold">Requirements</h2>
                 <GatingOptions
-                    enabledOptions={['followedBy', 'following', 'channels']}
                     onUpdate={(option) => {
                         if (option.channels) {
                             updateConfig({

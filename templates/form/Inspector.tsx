@@ -31,26 +31,65 @@ import { useEffect, useRef, useState } from 'react'
 import { Trash } from 'react-feather'
 import toast from 'react-hot-toast'
 import type { Config, Storage, fieldTypes } from '.'
+import { Label } from '@/components/shadcn/Label'
+import { Switch } from '@/components/shadcn/Switch'
+import GatingOptions from '@/sdk/components/GatingOptions'
+import { corsFetch } from '@/sdk/scrape'
+import { useDebouncedCallback } from 'use-debounce'
 
 export default function Inspector() {
     const frameId = useFrameId()
     const storage = useFrameStorage() as Storage
     const [config, updateConfig] = useFrameConfig<Config>()
 
-    const [showModal, setShowModal] = useState(false)
+    const [enableGating, setEnableGating] = useState<boolean>(config.enableGating ?? false)
+    const [itemType, setItemType] = useState<string>('text')
+
     const fields: fieldTypes[] = config.fields
 
     const itemNameInputRef = useRef<HTMLInputElement>(null)
     const itemDescriptionInputRef = useRef<HTMLInputElement>(null)
     const itemExampleInputRef = useRef<HTMLInputElement>(null)
     const itemRequiredInputRef = useRef<HTMLInputElement>(null)
-    const [itemType, setItemType] = useState<string>('text')
 
     useEffect(() => {
         if (!config?.frameId || config.frameId === '') {
             updateConfig({ frameId: frameId })
         }
     }, [updateConfig, config.frameId, frameId])
+
+    const onChangeUsername = useDebouncedCallback(async (username: string) => {
+        if (username === '' || username === config.owner?.username) {
+            return
+        }
+
+        try {
+            const response = await corsFetch(
+                `https://api.warpcast.com/v2/user-by-username?username=${username}`
+            )
+
+            if (!response) return
+
+            const data = JSON.parse(response) as
+                | {
+                      result: { user: { fid: number; username: string } }
+                  }
+                | { errors: unknown[] }
+
+            if ('errors' in data) {
+                toast.error(`No FID associated with username ${username}`)
+                return
+            }
+            updateConfig({
+                owner: {
+                    fid: data.result.user.fid,
+                    username: data.result.user.username,
+                },
+            })
+        } catch {
+            toast.error('Failed to fetch FID')
+        }
+    }, 1000)
 
     return (
         <div className="w-full h-full space-y-4">
@@ -123,7 +162,15 @@ export default function Inspector() {
                     Download CSV
                 </Button>
             </div>
-
+            <div className="flex flex-col gap-2 w-full">
+                <h2 className="text-lg font-semibold">Your Farcaster username</h2>
+                <Input
+                    className="w-full"
+                    placeholder="eg. vitalik.eth"
+                    defaultValue={config.owner?.username}
+                    onChange={async (e) => onChangeUsername(e.target.value)}
+                />
+            </div>
             <div className="flex flex-col gap-2">
                 <h2 className="text-2xl font-semibold">Messages</h2>
 
@@ -398,6 +445,54 @@ export default function Inspector() {
                     />
                 </div>
             </div>
+
+            <div className="flex flex-row items-center justify-between gap-2 ">
+                <Label className="font-md" htmlFor="gating">
+                    Enable Form Gating?
+                </Label>
+                <Switch
+                    id="gating"
+                    checked={enableGating}
+                    onCheckedChange={(checked) => {
+                        if (checked && !config.owner) {
+                            toast.error(
+                                'Please configure your farcaster username before enabling Form Gating'
+                            )
+                            return
+                        }
+                        setEnableGating(checked)
+                    }}
+                />
+            </div>
+
+            {enableGating && config.gating && (
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg font-semibold">Form Gating options</h2>
+                    <GatingOptions
+                        onUpdate={(option) => {
+                            if (option.channels) {
+                                updateConfig({
+                                    gating: {
+                                        ...config.gating,
+                                        channels: {
+                                            ...(config.gating?.channels ?? {}),
+                                            data: option.channels.data,
+                                        },
+                                    },
+                                })
+                            } else {
+                                updateConfig({
+                                    gating: {
+                                        ...config.gating,
+                                        ...option,
+                                    },
+                                })
+                            }
+                        }}
+                        config={config.gating}
+                    />
+                </div>
+            )}
         </div>
     )
 }
@@ -427,4 +522,3 @@ function downloadCSV(storage: Storage, fileName: string, inputNames: string[]): 
     link.click()
     document.body.removeChild(link)
 }
-

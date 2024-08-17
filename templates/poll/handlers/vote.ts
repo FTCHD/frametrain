@@ -1,23 +1,44 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import ResultsView from '../views/Results'
+import { FrameError } from '@/sdk/error'
+import { validateGatingOptions } from '@/lib/gating'
 
 export default async function vote({
     body,
     config,
     storage,
 }: {
-    body: FrameActionPayload
+    body: FrameValidatedActionPayload
     config: Config
     storage: Storage
 }): Promise<BuildFrameData> {
-    const voter = body.untrustedData.fid.toString()
-    const buttonIndex = body.untrustedData.buttonIndex
+    const viewer = body.validatedData.interactor
+    const cast = body.validatedData.cast
+    const voter = viewer.fid.toString()
+    const buttonIndex = body.validatedData.tapped_button.index as number
     const pastIndex = storage.votesForId?.[voter]
 
     let newStorage = storage
+
+    if (config.enableGating && config.gating) {
+        if (!config.owner) {
+            throw new FrameError('Frame Owner Info not configured')
+        }
+
+        const validated = await validateGatingOptions({
+            user: config.owner,
+            option: config.gating,
+            cast: cast.viewer_context,
+            viewer,
+        })
+
+        if (validated !== null) {
+            throw new FrameError(validated.message)
+        }
+    }
 
     if (buttonIndex !== pastIndex) {
         // console.log('pastIndex', pastIndex)
@@ -43,10 +64,6 @@ export default async function vote({
             totalVotes: (storage?.totalVotes ?? 0) + (revertPastVote ? 0 : 1),
         })
     }
-
-    // console.log(voter)
-    // console.log(storage)
-    // console.log(newStorage)
 
     const totalVotes = newStorage.totalVotes
 

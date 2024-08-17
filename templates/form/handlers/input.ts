@@ -10,24 +10,43 @@ import InputView from '../views/Input'
 import SuccessView from '../views/Success'
 import about from './about'
 import initial from './initial'
+import { validateGatingOptions } from '@/lib/gating'
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export default async function input({
     body,
     config,
     storage,
-    params,
 }: {
     body: FrameValidatedActionPayload
     config: Config
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
-    const fid = body.validatedData.interactor.fid
+    const viewer = body.validatedData.interactor
+    const cast = body.validatedData.cast
+    const fid = viewer.fid
     const buttonIndex = body.validatedData.tapped_button.index
     const textInput = body.validatedData?.input?.text || ''
 
     let newStorage = storage
+
+    if (config.enableGating && config.gating) {
+        if (!config.owner) {
+            throw new FrameError('Frame Owner Info not configured')
+        }
+
+        const validated = await validateGatingOptions({
+            user: config.owner,
+            option: config.gating,
+            cast: cast.viewer_context,
+            viewer,
+        })
+
+        if (validated !== null) {
+            throw new FrameError(validated.message)
+        }
+    }
 
     if (!UsersState[fid]) {
         updateUserState(fid, { pageType: 'init', inputValues: [] })
