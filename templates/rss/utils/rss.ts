@@ -1,10 +1,6 @@
 import { parseFeed, Parser } from 'htmlparser2'
-import dayjs from 'dayjs'
-import LocalizedFormat from 'dayjs/plugin/localizedFormat'
-import advancedFormat from 'dayjs/plugin/advancedFormat'
-
-dayjs.extend(LocalizedFormat)
-dayjs.extend(advancedFormat)
+import { corsFetch } from '@/sdk/scrape'
+import { dayjs } from './dayjs'
 
 function extractText(html: string): string {
     let result = ''
@@ -20,10 +16,7 @@ function extractText(html: string): string {
 
 export interface RssFeed {
     title: string
-    updatedAt: {
-        formatted: string
-        unix: number
-    }
+    lastUpdated: number
     posts: {
         title: string
         link: string
@@ -33,33 +26,26 @@ export interface RssFeed {
     }[]
 }
 
-export type RssFeedIntro = Pick<RssFeed, 'title' | 'updatedAt'> & {
+export type RssFeedIntro = Pick<RssFeed, 'title' | 'lastUpdated'> & {
     total: number
 }
 
-export async function fetchRssFeedIntro(url: string): Promise<RssFeedIntro> {
-    const response = await fetch(url)
+export async function fetchRssFeedCover(url: string): Promise<RssFeedIntro> {
+    const content = await corsFetch(url)
 
-    if (!response.ok) {
+    if (!content) {
         throw new Error('Failed to fetch rss feed')
     }
 
-    const content = await response.text()
     const feed = parseFeed(content)
 
     if (feed === null) {
         throw new Error('Failed to parse feed')
     }
 
-    const date = dayjs(feed.updated)
-
     return {
         title: extractText(feed.title || ''),
-        updatedAt: {
-            formatted: date.format('dddd, MMMM Do @ LT'),
-            unix: date.unix(),
-        },
-
+        lastUpdated: new Date(feed.updated || '').getTime(),
         total: Array.isArray(feed.items) ? feed.items.length : 1,
     }
 }
@@ -88,14 +74,9 @@ export async function fetchRssFeed(url: string): Promise<RssFeed> {
         }
     })
 
-    const date = dayjs(feed.updated)
-
     return {
         title: extractText(feed.title || ''),
-        updatedAt: {
-            formatted: date.format('dddd, MMMM Do @ LT'),
-            unix: date.unix(),
-        },
+        lastUpdated: new Date(feed.updated || '').getTime(),
         posts,
     }
 }

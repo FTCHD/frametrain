@@ -1,39 +1,43 @@
 'use server'
+
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config } from '..'
+import type { Config, Storage } from '..'
 import CoverView from '../views/Cover'
-import { fetchRssFeedIntro, type RssFeedIntro } from '../rss'
-import { FrameError } from '@/sdk/error'
 
 export default async function initial({
     config,
+    params,
 }: {
     // GET requests don't have a body.
     config: Config
+    params?: {
+        info?: {
+            title: string
+            total: number
+            lastUpdated: number
+        }
+    }
+    storage?: Storage
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    let feed: RssFeedIntro | null = null
+    const info = params?.info || config.info || null
     const buttons: FrameButtonMetadata[] = []
 
-    try {
-        if (config.rssUrl) {
-            feed = await fetchRssFeedIntro(config.rssUrl)
-
-            buttons.push({
+    if (config.rssUrl && info) {
+        buttons.push(
+            { label: 'Refresh' },
+            {
                 label: 'Read',
-            })
-        }
-    } catch (e) {
-        console.error('Failed to fetch rss feed', e)
-        throw new FrameError('An error occurred while fetching rss feed')
+            }
+        )
     }
 
     return {
         buttons,
         fonts: roboto,
-        component: CoverView(feed),
+        component: CoverView(info),
         handler: 'post',
-        params: feed ? { lastUpdated: feed.updatedAt.unix } : undefined,
+        params: info ? { lastUpdated: info.lastUpdated, initial: true } : undefined,
     }
 }

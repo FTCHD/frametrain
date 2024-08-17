@@ -2,10 +2,11 @@
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
-import { fetchRssFeed, fetchRssFeedIntro, type RssFeed } from '../rss'
+import { fetchRssFeed, fetchRssFeedCover, type RssFeed } from '../utils/rss'
 import PostView from '../views/Post'
 import initial from './initial'
 import { FrameError } from '@/sdk/error'
+import { dayjs } from '../utils/dayjs'
 
 export default async function post({
     body,
@@ -28,7 +29,19 @@ export default async function post({
     let lastUpdated: number | null =
         params?.lastUpdated === undefined ? null : Number.parseInt(params.lastUpdated)
 
-    if (!config.rssUrl || (buttonIndex === 1 && params?.currentPage)) {
+    if (!config.rssUrl || buttonIndex === 1) {
+        const diff = dayjs().diff(dayjs(lastUpdated), 'minute')
+        if (buttonIndex === 1 && params?.initial && diff > 10) {
+            const info = await fetchRssFeedCover(`${config.rssUrl}`)
+            return initial({
+                config,
+                params: { info },
+                storage: {
+                    ...newStorage,
+                    [fid]: {},
+                },
+            })
+        }
         return initial({ config })
     }
 
@@ -46,12 +59,12 @@ export default async function post({
                     [config.rssUrl]: feed,
                 },
             }
-            lastUpdated = feed.updatedAt.unix
+            lastUpdated = feed.lastUpdated
         } else {
             // making sure to not fetch the feed again if it hasn't been updated
             if (
-                !(Number.isNaN(lastUpdated) && Number.isNaN(existingPosts.updatedAt?.unix)) &&
-                lastUpdated === existingPosts.updatedAt.unix
+                !(Number.isNaN(lastUpdated) && Number.isNaN(existingPosts.lastUpdated)) &&
+                lastUpdated === existingPosts.lastUpdated
             ) {
                 feed = existingPosts
             } else {
@@ -63,7 +76,7 @@ export default async function post({
                         [config.rssUrl]: feed,
                     },
                 }
-                lastUpdated = feed.updatedAt.unix
+                lastUpdated = feed.lastUpdated
             }
         }
     } catch {
@@ -75,7 +88,7 @@ export default async function post({
     } else {
         nextPage =
             params?.currentPage !== undefined
-                ? buttonIndex === 1
+                ? buttonIndex === 2
                     ? Number(params.currentPage) - 1
                     : Number(params.currentPage) + 1
                 : 1

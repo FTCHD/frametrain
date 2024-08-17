@@ -1,10 +1,10 @@
-import type { RssFeed } from '../rss'
+import type { RssFeed } from '../utils/rss'
 
 export default function PostView({
     post,
     postIndex,
     total,
-}: { post: RssFeed['body'][number]; postIndex: number; total: number }) {
+}: { post: RssFeed['posts'][number]; postIndex: number; total: number }) {
     const description = (post?.content || post.description).trim()
     return (
         <div

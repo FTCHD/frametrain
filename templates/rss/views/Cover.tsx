@@ -1,4 +1,5 @@
-import type { RssFeedIntro } from '../rss'
+import { dayjs } from '../utils/dayjs'
+import type { RssFeedIntro } from '../utils/rss'
 
 export default function CoverView(info: RssFeedIntro | null) {
     if (info) {
@@ -45,7 +46,7 @@ export default function CoverView(info: RssFeedIntro | null) {
                         fontWeight: 'medium',
                     }}
                 >
-                    Last updated: {info.updatedAt.formatted}
+                    Last updated: {dayjs(info.lastUpdated).format('dddd, MMMM Do @ LT')}
                 </span>
             </div>
         )
