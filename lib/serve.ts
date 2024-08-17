@@ -1,6 +1,7 @@
 'use server'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { ImageResponse } from '@vercel/og'
+import { unstable_cache } from 'next/cache'
 import type { ReactElement } from 'react'
 import sharp from 'sharp'
 import type {
@@ -11,68 +12,68 @@ import type {
 } from './farcaster'
 import type { BaseStorage } from './types'
 
-export async function buildFramePage({
-    id,
-    buttons,
-    aspectRatio,
-    inputText,
-    refreshPeriod,
-    params,
-    storage,
-    fonts,
-    component,
-    image,
-    handler,
-    linkedPage,
-}: {
-    id: string
-    linkedPage: string | undefined
-} & BuildFrameData) {
-    if (!component && !image) {
-        throw new Error('Either component or image must be provided')
-    }
-
-    let imageData
-
-    if (component) {
-        const renderedImage = new ImageResponse(component, {
-            ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
-            fonts,
-        })
-
-        // get image data from vercel/og ImageResponse
-        const bufferData = await renderedImage.arrayBuffer()
-
-        // compress using sharp
-        const compressedData = await sharp(bufferData)
-            .png({
-                quality: 40,
-            })
-            .timeout({ seconds: 1 })
-            .toBuffer()
-
-        imageData = 'data:image/png;base64,' + compressedData.toString('base64')
-    } else {
-        imageData = image!
-    }
-
-    const searchParams =
-        params !== undefined
-            ? Object.entries(params)
-                  .map(([key, value]) => `${key}=${value}`)
-                  .join('&')
-            : ''
-
-    const metadata = await buildFrame({
+export const buildFramePage = unstable_cache(
+    async ({
+        id,
         buttons,
-        image: imageData,
         aspectRatio,
         inputText,
         refreshPeriod,
-        postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${handler}` + '?' + searchParams,
-    })
+        params,
+        fonts,
+        component,
+        image,
+        handler,
+        linkedPage,
+    }: {
+        id: string
+        linkedPage: string | undefined
+    } & BuildFrameData) => {
+        if (!component && !image) {
+            throw new Error('Either component or image must be provided')
+        }
 
-    const frame = `<html lang="en">
+        let imageData
+
+        if (component) {
+            const renderedImage = new ImageResponse(component, {
+                ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+                fonts,
+            })
+
+            // get image data from vercel/og ImageResponse
+            const bufferData = await renderedImage.arrayBuffer()
+
+            // compress using sharp
+            const compressedData = await sharp(bufferData)
+                .png({
+                    quality: 40,
+                })
+                .timeout({ seconds: 1 })
+                .toBuffer()
+
+            imageData = 'data:image/png;base64,' + compressedData.toString('base64')
+        } else {
+            imageData = image!
+        }
+
+        const searchParams =
+            params !== undefined
+                ? Object.entries(params)
+                      .map(([key, value]) => `${key}=${value}`)
+                      .join('&')
+                : ''
+
+        const metadata = await buildFrame({
+            buttons,
+            image: imageData,
+            aspectRatio,
+            inputText,
+            refreshPeriod,
+            postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${handler}` + '?' + searchParams,
+        })
+
+        const frame = `<html lang="en">
 	<head>
 		${Object.keys(metadata)
             .map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
@@ -91,8 +92,13 @@ export async function buildFramePage({
 	</html>
 	`
 
-    return frame
-}
+        return frame
+    },
+    [],
+    {
+        revalidate: 60,
+    }
+)
 
 export async function buildPreviewFramePage({
     id,
