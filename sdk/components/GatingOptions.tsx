@@ -26,42 +26,40 @@ export type GatingERCType = {
     collection?: string
 }
 type GatingConfig = {
-    followed: boolean
+    channels: { checked: boolean; data: string[] }
+    followedBy: boolean
     following: boolean
     liked: boolean
-    casted: boolean
+    recasted: boolean
     eth: boolean
     sol: boolean
-    power: boolean
-    channels: { checked: boolean; data: string[] }
+    powerBadge: boolean
     maxFid: number
     score: number
     erc20: GatingERCType | null
     erc721: GatingERCType | null
     erc1155: GatingERCType | null
-    viewer: { fid: number; username: string } | null
 }
 type GatingTypes =
-    | 'followed'
+    | 'followedBy'
     | 'following'
     | 'liked'
-    | 'casted'
+    | 'recasted'
     | 'eth'
     | 'sol'
-    | 'power'
+    | 'powerBadge'
     | 'channels'
     | 'maxFid'
     | 'score'
     | 'erc20'
     | 'erc721'
     | 'erc1155'
-    | 'viewer'
 
 type Options = GatingTypes
 
-type GatingOptionsProps = {
+export type GatingOptionsProps = {
     config: GatingConfig
-    onUpdate: (updatedGatingConfig: GatingConfig) => void
+    onUpdate: (updatedGatingConfig: Partial<GatingConfig>) => void
     enabledOptions?: Options[]
 }
 
@@ -200,39 +198,21 @@ export default function GatingOptions({
 }: GatingOptionsProps) {
     const [addingChannel, setAddingChannel] = useState(false)
     const channelInputRef = useRef<HTMLInputElement>(null)
-    const [selectedOptions, setSelectedOptions] = useState<Record<string, boolean>>(
-        config
-            ? {
-                  liked: config.liked,
-                  recasted: config.casted,
-                  followed: config.followed,
-                  following: config.following,
-                  power: config.power,
-                  eth: config.eth,
-                  sol: config.sol,
-                  channels: config.channels.data.length > 0 || config.channels.checked,
-                  fid: (config.maxFid || 0) > 0,
-                  score: config.score > 0,
-                  erc721: Boolean(config.erc721),
-                  erc1155: Boolean(config.erc1155),
-                  erc20: Boolean(config.erc20),
-              }
-            : {
-                  liked: false,
-                  recasted: false,
-                  followed: false,
-                  following: false,
-                  power: false,
-                  eth: false,
-                  sol: false,
-                  channels: false,
-                  fid: false,
-                  score: false,
-                  erc721: false,
-                  erc1155: false,
-                  erc20: false,
-              }
-    )
+    const [selectedOptions, setSelectedOptions] = useState<Record<string, boolean>>({
+        liked: config.liked,
+        recasted: config.recasted,
+        followedBy: config.followedBy,
+        following: config.following,
+        powerBadge: config.powerBadge,
+        eth: config.eth,
+        sol: config.sol,
+        channels: config.channels.data.length > 0 && config.channels.checked,
+        fid: config.maxFid > 0,
+        score: config.score > 0,
+        erc721: Boolean(config.erc721),
+        erc1155: Boolean(config.erc1155),
+        erc20: Boolean(config.erc20),
+    })
 
     const requirements: {
         key: string
@@ -252,25 +232,25 @@ export default function GatingOptions({
             key: 'recasted',
             label: 'Must Recast',
             isBasic: true,
-            enabled: enabledOptions.includes('casted'),
-        },
-        {
-            key: 'followed',
-            label: 'Must Follow Me',
-            isBasic: true,
-            enabled: enabledOptions.includes('followed'),
+            enabled: enabledOptions.includes('recasted'),
         },
         {
             key: 'following',
-            label: 'Must be Someone I Follow',
+            label: 'Must Follow Me',
             isBasic: true,
             enabled: enabledOptions.includes('following'),
         },
         {
-            key: 'power',
+            key: 'followedBy',
+            label: 'Must be Someone I Follow',
+            isBasic: true,
+            enabled: enabledOptions.includes('followedBy'),
+        },
+        {
+            key: 'powerBadge',
             label: 'Must have a Power Badge',
             isBasic: true,
-            enabled: enabledOptions.includes('power'),
+            enabled: enabledOptions.includes('powerBadge'),
         },
         {
             key: 'eth',
@@ -290,13 +270,14 @@ export default function GatingOptions({
             isBasic: false,
             enabled: enabledOptions.includes('channels'),
             onChange: (checked: boolean) => {
-                onUpdate({
-                    ...config,
-                    channels: {
-                        ...config.channels,
-                        checked,
-                    },
-                })
+                if (!checked) {
+                    onUpdate({
+                        channels: {
+                            checked,
+                            data: config.channels.data,
+                        },
+                    })
+                }
             },
             children: (
                 <>
@@ -319,22 +300,17 @@ export default function GatingOptions({
                                 setAddingChannel(true)
 
                                 try {
-                                    const channelInfo = await getFarcasterChannelbyName(channel)
-
-                                    if (!channelInfo) {
-                                        toast.error(`No channel found with name ${channel}`)
-                                        return
-                                    }
+                                    await getFarcasterChannelbyName(channel)
 
                                     onUpdate({
-                                        ...config,
                                         channels: {
                                             ...config.channels,
-                                            data: [...(config.channels.data || []), channel],
+                                            data: [...config.channels.data, channel],
                                         },
                                     })
 
                                     channelInputRef.current.value = ''
+                                    toast.success('Channel added successfully')
                                 } catch {
                                     toast.error('Failed to fetch channel')
                                 } finally {
@@ -364,7 +340,6 @@ export default function GatingOptions({
                                         variant={'destructive'}
                                         onClick={() =>
                                             onUpdate({
-                                                ...config,
                                                 channels: {
                                                     ...config.channels,
                                                     data: [
@@ -407,7 +382,7 @@ export default function GatingOptions({
                                     ...selectedOptions,
                                     fid: maxFid > 0,
                                 })
-                                onUpdate({ ...config, maxFid })
+                                onUpdate({ maxFid })
                             }}
                         />
                     </div>
@@ -440,7 +415,7 @@ export default function GatingOptions({
                                     ...selectedOptions,
                                     score: score > 0,
                                 })
-                                onUpdate({ ...config, score })
+                                onUpdate({ score })
                             }}
                         />
                     </div>
@@ -462,7 +437,6 @@ export default function GatingOptions({
             onChange(value) {
                 if (!value) {
                     onUpdate({
-                        ...config,
                         erc721: null,
                     })
                 }
@@ -478,7 +452,6 @@ export default function GatingOptions({
                     }}
                     onChange={(erc721) => {
                         onUpdate({
-                            ...config,
                             erc721,
                         })
                     }}
@@ -493,7 +466,6 @@ export default function GatingOptions({
             onChange(value) {
                 if (!value) {
                     onUpdate({
-                        ...config,
                         erc1155: null,
                     })
                 }
@@ -510,7 +482,6 @@ export default function GatingOptions({
                     }}
                     onChange={(erc1155) => {
                         onUpdate({
-                            ...config,
                             erc1155,
                         })
                     }}
@@ -525,7 +496,6 @@ export default function GatingOptions({
             onChange(value) {
                 if (!value) {
                     onUpdate({
-                        ...config,
                         erc20: null,
                     })
                 }
@@ -542,7 +512,6 @@ export default function GatingOptions({
                     }}
                     onChange={(erc20) => {
                         onUpdate({
-                            ...config,
                             erc20,
                         })
                     }}
@@ -551,7 +520,6 @@ export default function GatingOptions({
         },
     ]
     const options = requirements.filter((op) => op.enabled)
-    const enableUsername = enabledOptions.includes('followed')
 
     return (
         <div className="flex flex-col gap-4 w-full">
@@ -569,7 +537,6 @@ export default function GatingOptions({
 
                                 if (option.isBasic) {
                                     onUpdate({
-                                        ...config,
                                         [option.key]: checked,
                                     })
                                 } else {

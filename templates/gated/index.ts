@@ -2,7 +2,7 @@ import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
-import type { GatingERCType } from '@/sdk/components/GatingOptions'
+import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
 
 export interface Config extends BaseConfig {
     owner: {
@@ -14,23 +14,7 @@ export interface Config extends BaseConfig {
     rewardMessage: string | null
     rewardImage: string | null
     links: string[]
-    requirements: {
-        basic: {
-            followed: boolean
-            following: boolean
-            liked: boolean
-            casted: boolean
-            eth: boolean
-            sol: boolean
-            power: boolean
-        }
-        channels: { checked: boolean; data: string[] }
-        maxFid: number
-        score: number
-        erc20: GatingERCType | null
-        erc721: GatingERCType | null
-        erc1155: GatingERCType | null
-    }
+    requirements: GatingOptionsProps['config']
 }
 
 export interface Storage extends BaseStorage {}
@@ -45,26 +29,24 @@ export default {
     Inspector,
     handlers,
     initialConfig: {
-        username: null,
+        owner: null,
         welcomeText: null,
         rewardMessage: null,
         label: null,
         rewardImage: null,
         links: [],
         requirements: {
-            basic: {
-                followed: false,
-                following: false,
-                liked: false,
-                casted: false,
-                eth: false,
-                sol: false,
-                power: false,
-            },
             channels: {
                 checked: false,
                 data: [],
             },
+            followedBy: false,
+            following: false,
+            liked: false,
+            recasted: false,
+            eth: false,
+            sol: false,
+            powerBadge: false,
             maxFid: 0,
             score: 0,
             erc20: null,

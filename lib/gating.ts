@@ -154,8 +154,8 @@ export async function checkFarcasterChannelsMembership(fid: number, channels: st
 
 export async function checkFollowStatus(userFid: number, viewerFid: number) {
     try {
-        const response = (await fetch(
-            `${neynarApiBaseUrl}/farcaster/user/bulk?fids=${userFid}&viewer_fids=${viewerFid}`,
+        const request = await fetch(
+            `${neynarApiBaseUrl}/farcaster/user/bulk?fids=${userFid}&viewer_fid=${viewerFid}`,
             {
                 method: 'GET',
                 headers: {
@@ -165,16 +165,9 @@ export async function checkFollowStatus(userFid: number, viewerFid: number) {
                 },
             }
         )
-            .then((response) => response.json())
-            .catch((err) => {
-                console.error(err)
-                return {
-                    isValid: false,
-                    message: undefined,
-                }
-            })) as { users: FarcasterUserInfo[] }
+        const response = await request.json()
 
-        return response.users[0].viewer_context!
+        return response.users[0].viewer_context
     } catch {
         return {
             'following': false,
