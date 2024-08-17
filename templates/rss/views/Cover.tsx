@@ -45,7 +45,7 @@ export default function CoverView(info: RssFeedIntro | null) {
                         fontWeight: 'medium',
                     }}
                 >
-                    Last updated: {info.updatedAt}
+                    Last updated: {info.lastUpdated.human}
                 </span>
             </div>
         )

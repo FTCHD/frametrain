@@ -3,6 +3,7 @@ import { Input } from '@/components/shadcn/Input'
 import { useFrameConfig } from '@/sdk/hooks'
 import { useEffect, useRef } from 'react'
 import type { Config } from '.'
+import { fetchRssFeedCover } from './utils/rss'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -24,13 +25,15 @@ export default function Inspector() {
                     <Input
                         className="py-2 text-lg"
                         ref={rssUrlRef}
-                        onChange={(e) => {
+                        onChange={async (e) => {
                             const rssUrl = e.target.value
 
                             if (!rssUrl.length) {
+                                updateConfig({ rssUrl: null })
                                 return
                             }
-                            updateConfig({ rssUrl })
+                            const info = await fetchRssFeedCover(rssUrl)
+                            updateConfig({ rssUrl, info })
                         }}
                     />
                 </div>

@@ -1,10 +1,6 @@
-import dayjs from 'dayjs'
-import advancedFormat from 'dayjs/plugin/advancedFormat'
-import LocalizedFormat from 'dayjs/plugin/localizedFormat'
-import { Parser, parseFeed } from 'htmlparser2'
-
-dayjs.extend(LocalizedFormat)
-dayjs.extend(advancedFormat)
+import { parseFeed, Parser } from 'htmlparser2'
+import { corsFetch } from '@/sdk/scrape'
+import { dayjs } from './dayjs'
 
 function extractText(html: string): string {
     let result = ''
@@ -20,10 +16,7 @@ function extractText(html: string): string {
 
 export interface RssFeed {
     title: string
-    lastUpdated: {
-        ts: number
-        human: string
-    }
+    lastUpdated: number
     posts: {
         title: string
         link: string
@@ -37,14 +30,13 @@ export type RssFeedIntro = Pick<RssFeed, 'title' | 'lastUpdated'> & {
     total: number
 }
 
-export async function fetchRssFeedIntro(url: string): Promise<RssFeedIntro> {
-    const response = await fetch(url)
+export async function fetchRssFeedCover(url: string): Promise<RssFeedIntro> {
+    const content = await corsFetch(url)
 
-    if (!response.ok) {
+    if (!content) {
         throw new Error('Failed to fetch rss feed')
     }
 
-    const content = await response.text()
     const feed = parseFeed(content)
 
     if (feed === null) {
@@ -53,10 +45,7 @@ export async function fetchRssFeedIntro(url: string): Promise<RssFeedIntro> {
 
     return {
         title: extractText(feed.title || ''),
-        lastUpdated: {
-            ts: dayjs(feed.updated).valueOf(),
-            human: dayjs(feed.updated).format('dddd, MMMM Do @ LT'),
-        },
+        lastUpdated: new Date(feed.updated || '').getTime(),
         total: Array.isArray(feed.items) ? feed.items.length : 1,
     }
 }
@@ -87,10 +76,7 @@ export async function fetchRssFeed(url: string): Promise<RssFeed> {
 
     return {
         title: extractText(feed.title || ''),
-        lastUpdated: {
-            ts: dayjs(feed.updated).valueOf(),
-            human: dayjs(feed.updated).format('dddd, MMMM Do @ LT'),
-        },
+        lastUpdated: new Date(feed.updated || '').getTime(),
         posts,
     }
 }

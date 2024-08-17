@@ -54,7 +54,7 @@ export default async function post({
     } else {
         nextPage =
             params?.currentPage !== undefined
-                ? buttonIndex === 1
+                ? buttonIndex === 2
                     ? Number(params.currentPage) - 1
                     : Number(params.currentPage) + 1
                 : 1

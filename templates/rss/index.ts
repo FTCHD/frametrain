@@ -5,7 +5,15 @@ import cover from './cover.jpeg'
 import handlers from './handlers'
 
 export interface Config extends BaseConfig {
-    rssUrl: string | undefined
+    rssUrl: string | null
+    info: {
+        title: string
+        total: number
+        lastUpdated: {
+            ts: number
+            human: string
+        }
+    }
 }
 
 export interface Storage extends BaseStorage {
@@ -22,6 +30,10 @@ export default {
     enabled: true,
     Inspector,
     handlers,
+    initialConfig: {
+        rssUrl: null,
+        info: null,
+    },
     requiresValidation: false,
     events: [],
 } satisfies BaseTemplate
