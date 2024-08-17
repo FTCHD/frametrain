@@ -60,7 +60,7 @@ type Options = GatingTypes
 export type GatingOptionsProps = {
     config: GatingConfig
     onUpdate: (updatedGatingConfig: Partial<GatingConfig>) => void
-    enabledOptions?: Options[]
+    enabledOptions?: Options[] | 'all'
 }
 
 const TokenGating = ({
@@ -194,7 +194,7 @@ const TokenGating = ({
 export default function GatingOptions({
     config,
     onUpdate,
-    enabledOptions = ['following'],
+    enabledOptions = 'all',
 }: GatingOptionsProps) {
     const [addingChannel, setAddingChannel] = useState(false)
     const channelInputRef = useRef<HTMLInputElement>(null)
@@ -519,7 +519,7 @@ export default function GatingOptions({
             ),
         },
     ]
-    const options = requirements.filter((op) => op.enabled)
+    const options = requirements.filter((op) => (enabledOptions === 'all' ? true : op.enabled))
 
     return (
         <div className="flex flex-col gap-4 w-full">
