@@ -176,75 +176,77 @@ export async function buildPreviewFramePage({
     return frame
 }
 
-export async function buildFrame({
-    buttons,
-    image,
-    aspectRatio = '1.91:1',
-    inputText,
-    postUrl,
-    refreshPeriod,
-    version = 'vNext',
-}: {
-    buttons: FrameButtonMetadata[]
-    image: string
-    aspectRatio?: '1.91:1' | '1:1'
-    inputText?: string
-    postUrl: string
-    refreshPeriod?: number
-    version?: string
-}) {
-    // Regular expression to match the pattern YYYY-MM-DD
-    if (!(version === 'vNext' || /^\d{4}-\d{2}-\d{2}$/.test(version))) {
-        throw new Error('Invalid version.')
-    }
-
-    const metadata: Record<string, string> = {
-        'fc:frame': version,
-        // 'og:image': image,
-        'fc:frame:image': image,
-        'fc:frame:image:aspect_ratio': aspectRatio,
-        'fc:frame:post_url': postUrl,
-    }
-
-    if (inputText) {
-        if (inputText.length > 32) {
-            throw new Error('Input text exceeds maximum length of 32 bytes.')
+export const buildFrame = unstable_cache(
+    async ({
+        buttons,
+        image,
+        aspectRatio = '1.91:1',
+        inputText,
+        postUrl,
+        refreshPeriod,
+        version = 'vNext',
+    }: {
+        buttons: FrameButtonMetadata[]
+        image: string
+        aspectRatio?: '1.91:1' | '1:1'
+        inputText?: string
+        postUrl: string
+        refreshPeriod?: number
+        version?: string
+    }) => {
+        // Regular expression to match the pattern YYYY-MM-DD
+        if (!(version === 'vNext' || /^\d{4}-\d{2}-\d{2}$/.test(version))) {
+            throw new Error('Invalid version.')
         }
-        metadata['fc:frame:input:text'] = inputText
-    }
 
-    if (buttons) {
-        if (buttons.length > 4) {
-            throw new Error('Maximum of 4 buttons allowed.')
+        const metadata: Record<string, string> = {
+            'fc:frame': version,
+            // 'og:image': image,
+            'fc:frame:image': image,
+            'fc:frame:image:aspect_ratio': aspectRatio,
+            'fc:frame:post_url': postUrl,
         }
-        buttons.forEach((button: FrameButtonMetadata, index: number) => {
-            if (!button.label || button.label.length > 256) {
-                throw new Error('Button label is required and must be maximum of 256 bytes.')
+
+        if (inputText) {
+            if (inputText.length > 32) {
+                throw new Error('Input text exceeds maximum length of 32 bytes.')
             }
-            metadata[`fc:frame:button:${index + 1}`] = button.label
-            if (button.action) {
-                if (!['post', 'post_redirect', 'mint', 'link', 'tx'].includes(button.action)) {
-                    throw new Error('Invalid button action.')
+            metadata['fc:frame:input:text'] = inputText
+        }
+
+        if (buttons) {
+            if (buttons.length > 4) {
+                throw new Error('Maximum of 4 buttons allowed.')
+            }
+            buttons.forEach((button: FrameButtonMetadata, index: number) => {
+                if (!button.label || button.label.length > 256) {
+                    throw new Error('Button label is required and must be maximum of 256 bytes.')
                 }
-                metadata[`fc:frame:button:${index + 1}:action`] = button.action
-            } else {
-                metadata[`fc:frame:button:${index + 1}:action`] = 'post' // Default action
-            }
-            if (button.target) {
-                metadata[`fc:frame:button:${index + 1}:target`] = button.target
-            }
-        })
-    }
-
-    if (refreshPeriod) {
-        if (refreshPeriod < 0) {
-            throw new Error('Refresh period must be a positive number.')
+                metadata[`fc:frame:button:${index + 1}`] = button.label
+                if (button.action) {
+                    if (!['post', 'post_redirect', 'mint', 'link', 'tx'].includes(button.action)) {
+                        throw new Error('Invalid button action.')
+                    }
+                    metadata[`fc:frame:button:${index + 1}:action`] = button.action
+                } else {
+                    metadata[`fc:frame:button:${index + 1}:action`] = 'post' // Default action
+                }
+                if (button.target) {
+                    metadata[`fc:frame:button:${index + 1}:target`] = button.target
+                }
+            })
         }
-        metadata['fc:frame:refresh_period'] = refreshPeriod.toString()
-    }
 
-    return metadata
-}
+        if (refreshPeriod) {
+            if (refreshPeriod < 0) {
+                throw new Error('Refresh period must be a positive number.')
+            }
+            metadata['fc:frame:refresh_period'] = refreshPeriod.toString()
+        }
+
+        return metadata
+    }
+)
 
 export async function validatePayload(
     body: FrameActionPayload
