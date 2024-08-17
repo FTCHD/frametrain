@@ -1,7 +1,6 @@
 'use server'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { ImageResponse } from '@vercel/og'
-import type { ReactElement } from 'react'
 import sharp from 'sharp'
 import type {
     BuildFrameData,
@@ -9,7 +8,6 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from './farcaster'
-import type { BaseStorage } from './types'
 
 export async function buildFramePage({
     id,
@@ -106,17 +104,7 @@ export async function buildPreviewFramePage({
     handler,
 }: {
     id: string
-    buttons: FrameButtonMetadata[]
-    aspectRatio: '1.91:1' | '1:1'
-    inputText?: string
-    refreshPeriod?: number
-    params?: any
-    storage?: BaseStorage
-    fonts?: any[]
-    component: ReactElement
-    image: string
-    handler?: string
-}) {
+} & BuildFrameData) {
     if (!component && !image) {
         throw new Error('Either component or image must be provided')
     }
