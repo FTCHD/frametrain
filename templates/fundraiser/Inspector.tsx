@@ -1,7 +1,7 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { type ReactNode, useRef, useState } from 'react'
 import type { Config } from '.'
 import { Separator } from '@/components/shadcn/Separator'
@@ -73,7 +73,6 @@ function sidebarNavItems(obj: {
 }
 
 export default function Inspector() {
-    const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const [activeTab, setActiveTab] = useState<NavBarItem['key']>('fundraise')
 

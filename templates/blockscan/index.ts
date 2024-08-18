@@ -3,9 +3,12 @@ import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
 import type { SerializableConfig } from './utils/etherscan'
+import type { TextSlideProps } from '@/sdk/components/TextSlide'
 
 export interface Config extends BaseConfig {
     etherscan: SerializableConfig | null
+    coverImage?: string
+    coverText?: TextSlideProps
 }
 
 export interface Storage extends BaseStorage {

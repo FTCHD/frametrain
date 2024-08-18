@@ -91,16 +91,7 @@ export default async function simulate({
     })
 
     const isLastFunction = signatureIndex === abiString.length
-    console.log(`simulate handler >> signatureIndex: ${signatureIndex}`, {
-        textInput,
-        total: abiString.length,
-        signatureIndex,
-        params,
-        args,
-        newStorage,
-        isLastFunction,
-        nextIndex: signatureIndex + 1,
-    })
+
     let result: string | null = null
 
     switch (buttonIndex) {
@@ -113,7 +104,6 @@ export default async function simulate({
                     args,
                     address: config.etherscan.address,
                 })
-                console.log('smulate >> simulation', simulation)
                 if (typeof simulation.result !== undefined) {
                     result = Array.isArray(simulation.result)
                         ? (simulation.result as unknown[]).join('\n')
@@ -134,8 +124,6 @@ export default async function simulate({
                     )
                     if (revertError instanceof ContractFunctionRevertedError) {
                         throw new FrameError(revertError.shortMessage)
-
-                        // do something with `errorName`
                     }
                 }
                 const error = e as Error
@@ -145,7 +133,6 @@ export default async function simulate({
         }
         default: {
             let nextIndex = 1
-            // nextIndex = buttonIndex === 1 ? Number(params.currentIndex) : signatureIndex + 1
             if (buttonIndex === 1) {
                 nextIndex = signatureIndex === 0 ? abiString.length - 1 : signatureIndex - 1
             } else {

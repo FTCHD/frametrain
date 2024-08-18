@@ -1,6 +1,4 @@
-import type { Config } from '..'
-
-export default function CoverView(config: Config) {
+export default function CoverView() {
     return (
         <div
             style={{
@@ -16,9 +14,7 @@ export default function CoverView(config: Config) {
                 color: '#ffffff',
             }}
         >
-            {config.etherscan
-                ? 'Press "START" to begin your journey'
-                : 'Enter a contract address url to get started'}
+            Enter a contract address url to get started
         </div>
     )
 }
