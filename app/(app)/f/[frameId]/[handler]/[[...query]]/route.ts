@@ -56,12 +56,7 @@ export async function POST(
         notFound()
     }
 
-    if (frame.config?.airstackKey) {
-        const valid = await validatePayloadAirstack(body, frame.config.airstackKey)
-        if (!valid) {
-            throw new Error('PAYLOAD NOT VALID')
-        }
-    }
+  
 
     if (template.requiresValidation) {
         const validatedBody = await validatePayload(body)
@@ -108,7 +103,7 @@ export async function POST(
         ...(buildParameters as BuildFrameData),
     })
 
-    waitUntil(processFrame(frame, buildParameters))
+    waitUntil(processFrame(frame, buildParameters, body))
 
     return new Response(renderedFrame, {
         headers: {
@@ -117,7 +112,11 @@ export async function POST(
     })
 }
 
-async function processFrame(f: InferSelectModel<typeof frameTable>, p: BuildFrameData) {
+async function processFrame(
+    f: InferSelectModel<typeof frameTable>,
+    p: BuildFrameData,
+    b: FrameActionPayload
+) {
     const storageData = p.storage as BaseStorage | undefined
 
     if (storageData) {
@@ -156,6 +155,13 @@ async function processFrame(f: InferSelectModel<typeof frameTable>, p: BuildFram
                 .catch((e) => {
                     console.error('Error sending webhook', e)
                 })
+        }
+    }
+
+    if (f.config?.airstackKey) {
+        const valid = await validatePayloadAirstack(b, f.config.airstackKey)
+        if (!valid) {
+            throw new Error('PAYLOAD NOT VALID')
         }
     }
 }
