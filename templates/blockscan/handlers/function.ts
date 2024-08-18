@@ -18,7 +18,6 @@ export default async function signature({
     if (!config.etherscan) {
         throw new FrameError('Smart Contract config is missing')
     }
-    const buttonIndex = body.validatedData.tapped_button.index as number
     const rawAbiString = config.etherscan.abis.flatMap((abi) => abi)
     const abiString = rawAbiString.filter((abi) => abi.startsWith('function'))
     const signatureIndex = params.currentIndex === undefined ? 0 : Number(params.currentIndex)
@@ -27,15 +26,6 @@ export default async function signature({
     const abi = parseAbi([signature]) as AbiFunction[]
     const abiObj = abi[0]
     const args = abiObj.inputs.map((input) => `${input.name} (${input.type})`)
-    console.log(`function handler >> signatureIndex: ${signatureIndex}`, {
-        args,
-        total: {
-            raw: rawAbiString.length,
-            filtered: abiString.length,
-        },
-        signatureIndex,
-        buttonIndex,
-    })
 
     return {
         buttons: [
@@ -43,7 +33,7 @@ export default async function signature({
                 label: '←',
             },
             {
-                label: 'Simulate',
+                label: 'Confirm',
             },
             {
                 label: '→',

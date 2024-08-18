@@ -15,7 +15,7 @@ import { Slider } from '@/components/shadcn/Slider'
 import { Switch } from '@/components/shadcn/Switch'
 import { Textarea } from '@/components/shadcn/Textarea'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { Trash } from 'lucide-react'
 import { type ReactNode, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -73,7 +73,6 @@ function sidebarNavItems(obj: {
 }
 
 export default function Inspector() {
-    const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const [activeTab, setActiveTab] = useState<NavBarItem['key']>('fundraise')
 
