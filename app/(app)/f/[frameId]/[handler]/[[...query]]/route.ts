@@ -6,7 +6,7 @@ import type {
     FrameActionPayloadValidated,
 } from '@/lib/farcaster'
 import { updateFrameCalls, updateFrameStorage } from '@/lib/frame'
-import { buildFramePage, validatePayload } from '@/lib/serve'
+import { buildFramePage, validatePayload, validatePayloadAirstack } from '@/lib/serve'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
 import templates from '@/templates'
@@ -54,6 +54,13 @@ export async function POST(
 
     if (!handlerFn) {
         notFound()
+    }
+
+    if (frame.config?.airstackKey) {
+        const valid = await validatePayloadAirstack(body, frame.config.airstackKey)
+        if (!valid) {
+            throw new Error('PAYLOAD NOT VALID')
+        }
     }
 
     if (template.requiresValidation) {
