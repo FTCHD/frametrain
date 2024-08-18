@@ -24,6 +24,7 @@ import SlideEditor from './components/SlideEditor'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
 import FontConfig from './utils/FontConfig'
 import { FigmaView } from './views/FigmaView'
+import { dimensionsForRatio } from '@/sdk/constants'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
@@ -223,7 +224,24 @@ export default function Inspector() {
                                         : 'border-input'
                                 }`}
                             >
-                                <div style={{ 'transform': 'scale(0.245)' }}>
+                                <div
+                                    style={{
+                                        'transform':
+                                            slideConfig.aspectRatio == '1:1'
+                                                ? 'scale(0.245)'
+                                                : 'scale(0.130)',
+                                        // Handle the case where no image has been configured but we need a min-width
+                                        ...(!slideConfig.baseImagePaths
+                                            ? {
+                                                  'width':
+                                                      slideConfig.aspectRatio == '1:1'
+                                                          ? dimensionsForRatio['1/1'].width
+                                                          : dimensionsForRatio['1.91/1'].height,
+                                              }
+                                            : {}),
+                                        'overflow': 'clip',
+                                    }}
+                                >
                                     <FigmaView slideConfig={slideConfig} />
                                 </div>
                             </div>
@@ -281,7 +299,7 @@ export default function Inspector() {
                         )}
                     </div>
 
-                    {config.slides && (
+                    {config.slides?.[selectedSlideIndex] && (
                         <SlideEditor
                             key={config.slides[selectedSlideIndex].id}
                             slideConfig={config.slides[selectedSlideIndex]}
