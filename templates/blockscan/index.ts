@@ -30,6 +30,9 @@ export default {
     handlers,
     initialConfig: {
         etherscan: null,
+        coverText: {
+            title: 'Title',
+        },
     },
     requiresValidation: true,
     events: [],

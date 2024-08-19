@@ -2,8 +2,7 @@
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
-import CoverView from '../views/Cover'
-import TextSlide from '@/sdk/components/TextSlide'
+import TextSlide, { type TextSlideProps } from '@/sdk/components/TextSlide'
 
 export default async function initial({
     config,
@@ -13,15 +12,17 @@ export default async function initial({
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const buttons: FrameButtonMetadata[] = []
     const fonts = [...roboto]
-    let component: BuildFrameData['component'] = CoverView()
+    const coverText: TextSlideProps = {
+        title: 'Enter a contract address url to get started',
+    }
 
     if (config.etherscan) {
         buttons.push({ label: 'START' })
+        coverText.title = 'Title'
     }
 
-    if (config.coverImage) {
-        component = undefined
-    } else if (config.coverText) {
+    if (config.coverText) {
+        coverText.title = config.coverText.title
         if (config.coverText.titleStyles?.font) {
             const titleFont = await loadGoogleFontAllVariants(config.coverText.titleStyles.font)
             fonts.push(...titleFont)
@@ -30,15 +31,13 @@ export default async function initial({
             const titleFont = await loadGoogleFontAllVariants(config.coverText.subtitleStyles.font)
             fonts.push(...titleFont)
         }
-
-        component = TextSlide(config.coverText)
     }
 
     return {
         fonts,
         buttons,
         image: config.coverImage,
-        component,
+        component: config.coverImage ? undefined : TextSlide(coverText),
         handler: 'function',
     }
 }
