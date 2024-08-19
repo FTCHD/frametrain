@@ -1,11 +1,11 @@
 import { client } from '@/db/client'
-import { frameTable } from '@/db/schema'
+import { frameTable, interactionTable } from '@/db/schema'
 import type {
     BuildFrameData,
     FrameActionPayload,
     FrameActionPayloadValidated,
 } from '@/lib/farcaster'
-import { updateFrameCalls, updateFrameStorage } from '@/lib/frame'
+import { updateFrameStorage } from '@/lib/frame'
 import { buildFramePage, validatePayload, validatePayloadAirstack } from '@/lib/serve'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
@@ -56,8 +56,6 @@ export async function POST(
         notFound()
     }
 
-  
-
     if (template.requiresValidation) {
         const validatedBody = await validatePayload(body)
         if (!validatedBody.valid) {
@@ -87,7 +85,7 @@ export async function POST(
             )
         }
 
-        console.log(error)
+        console.error(error)
 
         return Response.json(
             { message: 'Unknown error' },
@@ -121,10 +119,7 @@ async function processFrame(
 
     if (storageData) {
         await updateFrameStorage(f.id, storageData)
-        console.log('Updated frame storage')
     }
-
-    await updateFrameCalls(f.id, f.currentMonthCalls + 1)
 
     if (f.webhooks) {
         const webhookUrls = f.webhooks
@@ -158,10 +153,27 @@ async function processFrame(
         }
     }
 
-    if (f.config?.airstackKey) {
-        const valid = await validatePayloadAirstack(b, f.config.airstackKey)
-        if (!valid) {
-            throw new Error('PAYLOAD NOT VALID')
-        }
+    const airstackKey = f.config?.airstackKey || process.env.AIRSTACK_API_KEY
+
+    const interactionData = await validatePayloadAirstack(b, airstackKey)
+
+    if (interactionData.valid) {
+        await client
+            .insert(interactionTable)
+            .values({
+                frame: f.id,
+                fid: interactionData.message.data.fid.toString(),
+                buttonIndex: interactionData.message.data.frameActionBody.buttonIndex.toString(),
+                inputText: interactionData.message.data.frameActionBody.inputText || undefined,
+                state: interactionData.message.data.frameActionBody.state || undefined,
+                transactionHash:
+                    interactionData.message.data.frameActionBody.transactionId || undefined,
+                castFid: interactionData.message.data.frameActionBody.castId.fid.toString(),
+                castHash: interactionData.message.data.frameActionBody.castId.hash,
+                createdAt: new Date(),
+            })
+            .run()
+    } else {
+        console.error('AIRSTACK_PAYLOAD_NOT_VALID')
     }
 }

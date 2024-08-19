@@ -260,7 +260,7 @@ export async function validatePayload(
 export async function validatePayloadAirstack(
     body: FrameActionPayload,
     airstackKey: string
-): Promise<FrameValidatedActionPayload> {
+): Promise<FrameValidatedActionPayload | { valid: false; message: undefined }> {
     const options = {
         method: 'POST',
         headers: {
@@ -276,10 +276,11 @@ export async function validatePayloadAirstack(
         .then((response) => response.json())
         .catch((err) => {
             console.error(err)
-            return false
+            return {
+                valid: false,
+                message: undefined,
+            }
         })) as FrameValidatedActionPayload
 
-    const { valid } = r
-
-    return valid
+    return r
 }
