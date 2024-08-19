@@ -11,7 +11,7 @@ type TextStyle = {
 
 export type TextSlideProps = {
     title: string
-    subtitle?: string
+    subtitle: string
     customMessage?: string
     titleStyles?: TextStyle
     subtitleStyles?: TextStyle
@@ -40,6 +40,8 @@ export default function TextSlide({
     } else {
         backgroundProp['backgroundColor'] = 'black'
     }
+
+    console.log({ subtitleStyles })
 
     const alignmentToFlex = (alignment: TextStyle['alignment']): string => {
         switch (alignment) {
@@ -71,12 +73,13 @@ export default function TextSlide({
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '100px',
-                padding: '70px',
+                alignItems: 'center',
+                padding: '40px',
+                gap: '30px',
                 ...backgroundProp,
             }}
         >
-            <h3
+            <span
                 style={{
                     fontFamily: titleStyles?.font || 'Roboto',
                     fontSize: `${titleStyles?.size || 75}px`,
@@ -89,29 +92,27 @@ export default function TextSlide({
                 }}
             >
                 {title}
-            </h3>
-            {subtitle && (
-                <span
-                    style={{
-                        color: subtitleStyles?.color || 'white',
-                        fontFamily: subtitleStyles?.font || 'Roboto',
-                        fontSize: `${titleStyles?.size || 50}px`,
-                        fontStyle: subtitleStyles?.style || 'normal',
-                        fontWeight: subtitleStyles?.weight || 'medium',
-                        justifyContent: alignmentToFlex(subtitleStyles?.alignment),
-                        textAlign: alignmentToTextAlign(subtitleStyles?.alignment),
-                        opacity: '0.8',
-                    }}
-                >
-                    {subtitle}
-                </span>
-            )}
-
+            </span>
+            <span
+                style={{
+                    color: subtitleStyles?.color || 'white',
+                    fontFamily: subtitleStyles?.font || 'Roboto',
+                    fontSize: `${subtitleStyles?.size || 50}px`,
+                    fontStyle: subtitleStyles?.style || 'normal',
+                    fontWeight: subtitleStyles?.weight || 'medium',
+                    justifyContent: alignmentToFlex(subtitleStyles?.alignment),
+                    textAlign: alignmentToTextAlign(subtitleStyles?.alignment),
+                    opacity: '0.8',
+                    textWrap: 'balance',
+                }}
+            >
+                {subtitle}
+            </span>
             {customMessage && (
                 <span
                     style={{
                         fontFamily: customStyles?.font || 'Roboto',
-                        fontSize: `${titleStyles?.size || 30}px`,
+                        fontSize: `${customStyles?.size || 30}px`,
                         color: customStyles?.color || 'white',
                         fontStyle: customStyles?.style || 'normal',
                         fontWeight: customStyles?.weight || 'medium',
