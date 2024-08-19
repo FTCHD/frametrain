@@ -13,6 +13,7 @@ export default async function initial({
     const buttons: FrameButtonMetadata[] = []
     const fonts = [...roboto]
     const coverText: TextSlideProps = {
+        ...config.coverText,
         title: 'Enter a contract address url to get started',
     }
 
