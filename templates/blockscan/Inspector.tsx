@@ -6,7 +6,7 @@ import type { Config } from '.'
 import { useDebouncedCallback } from 'use-debounce'
 import { getContractData } from './utils/etherscan'
 import toast from 'react-hot-toast'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
 import { Label } from '@/components/shadcn/Label'
 import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
@@ -18,7 +18,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
-import { LoaderIcon } from 'lucide-react'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -31,26 +30,7 @@ export default function Inspector() {
     const [coverSubtitleFontSize, setCoverSubtitleFontSize] = useState(
         config.cover?.subtitleStyles?.size || 15
     )
-    const [changingTitle, setChangingTitle] = useState(false)
     const uploadImage = useUploadImage()
-    const titleInputRef = useRef<HTMLInputElement>(null)
-    const subTitleInputRef = useRef<HTMLInputElement>(null)
-
-    useEffect(() => {
-        if (!config.coverText?.title) return
-        if (!titleInputRef.current) return
-        if (titleInputRef.current.value) return
-
-        titleInputRef.current.value = config.coverText.title
-    }, [config.coverText?.title])
-
-    useEffect(() => {
-        if (!config.coverText?.subtitle) return
-        if (!subTitleInputRef.current) return
-        if (subTitleInputRef.current.value) return
-
-        subTitleInputRef.current.value = config.coverText.subtitle
-    }, [config.coverText?.subtitle])
 
     const onChangeLink = useDebouncedCallback(async (link: string) => {
         if (config.etherscan?.link === link) return
@@ -63,9 +43,8 @@ export default function Inspector() {
         try {
             //
             const etherscan = await getContractData(link)
-            updateConfig({ etherscan })
-
             toast.success('Contract data fetched successfully')
+            updateConfig({ etherscan })
         } catch (e) {
             const error = e as Error
             toast.error(error.message)
@@ -183,77 +162,46 @@ export default function Inspector() {
                     <div className="flex flex-col gap-4 w-full">
                         <div className="flex flex-col gap-2 w-full">
                             <div className="flex flex-col w-full">
-                                <h2 className="text-lg">Cover Title (Required)</h2>
-                                <Input ref={titleInputRef} placeholder="cover title" />
-                            </div>
-                            <div className="flex flex-col w-full">
-                                <h2 className="text-lg">Cover Subtitle (Required)</h2>
-                                <Input ref={subTitleInputRef} placeholder="cover subtitle" />
-                            </div>
-                            <div className="flex flex-row gap-2">
-                                <Button
-                                    size="lg"
-                                    className="px-4 py-2 rounded-md"
-                                    disabled={changingTitle}
-                                    onClick={() => {
-                                        if (
-                                            !(
-                                                titleInputRef.current?.value &&
-                                                subTitleInputRef.current?.value
-                                            )
-                                        )
-                                            return
-                                        setChangingTitle(true)
-
-                                        const title = titleInputRef.current.value.trim()
-                                        const subtitle = subTitleInputRef.current.value.trim()
-
-                                        if (!(title.length && subtitle.length)) {
-                                            toast.error(
-                                                'Please enter a title and a subtitle for the cover'
-                                            )
-                                            setChangingTitle(false)
-
+                                <h2 className="text-lg">Cover Title</h2>
+                                <Input
+                                    className="py-2 text-lg"
+                                    defaultValue={config.coverText?.title}
+                                    onChange={async (e) => {
+                                        const title = e.target.value.trim()
+                                        if (title === '') {
+                                            toast.error('Please enter a title for the cover')
                                             return
                                         }
-
                                         updateConfig({
                                             coverText: {
                                                 ...config.coverText,
                                                 title,
-                                                subtitle,
                                             },
                                         })
-                                        titleInputRef.current.value = ''
-                                        subTitleInputRef.current.value = ''
-                                        setChangingTitle(false)
                                     }}
-                                >
-                                    {changingTitle ? (
-                                        <LoaderIcon className="animate-spin" />
-                                    ) : (
-                                        'Update title and subtitle'
-                                    )}
-                                </Button>
-                                <Button
-                                    variant="destructive"
-                                    disabled={changingTitle}
-                                    onClick={() => {
+                                    placeholder="cover title"
+                                />
+                            </div>
+                            <div className="flex flex-col w-full">
+                                <h2 className="text-lg">Cover Subtitle</h2>
+                                <Input
+                                    className="py-2 text-lg"
+                                    defaultValue={config.coverText?.subtitle}
+                                    onChange={async (e) => {
+                                        const subtitle = e.target.value.trim()
+
                                         updateConfig({
                                             coverText: {
                                                 ...config.coverText,
-                                                title: undefined,
-                                                subtitle: undefined,
+                                                subtitle: subtitle === '' ? undefined : subtitle,
                                             },
                                         })
                                     }}
-                                    className="px-4 py-2 rounded-md"
-                                >
-                                    Reset
-                                </Button>
+                                    placeholder="cover subtitle"
+                                />
                             </div>
                             <div className="flex flex-col w-full">
-                                <h2 className="text-lg">Cover Custom Message (Optional)</h2>
+                                <h2 className="text-lg">Cover Custom Message</h2>
                                 <Input
                                     className="py-2 text-lg"
                                     defaultValue={config.coverText?.customMessage}
