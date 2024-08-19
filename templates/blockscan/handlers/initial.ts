@@ -16,6 +16,7 @@ export default async function initial({
     const coverText: TextSlideProps = {
         ...config.coverText,
         title: 'Enter a contract address url to get started',
+        subtitle: 'Subtitle',
     }
 
     if (config.etherscan) {
@@ -25,6 +26,7 @@ export default async function initial({
 
     if (config.coverText) {
         coverText.title = config.coverText.title
+        coverText.subtitle = config.coverText.subtitle
         if (config.coverText.titleStyles?.font) {
             const titleFont = await loadGoogleFontAllVariants(config.coverText.titleStyles.font)
             fonts.push(...titleFont)
