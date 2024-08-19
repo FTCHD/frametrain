@@ -1,3 +1,5 @@
+import type { Property } from 'csstype'
+
 type TextStyle = {
     color?: string
     alignment?: 'left' | 'center' | 'right'
@@ -39,6 +41,29 @@ export default function TextSlide({
         backgroundProp['backgroundColor'] = 'black'
     }
 
+    const alignmentToFlex = (alignment: TextStyle['alignment']): string => {
+        switch (alignment) {
+            case 'left':
+                return 'flex-start'
+            case 'right':
+                return 'flex-end'
+            default:
+                return 'center'
+        }
+    }
+
+    const alignmentToTextAlign = (
+        alignment: TextStyle['alignment']
+    ): Property.TextAlign | undefined => {
+        switch (alignment) {
+            case 'left':
+                return 'left'
+            case 'right':
+                return 'right'
+            default:
+                return 'center'
+        }
+    }
     return (
         <div
             style={{
@@ -46,7 +71,6 @@ export default function TextSlide({
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
                 gap: '100px',
                 padding: '70px',
                 ...backgroundProp,
@@ -54,12 +78,13 @@ export default function TextSlide({
         >
             <h3
                 style={{
-                    color: titleStyles?.color || 'white',
                     fontFamily: titleStyles?.font || 'Roboto',
                     fontSize: titleStyles?.size || '75px',
-                    textAlign: titleStyles?.alignment || 'center',
+                    color: titleStyles?.color || 'white',
                     fontStyle: titleStyles?.style || 'normal',
                     fontWeight: titleStyles?.weight || 'bold',
+                    justifyContent: alignmentToFlex(titleStyles?.alignment),
+                    textAlign: alignmentToTextAlign(titleStyles?.alignment),
                     textWrap: 'balance',
                 }}
             >
@@ -71,24 +96,27 @@ export default function TextSlide({
                         color: subtitleStyles?.color || 'white',
                         fontFamily: subtitleStyles?.font || 'Roboto',
                         fontSize: subtitleStyles?.size || '50px',
-                        textAlign: subtitleStyles?.alignment || 'center',
                         fontStyle: subtitleStyles?.style || 'normal',
                         fontWeight: subtitleStyles?.weight || 'medium',
+                        justifyContent: alignmentToFlex(subtitleStyles?.alignment),
+                        textAlign: alignmentToTextAlign(subtitleStyles?.alignment),
                         opacity: '0.8',
                     }}
                 >
                     {subtitle}
                 </span>
             )}
+
             {customMessage && (
                 <span
                     style={{
-                        color: customStyles?.color || 'white',
                         fontFamily: customStyles?.font || 'Roboto',
                         fontSize: customStyles?.size || '30px',
-                        textAlign: customStyles?.alignment || 'center',
+                        color: customStyles?.color || 'white',
                         fontStyle: customStyles?.style || 'normal',
                         fontWeight: customStyles?.weight || 'medium',
+                        justifyContent: alignmentToFlex(customStyles?.alignment),
+                        textAlign: alignmentToTextAlign(customStyles?.alignment),
                     }}
                 >
                     {customMessage}
