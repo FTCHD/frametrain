@@ -1,6 +1,7 @@
 'use client'
 import { createFrame } from '@/lib/frame'
 import type templates from '@/templates'
+import { useSession } from 'next-auth/react'
 import type { StaticImageData } from 'next/image'
 import NextImage from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -20,14 +21,19 @@ export default function TemplateCard({
         cover: StaticImageData
     }
 }) {
+    const sesh = useSession()
     const router = useRouter()
-	
-	const [isLoading, setLoading] = useState(false)
+
+    const [isLoading, setLoading] = useState(false)
 
     const { name, description, creatorName, cover } = template
 
     async function createAndNavigate() {
-		setLoading(true)
+        if (!sesh.data?.user) {
+            document.querySelector('.fc-authkit-signin-button')?.querySelector('button')?.click()
+            return
+        }
+        setLoading(true)
         const newFrame = await createFrame({
             name: 'My Frame',
             template: id as keyof typeof templates,

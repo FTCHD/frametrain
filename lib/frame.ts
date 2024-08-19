@@ -1,9 +1,9 @@
 'use server'
 import { auth } from '@/auth'
 import { client } from '@/db/client'
-import { frameTable } from '@/db/schema'
+import { frameTable, interactionTable } from '@/db/schema'
 import templates from '@/templates'
-import { type InferInsertModel, and, desc, eq } from 'drizzle-orm'
+import { type InferInsertModel, and, count, desc, eq, getTableColumns } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { uploadPreview } from './storage'
@@ -31,13 +31,34 @@ export async function getRecentFrameList() {
         notFound()
     }
 
+    // const frames = await client.query.frameTable.findMany({
+    //     where: eq(frameTable.owner, sesh.user.id!),
+    //     limit: 10,
+    //     // extras: {
+    //     // interactionCount: (frames, { sql }) =>
+    //     //     sql<number>`SELECT COUNT(*) FROM interaction WHERE frameId = ${frames.id}`.as(
+    //     //         'interactionCount'
+    //     //     ),
+    //     // interactionCount: sql`SELECT count(*) FROM interaction;`.as('interactionCount'),
+    //     // test: sql`lower(${frameTable.name})`.as('lowered_name'),
+    //     // },
+    //     with: {
+    //         interactions: {},
+    //     },
+    //     orderBy: desc(frameTable.updatedAt),
+    // })
+
     const frames = await client
-        .select()
+        .select({
+            ...getTableColumns(frameTable),
+            interactionCount: count(interactionTable.id),
+        })
         .from(frameTable)
         .where(eq(frameTable.owner, sesh.user.id!))
         .limit(10)
+        .leftJoin(interactionTable, eq(frameTable.id, interactionTable.frame))
+        .groupBy(frameTable.id)
         .orderBy(desc(frameTable.updatedAt))
-        .all()
 
     return frames
 }
