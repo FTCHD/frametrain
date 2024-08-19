@@ -3,7 +3,7 @@ import type { Property } from 'csstype'
 type TextStyle = {
     color?: string
     alignment?: 'left' | 'center' | 'right'
-    size?: string
+    size?: number
     weight?: string
     font?: string
     style?: string
@@ -79,7 +79,7 @@ export default function TextSlide({
             <h3
                 style={{
                     fontFamily: titleStyles?.font || 'Roboto',
-                    fontSize: titleStyles?.size || '75px',
+                    fontSize: `${titleStyles?.size || 75}px`,
                     color: titleStyles?.color || 'white',
                     fontStyle: titleStyles?.style || 'normal',
                     fontWeight: titleStyles?.weight || 'bold',
@@ -95,7 +95,7 @@ export default function TextSlide({
                     style={{
                         color: subtitleStyles?.color || 'white',
                         fontFamily: subtitleStyles?.font || 'Roboto',
-                        fontSize: subtitleStyles?.size || '50px',
+                        fontSize: `${titleStyles?.size || 50}px`,
                         fontStyle: subtitleStyles?.style || 'normal',
                         fontWeight: subtitleStyles?.weight || 'medium',
                         justifyContent: alignmentToFlex(subtitleStyles?.alignment),
@@ -111,7 +111,7 @@ export default function TextSlide({
                 <span
                     style={{
                         fontFamily: customStyles?.font || 'Roboto',
-                        fontSize: customStyles?.size || '30px',
+                        fontSize: `${titleStyles?.size || 30}px`,
                         color: customStyles?.color || 'white',
                         fontStyle: customStyles?.style || 'normal',
                         fontWeight: customStyles?.weight || 'medium',
