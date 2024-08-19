@@ -25,10 +25,16 @@ export default function Inspector() {
         config.coverImage ? 'image' : 'text'
     )
     const [coverTitleFontSize, setCoverTitleFontSize] = useState(
-        config.cover?.titleStyles?.size || 30
+        config.coverText?.titleStyles?.size || 75
     )
     const [coverSubtitleFontSize, setCoverSubtitleFontSize] = useState(
-        config.cover?.subtitleStyles?.size || 15
+        config.coverText?.subtitleStyles?.size || 50
+    )
+    const [functionTitleFontSize, setFunctionTitleFontSize] = useState(
+        config.functionStyles?.titleStyles?.size || 75
+    )
+    const [functionSubtitleFontSize, setFunctionSubtitleFontSize] = useState(
+        config.functionStyles?.subtitleStyles?.size || 50
     )
     const uploadImage = useUploadImage()
 
@@ -498,11 +504,279 @@ export default function Inspector() {
 
                 <div className="flex flex-col gap-2 w-full">
                     <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function Customization</h2>
+                        <h2 className="text-lg font-semibold">Function Slide Customization</h2>
                         <p className="text-sm text-muted-foreground">
                             Customize how your Smart Contract Frame functions are show to your
                             viewers
                         </p>
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function Slide background</h2>
+                        <ColorPicker
+                            className="w-full"
+                            enabledPickers={['solid', 'gradient', 'image']}
+                            background={config.functionStyles?.backgroundColor || 'black'}
+                            setBackground={(backgroundColor) => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        backgroundColor,
+                                    },
+                                })
+                            }}
+                            uploadBackground={async (base64String, contentType) => {
+                                const { filePath } = await uploadImage({
+                                    base64String: base64String,
+                                    contentType: contentType,
+                                })
+
+                                return filePath
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function title Color</h2>
+                        <ColorPicker
+                            className="w-full"
+                            background={config.functionStyles?.titleStyles?.color || 'white'}
+                            setBackground={(color) => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        titleStyles: {
+                                            ...config.functionStyles?.titleStyles,
+                                            color,
+                                        },
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <label className="text-lg font-semibold">
+                            Function title Size ({functionTitleFontSize}px)
+                        </label>
+
+                        <Slider
+                            defaultValue={[functionTitleFontSize]}
+                            max={140}
+                            step={2}
+                            onValueChange={(newRange) => {
+                                const size = newRange[0]
+                                setFunctionTitleFontSize(size)
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        titleStyles: {
+                                            ...config.functionStyles?.titleStyles,
+                                            size,
+                                        },
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function title Font</h2>
+                        <FontFamilyPicker
+                            defaultValue={config.functionStyles?.titleStyles?.font || 'Roboto'}
+                            onSelect={(font) => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        titleStyles: {
+                                            ...config.functionStyles?.titleStyles,
+                                            font,
+                                        },
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function title Style</h2>
+                        <FontStylePicker
+                            currentFont={config.functionStyles?.titleStyles?.font || 'Roboto'}
+                            defaultValue={config.functionStyles?.titleStyles?.style || 'normal'}
+                            onSelect={(style: string) => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        titleStyles: {
+                                            ...config.functionStyles?.titleStyles,
+                                            style,
+                                        },
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function title Weight</h2>
+                        <FontWeightPicker
+                            currentFont={config.functionStyles?.titleStyles?.font || 'Roboto'}
+                            defaultValue={config.functionStyles?.titleStyles?.weight || 'normal'}
+                            onSelect={(weight) => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        titleStyles: {
+                                            ...config.functionStyles?.titleStyles,
+                                            weight,
+                                        },
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function title Position</h2>
+                        <Select
+                            defaultValue={config.functionStyles?.titleStyles?.alignment || 'center'}
+                            onValueChange={(alignment: 'left' | 'center' | 'right') => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        titleStyles: {
+                                            ...config.functionStyles?.titleStyles,
+                                            alignment,
+                                        },
+                                    },
+                                })
+                            }}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Left" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value={'left'}>Left</SelectItem>
+                                <SelectItem value={'center'}>Center</SelectItem>
+                                <SelectItem value={'right'}>Right</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function information Color</h2>
+                        <ColorPicker
+                            className="w-full"
+                            background={config.functionStyles?.subtitleStyles?.color || 'white'}
+                            setBackground={(color) => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        subtitleStyles: {
+                                            ...config.functionStyles?.subtitleStyles,
+                                            color,
+                                        },
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <label className="text-lg font-semibold">
+                            Function information Size ({functionSubtitleFontSize}
+                            px)
+                        </label>
+                        <Slider
+                            defaultValue={[functionSubtitleFontSize]}
+                            max={140}
+                            step={2}
+                            onValueChange={(newRange) => {
+                                const size = newRange[0]
+                                setFunctionSubtitleFontSize(size)
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        subtitleStyles: {
+                                            ...config.functionStyles?.subtitleStyles,
+                                            size,
+                                        },
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function information Font</h2>
+                        <FontFamilyPicker
+                            defaultValue={config.functionStyles?.subtitleStyles?.font || 'Roboto'}
+                            onSelect={(font) => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        subtitleStyles: {
+                                            ...config.functionStyles?.subtitleStyles,
+                                            font,
+                                        },
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function information Style</h2>
+                        <FontStylePicker
+                            currentFont={config.functionStyles?.subtitleStyles?.font || 'Roboto'}
+                            defaultValue={config.functionStyles?.subtitleStyles?.style || 'normal'}
+                            onSelect={(style) => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        subtitleStyles: {
+                                            ...config.functionStyles?.subtitleStyles,
+                                            style,
+                                        },
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function information Weight</h2>
+                        <FontWeightPicker
+                            currentFont={config.functionStyles?.subtitleStyles?.font || 'Roboto'}
+                            defaultValue={config.functionStyles?.subtitleStyles?.weight || 'normal'}
+                            onSelect={(weight) => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        subtitleStyles: {
+                                            ...config.functionStyles?.subtitleStyles,
+                                            weight,
+                                        },
+                                    },
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Function information Position</h2>{' '}
+                        <Select
+                            defaultValue={
+                                config.functionStyles?.subtitleStyles?.alignment || 'center'
+                            }
+                            onValueChange={(alignment: 'left' | 'center' | 'right') => {
+                                updateConfig({
+                                    functionStyles: {
+                                        ...config.functionStyles,
+                                        subtitleStyles: {
+                                            ...config.functionStyles?.subtitleStyles,
+                                            alignment,
+                                        },
+                                    },
+                                })
+                            }}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Left" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value={'left'}>Left</SelectItem>
+                                <SelectItem value={'center'}>Center</SelectItem>
+                                <SelectItem value={'right'}>Right</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
             </div>
