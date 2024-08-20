@@ -16,7 +16,7 @@ export interface Config extends BaseConfig {
 }
 
 export interface Storage extends BaseStorage {
-    votesForId: Record<string, number>
+    votesForId: Record<string, { option: number; username: string; timestamp: number }>
     votesForOption: Record<string, number>
     totalVotes: number
 }
