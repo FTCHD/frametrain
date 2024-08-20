@@ -5,13 +5,13 @@ import type {
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
 import type { Config } from '..'
-import SuccessView from '../views/Success'
 import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
 import { FrameError } from '@/sdk/error'
 import { getClient } from '../utils/viem'
 import { getGlideConfig } from '../utils/shared'
 import RefreshView from '../views/Refresh'
 import initial from './initial'
+import TextSlide from '@/sdk/components/TextSlide'
 
 export default async function status({
     body,
@@ -35,11 +35,6 @@ export default async function status({
         return initial({ config, body, storage: undefined })
     }
 
-    console.log(`status handler >> tx info for sessionId: ${params.sessionId}`, {
-        transaction: body.validatedData.transaction,
-        params,
-    })
-
     if (!(body.validatedData.transaction?.hash || params.transactionId)) {
         throw new FrameError('Transaction Hash is missing')
     }
@@ -61,9 +56,7 @@ export default async function status({
             hash: txHash,
         })
         // Wait for the session to complete. It can take a few seconds
-        const session = await waitForSession(glideConfig, params.sessionId)
-
-        console.log('status handler >> Session:', session)
+        await waitForSession(glideConfig, params.sessionId)
 
         return {
             buttons: [
@@ -78,7 +71,7 @@ export default async function status({
                     target: 'https://www.frametra.in',
                 },
             ],
-            component: config.success?.image ? undefined : SuccessView(config),
+            component: config.success?.image ? undefined : TextSlide(config.success),
             handler: 'success',
             image: config.success?.image,
         }
@@ -113,7 +106,11 @@ export default async function status({
         return {
             buttons,
             image: paid ? config.success?.image : undefined,
-            component: paid ? undefined : RefreshView(),
+            component: paid
+                ? config.success?.image
+                    ? undefined
+                    : TextSlide(config.success)
+                : RefreshView(),
             handler: paid ? 'success' : 'status',
             params: {
                 transactionId: txHash,

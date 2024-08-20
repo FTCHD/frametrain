@@ -3,15 +3,7 @@ import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
 import type { ChainKey } from './utils/viem'
-
-type Styles = {
-    color?: string
-    size?: number
-    weight?: string
-    position?: string
-    family?: string
-    style?: string
-}
+import type { TextSlideProps } from '@/sdk/components/TextSlide'
 
 export interface Config extends BaseConfig {
     address?: string
@@ -23,22 +15,16 @@ export interface Config extends BaseConfig {
     }
     enablePredefinedAmounts: boolean
     amounts: number[]
-    cover?: {
-        title: string
-        description: string
-        background?: string
-        barColor?: string
-        titleStyles?: Styles
-        descriptionStyles?: Styles
-    }
-    success?: {
+    cover: TextSlideProps & {
         image?: string
-        title?: string
-        description?: string
-        background?: string
-        titleStyles?: Styles
-        descriptionStyles?: Styles
     }
+    success: TextSlideProps & {
+        image?: string
+    }
+    about: TextSlideProps & {
+        image?: string
+    }
+    barColor: string
 }
 
 export interface Storage extends BaseStorage {}
@@ -57,13 +43,21 @@ export default {
         enablePredefinedAmounts: false,
         isEns: false,
         amounts: [],
+        barColor: 'yellow',
         cover: {
-            title: 'Cover',
-            description: 'Description',
+            title: 'Fundraiser',
+            description: 'Welcome to the Fundraiser!',
+            customMessage: 'You can customize this message.',
         },
         success: {
-            title: 'Success',
-            description: 'Description',
+            title: 'Thanks for your donation!',
+            subtitle: 'Your donation has been received.',
+            customMessage: 'We appreciate your support.',
+        },
+        about: {
+            title: 'About',
+            subtitle: 'Subtitle',
+            customMessage: 'You can customize this message.',
         },
     },
     requiresValidation: true,

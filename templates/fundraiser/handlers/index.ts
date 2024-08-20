@@ -3,6 +3,7 @@ import transaction from './transaction'
 import status from './status'
 import success from './success'
 import confirmation from './confirmation'
+import about from './about'
 
 export default {
     initial,
@@ -10,4 +11,5 @@ export default {
     success,
     status,
     confirmation,
+    about,
 }

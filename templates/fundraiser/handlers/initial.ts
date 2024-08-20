@@ -5,6 +5,7 @@ import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
 import CoverView from '../views/Cover'
 import { formatSymbol } from '../utils/shared'
+import TextSlide from '@/sdk/components/TextSlide'
 
 export default async function initial({
     config,
@@ -14,7 +15,11 @@ export default async function initial({
     config: Config
     storage: undefined
 }): Promise<BuildFrameData> {
-    const buttons: FrameButtonMetadata[] = []
+    const buttons: FrameButtonMetadata[] = [
+        {
+            label: 'About',
+        },
+    ]
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
     if (config.token?.symbol && config.enablePredefinedAmounts && config.amounts.length) {
@@ -39,7 +44,8 @@ export default async function initial({
             : undefined,
         buttons,
         fonts: roboto,
-        component: CoverView(config),
+        image: config.cover.image,
+        component: config.cover.image ? undefined : TextSlide(config.cover),
         handler: 'confirmation',
     }
 }

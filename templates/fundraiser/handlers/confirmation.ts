@@ -7,6 +7,7 @@ import { FrameError } from '@/sdk/error'
 import { getAddressFromEns, getClient } from '../utils/viem'
 import { chains, createSession, currencies } from '@paywithglide/glide-js'
 import ConfirmationView from '../views/Confirmation'
+import about from './about'
 
 export default async function confirmation({
     config,
@@ -31,6 +32,10 @@ export default async function confirmation({
     const amounts = config.enablePredefinedAmounts ? config.amounts : []
     const lastButtonIndex = amounts.length + 1
     const isCustomAmount = buttonIndex === lastButtonIndex
+
+    if (buttonIndex === 1) {
+        return about({ config, body, storage: undefined })
+    }
 
     let amount = 0
     let address = config.address as `0x${string}`
