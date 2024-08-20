@@ -16,9 +16,15 @@ export async function getFrameList() {
     }
 
     const frames = await client
-        .select()
+        .select({
+            ...getTableColumns(frameTable),
+            interactionCount: count(interactionTable.id),
+        })
         .from(frameTable)
         .where(eq(frameTable.owner, sesh.user.id!))
+        .leftJoin(interactionTable, eq(frameTable.id, interactionTable.frame))
+        .groupBy(frameTable.id)
+        .orderBy(desc(frameTable.updatedAt))
         .all()
 
     return frames
