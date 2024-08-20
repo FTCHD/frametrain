@@ -1,9 +1,11 @@
+import path from 'path'
 import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
 import { buildFramePage } from '@/lib/serve'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
 import templates from '@/templates'
 import { eq } from 'drizzle-orm'
+import { readFile } from 'fs/promises'
 import { notFound } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 
@@ -45,6 +47,13 @@ export async function GET(request: NextRequest, { params }: { params: { frameId:
         params: searchParams,
     })
 
+    const hasPage = await readFile(
+        path.join(process.cwd(), 'templates', frame.template, 'Page.tsx'),
+        'utf-8'
+    )
+        .then((s) => !!s)
+        .catch(() => false)
+
     const renderedFrame = await buildFramePage({
         id: frame.id,
         buttons: buildParameters.buttons,
@@ -56,7 +65,9 @@ export async function GET(request: NextRequest, { params }: { params: { frameId:
         component: buildParameters.component,
         image: buildParameters.image,
         handler: buildParameters.handler,
-        linkedPage: frame.linkedPage || undefined,
+        linkedPage: hasPage
+            ? `${process.env.NEXT_PUBLIC_HOST}/f/${frame.id}/show`
+            : frame.linkedPage || undefined,
     })
 
     return new Response(renderedFrame, {
