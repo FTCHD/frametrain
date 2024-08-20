@@ -1,14 +1,18 @@
 'use server'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type {
+    BuildFrameData,
+    FrameButtonMetadata,
+    FrameValidatedActionPayload,
+} from '@/lib/farcaster'
+import type { Config } from '..'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
-import type { Config } from '..'
 import { getClient } from '../common/onchain'
 import { getGlideConfig } from '../common/shared'
 import RefreshView from '../views/Refresh'
-import SuccessView from '../views/Success'
 import initial from './initial'
+import TextSlide from '@/sdk/components/TextSlide'
 
 export default async function status({
     body,
@@ -32,11 +36,6 @@ export default async function status({
         return initial({ config, body, storage: undefined })
     }
 
-    console.log(`status handler >> tx info for sessionId: ${params.sessionId}`, {
-        transaction: body.validatedData.transaction,
-        params,
-    })
-
     if (!(body.validatedData.transaction?.hash || params.transactionId)) {
         throw new FrameError('Transaction Hash is missing')
     }
@@ -54,15 +53,12 @@ export default async function status({
 
     try {
         // Get the status of the payment transaction
-        const updatedTx = await updatePaymentTransaction(glideConfig, {
+        await updatePaymentTransaction(glideConfig, {
             sessionId: params.sessionId,
             hash: txHash,
         })
-        console.log('status handler >> updatedTx:', updatedTx)
         // Wait for the session to complete. It can take a few seconds
-        const session = await waitForSession(glideConfig, params.sessionId)
-
-        console.log('status handler >> Session:', session)
+        await waitForSession(glideConfig, params.sessionId)
 
         const buildData: Record<string, any> = {
             buttons: [
@@ -81,22 +77,48 @@ export default async function status({
         if (config.success?.image) {
             buildData['image'] = config.success?.image
         } else {
-            buildData['component'] = SuccessView(config)
+            buildData['component'] = TextSlide(config.success)
             buildData['fonts'] = await loadGoogleFontAllVariants('Roboto')
         }
 
         return buildData as BuildFrameData
-    } catch (error) {
-        console.error('Error fetching session', error)
+    } catch (e) {
+        const buttons: FrameButtonMetadata[] = []
+        const error = e as Error
+        // updatePaymentTransaction throws an error if the transaction is already paid
+        const paid = error.message.toLowerCase().includes('session is already paid')
+
+        if (paid) {
+            buttons.push(
+                {
+                    label: 'Donate again',
+                },
+                {
+                    label: `View on ${client.chain.blockExplorers?.default.name}`,
+                    action: 'link',
+                    target: `https://${client.chain.blockExplorers?.default.url}/tx/${txHash}`,
+                },
+                {
+                    label: 'Create Your Own',
+                    action: 'link',
+                    target: 'https://www.frametra.in',
+                }
+            )
+        } else {
+            buttons.push({
+                label: 'Refresh',
+            })
+        }
 
         return {
-            buttons: [
-                {
-                    label: 'Refresh',
-                },
-            ],
-            component: RefreshView(),
-            handler: 'status',
+            buttons,
+            image: paid ? config.success?.image : undefined,
+            component: paid
+                ? config.success?.image
+                    ? undefined
+                    : TextSlide(config.success)
+                : RefreshView(),
+            handler: paid ? 'success' : 'status',
             params: {
                 transactionId: txHash,
                 sessionId: params.sessionId,
