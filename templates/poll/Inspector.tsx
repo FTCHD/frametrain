@@ -2,22 +2,19 @@
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { ColorPicker } from '@/sdk/components'
-import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useRef } from 'react'
 import { X } from 'react-feather'
 import type { Config } from '.'
 
 export default function Inspector() {
-    const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
-	const uploadImage = useUploadImage()
+    const uploadImage = useUploadImage()
 
     const { options } = config
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
     const buttonLabelInputRef = useRef<HTMLInputElement>(null)
-
-    const questionInputRef = useRef<HTMLInputElement>(null)
 
     return (
         <div className="flex flex-col gap-5 w-full h-full">
