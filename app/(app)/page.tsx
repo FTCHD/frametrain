@@ -4,16 +4,25 @@ import Header from '@/components/foundation/Header'
 import ProjectCard from '@/components/home/ProjectCard'
 import TemplateCard from '@/components/home/TemplateCard'
 import { getRecentFrameList } from '@/lib/frame'
-import templates from '@/templates'
+import { getFeaturedTemplates, getTemplates } from '@/lib/template'
 import { ArrowRightIcon } from 'lucide-react'
 import NextLink from 'next/link'
 
 export default async function Home() {
     const sesh = await auth()
+	
+	let templates:
+    | Awaited<ReturnType<typeof getFeaturedTemplates>>
+    | Awaited<ReturnType<typeof getTemplates>> = []
+	
 	let recentFrames: Awaited<ReturnType<typeof getRecentFrameList>> = []
 
     if (sesh?.user) {
         recentFrames = await getRecentFrameList()
+
+        templates = await getFeaturedTemplates()
+    } else {
+        templates = await getTemplates()
     }
 
     return (

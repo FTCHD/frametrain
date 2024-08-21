@@ -1,7 +1,7 @@
 
 import Header from '@/components/foundation/Header'
 import TemplateCard from '@/components/home/TemplateCard'
-import templates from '@/templates'
+import { getTemplates } from '@/lib/template'
 import type { Metadata } from 'next'
 import NextLink from 'next/link'
 
@@ -36,6 +36,8 @@ export const metadata: Metadata = {
 }
 
 export default async function TemplateList() {
+	const templates = await getTemplates()
+	
     return (
         <div className="flex flex-col p-5 w-full h-full gap-5">
             <Header />
