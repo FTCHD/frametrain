@@ -95,6 +95,16 @@ export async function POST(
         )
     }
 
+    if (buildParameters.transaction) {
+        waitUntil(processFrame(frame, buildParameters))
+
+        return new Response(JSON.stringify(buildParameters.transaction), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+    }
+
     const renderedFrame = await buildFramePage({
         id: frame.id,
         linkedPage: frame.linkedPage || undefined,
@@ -152,7 +162,7 @@ async function processFrame(
                 })
         }
     }
-
+      
     const airstackKey = f.config?.airstackKey || process.env.AIRSTACK_API_KEY
 
     const interactionData = await validatePayloadAirstack(b, airstackKey)

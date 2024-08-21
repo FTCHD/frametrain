@@ -7,6 +7,8 @@ import { encode } from 'next-auth/jwt'
 
 const SUPPORTED_TEMPLATES = ['cal', 'discourse', 'luma']
 
+const SUPPORTED_TEMPLATES = ['cal', 'discourse']
+
 export async function GET(
     request: Request,
     { params }: { params: { templateId: keyof typeof templates } }

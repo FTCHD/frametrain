@@ -2,8 +2,12 @@ import type { FrameButtonMetadata as OnchainKitFrameButtonMetadata } from '@coin
 import type {
     User as NeynarUser,
     ValidatedFrameActionResponse as NeynarValidatedFrameActionResponse,
+    Channel as NeynarChannel,
 } from '@neynar/nodejs-sdk/build/neynar-api/v2'
-import type { FrameActionPayload as FramesJSFrameActionPayload } from 'frames.js'
+import type {
+    FrameActionPayload as FramesJSFrameActionPayload,
+    TransactionTargetResponse,
+} from 'frames.js'
 import type { ReactElement } from 'react'
 import type { BaseStorage } from './types'
 
@@ -16,6 +20,7 @@ export type FrameActionPayload = FramesJSFrameActionPayload
 export type FrameValidatedActionPayload = NeynarValidatedFrameActionResponse
 
 export type FarcasterUserInfo = NeynarUser
+export type FarcasterChannel = NeynarChannel
 
 export type FrameActionPayloadValidated = FrameActionPayload & {
     validatedData: FrameValidatedActionPayload['validatedData']
@@ -36,4 +41,5 @@ export interface BuildFrameData {
         event: string
         data: Record<string, unknown>
     }[]
+    transaction?: TransactionTargetResponse
 }

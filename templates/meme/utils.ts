@@ -26,6 +26,8 @@ export async function getMemes() {
               }
 
         if (!data.success) {
+            console.error(`[imgFlip.getMemes] >> ${data.error_message}`, data)
+
             throw new Error(data.error_message)
         }
 

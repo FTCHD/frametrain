@@ -2,6 +2,7 @@ import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
+import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
 
 export type fieldTypes = {
     fieldName: string
@@ -12,6 +13,10 @@ export type fieldTypes = {
 }
 
 export interface Config extends BaseConfig {
+    owner?: {
+        username: string
+        fid: number
+    }
     fields: fieldTypes[] | []
     backgroundColor: string
     fontColor: string
@@ -21,6 +26,8 @@ export interface Config extends BaseConfig {
     shareText: string
     frameId: string
     allowDuplicates: boolean
+    gating?: GatingOptionsProps['config']
+    enableGating?: boolean
 }
 
 interface DATA_RECORD {
@@ -52,6 +59,25 @@ export default {
         shareText: 'Check This Out!',
         frameId: undefined,
         allowDuplicates: false,
+        enableGating: false,
+        gating: {
+            channels: {
+                checked: false,
+                data: [],
+            },
+            followedBy: false,
+            following: false,
+            liked: false,
+            recasted: false,
+            eth: false,
+            sol: false,
+            powerBadge: false,
+            maxFid: 0,
+            score: 0,
+            erc20: null,
+            erc721: null,
+            erc1155: null,
+        },
     },
     requiresValidation: true,
     events: [],

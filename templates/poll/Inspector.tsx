@@ -3,21 +3,70 @@ import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { ColorPicker } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { X } from 'react-feather'
 import type { Config } from '.'
+import { Label } from '@/components/shadcn/Label'
+import { Switch } from '@/components/shadcn/Switch'
+import GatingOptions from '@/sdk/components/GatingOptions'
+import toast from 'react-hot-toast'
+import { useDebouncedCallback } from 'use-debounce'
+import { corsFetch } from '@/sdk/scrape'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
     const uploadImage = useUploadImage()
+    const [enableGating, setEnableGating] = useState<boolean>(config.enableGating ?? false)
 
-    const { options } = config
+    const { options, gating } = config
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
     const buttonLabelInputRef = useRef<HTMLInputElement>(null)
 
+    const onChangeUsername = useDebouncedCallback(async (username: string) => {
+        if (username === '' || username === config.owner?.username) {
+            return
+        }
+
+        try {
+            const response = await corsFetch(
+                `https://api.warpcast.com/v2/user-by-username?username=${username}`
+            )
+
+            if (!response) return
+
+            const data = JSON.parse(response) as
+                | {
+                      result: { user: { fid: number; username: string } }
+                  }
+                | { errors: unknown[] }
+
+            if ('errors' in data) {
+                toast.error(`No FID associated with username ${username}`)
+                return
+            }
+            updateConfig({
+                owner: {
+                    fid: data.result.user.fid,
+                    username: data.result.user.username,
+                },
+            })
+        } catch {
+            toast.error('Failed to fetch FID')
+        }
+    }, 1000)
+
     return (
         <div className="flex flex-col gap-5 w-full h-full">
+            <div className="flex flex-col gap-2 w-full">
+                <h2 className="text-lg font-semibold">Your Farcaster username</h2>
+                <Input
+                    className="w-full"
+                    placeholder="eg. vitalik.eth"
+                    defaultValue={config.owner?.username}
+                    onChange={async (e) => onChangeUsername(e.target.value)}
+                />
+            </div>
             <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold">Question</h2>
                 <Input
@@ -137,6 +186,54 @@ export default function Inspector() {
                     setBackground={(value) => updateConfig({ barColor: value })}
                 />
             </div>
+
+            <div className="flex flex-row items-center justify-between gap-2 ">
+                <Label className="font-md" htmlFor="gating">
+                    Enable Poll Gating?
+                </Label>
+                <Switch
+                    id="gating"
+                    checked={enableGating}
+                    onCheckedChange={(checked) => {
+                        if (checked && !config.owner) {
+                            toast.error(
+                                'Please configure your farcaster username before enabling Poll Gating'
+                            )
+                            return
+                        }
+                        setEnableGating(checked)
+                    }}
+                />
+            </div>
+
+            {enableGating && gating && (
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg font-semibold">Poll Gating options</h2>
+                    <GatingOptions
+                        onUpdate={(option) => {
+                            if (option.channels) {
+                                updateConfig({
+                                    gating: {
+                                        ...gating,
+                                        channels: {
+                                            ...gating.channels,
+                                            data: option.channels.data,
+                                        },
+                                    },
+                                })
+                            } else {
+                                updateConfig({
+                                    gating: {
+                                        ...config.gating,
+                                        ...option,
+                                    },
+                                })
+                            }
+                        }}
+                        config={gating}
+                    />
+                </div>
+            )}
         </div>
     )
 }

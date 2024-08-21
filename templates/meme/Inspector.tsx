@@ -81,7 +81,7 @@ export default function Inspector() {
     return (
         <div className="w-full h-full space-y-4">
             <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold">Templates</h2>
+                <h2 className="text-lg font-semibold">Meme Templates</h2>
 
                 <Select
                     disabled={generating}
