@@ -2,6 +2,7 @@ import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
+import type { TextSlideProps } from '@/sdk/components/TextSlide'
 
 export type PoolToken = {
     address: `0x${string}`
@@ -29,6 +30,26 @@ export interface Config extends BaseConfig {
         // mainly used to determine which token is the primary token for the Inspector
         primary: 'token0' | 'token1'
     } | null
+    success: TextSlideProps & {
+        image?: string
+    }
+    backgroundColor: string
+    coverMessage?: {
+        text: string
+        color: string
+        weight: string
+        size: string
+        style: string
+        font: string
+    }
+    pairName?: {
+        text: string
+        color: string
+        weight: string
+        size: string
+        style: string
+        font: string
+    }
 }
 
 export interface Storage extends BaseStorage {}
@@ -43,9 +64,15 @@ export default {
     Inspector,
     handlers,
     initialConfig: {
+        backgroundColor: 'black',
         amounts: [],
         enablePredefinedAmounts: false,
         pool: null,
+        success: {
+            title: 'Transaction was successful!',
+            subtitle: 'Your swap has been completed.',
+            customMessage: 'We appreciate your support.',
+        },
     },
     requiresValidation: true,
     events: [],

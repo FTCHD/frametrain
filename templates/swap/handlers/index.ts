@@ -1,11 +1,13 @@
 import initial from './initial'
-import price from './price'
+import estimate from './estimate'
 import success from './success'
 import swap from './swap'
+import cover from './cover'
 
 export default {
     initial,
     swap,
-    price,
+    estimate,
     success,
+    cover,
 }

@@ -4,7 +4,10 @@ import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaste
 import type { Config } from '..'
 import initial from './initial'
 import { bytesToHex } from 'viem'
-import price from './price'
+import TextSlide from '@/sdk/components/TextSlide'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { FrameError } from '@/sdk/error'
+import estimate from './estimate'
 
 export default async function success({
     body,
@@ -26,17 +29,38 @@ export default async function success({
         : undefined
     const buttonIndex = body.validatedData.tapped_button?.index || 1
 
-    if (!(config.pool && transactionId) || buttonIndex === 1) {
+    if (buttonIndex === 1) {
         return initial({ config })
     }
 
-    if (params?.buyAmount) {
-        return price({ body, config, params, storage })
+    if (!(config.pool && transactionId)) {
+        throw new FrameError('Transaction hash missing')
     }
 
-    console.info('success', { transactionId })
+    if (params?.buyAmount) {
+        return estimate({ body, config, params, storage })
+    }
+
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts = [...roboto]
+
+    if (config.success.titleStyles?.font) {
+        const titleFont = await loadGoogleFontAllVariants(config.success.titleStyles.font)
+        fonts.push(...titleFont)
+    }
+
+    if (config.success.subtitleStyles?.font) {
+        const subtitleFont = await loadGoogleFontAllVariants(config.success.subtitleStyles.font)
+        fonts.push(...subtitleFont)
+    }
+
+    if (config.success.customStyles?.font) {
+        const customFont = await loadGoogleFontAllVariants(config.success.customStyles.font)
+        fonts.push(...customFont)
+    }
 
     return {
+        fonts,
         buttons: [
             {
                 label: 'View Transaction',
@@ -47,7 +71,8 @@ export default async function success({
                 label: 'Buy More',
             },
         ],
-        image: 'https://pbs.twimg.com/media/F4M9IOlWwAEgTDf.jpg',
-        handler: 'initial',
+        image: config.success.image,
+        handler: 'cover',
+        component: config.success?.image ? undefined : TextSlide(config.success),
     }
 }

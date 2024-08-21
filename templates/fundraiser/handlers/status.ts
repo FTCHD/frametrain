@@ -45,7 +45,7 @@ export default async function status({
     }
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts: any[] = [roboto]
+    const fonts = [...roboto]
 
     if (config.success.titleStyles?.font) {
         const titleFont = await loadGoogleFontAllVariants(config.success.titleStyles.font)

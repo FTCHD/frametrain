@@ -1,6 +1,6 @@
 import type { Config } from '..'
 
-export default function PageView({
+export default function EstimateView({
     token0,
     token1,
     network,
