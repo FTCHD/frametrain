@@ -43,7 +43,15 @@ export async function GET(request: NextRequest, { params }: { params: { frameId:
 
     const renderedFrame = await buildPreviewFramePage({
         id: frame.id,
-        ...buildParameters,
+        buttons: buildParameters.buttons,
+        aspectRatio: buildParameters.aspectRatio,
+        inputText: buildParameters.inputText,
+        refreshPeriod: buildParameters.refreshPeriod,
+        params: buildParameters.params,
+        fonts: buildParameters.fonts,
+        component: buildParameters.component,
+        image: buildParameters.image,
+        handler: buildParameters.handler,
     })
 
     return new Response(renderedFrame, {

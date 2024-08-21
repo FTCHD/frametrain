@@ -1,14 +1,8 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
 import { ColorPicker } from '@/sdk/components'
+import { Select } from '@/sdk/components/Select'
 import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
 import type { PDFPageProxy } from 'pdfjs-dist/types/web/interfaces'
@@ -21,65 +15,64 @@ export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
 	const uploadImage = useUploadImage()
 
-    const [responseData, setResponseData] = useState<string[]>(config.slideUrls || [])
     const [file, setFile] = useState<File>()
 
-    const [loading, setLoading] = useState(false)
-
-    async function renderPdf(url: string) {
-        setLoading(true)
-
-        const pages = []
-        let pageNumber = 1
-        const pdfDocument = await getPdfDocument(url)
-        while (pageNumber <= pdfDocument.numPages) {
-            const pdfPage = (await createPDFPage(pdfDocument, pageNumber)) as PDFPageProxy
-            const viewport = pdfPage.getViewport({ scale: 2 })
-            const { height, width } = viewport
-            const canvas = document.createElement('canvas')
-            canvas.width = width
-            canvas.height = height
-
-            await renderPDFToCanvas(pdfPage, canvas)
-            const ctx = canvas.getContext('2d')
-            if (ctx) {
-                pages.push(canvas.toDataURL('image/jpeg'))
-            }
-            pageNumber++
-        }
-
-        const slideUrls = []
-        // biome-ignore lint/style/useForOf: <explanation>
-        for (let i = 0; i < pages.length; i++) {
-            const page = pages[i]
-
-            const { fileName } = await uploadImage({
-                base64String: page.replace('data:image/jpeg;base64,', ''),
-                contentType: 'image/jpeg',
-            })
-
-            slideUrls.push('/frames/' + frameId + '/' + fileName)
-        }
-
-        updateConfig({ slideUrls: slideUrls })
-
-        setLoading(false)
-    }
+    const [uploadingSlides, setUploadingSlides] = useState(false)
 
     useEffect(() => {
         if (!file) return
+        if (uploadingSlides) return
 
         const reader = new FileReader()
         reader.addEventListener(
             'load',
-            () => {
-                renderPdf(reader.result as string)
+            async () => {
+                const url = reader.result as string
+                setUploadingSlides(true)
+
+                const pages = []
+                let pageNumber = 1
+                const pdfDocument = await getPdfDocument(url)
+                while (pageNumber <= pdfDocument.numPages) {
+                    const pdfPage = (await createPDFPage(pdfDocument, pageNumber)) as PDFPageProxy
+                    const viewport = pdfPage.getViewport({ scale: 2 })
+                    const { height, width } = viewport
+                    const canvas = document.createElement('canvas')
+                    canvas.width = width
+                    canvas.height = height
+
+                    await renderPDFToCanvas(pdfPage, canvas)
+                    const ctx = canvas.getContext('2d')
+                    if (ctx) {
+                        pages.push(canvas.toDataURL('image/jpeg'))
+                    }
+                    pageNumber++
+                }
+
+                const slideUrls = []
+                // biome-ignore lint/style/useForOf: <explanation>
+                for (let i = 0; i < pages.length; i++) {
+                    const page = pages[i]
+
+                    const { fileName } = await uploadImage({
+                        base64String: page.replace('data:image/jpeg;base64,', ''),
+                        contentType: 'image/jpeg',
+                    })
+
+                    slideUrls.push('/frames/' + frameId + '/' + fileName)
+                }
+
+                updateConfig({ slideUrls: slideUrls })
+
+                setUploadingSlides(false)
+
+                setFile(undefined)
             },
             false
         )
 
         reader.readAsDataURL(file)
-    }, [file, renderPdf])
+    }, [file, frameId, updateConfig, uploadingSlides, uploadImage])
 
     return (
         <div className=" h-full flex flex-col gap-10">
@@ -90,7 +83,7 @@ export default function Inspector() {
                     <Input
                         className="py-2 text-lg "
                         defaultValue={config.title}
-                        onChange={(e) => updateConfig({ title: e.target.value })}
+                        onChange={(e) => updateConfig({ title: e.target.value || undefined })}
                         placeholder="Title"
                     />
                 </div>
@@ -99,7 +92,7 @@ export default function Inspector() {
                     <Input
                         className="py-2 text-lg "
                         defaultValue={config.subtitle}
-                        onChange={(e) => updateConfig({ subtitle: e.target.value })}
+                        onChange={(e) => updateConfig({ subtitle: e.target.value || undefined })}
                         placeholder="Subtitle"
                     />
                 </div>
@@ -131,7 +124,7 @@ export default function Inspector() {
             </div>
             <div className="flex flex-col gap-5">
                 <h2 className="text-2xl font-bold">File & Content</h2>
-                {!(file || responseData.length) ? (
+                {!config?.slideUrls?.length ? (
                     <label
                         htmlFor="uploadFile"
                         className="flex cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
@@ -141,6 +134,7 @@ export default function Inspector() {
                             id="uploadFile"
                             accept="application/pdf"
                             type="file"
+                            disabled={uploadingSlides}
                             onChange={(e) => {
                                 if (e.target.files?.[0]) {
                                     setFile(e.target.files?.[0])
@@ -150,7 +144,7 @@ export default function Inspector() {
                         />
                     </label>
                 ) : null}
-                {file || responseData.length ? (
+                {config?.slideUrls?.length ? (
                     <div className="flex flex-row space-x-4 w-full">
                         <label
                             htmlFor="uploadFile"
@@ -172,7 +166,6 @@ export default function Inspector() {
                         <Button
                             variant="destructive"
                             onClick={() => {
-                                setFile(undefined)
                                 updateConfig({ slideUrls: [] })
                             }}
                             className="w-full"
@@ -185,10 +178,10 @@ export default function Inspector() {
             <div className="flex flex-col">
                 <div className="flex flex-row justify-between items-center">
                     <h2 className="text-lg font-semibold">Slides</h2>
-                    {loading && <LoaderIcon className="animate-spin" />}
+                    {uploadingSlides && <LoaderIcon className="animate-spin" />}
                 </div>
                 <div className="flex flex-row flex-wrap gap-4">
-                    {responseData.map((slideUrl) => (
+                    {config?.slideUrls?.map((slideUrl) => (
                         <img
                             key={slideUrl}
                             src={process.env.NEXT_PUBLIC_CDN_HOST + slideUrl}
@@ -203,15 +196,10 @@ export default function Inspector() {
                 <h2 className="text-lg font-semibold">Aspect Ratio</h2>
                 <Select
                     defaultValue={config.aspectRatio}
-                    onValueChange={(value) => updateConfig({ aspectRatio: value })}
+                    onChange={(value) => updateConfig({ aspectRatio: value })}
                 >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Aspect Ratio" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value={'1/1'}>Square</SelectItem>
-                        <SelectItem value={'1.91/1'}>Wide</SelectItem>
-                    </SelectContent>
+                    <option value={'1/1'}>Square</option>
+                    <option value={'1.91/1'}>Wide</option>
                 </Select>
             </div>
         </div>

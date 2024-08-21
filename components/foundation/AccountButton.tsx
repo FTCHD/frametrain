@@ -61,7 +61,12 @@ export default function AccountButton() {
 
     return (
         <AuthKitProvider>
-            {isAuthenticated || sesh?.status === 'authenticated' ? (
+            {sesh?.status === 'loading' ? undefined : isLoggingIn ? (
+                <div className="flex flex-col justify-center items-center w-full h-full gap-2">
+                    <BaseSpinner />
+                    {timeSpent > 5 && <p className="text-sm">Stuck? Try refreshing the page!</p>}
+                </div>
+            ) : isAuthenticated || sesh?.status === 'authenticated' ? (
                 <TooltipProvider delayDuration={0}>
                     <Tooltip>
                         <TooltipTrigger>
@@ -76,11 +81,6 @@ export default function AccountButton() {
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-            ) : isLoggingIn ? (
-                <div className="flex flex-col justify-center items-center w-full h-full gap-2">
-                    <BaseSpinner />
-                    {timeSpent > 5 && <p className="text-sm">Stuck? Try refreshing the page!</p>}
-                </div>
             ) : (
                 <SignInButton
                     nonce={getNonce}

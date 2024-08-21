@@ -227,7 +227,7 @@ function FrameButton({
                 break
             }
             default: {
-                toast.error('Not implemented yet')
+                toast.error('Use the Warpcast Frames Validator to test transactions!')
                 break
             }
         }

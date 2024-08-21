@@ -4,7 +4,8 @@ import { validatePayload } from '@/lib/serve'
 import templates from '@/templates'
 import type { InferInsertModel } from 'drizzle-orm'
 import { encode } from 'next-auth/jwt'
-// import { decode, encode } from 'next-auth/jwt';
+
+const SUPPORTED_TEMPLATES = ['cal', 'discourse', 'luma']
 
 const SUPPORTED_TEMPLATES = ['cal', 'discourse']
 

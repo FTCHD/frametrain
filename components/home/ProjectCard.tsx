@@ -1,10 +1,11 @@
 'use client'
+import type { getRecentFrameList } from '@/lib/frame'
 
-import type { frameTable } from '@/db/schema'
-import type { InferSelectModel } from 'drizzle-orm'
+export default function ProjectCard({
+    frame,
+}: { frame: Awaited<ReturnType<typeof getRecentFrameList>>[number] }) {
+    const { id, name, template, interactionCount } = frame
 
-export default function ProjectCard({ frame }: { frame: InferSelectModel<typeof frameTable> }) {
-    const { id, name, template, currentMonthCalls } = frame
     return (
         <a
             href={`/frame/${id}`}
@@ -33,7 +34,7 @@ export default function ProjectCard({ frame }: { frame: InferSelectModel<typeof 
                             {template[0].toUpperCase() + template.slice(1)}
                         </div>
                         <div className="px-4 py-1 text-sm font-medium rounded-full text-[#c7dff7] bg-[#12467B]">
-                            {currentMonthCalls === 0 ? 'No taps' : `${currentMonthCalls} taps`}
+                            {interactionCount === 0 ? 'No taps' : `${interactionCount} taps`}
                         </div>
                     </div>
                 </div>

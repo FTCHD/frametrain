@@ -24,7 +24,7 @@
         "@ffmpeg/util": "^0.12.1",
         "@formkit/auto-animate": "^0.8.2",
         "@hookform/resolvers": "^3.4.2",
-        "@libsql/client": "0.3.3",
+        "@libsql/client": "^0.9.0",
         "@neynar/nodejs-sdk": "^1.27.0",
         "@paralleldrive/cuid2": "^2.2.2",
         "@paywithglide/glide-js": "^0.9.11",

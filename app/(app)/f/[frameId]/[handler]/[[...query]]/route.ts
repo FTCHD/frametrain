@@ -1,12 +1,12 @@
 import { client } from '@/db/client'
-import { frameTable } from '@/db/schema'
+import { frameTable, interactionTable } from '@/db/schema'
 import type {
     BuildFrameData,
     FrameActionPayload,
     FrameActionPayloadValidated,
 } from '@/lib/farcaster'
-import { updateFrameCalls, updateFrameStorage } from '@/lib/frame'
-import { buildFramePage, validatePayload } from '@/lib/serve'
+import { updateFrameStorage } from '@/lib/frame'
+import { buildFramePage, validatePayload, validatePayloadAirstack } from '@/lib/serve'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
 import templates from '@/templates'
@@ -85,7 +85,7 @@ export async function POST(
             )
         }
 
-        console.log(error)
+        console.error(error)
 
         return Response.json(
             { message: 'Unknown error' },
@@ -111,7 +111,7 @@ export async function POST(
         ...(buildParameters as BuildFrameData),
     })
 
-    waitUntil(processFrame(frame, buildParameters))
+    waitUntil(processFrame(frame, buildParameters, body))
 
     return new Response(renderedFrame, {
         headers: {
@@ -120,15 +120,16 @@ export async function POST(
     })
 }
 
-async function processFrame(f: InferSelectModel<typeof frameTable>, p: BuildFrameData) {
+async function processFrame(
+    f: InferSelectModel<typeof frameTable>,
+    p: BuildFrameData,
+    b: FrameActionPayload
+) {
     const storageData = p.storage as BaseStorage | undefined
 
     if (storageData) {
         await updateFrameStorage(f.id, storageData)
-        console.log('Updated frame storage')
     }
-
-    await updateFrameCalls(f.id, f.currentMonthCalls + 1)
 
     if (f.webhooks) {
         const webhookUrls = f.webhooks
@@ -160,5 +161,29 @@ async function processFrame(f: InferSelectModel<typeof frameTable>, p: BuildFram
                     console.error('Error sending webhook', e)
                 })
         }
+    }
+      
+    const airstackKey = f.config?.airstackKey || process.env.AIRSTACK_API_KEY
+
+    const interactionData = await validatePayloadAirstack(b, airstackKey)
+
+    if (interactionData.valid) {
+        await client
+            .insert(interactionTable)
+            .values({
+                frame: f.id,
+                fid: interactionData.message.data.fid.toString(),
+                buttonIndex: interactionData.message.data.frameActionBody.buttonIndex.toString(),
+                inputText: interactionData.message.data.frameActionBody.inputText || undefined,
+                state: interactionData.message.data.frameActionBody.state || undefined,
+                transactionHash:
+                    interactionData.message.data.frameActionBody.transactionId || undefined,
+                castFid: interactionData.message.data.frameActionBody.castId.fid.toString(),
+                castHash: interactionData.message.data.frameActionBody.castId.hash,
+                createdAt: new Date(),
+            })
+            .run()
+    } else {
+        console.error('AIRSTACK_PAYLOAD_NOT_VALID')
     }
 }
