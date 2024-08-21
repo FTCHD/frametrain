@@ -4,7 +4,7 @@ import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
 import { formatSymbol } from '../common/shared'
 import CoverView from '../views/Cover'
-import PageView from '../views/Page'
+import EstimateView from '../views/Estimate'
 
 export default async function initial({
     config,
@@ -16,7 +16,18 @@ export default async function initial({
     params?: any
 }): Promise<BuildFrameData> {
     const buttons: FrameButtonMetadata[] = []
-    const fonts = []
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts = [...roboto]
+
+    if (config.coverMessage?.font) {
+        const customMessageFont = await loadGoogleFontAllVariants(config.coverMessage.font)
+        fonts.push(...customMessageFont)
+    }
+
+    if (config.pairName?.font) {
+        const pairNameFont = await loadGoogleFontAllVariants(config.pairName.font)
+        fonts.push(...pairNameFont)
+    }
 
     if (config.pool) {
         const customFonts = await Promise.all([
@@ -43,17 +54,14 @@ export default async function initial({
             buttons,
             inputText: `Buy ${token1.symbol} amount (eg. 0.1)`,
             fonts,
-            component: PageView({ token0, token1, network: config.pool.network }),
-            handler: 'price',
+            component: EstimateView({ token0, token1, network: config.pool.network }),
+            handler: 'estimate',
         }
-    } 
-
-    const roboto = await loadGoogleFontAllVariants('Roboto')
+    }
 
     return {
         buttons,
-        fonts: roboto,
+        fonts,
         component: CoverView(config),
-        handler: 'price',
     }
 }

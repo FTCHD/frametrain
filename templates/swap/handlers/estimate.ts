@@ -6,7 +6,7 @@ import { fetchPrice } from '../common/0x'
 import PriceView from '../views/Price'
 import initial from './initial'
 
-export default async function price({
+export default async function estimate({
     body,
     config,
     params,

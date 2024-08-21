@@ -14,7 +14,7 @@ export default async function initial({
     storage: undefined
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts: any[] = [roboto]
+    const fonts = [...roboto]
     const buttons: FrameButtonMetadata[] = [
         {
             label: 'About',

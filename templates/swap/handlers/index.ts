@@ -1,11 +1,13 @@
 import initial from './initial'
-import price from './price'
+import estimate from './estimate'
 import success from './success'
 import txData from './txData'
+import cover from './cover'
 
 export default {
     initial,
+    estimate,
     txData,
-    price,
     success,
+    cover,
 }

@@ -12,7 +12,7 @@ export default async function about({
     storage: undefined
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts: any[] = [roboto]
+    const fonts = [...roboto]
 
     if (config.about.titleStyles?.font) {
         const titleFont = await loadGoogleFontAllVariants(config.about.titleStyles.font)
