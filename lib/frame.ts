@@ -37,23 +37,6 @@ export async function getRecentFrameList() {
         notFound()
     }
 
-    // const frames = await client.query.frameTable.findMany({
-    //     where: eq(frameTable.owner, sesh.user.id!),
-    //     limit: 10,
-    //     // extras: {
-    //     // interactionCount: (frames, { sql }) =>
-    //     //     sql<number>`SELECT COUNT(*) FROM interaction WHERE frameId = ${frames.id}`.as(
-    //     //         'interactionCount'
-    //     //     ),
-    //     // interactionCount: sql`SELECT count(*) FROM interaction;`.as('interactionCount'),
-    //     // test: sql`lower(${frameTable.name})`.as('lowered_name'),
-    //     // },
-    //     with: {
-    //         interactions: {},
-    //     },
-    //     orderBy: desc(frameTable.updatedAt),
-    // })
-
     const frames = await client
         .select({
             ...getTableColumns(frameTable),
@@ -61,7 +44,7 @@ export async function getRecentFrameList() {
         })
         .from(frameTable)
         .where(eq(frameTable.owner, sesh.user.id!))
-        .limit(10)
+        .limit(8)
         .leftJoin(interactionTable, eq(frameTable.id, interactionTable.frame))
         .groupBy(frameTable.id)
         .orderBy(desc(frameTable.updatedAt))
