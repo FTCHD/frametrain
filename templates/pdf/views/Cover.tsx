@@ -36,7 +36,6 @@ export default function CoverView({
                     fontFamily: 'Roboto',
                     fontSize: '100px',
                     textAlign: 'center',
-                    textWrap: 'balance',
                 }}
             >
                 {title ?? 'Title'}

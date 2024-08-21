@@ -1,9 +1,9 @@
 'use server'
 import { auth } from '@/auth'
 import { client } from '@/db/client'
-import { frameTable } from '@/db/schema'
+import { frameTable, interactionTable } from '@/db/schema'
 import templates from '@/templates'
-import { type InferInsertModel, and, desc, eq } from 'drizzle-orm'
+import { type InferInsertModel, and, count, desc, eq, getTableColumns } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { uploadPreview } from './storage'
@@ -16,9 +16,15 @@ export async function getFrameList() {
     }
 
     const frames = await client
-        .select()
+        .select({
+            ...getTableColumns(frameTable),
+            interactionCount: count(interactionTable.id),
+        })
         .from(frameTable)
         .where(eq(frameTable.owner, sesh.user.id!))
+        .leftJoin(interactionTable, eq(frameTable.id, interactionTable.frame))
+        .groupBy(frameTable.id)
+        .orderBy(desc(frameTable.updatedAt))
         .all()
 
     return frames
@@ -32,12 +38,16 @@ export async function getRecentFrameList() {
     }
 
     const frames = await client
-        .select()
+        .select({
+            ...getTableColumns(frameTable),
+            interactionCount: count(interactionTable.id),
+        })
         .from(frameTable)
         .where(eq(frameTable.owner, sesh.user.id!))
-        .limit(10)
+        .limit(8)
+        .leftJoin(interactionTable, eq(frameTable.id, interactionTable.frame))
+        .groupBy(frameTable.id)
         .orderBy(desc(frameTable.updatedAt))
-        .all()
 
     return frames
 }

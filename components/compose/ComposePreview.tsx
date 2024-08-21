@@ -112,9 +112,12 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                 onFocusOutside={(e) => e.preventDefault()}
             >
                 <div
-                    className={`flex flex-col h-[${
-                        image.aspectRatio === '1:1' ? '360px' : '220px'
-                    }] justify-center items-center z-10 fixed bottom-0 right-0 min-w-[320px] mr-2`}
+                    className={
+                        'flex flex-col justify-center items-center z-10 fixed bottom-0 right-0 min-w-[320px] mr-2'
+                    }
+                    style={{
+                        height: image.aspectRatio === '1:1' ? '430px' : '230px',
+                    }}
                 >
                     <div
                         className="relative h-[75%] overflow-hidden"
@@ -130,7 +133,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                             }}
                         />
                     </div>
-                    <div className="py-2 rounded-lg rounded-t-none border border-t-0 px-4 border-[#4c3a4e80] bg-[#2A2432] min-h-[25%] w-full">
+                    <div className="py-2 rounded-lg rounded-t-none border border-t-0 px-4 border-[#4c3a4e80] bg-[#2A2432] min-h-[15%] w-full">
                         <div className="flex flex-row w-full h-full justify-center items-center gap-[10px]">
                             {buttons?.map((button, index) =>
                                 button ? (

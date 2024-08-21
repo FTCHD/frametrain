@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import ResultsView from '../views/Results'
@@ -11,7 +11,7 @@ export default async function vote({
     config,
     storage,
 }: {
-    body: FrameValidatedActionPayload
+    body: FrameActionPayloadValidated
     config: Config
     storage: Storage
 }): Promise<BuildFrameData> {
@@ -19,7 +19,10 @@ export default async function vote({
     const cast = body.validatedData.cast
     const voter = viewer.fid.toString()
     const buttonIndex = body.validatedData.tapped_button.index as number
-    const pastIndex = storage.votesForId?.[voter]
+    const username = body.validatedData.interactor.username
+
+    const pastIndex =
+        storage.votesForId?.[voter]?.option || (storage.votesForId?.[voter] as unknown as number)
 
     let newStorage = storage
 
@@ -54,7 +57,11 @@ export default async function vote({
         newStorage = Object.assign(storage, {
             votesForId: {
                 ...(storage.votesForId ?? {}),
-                [voter]: buttonIndex,
+                [voter]: {
+                    option: buttonIndex,
+                    username,
+                    timestamp: Date.now(),
+                },
             },
             votesForOption: {
                 ...(storage.votesForOption ?? {}),

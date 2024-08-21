@@ -1,12 +1,6 @@
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
 import { useEffect, useMemo, useState } from 'react'
 import { getGoogleFonts } from '../fonts'
+import { Select } from './Select'
 
 export function FontWeightPicker({
     currentFont,
@@ -162,17 +156,12 @@ export function FontWeightPicker({
     }
 
     return (
-        <Select defaultValue={defaultWeight} onValueChange={onSelect}>
-            <SelectTrigger className="w-full">
-                <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-                {weights.map((weight) => (
-                    <SelectItem key={weight} value={weight.toString()}>
-                        {weight}
-                    </SelectItem>
-                ))}
-            </SelectContent>
+        <Select defaultValue={defaultWeight} onChange={onSelect}>
+            {weights.map((weight) => (
+                <option key={weight} value={weight.toString()}>
+                    {weight}
+                </option>
+            ))}
         </Select>
     )
 }

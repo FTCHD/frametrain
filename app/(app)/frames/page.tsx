@@ -1,8 +1,9 @@
 import { auth } from '@/auth'
-import Header from '@/components/foundation/Header'
 import ProjectCard from '@/components/home/ProjectCard'
 import { getFrameList } from '@/lib/frame'
+import { ArrowLeftIcon } from 'lucide-react'
 import type { Metadata } from 'next'
+import NextLink from 'next/link'
 import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
@@ -46,11 +47,26 @@ export default async function FrameList() {
 
     return (
         <div className="flex flex-col p-5 w-full h-full gap-5">
-            <Header />
+            <section className="flex flex-row justify-between items-center px-4 py-2">
+                <NextLink href="/" className="text-5xl font-bold">
+                    My Frames
+                </NextLink>
+            </section>
             <div className="flex flex-grow justify-center items-center">
                 <div className="flex flex-col w-full">
                     <div className="flex flex-col p-4 space-y-8 w-full md:pl-4">
-                        <h1 className="text-3xl font-semibold">🖼️ Frames</h1>
+                        <div className="flex flex-col gap-2">
+                            <NextLink href="/" className="w-fit">
+                                <p className="group text-sm flex flex-row gap-1 items-center text-[#ffffff90] border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90]">
+                                    <ArrowLeftIcon
+                                        color="#ffffff90"
+                                        size={16}
+                                        className="ml-1 group-hover:m-0 transition-all duration-300"
+                                    />{' '}
+                                    Back
+                                </p>
+                            </NextLink>
+                        </div>
                         {frames.length ? (
                             <div className="flex flex-wrap gap-4 justify-start">
                                 {frames.map((frame) => (

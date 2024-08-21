@@ -1,7 +1,6 @@
 'use server'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { ImageResponse } from '@vercel/og'
-import type { ReactElement } from 'react'
 import sharp from 'sharp'
 import type {
     BuildFrameData,
@@ -9,7 +8,6 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from './farcaster'
-import type { BaseStorage } from './types'
 
 export async function buildFramePage({
     id,
@@ -18,7 +16,6 @@ export async function buildFramePage({
     inputText,
     refreshPeriod,
     params,
-    storage,
     fonts,
     component,
     image,
@@ -63,7 +60,7 @@ export async function buildFramePage({
                   .join('&')
             : ''
 
-    const metadata = buildFrame({
+    const metadata = await buildFrame({
         buttons,
         image: imageData,
         aspectRatio,
@@ -101,24 +98,13 @@ export async function buildPreviewFramePage({
     inputText,
     refreshPeriod,
     params,
-    storage,
     fonts,
     component,
     image,
     handler,
 }: {
     id: string
-    buttons: FrameButtonMetadata[]
-    aspectRatio: '1.91:1' | '1:1'
-    inputText?: string
-    refreshPeriod?: number
-    params?: any
-    storage?: BaseStorage
-    fonts?: any[]
-    component: ReactElement
-    image: string
-    handler?: string
-}) {
+} & BuildFrameData) {
     if (!component && !image) {
         throw new Error('Either component or image must be provided')
     }
@@ -145,7 +131,7 @@ export async function buildPreviewFramePage({
                   .join('&')
             : ''
 
-    const metadata = buildFrame({
+    const metadata = await buildFrame({
         buttons,
         image: imageData,
         aspectRatio,
@@ -170,7 +156,7 @@ export async function buildPreviewFramePage({
     return frame
 }
 
-function buildFrame({
+export async function buildFrame({
     buttons,
     image,
     aspectRatio = '1.91:1',
@@ -198,7 +184,7 @@ function buildFrame({
 
     const metadata: Record<string, string> = {
         'fc:frame': version,
-        'og:image': image,
+        // 'og:image': image,
         'fc:frame:image': image,
         'fc:frame:image:aspect_ratio': aspectRatio,
         'fc:frame:post_url': postUrl,
@@ -277,6 +263,34 @@ export async function validatePayload(
             console.error(err)
             return {
                 isValid: false,
+                message: undefined,
+            }
+        })) as FrameValidatedActionPayload
+
+    return r
+}
+
+export async function validatePayloadAirstack(
+    body: FrameActionPayload,
+    airstackKey: string
+): Promise<FrameValidatedActionPayload | { valid: false; message: undefined }> {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/octet-stream',
+            'x-airstack-hubs': airstackKey,
+        },
+        body: new Uint8Array(
+            body.trustedData.messageBytes.match(/.{1,2}/g)!.map((byte) => Number.parseInt(byte, 16))
+        ),
+    }
+
+    const r = (await fetch('https://hubs.airstack.xyz/v1/validateMessage', options)
+        .then((response) => response.json())
+        .catch((err) => {
+            console.error(err)
+            return {
+                valid: false,
                 message: undefined,
             }
         })) as FrameValidatedActionPayload

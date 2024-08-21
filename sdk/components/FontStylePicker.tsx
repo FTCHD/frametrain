@@ -1,12 +1,6 @@
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
 import { useEffect, useMemo, useState } from 'react'
 import { getGoogleFonts } from '../fonts'
+import { Select } from './Select'
 
 export function FontStylePicker({
     currentFont,
@@ -159,17 +153,12 @@ export function FontStylePicker({
     }
 
     return (
-        <Select defaultValue={defaultStyle} onValueChange={onSelect}>
-            <SelectTrigger className="w-full">
-                <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-                {styles.map((style) => (
-                    <SelectItem key={style} value={style}>
-                        {style}
-                    </SelectItem>
-                ))}
-            </SelectContent>
+        <Select defaultValue={defaultStyle} onChange={onSelect}>
+            {styles.map((style) => (
+                <option key={style} value={style}>
+                    {style}
+                </option>
+            ))}
         </Select>
     )
 }

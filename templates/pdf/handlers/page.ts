@@ -49,7 +49,7 @@ export default async function page({
 
     return {
         buttons: buttons,
-        aspectRatio: '1:1',
+        aspectRatio: config.aspectRatio === '1.91/1' ? '1.91:1' : '1:1',
         image: process.env.NEXT_PUBLIC_CDN_HOST + slideUrl,
         handler: 'page',
         params: {
