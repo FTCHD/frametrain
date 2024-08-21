@@ -12,6 +12,7 @@ import { getGlideConfig } from '../utils/shared'
 import RefreshView from '../views/Refresh'
 import initial from './initial'
 import TextSlide from '@/sdk/components/TextSlide'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function status({
     body,
@@ -43,6 +44,24 @@ export default async function status({
         throw new FrameError('Session Id is missing')
     }
 
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts: any[] = [roboto]
+
+    if (config.success.titleStyles?.font) {
+        const titleFont = await loadGoogleFontAllVariants(config.success.titleStyles.font)
+        fonts.push(...titleFont)
+    }
+
+    if (config.success.subtitleStyles?.font) {
+        const subtitleFont = await loadGoogleFontAllVariants(config.success.subtitleStyles.font)
+        fonts.push(...subtitleFont)
+    }
+
+    if (config.success.customStyles?.font) {
+        const customFont = await loadGoogleFontAllVariants(config.success.customStyles.font)
+        fonts.push(...customFont)
+    }
+
     const txHash = (
         body.validatedData.transaction ? body.validatedData.transaction.hash : params.transactionId
     ) as `0x${string}`
@@ -59,6 +78,7 @@ export default async function status({
         await waitForSession(glideConfig, params.sessionId)
 
         return {
+            fonts,
             buttons: [
                 {
                     label: `View on ${client.chain.blockExplorers?.default.name}`,
@@ -104,6 +124,7 @@ export default async function status({
         }
 
         return {
+            fonts,
             buttons,
             image: paid ? config.success?.image : undefined,
             component: paid

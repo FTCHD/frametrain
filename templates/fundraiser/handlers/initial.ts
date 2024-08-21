@@ -15,12 +15,28 @@ export default async function initial({
     config: Config
     storage: undefined
 }): Promise<BuildFrameData> {
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts: any[] = [roboto]
     const buttons: FrameButtonMetadata[] = [
         {
             label: 'About',
         },
     ]
-    const roboto = await loadGoogleFontAllVariants('Roboto')
+
+    if (config.cover.titleStyles?.font) {
+        const titleFont = await loadGoogleFontAllVariants(config.cover.titleStyles.font)
+        fonts.push(...titleFont)
+    }
+
+    if (config.cover.subtitleStyles?.font) {
+        const subtitleFont = await loadGoogleFontAllVariants(config.cover.subtitleStyles.font)
+        fonts.push(...subtitleFont)
+    }
+
+    if (config.cover.customStyles?.font) {
+        const customFont = await loadGoogleFontAllVariants(config.cover.customStyles.font)
+        fonts.push(...customFont)
+    }
 
     if (config.token?.symbol && config.enablePredefinedAmounts && config.amounts.length) {
         for (const amount of config.amounts) {
@@ -43,7 +59,7 @@ export default async function initial({
             ? `Donate custom ${config.token?.symbol} amount`
             : undefined,
         buttons,
-        fonts: roboto,
+        fonts,
         image: config.cover.image,
         component: config.cover.image ? undefined : TextSlide(config.cover),
         handler: 'confirmation',
