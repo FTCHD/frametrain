@@ -85,7 +85,9 @@ export default async function Home() {
             <div className="flex flex-row w-full justify-center items-center p-4 ">
                 <NextLink
                     style={{ textDecoration: 'none' }}
-                    href={'https://github.com/FTCHD/frametrain?tab=readme-ov-file#revenue-sharing'}
+                    href={
+                        'https://github.com/FTCHD/frametrain?tab=readme-ov-file#revenue-sharing-wip'
+                    }
                 >
                     <h1 className="text-sm font-medium hover:text-blue-500 hover:font-bold  transition-all duration-140">
                         🔍 Looking for a template? Build it yourself and get paid for it!
