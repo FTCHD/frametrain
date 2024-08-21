@@ -46,7 +46,7 @@ export default {
         barColor: 'yellow',
         cover: {
             title: 'Fundraiser',
-            description: 'Welcome to the Fundraiser!',
+            subtitle: 'Welcome to the Fundraiser!',
             customMessage: 'You can customize this message.',
         },
         success: {
