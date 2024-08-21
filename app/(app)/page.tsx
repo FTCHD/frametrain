@@ -3,6 +3,7 @@ import AccountButton from '@/components/foundation/AccountButton'
 import Header from '@/components/foundation/Header'
 import ProjectCard from '@/components/home/ProjectCard'
 import TemplateCard from '@/components/home/TemplateCard'
+import { Button } from '@/components/shadcn/Button'
 import { getRecentFrameList } from '@/lib/frame'
 import { getFeaturedTemplates, getTemplates } from '@/lib/template'
 import { ArrowRightIcon } from 'lucide-react'
@@ -69,7 +70,19 @@ export default async function Home() {
                     </div>
 
                     <div className="flex flex-col p-4 space-y-8 md:pl-4">
-                        <h1 className="text-3xl font-semibold">💎 Templates</h1>
+                        <div className="flex flex-row w-full items-center gap-8">
+                            <h1 className="text-3xl font-semibold">💎 Templates</h1>
+                            <NextLink href="/templates">
+                                <p className="group text-sm flex flex-row gap-1 items-center text-[#ffffff90] border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90]">
+                                    All templates{' '}
+                                    <ArrowRightIcon
+                                        color="#ffffff90"
+                                        size={16}
+                                        className="ml-1 group-hover:m-0 transition-all duration-300"
+                                    />
+                                </p>
+                            </NextLink>
+                        </div>
                         <div className="flex flex-col flex-wrap gap-4 items-start md:flex-row">
                             {Object.keys(templates).map((id) => (
                                 <TemplateCard
@@ -82,7 +95,13 @@ export default async function Home() {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-row w-full justify-center items-center p-4 ">
+
+            <div className="flex flex-col w-full justify-between items-center p-4 gap-8">
+                <NextLink href="/templates">
+                    <Button variant={'primary'} size={'lg'}>
+                        BROWSE TEMPLATES
+                    </Button>
+                </NextLink>
                 <NextLink
                     style={{ textDecoration: 'none' }}
                     href={
