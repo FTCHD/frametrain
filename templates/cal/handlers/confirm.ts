@@ -44,10 +44,10 @@ export default async function confirm({
                 eventTypeSlug: params.duration,
                 startTime: dates[0],
                 endTime: dates[1],
-                timeZone: 'UTC',
                 duration: null,
                 rescheduleUid: null,
                 orgSlug: null,
+                timeZone: config.timezone || 'Europe/London',
             },
             meta: {
                 values: {
@@ -61,7 +61,7 @@ export default async function confirm({
     const slots = await fetch(url)
     const slotsResponse = await slots.json()
 
-    const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
+    const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots, config.timezone)
     const date = datesArray[params.date]
 
     const email = body.untrustedData.inputText
@@ -73,7 +73,8 @@ export default async function confirm({
             email!,
             slotsResponse.result.data.json.slots[date][params.slot].time,
             eventTypeId,
-            config.username!
+            config.username!,
+            config.timezone || 'Europe/London'
         )
     } catch {
         throw new FrameError('Error booking event.')

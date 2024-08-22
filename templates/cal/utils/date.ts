@@ -62,7 +62,7 @@ export function getDurationFormatted(mins: number | undefined) {
     return hourStr || minStr
 }
 
-export function extractDatesAndSlots(data: any) {
+export function extractDatesAndSlots(data: any, timeZone = 'Europe/London') {
     if (!data || typeof data !== 'object') {
         throw new Error('Invalid input data')
     }
@@ -75,7 +75,7 @@ export function extractDatesAndSlots(data: any) {
             return dateObject.toLocaleString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
-                timeZone: 'UTC',
+                timeZone,
             })
         })
     })

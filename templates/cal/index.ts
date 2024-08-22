@@ -11,7 +11,7 @@ export interface Config extends BaseConfig {
     titleStyle?: string
     background?: string
     bodyColor?: string
-
+    timezone: string | undefined
     fid: number | undefined
     image: string | undefined
     name: string | undefined
@@ -56,6 +56,7 @@ export default {
     initialConfig: {
         events: [],
         bio: [],
+        timezone: 'Europe/London',
         gatingOptions: {
             karmaGating: false,
             nftGating: false,

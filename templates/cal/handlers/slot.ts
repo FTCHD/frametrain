@@ -40,7 +40,7 @@ export default async function slot({
                         eventTypeSlug: params.duration,
                         startTime: dates[0],
                         endTime: dates[1],
-                        timeZone: 'UTC',
+                        timeZone: config.timezone || 'Europe/London',
                         duration: null,
                         rescheduleUid: null,
                         orgSlug: null,
@@ -57,9 +57,11 @@ export default async function slot({
             const slots = await fetch(url)
             const slotsResponse = await slots.json()
 
-            const [datesArray, slotsArray] = extractDatesAndSlots(
-                slotsResponse.result.data.json.slots
+            const [_, slotsArray] = extractDatesAndSlots(
+                slotsResponse.result.data.json.slots,
+                config.timezone
             )
+
             return {
                 buttons: [
                     {
@@ -95,7 +97,8 @@ export default async function slot({
                         eventTypeSlug: params.duration,
                         startTime: dates[0],
                         endTime: dates[1],
-                        timeZone: 'UTC',
+                        timeZone: config.timezone || 'Europe/London',
+
                         duration: null,
                         rescheduleUid: null,
                         orgSlug: null,
@@ -113,8 +116,10 @@ export default async function slot({
             const slotsResponse = await slots.json()
 
             const [datesArray, slotsArray] = extractDatesAndSlots(
-                slotsResponse.result.data.json.slots
+                slotsResponse.result.data.json.slots,
+                config.timezone
             )
+
             return {
                 buttons: [
                     {
@@ -157,7 +162,8 @@ export default async function slot({
                         eventTypeSlug: params.duration,
                         startTime: dates[0],
                         endTime: dates[1],
-                        timeZone: 'UTC',
+                        timeZone: config.timezone || 'Europe/London',
+
                         duration: null,
                         rescheduleUid: null,
                         orgSlug: null,
@@ -174,8 +180,9 @@ export default async function slot({
             const slots = await fetch(url)
             const slotsResponse = await slots.json()
 
-            const [datesArray, slotsArray] = extractDatesAndSlots(
-                slotsResponse.result.data.json.slots
+            const [_, slotsArray] = extractDatesAndSlots(
+                slotsResponse.result.data.json.slots,
+                config.timezone
             )
             return {
                 buttons: [

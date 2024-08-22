@@ -15,6 +15,7 @@ import type { Config } from '.'
 import { fetchProfileData } from './utils/cal'
 import { getDurationFormatted } from './utils/date'
 import { getName } from './utils/nft'
+import { Badge } from '@/components/shadcn/Badge'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -25,6 +26,15 @@ export default function Inspector() {
     const slugInputRef = useRef<HTMLInputElement>(null)
     const [loading, setLoading] = useState(false)
     const events = config.events || []
+    const eventSlugs = events.map((evt) => evt.slug)
+
+    const timezones = Intl.supportedValuesOf('timeZone')
+    const timezoneOptions = timezones.map((tz) => {
+        return {
+            label: tz,
+            value: tz,
+        }
+    })
 
     const onChangeUsername = useDebouncedCallback(async (username: string) => {
         if (config.username === username) return
@@ -104,71 +114,122 @@ export default function Inspector() {
             </div>
             <div className="flex flex-col gap-4 w-full max-md:gap-2">
                 <h2 className="text-2xl font-bold max-md:text-lg">Event Slugs</h2>
-
                 {events.length < 4 && (
-                    <div className="flex gap-2 items-center">
-                        <Input
-                            ref={slugInputRef}
-                            placeholder="Event ID/Slug (eg. 15min/30min/secret)"
-                        />
-                        <Button
-                            size={'lg'}
-                            variant={'secondary'}
-                            disabled={loading}
-                            onClick={async () => {
-                                if (!slugInputRef.current?.value) return
-
-                                setLoading(true)
-
-                                const eventSlug = slugInputRef.current.value.trim()
-
-                                if (!eventSlug.length) {
-                                    setLoading(false)
-                                    return
-                                }
-
-                                try {
-                                    const text = await corsFetch(
-                                        `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
-                                        {
-                                            method: 'GET',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
-                                        }
-                                    )
-                                    const data = JSON.parse(text as string)
-                                    const json = data[0].result.data.json
-
-                                    if (json === null) {
-                                        throw new Error('error')
+                    <>
+                        <div className="flex gap-2 items-center">
+                            <Input
+                                ref={slugInputRef}
+                                placeholder="Event ID/Slug (eg. 15min/30min/secret)"
+                            />
+                            <Button
+                                size={'lg'}
+                                variant={'secondary'}
+                                disabled={loading}
+                                onClick={async () => {
+                                    if (!slugInputRef.current?.value) return
+                                    setLoading(true)
+                                    const eventSlug = slugInputRef.current.value.trim()
+                                    if (!eventSlug.length) {
+                                        setLoading(false)
+                                        return
                                     }
+                                    try {
+                                        const text = await corsFetch(
+                                            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
+                                            {
+                                                method: 'GET',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                },
+                                            }
+                                        )
+                                        const data = JSON.parse(text as string)
+                                        const json = data[0].result.data.json
+                                        if (json === null) {
+                                            throw new Error('error')
+                                        }
+                                        const slug = data[0].result.data.json.slug as string
+                                        const duration = data[0].result.data.json.length as number
+                                        const newEvents = [
+                                            ...events,
+                                            {
+                                                slug: slug,
+                                                duration: duration,
+                                                formattedDuration: getDurationFormatted(duration),
+                                            },
+                                        ]
+                                        updateConfig({ events: newEvents })
+                                    } catch {
+                                        toast.error(`No event type found for: ${eventSlug}`)
+                                    } finally {
+                                        setLoading(false)
+                                        slugInputRef.current.value = ''
+                                    }
+                                }}
+                            >
+                                {loading ? <LoaderIcon className="animate-spin" /> : 'ADD'}
+                            </Button>
+                        </div>
+                        <div className="flex gap-2 mt-2">
+                            {['15min', '30min'].map((eventSlug) => (
+                                <Badge
+                                    key={eventSlug}
+                                    variant={
+                                        eventSlugs.includes(eventSlug) ? 'secondary' : 'outline'
+                                    }
+                                    className={`cursor-pointer ${
+                                        eventSlugs.includes(eventSlug) ? 'opacity-50' : ''
+                                    }`}
+                                    role="button"
+                                    aria-label={`${eventSlug} event type`}
+                                    aria-disabled={eventSlugs.includes(eventSlug)}
+                                    onClick={async () => {
+                                        setLoading(true)
+                                        if (eventSlugs.includes(eventSlug)) {
+                                            setLoading(false)
+                                            return
+                                        }
 
-                                    const slug = data[0].result.data.json.slug as string
-                                    const duration = data[0].result.data.json.length as number
-
-                                    const newEvents = [
-                                        ...events,
-                                        {
-                                            slug: slug,
-                                            duration: duration,
-                                            formattedDuration: getDurationFormatted(duration),
-                                        },
-                                    ]
-
-                                    updateConfig({ events: newEvents })
-                                } catch {
-                                    toast.error(`No event type found for: ${eventSlug}`)
-                                } finally {
-                                    setLoading(false)
-
-                                    slugInputRef.current.value = ''
-                                }
-                            }}
-                        >
-                            {loading ? <LoaderIcon className="animate-spin" /> : 'ADD'}
-                        </Button>
-                    </div>
+                                        try {
+                                            const text = await corsFetch(
+                                                `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
+                                                {
+                                                    method: 'GET',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                    },
+                                                }
+                                            )
+                                            const data = JSON.parse(text as string)
+                                            const json = data[0].result.data.json
+                                            if (json === null) {
+                                                throw new Error('error')
+                                            }
+                                            const slug = data[0].result.data.json.slug as string
+                                            const duration = data[0].result.data.json
+                                                .length as number
+                                            const newEvents = [
+                                                ...events,
+                                                {
+                                                    slug: slug,
+                                                    duration: duration,
+                                                    formattedDuration:
+                                                        getDurationFormatted(duration),
+                                                },
+                                            ]
+                                            updateConfig({ events: newEvents })
+                                        } catch {
+                                            toast.error(`No event type found for: ${eventSlug}`)
+                                        } finally {
+                                            setLoading(false)
+                                        }
+                                    }}
+                                >
+                                    {eventSlug}
+                                </Badge>
+                            ))}
+                        </div>
+                    </>
                 )}
 
                 {events.map((event, index) => (
@@ -202,6 +263,28 @@ export default function Inspector() {
                 ))}
             </div>
 
+            <div className="flex flex-col gap-2">
+                <h2 className="text-lg font-semibold">Timezone</h2>
+                <p className="text-sm text-muted-foreground">
+                    Choose your preferred timezone to display the event start time.
+                </p>
+                <Select
+                    defaultValue={config.timezone ?? 'Europe/London'}
+                    onChange={async (value) => {
+                        if (!config.events.length) return
+
+                        updateConfig({
+                            timezone: value,
+                        })
+                    }}
+                >
+                    {timezoneOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </Select>
+            </div>
             <div className="flex flex-col gap-2">
                 <h2 className="text-2xl font-semibold max-md:text-lg">Gating Options</h2>
                 <div className="flex flex-col gap-2 w-full md:w-auto max-md:gap-0">

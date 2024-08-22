@@ -5,10 +5,10 @@ export async function bookCall(
     email: string,
     startTime: string,
     eventTypeId: number,
-    user: string
+    user: string,
+    timeZone: string
 ) {
     const url = 'https://cal.com/api/book/event'
-    const timeZone = 'UTC'
 
     const requestBody = {
         responses: {
