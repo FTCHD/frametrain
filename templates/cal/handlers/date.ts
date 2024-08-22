@@ -20,8 +20,20 @@ export default async function date({
     const fonts = await loadGoogleFontAllVariants(config?.fontFamily ?? 'Roboto')
 
     const buttonIndex = body.untrustedData.buttonIndex
+    const inputText = body.untrustedData.inputText
 
-    let date = params?.date === undefined || params?.date === 'NaN' ? 0 : Number(params?.date)
+    const getDate = () => {
+        if (inputText) {
+            const date = dates.find((d) => d === inputText)
+            if (!date) {
+                throw new FrameError('The date you entered is invalid')
+            }
+            return Number(date)
+        }
+        return params?.date === undefined || params?.date === 'NaN' ? 0 : Number(params?.date)
+    }
+
+    let date = getDate()
     const eventIndex = params?.eventSlug
         ? config.events.findIndex((event) => event.slug === params.eventSlug)
         : buttonIndex - 1
@@ -29,7 +41,7 @@ export default async function date({
 
     switch (buttonIndex) {
         case 2: {
-            if (params.date === undefined) {
+            if (!inputText && params.date === undefined) {
                 break
             }
 
@@ -42,7 +54,8 @@ export default async function date({
                         eventTypeSlug: event.slug,
                         startTime: dates[0],
                         endTime: dates[1],
-                        timeZone: 'UTC',
+                        timeZone: config.timezone || 'Europe/London',
+
                         duration: null,
                         rescheduleUid: null,
                         orgSlug: null,
@@ -59,7 +72,10 @@ export default async function date({
             const slots = await fetch(url)
             const slotsResponse = await slots.json()
 
-            const [_, slotsArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
+            const [_, slotsArray] = extractDatesAndSlots(
+                slotsResponse.result.data.json.slots,
+                config.timezone
+            )
             return {
                 buttons: [
                     {
@@ -73,7 +89,6 @@ export default async function date({
                     },
                 ],
                 fonts,
-
                 component: NextView(config, slotsArray[date], 0),
                 handler: 'slot',
                 params: {
@@ -105,7 +120,8 @@ export default async function date({
                 eventTypeSlug: event.slug,
                 startTime: dates[0],
                 endTime: dates[1],
-                timeZone: 'UTC',
+                timeZone: config.timezone || 'Europe/London',
+
                 duration: null,
                 rescheduleUid: null,
                 orgSlug: null,
@@ -121,7 +137,7 @@ export default async function date({
 
     const slots = await fetch(url)
     const slotsResponse = await slots.json()
-    const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
+    const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots, config.timezone)
 
     if (!datesArray.length) {
         throw new FrameError('No availability found for this event.')
@@ -142,6 +158,7 @@ export default async function date({
         fonts,
         component: PageView(config, datesArray, date, event.formattedDuration),
         handler: 'date',
+        inputText: 'Enter a booking date from slide',
         params: {
             date,
             eventSlug: event.slug,

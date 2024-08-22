@@ -109,7 +109,8 @@ export default async function duration({
                     eventTypeSlug: event.slug,
                     startTime: dates[0],
                     endTime: dates[1],
-                    timeZone: 'UTC',
+                    timeZone: config.timezone || 'Europe/London',
+
                     duration: null,
                     rescheduleUid: null,
                     orgSlug: null,
@@ -125,7 +126,10 @@ export default async function duration({
 
         const slots = await fetch(url)
         const slotsResponse = await slots.json()
-        const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
+        const [datesArray] = extractDatesAndSlots(
+            slotsResponse.result.data.json.slots,
+            config.timezone
+        )
 
         if (!datesArray.length) {
             throw new FrameError('No events available to schedule.')
@@ -145,6 +149,7 @@ export default async function duration({
                 },
             ],
             component: DateView(config, datesArray, 0, event.formattedDuration),
+            inputText: 'Enter a booking date from slide',
             params: {
                 date: 0,
                 eventSlug: event.slug,
@@ -159,7 +164,6 @@ export default async function duration({
             label: event.formattedDuration,
         })),
         fonts: fonts,
-
         component: PageView(config),
         handler: 'date',
     }

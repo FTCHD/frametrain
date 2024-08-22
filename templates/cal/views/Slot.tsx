@@ -109,7 +109,7 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
                         fontSize: 28,
                     }}
                 >
-                    Timezone: UTC
+                    Timezone: {config.timezone || 'Europe/London'}
                 </div>
             </div>
 

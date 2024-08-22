@@ -25,6 +25,7 @@ export default function CoverView(
 
     const firstRowDates = visibleDates.slice(0, 6)
     const secondRowDates = visibleDates.slice(6, 12)
+    const timezone = config.timezone || 'Europe/London'
 
     return (
         <div
@@ -115,14 +116,24 @@ export default function CoverView(
                         alignSelf: 'center',
                     }}
                 >
-                    {months[Number.parseInt(dates[dateParam].split('-')[1])]}
+                    Month: {months[Number.parseInt(dates[dateParam].split('-')[1])]}
                 </div>
                 <div
                     style={{
                         display: 'flex',
                     }}
                 >
-                    {mins}
+                    Duration: {mins}
+                </div>
+
+                <div
+                    style={{
+                        color: config.primaryColor || 'white',
+                        display: 'flex',
+                        fontSize: 28,
+                    }}
+                >
+                    Timezone: {timezone}
                 </div>
             </div>
             <div
