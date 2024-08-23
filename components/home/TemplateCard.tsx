@@ -2,7 +2,6 @@
 import { createFrame } from '@/lib/frame'
 import type templates from '@/templates'
 import { useSession } from 'next-auth/react'
-import type { StaticImageData } from 'next/image'
 import NextImage from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -10,16 +9,9 @@ import { Plus } from 'react-feather'
 import { Separator } from '../shadcn/Separator'
 
 export default function TemplateCard({
-    id,
     template,
 }: {
-    id: string
-    template: {
-        name: string
-        description: string
-        creatorName: number
-        cover: StaticImageData
-    }
+    template: (typeof templates)[keyof typeof templates]
 }) {
     const sesh = useSession()
     const router = useRouter()
@@ -36,7 +28,7 @@ export default function TemplateCard({
         setLoading(true)
         const newFrame = await createFrame({
             name: 'My Frame',
-            template: id as keyof typeof templates,
+            template: template.name.toLowerCase() as keyof typeof templates,
         })
         router.push('/frame/' + newFrame.id)
     }
