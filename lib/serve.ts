@@ -1,7 +1,6 @@
 'use server'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { ImageResponse } from '@vercel/og'
-import type { ReactElement } from 'react'
 import sharp from 'sharp'
 import type {
     BuildFrameData,
@@ -9,7 +8,6 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from './farcaster'
-import type { BaseStorage } from './types'
 
 export async function buildFramePage({
     id,
@@ -18,7 +16,6 @@ export async function buildFramePage({
     inputText,
     refreshPeriod,
     params,
-    storage,
     fonts,
     component,
     image,
@@ -63,13 +60,15 @@ export async function buildFramePage({
                   .join('&')
             : ''
 
-    const metadata = buildFrame({
+    const metadata = await buildFrame({
         buttons,
         image: imageData,
         aspectRatio,
         inputText,
         refreshPeriod,
-        postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${handler}` + '?' + searchParams,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}`,
+        handler: handler,
+        searchParams: searchParams,
     })
 
     const frame = `<html lang="en">
@@ -101,24 +100,13 @@ export async function buildPreviewFramePage({
     inputText,
     refreshPeriod,
     params,
-    storage,
     fonts,
     component,
     image,
     handler,
 }: {
     id: string
-    buttons: FrameButtonMetadata[]
-    aspectRatio: '1.91:1' | '1:1'
-    inputText?: string
-    refreshPeriod?: number
-    params?: any
-    storage?: BaseStorage
-    fonts?: any[]
-    component: ReactElement
-    image: string
-    handler?: string
-}) {
+} & BuildFrameData) {
     if (!component && !image) {
         throw new Error('Either component or image must be provided')
     }
@@ -145,13 +133,15 @@ export async function buildPreviewFramePage({
                   .join('&')
             : ''
 
-    const metadata = buildFrame({
+    const metadata = await buildFrame({
         buttons,
         image: imageData,
         aspectRatio,
         inputText,
         refreshPeriod,
-        postUrl: `${process.env.NEXT_PUBLIC_HOST}/p/${id}/${handler}` + '?' + searchParams,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/p/${id}`,
+        handler: handler,
+        searchParams: searchParams,
     })
 
     const frame = `<html lang="en">
@@ -170,7 +160,7 @@ export async function buildPreviewFramePage({
     return frame
 }
 
-function buildFrame({
+export async function buildFrame({
     buttons,
     image,
     aspectRatio = '1.91:1',
@@ -178,6 +168,8 @@ function buildFrame({
     postUrl,
     refreshPeriod,
     version = 'vNext',
+    handler,
+    searchParams,
 }: {
     buttons: FrameButtonMetadata[]
     image: string
@@ -186,22 +178,20 @@ function buildFrame({
     postUrl: string
     refreshPeriod?: number
     version?: string
+    handler?: string
+    searchParams?: string
 }) {
     // Regular expression to match the pattern YYYY-MM-DD
     if (!(version === 'vNext' || /^\d{4}-\d{2}-\d{2}$/.test(version))) {
         throw new Error('Invalid version.')
     }
-    const url = new URL(postUrl)
-    const qs = url.search.slice(1)
-
-    const postUrlMatch = postUrl.match(/(https?:\/\/[^/]+\/[fp]\/[^/]+)/)
 
     const metadata: Record<string, string> = {
         'fc:frame': version,
-        'og:image': image,
+        // 'og:image': image,
         'fc:frame:image': image,
         'fc:frame:image:aspect_ratio': aspectRatio,
-        'fc:frame:post_url': postUrl,
+        'fc:frame:post_url': postUrl + `/${handler}` + '?' + searchParams,
     }
 
     if (inputText) {
@@ -220,25 +210,22 @@ function buildFrame({
                 throw new Error('Button label is required and must be maximum of 256 bytes.')
             }
             metadata[`fc:frame:button:${index + 1}`] = button.label
+
             if (button.action) {
                 if (!['post', 'post_redirect', 'mint', 'link', 'tx'].includes(button.action)) {
                     throw new Error('Invalid button action.')
                 }
                 metadata[`fc:frame:button:${index + 1}:action`] = button.action
+
+                if (button.action === 'tx') {
+                    metadata[`fc:frame:button:${index + 1}:target`] =
+                        postUrl + `/${button.handler || handler}` + '?' + searchParams
+                }
+                if (button.action === 'link' || button.action === 'mint') {
+                    metadata[`fc:frame:button:${index + 1}:target`] = button.target
+                }
             } else {
                 metadata[`fc:frame:button:${index + 1}:action`] = 'post' // Default action
-            }
-            if (button.target) {
-                metadata[`fc:frame:button:${index + 1}:target`] =
-                    postUrlMatch && button.target.startsWith('/')
-                        ? `${postUrlMatch[1]}/${button.target.slice(1)}?${qs}`
-                        : button.target
-            }
-
-            if (postUrlMatch && button.action === 'tx' && button.postUrl?.startsWith('/')) {
-                metadata[`fc:frame:button:${index + 1}:post_url`] = `${
-                    postUrlMatch[1]
-                }/${button.postUrl.slice(1)}?${qs}`
             }
         })
     }
