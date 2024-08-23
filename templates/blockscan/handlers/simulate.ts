@@ -133,8 +133,8 @@ export default async function simulate({
                 buttons.push({
                     label: functionName,
                     action: 'tx',
-                    target: '/txData',
-                    postUrl: '/success',
+                    handler: 'txData',
+                    callback: 'success',
                 })
                 action = 'write'
             } catch (e) {

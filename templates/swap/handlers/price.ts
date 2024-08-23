@@ -87,7 +87,7 @@ export default async function price({
             {
                 label: 'Buy Now',
                 action: 'tx',
-                target: '/txData',
+                handler: 'txData',
             },
         ],
         component: PriceView({ token0, token1, network: config.pool.network, amount, estimates }),

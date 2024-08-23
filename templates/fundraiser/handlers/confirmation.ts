@@ -81,7 +81,7 @@ export default async function confirmation({
             {
                 label: 'Confirm',
                 action: 'tx',
-                target: '/txData',
+                handler: 'txData',
             },
         ],
         fonts: roboto,
