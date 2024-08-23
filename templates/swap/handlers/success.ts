@@ -29,6 +29,8 @@ export default async function success({
         : undefined
     const buttonIndex = body.validatedData.tapped_button?.index || 1
 
+    console.log({ buttonIndex })
+
     if (buttonIndex === 1) {
         return initial({ config })
     }
