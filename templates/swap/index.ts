@@ -38,7 +38,7 @@ export interface Config extends BaseConfig {
         text: string
         color: string
         weight: string
-        size: string
+        size: number
         style: string
         font: string
     }
@@ -46,13 +46,15 @@ export interface Config extends BaseConfig {
         text: string
         color: string
         weight: string
-        size: string
+        size: number
         style: string
         font: string
     }
 }
 
-export interface Storage extends BaseStorage {}
+export interface Storage extends BaseStorage {
+    tokenToUsd: Record<string, { price: number; lastUpdated: number }>
+}
 
 export default {
     name: 'TokenSwap',

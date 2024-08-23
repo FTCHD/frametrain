@@ -1,6 +1,6 @@
 import type { Config } from '..'
 
-export default function CoverView(config: Config) {
+export default function CoverView(_config: Omit<Config, 'pool'>) {
     return (
         <div
             style={{

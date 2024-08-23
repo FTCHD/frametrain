@@ -1,13 +1,13 @@
 'use server'
 
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
-import type { Config } from '..'
-import initial from './initial'
-import { bytesToHex } from 'viem'
 import TextSlide from '@/sdk/components/TextSlide'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import { FrameError } from '@/sdk/error'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { bytesToHex } from 'viem'
+import type { Config } from '..'
 import estimate from './estimate'
+import initial from './initial'
 
 export default async function success({
     body,
@@ -28,6 +28,8 @@ export default async function success({
         ? bytesToHex(body.validatedData.transaction.hash)
         : undefined
     const buttonIndex = body.validatedData.tapped_button?.index || 1
+
+    console.log({ buttonIndex })
 
     if (buttonIndex === 1) {
         return initial({ config })
