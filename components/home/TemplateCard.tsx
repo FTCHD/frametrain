@@ -1,5 +1,6 @@
 'use client'
 import { createFrame } from '@/lib/frame'
+import type { getTemplates } from '@/lib/template'
 import type templates from '@/templates'
 import { useSession } from 'next-auth/react'
 import NextImage from 'next/image'
@@ -11,7 +12,7 @@ import { Separator } from '../shadcn/Separator'
 export default function TemplateCard({
     template,
 }: {
-    template: (typeof templates)[keyof typeof templates]
+    template: Awaited<ReturnType<typeof getTemplates>>[number]
 }) {
     const sesh = useSession()
     const router = useRouter()

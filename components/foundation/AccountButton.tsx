@@ -61,7 +61,9 @@ export default function AccountButton() {
 
     return (
         <AuthKitProvider>
-            {sesh?.status === 'loading' ? undefined : isLoggingIn ? (
+            {sesh?.status === 'loading' ? (
+                <div className="w-12 h-12 bg-transparent" />
+            ) : isLoggingIn ? (
                 <div className="flex flex-col justify-center items-center w-full h-full gap-2">
                     <BaseSpinner />
                     {timeSpent > 5 && <p className="text-sm">Stuck? Try refreshing the page!</p>}

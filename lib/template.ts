@@ -7,8 +7,21 @@ export const getFeaturedTemplates = unstable_cache(
         const FEATURED_IDS = ['cal', 'figma', 'poll', 'pdf']
 
         const featuredTemplates = Object.entries(templates)
-            .filter(([name, template]) => FEATURED_IDS.includes(name))
-            .map(([name, template]) => template)
+            .filter(([id, template]) => FEATURED_IDS.includes(id))
+            .map(([id, template]) => {
+                return {
+                    id: id,
+                    name: template.name,
+                    description: template.description,
+                    shortDescription: template.shortDescription,
+                    icon: template.icon,
+                    cover: template.cover,
+                    creatorFid: template.creatorFid,
+                    creatorName: template.creatorName,
+                    enabled: template.enabled,
+                    requiresValidation: template.requiresValidation,
+                }
+            })
 
         return featuredTemplates
     },
@@ -20,7 +33,22 @@ export const getFeaturedTemplates = unstable_cache(
 
 export const getTemplates = unstable_cache(
     async () => {
-        return templates
+        const allTemplates = Object.entries(templates).map(([id, template]) => {
+            return {
+                id: id,
+                name: template.name,
+                description: template.description,
+                shortDescription: template.shortDescription,
+                icon: template.icon,
+                cover: template.cover,
+                creatorFid: template.creatorFid,
+                creatorName: template.creatorName,
+                enabled: template.enabled,
+                requiresValidation: template.requiresValidation,
+            }
+        })
+
+        return allTemplates
     },
     [],
     {
@@ -29,8 +57,20 @@ export const getTemplates = unstable_cache(
 )
 
 export const getTemplate = unstable_cache(
-    async (name: keyof typeof templates) => {
-        return templates[name]
+    async (id: keyof typeof templates) => {
+        const template = templates[id]
+        return {
+            id: id,
+            name: template.name,
+            description: template.description,
+            shortDescription: template.shortDescription,
+            icon: template.icon,
+            cover: template.cover,
+            creatorFid: template.creatorFid,
+            creatorName: template.creatorName,
+            enabled: template.enabled,
+            requiresValidation: template.requiresValidation,
+        }
     },
     [],
     {
