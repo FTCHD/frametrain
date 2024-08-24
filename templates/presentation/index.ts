@@ -43,7 +43,7 @@ export interface Config extends BaseConfig {
 const DEFAULT_SLIDE: Slide = {
     type: 'text',
     aspectRatio: '1:1',
-    objectFit: 'fill',
+    objectFit: 'cover',
     background: {
         type: 'color',
         value: 'linear-gradient(245deg, rgb(252,136,0), rgb(252,0,162))',
