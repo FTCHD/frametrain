@@ -1,5 +1,5 @@
 import type { RssFeed } from '../common'
-
+        
 export default function PostView({
     post,
     postIndex,

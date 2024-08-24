@@ -27,7 +27,18 @@ export default async function post({
     let nextPage: number
     const lastUpdated: number = newStorage.lastUpdated || 0
 
-    if (!config.rssUrl || (buttonIndex === 1 && params?.currentPage)) {
+    if (!config.rssUrl || buttonIndex === 1) {
+        if (buttonIndex === 1 && params?.initial &&  Date.now() - lastUpdated > ms('10m')) {
+            const info = await fetchRssFeedCover(`${config.rssUrl}`)
+            return initial({
+                config,
+                params: { info },
+                storage: {
+                    ...newStorage,
+                    [fid]: {},
+                },
+            })
+        }
         return initial({ config })
     }
 
@@ -44,6 +55,7 @@ export default async function post({
             }
         } else {
             feed = existingPosts
+            lastUpdated = feed.lastUpdated
         }
     } catch {
         throw new FrameError('Failed to fetch RSS feed')

@@ -8,6 +8,7 @@ export default {
     initial,
     estimate,
     txData,
+    estimate,
     success,
     cover,
 }

@@ -79,6 +79,7 @@ export default async function status({
         await waitForSession(glideConfig, params.sessionId)
 
         const buildData: Record<string, any> = {
+
             fonts,
             buttons: [
                 {
