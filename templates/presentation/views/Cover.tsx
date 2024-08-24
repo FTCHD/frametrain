@@ -16,9 +16,7 @@ export default function CoverView(slide: Slide) {
                 alignItems: 'center',
                 textAlign: 'center',
                 color: '#1c1c1c',
-                backgroundColor:
-                    slide.background.value ||
-                    'linear-gradient(245deg, rgb(252,136,0), rgb(252,0,162))',
+                backgroundColor: slide.background.value,
             }}
         >
             {slide.type === 'text' ? (
