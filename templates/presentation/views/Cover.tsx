@@ -1,29 +1,9 @@
+
 import type { Slide } from '../'
 
 export default function CoverView(slide: Slide) {
     const title = slide?.title?.text
     const content = slide?.content?.text
-
-    /* Style Customization */
-    // Background
-    const background: any = {}
-
-    switch (slide.background?.type) {
-        case 'color': {
-            background['background'] = slide.background.value // Covers gradients and solid colors at the same time
-            break
-        }
-        case 'image':
-            background['backgroundImage'] = slide.background.value
-    }
-
-    /* Images */
-    if (slide?.image && slide.type === 'image') {
-        background['backgroundImage'] = `url(${slide.image})`
-        background['backgroundRepeat'] = 'no-repeat'
-        background['backgroundSize'] = slide.objectFit
-        background['backgroundPosition'] = 'center'
-    }
 
     return (
         <div
@@ -36,10 +16,12 @@ export default function CoverView(slide: Slide) {
                 alignItems: 'center',
                 textAlign: 'center',
                 color: '#1c1c1c',
-                ...background,
+                backgroundColor:
+                    slide.background.value ||
+                    'linear-gradient(245deg, rgb(252,136,0), rgb(252,0,162))',
             }}
         >
-            {(!slide.image || slide.type === 'text') && (
+            {slide.type === 'text' ? (
                 <div
                     style={{
                         width: '100%',
@@ -83,6 +65,12 @@ export default function CoverView(slide: Slide) {
                         </span>
                     )}
                 </div>
+            ) : (
+                <img
+                    src={slide.image || 'https://via.placeholder.com/630'}
+                    alt=""
+                    style={{ objectFit: slide.objectFit, width: '100%', height: '100%' }}
+                />
             )}
         </div>
     )
