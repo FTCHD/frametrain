@@ -29,7 +29,7 @@ export default function TemplateCard({
         setLoading(true)
         const newFrame = await createFrame({
             name: 'My Frame',
-            template: template.name.toLowerCase() as keyof typeof templates,
+            template: template.id as keyof typeof templates,
         })
         router.push('/frame/' + newFrame.id)
     }
