@@ -107,7 +107,7 @@ export async function buildPreviewFramePage({
 }: {
     id: string
 } & BuildFrameData) {
-    if (!(component || image)) {
+    if (!component && !image) {
         throw new Error('Either component or image must be provided')
     }
 

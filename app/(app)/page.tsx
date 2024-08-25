@@ -84,12 +84,8 @@ export default async function Home() {
                             </NextLink>
                         </div>
                         <div className="flex flex-col flex-wrap gap-4 items-start md:flex-row">
-                            {Object.keys(templates).map((id) => (
-                                <TemplateCard
-                                    key={id}
-                                    template={templates[id as keyof typeof templates] as any}
-                                    id={id}
-                                />
+                            {Object.values(templates).map((template) => (
+                                <TemplateCard key={template.name} template={template} />
                             ))}
                         </div>
                     </div>

@@ -96,7 +96,7 @@ export async function POST(
     }
 
     if (buildParameters.transaction) {
-        waitUntil(processFrame(frame, buildParameters))
+        waitUntil(processFrame(frame, buildParameters, body))
 
         return new Response(JSON.stringify(buildParameters.transaction), {
             headers: {
@@ -162,7 +162,7 @@ async function processFrame(
                 })
         }
     }
-      
+
     const airstackKey = f.config?.airstackKey || process.env.AIRSTACK_API_KEY
 
     const interactionData = await validatePayloadAirstack(b, airstackKey)
