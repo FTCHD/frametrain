@@ -5,7 +5,7 @@ import TextSlide from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import { bytesToHex } from 'viem'
-import type { Config } from '..'
+import type { Config, Storage } from '..'
 import estimate from './estimate'
 import initial from './initial'
 
@@ -28,8 +28,6 @@ export default async function success({
         ? bytesToHex(body.validatedData.transaction.hash)
         : undefined
     const buttonIndex = body.validatedData.tapped_button?.index || 1
-
-    console.log({ buttonIndex })
 
     if (buttonIndex === 1) {
         return initial({ config })
@@ -61,20 +59,31 @@ export default async function success({
         fonts.push(...customFont)
     }
 
-    return {
+    const buildData: Record<string, any> = {
         fonts,
         buttons: [
             {
-                label: 'View Transaction',
-                action: 'link',
-                target: `${config.pool.network.explorerUrl}/tx/${transactionId}`,
-            },
-            {
                 label: 'Buy More',
             },
+            {
+                label: `View on ${config.pool.network.name}`,
+                action: 'link',
+                target: `https://${config.pool.network.explorerUrl}/tx/${transactionId}`,
+            },
+            {
+                label: 'Create Your Own',
+                action: 'link',
+                target: 'https://www.frametra.in',
+            },
         ],
-        image: config.success.image,
-        handler: 'cover',
-        component: config.success?.image ? undefined : TextSlide(config.success),
+        handler: 'more',
     }
+
+    if (config.success?.image) {
+        buildData['image'] = config.success?.image
+    } else {
+        buildData['component'] = TextSlide(config.success)
+    }
+
+    return buildData as BuildFrameData
 }

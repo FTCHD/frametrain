@@ -2,10 +2,9 @@
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
+import { formatSymbol } from '../common/shared'
 import CoverView from '../views/Cover'
 import EstimateView from '../views/Estimate'
-import { formatSymbol } from '../utils/shared'
-import { FrameError } from '@/sdk/error'
 
 export default async function initial({
     config: { pool, ...config },
@@ -57,8 +56,7 @@ export default async function initial({
         let price = 0
         const token0ToUsd: { price: number; lastUpdated: number } | undefined =
             storage?.tokenToUsd?.[token0.symbol.toLowerCase()]
-
-
+        
         const fetchUsdPrice = async (symbol: string) => {
             try {
                 const request = await fetch(

@@ -2,7 +2,7 @@
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import type { Config, Storage } from '..'
-import { fetchPrice } from '../utils/0x'
+import { fetchPrice } from '../common/0x'
 import PriceView from '../views/Price'
 import initial from './initial'
 
@@ -87,7 +87,7 @@ export default async function estimate({
             {
                 label: 'Buy Now',
                 action: 'tx',
-                target: '/swap',
+                handler: 'txData',
             },
         ],
         component: PriceView({ token0, token1, network: config.pool.network, amount, estimates }),

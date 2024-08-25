@@ -1,8 +1,8 @@
 'use server'
 
-import { getContract } from 'viem'
+import { getContract, erc20Abi } from 'viem'
 import { chains, chainsByChainId, getClient } from './viem'
-import { ERC20_ABI, UNI_V3_POOL_ABI } from './abis'
+import { UNI_V3_POOL_ABI } from './abis'
 
 export const getPoolClient = async (address: `0x${string}`) => {
     for (const chain of chains) {
@@ -30,7 +30,7 @@ async function getTokenData({
         const token = getContract({
             client,
             address,
-            abi: ERC20_ABI,
+            abi: erc20Abi,
         })
 
         const name = await token.read.name()

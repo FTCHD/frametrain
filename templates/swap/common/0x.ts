@@ -89,7 +89,6 @@ export async function fetchPrice({
     const baseURL = get0xApiBase(network.id)
 
     if (!baseURL) {
-        console.error(`Swaps are not supported on ${network.name}`)
         return null
     }
 
@@ -122,10 +121,6 @@ export async function fetchPrice({
     }
 
     const price = formatUnits(BigInt(data.sellAmount), sellToken.decimals)
-    console.log(
-        `Price for buying ${formatSymbol(amount, buyToken.symbol)} is ${price} ${sellToken.symbol}`,
-        data
-    )
 
     return {
         price: +price,
@@ -155,13 +150,8 @@ export async function fetchQuote({
     const baseURL = get0xApiBase(network.id)
 
     if (!baseURL) {
-        console.error(`Swaps are not supported on ${network.name}`)
         return null
     }
-
-    console.log(
-        `Fetching quote for ${formatSymbol(amount, buyToken.symbol)} to ${sellToken.symbol}`
-    )
 
     if (sellToken.symbol.toLowerCase() === 'weth') {
         sellToken.symbol = 'ETH'
@@ -179,8 +169,6 @@ export async function fetchQuote({
     url.searchParams.append('buyTokenPercentageFee', AFFILIATE_FEE.toString())
     url.searchParams.append('feeRecipientTradeSurplus', FEE_RECIPIENT)
 
-    console.log(url.searchParams.entries())
-
     const response = await corsFetch(url.toString(), {
         headers: { '0x-api-key': process.env.ZEROX_API_KEY || '' },
     })
@@ -190,20 +178,8 @@ export async function fetchQuote({
     const data = JSON.parse(response) as ZeroXSwapQuoteResponse
 
     if ('code' in data) {
-        console.log(`Error fetching quote: ${data.reason}`, data)
-
         throw new Error(data.reason)
     }
-
-    const sellAmount = formatUnits(BigInt(data.sellAmount), sellToken.decimals)
-    const buyAmount = formatUnits(BigInt(data.buyAmount), buyToken.decimals)
-
-    console.log(
-        `Quote for buying ${formatSymbol(buyAmount, buyToken.symbol)} is ${formatSymbol(
-            sellAmount,
-            sellToken.symbol
-        )}`
-    )
 
     return data
 }

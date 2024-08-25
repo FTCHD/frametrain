@@ -3,7 +3,7 @@ import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaste
 import type { Config } from '..'
 import initial from './initial'
 
-export default async function cover({
+export default async function more({
     body,
     config,
     storage,

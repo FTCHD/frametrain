@@ -1,13 +1,13 @@
 import initial from './initial'
 import estimate from './estimate'
 import success from './success'
-import swap from './swap'
-import cover from './cover'
+import txData from './txData'
+import more from './more'
 
 export default {
     initial,
-    swap,
     estimate,
+    txData,
     success,
-    cover,
+    more,
 }
