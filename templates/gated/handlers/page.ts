@@ -75,9 +75,14 @@ export default async function page({
         })
     }
 
-    return {
+    const buildData: Record<string, unknown> = {
         buttons,
-        component: config.rewardImage ? undefined : AcceptView(config),
-        image: config.rewardImage || undefined,
     }
+    if (config.rewardImage) {
+        buildData.image = config.rewardImage
+    } else {
+        buildData.component = AcceptView(config)
+    }
+
+    return buildData as unknown as BuildFrameData
 }

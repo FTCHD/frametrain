@@ -5,12 +5,8 @@ import type { Config, Storage } from '..'
 import CoverView from '../views/Cover'
 
 export default async function initial({
-    body,
     config,
-    storage,
-    params,
 }: {
-    // GET requests don't have a body.
     body: undefined
     config: Config
     storage: Storage
