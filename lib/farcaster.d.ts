@@ -25,6 +25,7 @@ export type FrameButtonMetadata =
           action: 'tx'
           label: string
           handler?: string
+          callback?: string
       }
 
 // Can also use FrameRequest type from onchainkit

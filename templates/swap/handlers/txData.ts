@@ -38,6 +38,7 @@ export default async function txData({
         }
 
         return {
+            buttons: [],
             transaction: {
                 chainId: `eip155:${config.pool.network.id}`,
                 method: 'eth_sendTransaction',

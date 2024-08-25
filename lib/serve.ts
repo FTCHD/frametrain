@@ -220,6 +220,10 @@ export async function buildFrame({
                 if (button.action === 'tx') {
                     metadata[`fc:frame:button:${index + 1}:target`] =
                         postUrl + `/${button.handler || handler}` + '?' + searchParams
+                    if (button.callback) {
+                        metadata[`fc:frame:button:${index + 1}:post_url`] =
+                            postUrl + `/${button.callback}` + '?' + searchParams
+                    }
                 }
                 if (button.action === 'link' || button.action === 'mint') {
                     metadata[`fc:frame:button:${index + 1}:target`] = button.target

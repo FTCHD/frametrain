@@ -39,7 +39,7 @@ export default function ConfirmationView({ amount, config }: { amount: string; c
                     top: 0,
                     position: 'absolute',
                     left: 0,
-                    backgroundColor: config.cover?.barColor || 'yellow',
+                    backgroundColor: config?.barColor || 'yellow',
                 }}
             />
         </div>

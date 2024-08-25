@@ -40,6 +40,7 @@ export default async function txData({
     }
 
     return {
+        buttons: [],
         transaction: {
             chainId: session.unsignedTransaction.chainId,
             method: 'eth_sendTransaction',
