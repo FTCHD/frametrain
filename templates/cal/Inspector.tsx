@@ -118,13 +118,14 @@ export default function Inspector() {
                     <>
                         <div className="flex gap-2 items-center">
                             <Input
+                                disabled={!config.username}
                                 ref={slugInputRef}
                                 placeholder="Event ID/Slug (eg. 15min/30min/secret)"
                             />
                             <Button
                                 size={'lg'}
                                 variant={'secondary'}
-                                disabled={loading}
+                                disabled={!config.username || loading}
                                 onClick={async () => {
                                     if (!slugInputRef.current?.value) return
                                     setLoading(true)
@@ -182,13 +183,14 @@ export default function Inspector() {
                                     }`}
                                     role="button"
                                     aria-label={`${eventSlug} event type`}
-                                    aria-disabled={eventSlugs.includes(eventSlug)}
+                                    aria-disabled={
+                                        !config.username || eventSlugs.includes(eventSlug)
+                                    }
                                     onClick={async () => {
-                                        setLoading(true)
-                                        if (eventSlugs.includes(eventSlug)) {
-                                            setLoading(false)
+                                        if (!config.username || eventSlugs.includes(eventSlug)) {
                                             return
                                         }
+                                        setLoading(true)
 
                                         try {
                                             const text = await corsFetch(
