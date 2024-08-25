@@ -1,4 +1,3 @@
-import type { FrameButtonMetadata as OnchainKitFrameButtonMetadata } from '@coinbase/onchainkit/frame'
 import type {
     Channel as NeynarChannel,
     User as NeynarUser,
@@ -12,7 +11,21 @@ import type { ReactElement } from 'react'
 import type { BaseStorage } from './types'
 
 // We use the version from OnchainKit because it doesn't set the `action` and `target` fields as required.
-export type FrameButtonMetadata = OnchainKitFrameButtonMetadata
+export type FrameButtonMetadata =
+    | {
+          action?: 'post' | 'post_redirect' | undefined
+          label: string
+      }
+    | {
+          action: 'link' | 'mint'
+          label: string
+          target: string
+      }
+    | {
+          action: 'tx'
+          label: string
+          handler?: string
+      }
 
 // Can also use FrameRequest type from onchainkit
 export type FrameActionPayload = FramesJSFrameActionPayload
@@ -26,39 +39,20 @@ export type FrameActionPayloadValidated = FrameActionPayload & {
     validatedData: FrameValidatedActionPayload['validatedData']
 }
 
-export type BuildFrameData =
-    | {
-          buttons: FrameButtonMetadata[]
-          aspectRatio?: '1.91:1' | '1:1' | undefined
-          inputText?: string
-          refreshPeriod?: number
-          params?: any
-          storage?: BaseStorage
-          fonts?: any[]
-          component: ReactElement
-          handler: string
-          webhooks?: {
-              event: string
-              data: Record<string, unknown>
-          }[]
-      }
-    | {
-          buttons: FrameButtonMetadata[]
-          aspectRatio?: '1.91:1' | '1:1' | undefined
-          inputText?: string
-          refreshPeriod?: number
-          params?: any
-          storage?: BaseStorage
-          image: string
-          handler: string
-          webhooks?: {
-              event: string
-              data: Record<string, unknown>
-          }[]
-      }
-    | {
-          transaction: TransactionTargetResponse
-      }
-    | {
-          data: any
-      }
+export interface BuildFrameData {
+    buttons: FrameButtonMetadata[]
+    aspectRatio?: '1.91:1' | '1:1' | undefined
+    inputText?: string
+    refreshPeriod?: number
+    params?: any
+    storage?: BaseStorage
+    fonts?: any[]
+    component?: ReactElement
+    image?: string
+    handler?: string
+    webhooks?: {
+        event: string
+        data: Record<string, unknown>
+    }[]
+    transaction?: TransactionTargetResponse
+}
