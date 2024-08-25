@@ -4,15 +4,15 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
-import type { Config } from '..'
-import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
+import TextSlide from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
-import { getClient } from '../utils/viem'
-import { getGlideConfig } from '../utils/shared'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
+import type { Config } from '..'
+import { getClient } from '../common/onchain'
+import { getGlideConfig } from '../common/shared'
 import RefreshView from '../views/Refresh'
 import initial from './initial'
-import TextSlide from '@/sdk/components/TextSlide'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function status({
     body,
@@ -70,6 +70,7 @@ export default async function status({
     const glideConfig = getGlideConfig(client.chain)
 
     try {
+        // Get the status of the payment transaction
         await updatePaymentTransaction(glideConfig, {
             sessionId: params.sessionId,
             hash: txHash,
@@ -77,9 +78,12 @@ export default async function status({
         // Wait for the session to complete. It can take a few seconds
         await waitForSession(glideConfig, params.sessionId)
 
-        return {
+        const buildData: Record<string, any> = {
             fonts,
             buttons: [
+                {
+                    label: 'Donate again',
+                },
                 {
                     label: `View on ${client.chain.blockExplorers?.default.name}`,
                     action: 'link',
@@ -91,15 +95,30 @@ export default async function status({
                     target: 'https://www.frametra.in',
                 },
             ],
-            component: config.success?.image ? undefined : TextSlide(config.success),
             handler: 'success',
-            image: config.success?.image,
         }
+
+        if (config.success?.image) {
+            buildData['image'] = config.success?.image
+        } else {
+            buildData['component'] = TextSlide(config.success)
+        }
+
+        return buildData as BuildFrameData
     } catch (e) {
         const buttons: FrameButtonMetadata[] = []
         const error = e as Error
         // updatePaymentTransaction throws an error if the transaction is already paid
         const paid = error.message.toLowerCase().includes('session is already paid')
+        const buildData: Record<string, any> = {
+            handler: paid ? 'success' : 'status',
+            params: {
+                transactionId: txHash,
+                sessionId: params.sessionId,
+                isFresh: false,
+            },
+            fonts,
+        }
 
         if (paid) {
             buttons.push(
@@ -123,20 +142,12 @@ export default async function status({
             })
         }
 
-        return {
-            fonts,
-            buttons,
-            image: paid ? config.success?.image : undefined,
-            component: paid
-                ? config.success?.image
-                    ? undefined
-                    : TextSlide(config.success)
-                : RefreshView(),
-            handler: paid ? 'success' : 'status',
-            params: {
-                transactionId: txHash,
-                sessionId: params.sessionId,
-            },
+        if (config.success?.image) {
+            buildData['image'] = paid ? config.success?.image : undefined
+        } else {
+            buildData['component'] = paid ? TextSlide(config.success) : RefreshView()
         }
+
+        return buildData as BuildFrameData
     }
 }

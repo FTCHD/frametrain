@@ -1,8 +1,8 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
+import type { ChainKey } from './common/onchain'
 import cover from './cover.jpeg'
 import handlers from './handlers'
-import type { ChainKey } from './utils/viem'
 import type { TextSlideProps } from '@/sdk/components/TextSlide'
 
 export interface Config extends BaseConfig {

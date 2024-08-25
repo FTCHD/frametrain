@@ -1,13 +1,12 @@
 'use server'
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
-import type { Config } from '..'
 import { FrameError } from '@/sdk/error'
-import { getGlideConfig } from '../utils/shared'
-
 import { getSessionById } from '@paywithglide/glide-js'
-import { getClient } from '../utils/viem'
+import type { Config } from '..'
+import { getClient } from '../common/onchain'
+import { getGlideConfig } from '../common/shared'
 
-export default async function transaction({
+export default async function txData({
     config,
     params,
 }: {
@@ -37,11 +36,10 @@ export default async function transaction({
     }
 
     if (!session.unsignedTransaction) {
-        throw new FrameError('missing unsigned transaction')
+        throw new FrameError('Missing transaction')
     }
 
     return {
-        buttons: [],
         transaction: {
             chainId: session.unsignedTransaction.chainId,
             method: 'eth_sendTransaction',

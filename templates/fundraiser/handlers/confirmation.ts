@@ -1,11 +1,11 @@
 'use server'
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config } from '..'
-import { formatSymbol, getGlideConfig } from '../utils/shared'
 import { FrameError } from '@/sdk/error'
-import { getAddressFromEns, getClient } from '../utils/viem'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import { chains, createSession, currencies } from '@paywithglide/glide-js'
+import type { Config } from '..'
+import { getAddressFromEns, getClient } from '../common/onchain'
+import { formatSymbol, getGlideConfig } from '../common/shared'
 import ConfirmationView from '../views/Confirmation'
 import about from './about'
 
@@ -13,7 +13,6 @@ export default async function confirmation({
     config,
     body,
 }: {
-    // GET requests don't have a body.
     body: FrameValidatedActionPayload
     config: Config
     storage: undefined
@@ -87,7 +86,7 @@ export default async function confirmation({
             {
                 label: 'Confirm',
                 action: 'tx',
-                target: '/transaction',
+                handler: 'txData',
             },
         ],
         fonts: roboto,

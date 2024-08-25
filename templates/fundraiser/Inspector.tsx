@@ -1,10 +1,8 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { type ReactNode, useEffect, useRef, useState } from 'react'
-import type { Config } from '.'
-import { Separator } from '@/components/shadcn/Separator'
+import { Label } from '@/components/shadcn/InputLabel'
+import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
 import {
     Select,
     SelectContent,
@@ -12,15 +10,17 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
-import { type ChainKey, getTokenSymbol, supportedChains } from './utils/viem'
-import { Switch } from '@/components/shadcn/Switch'
-import { Label } from '@/components/shadcn/InputLabel'
-import { Trash } from 'lucide-react'
-import { formatSymbol } from './utils/shared'
-import toast from 'react-hot-toast'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import { Separator } from '@/components/shadcn/Separator'
 import { Slider } from '@/components/shadcn/Slider'
-import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
+import { Switch } from '@/components/shadcn/Switch'
+import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { Trash } from 'lucide-react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
+import type { Config } from '.'
+import { type ChainKey, getTokenSymbol, supportedChains } from './common/onchain'
+import { formatSymbol } from './common/shared'
 import { getFarcasterProfiles } from '@/sdk/neynar'
 
 type MenuItem = {
