@@ -1,11 +1,26 @@
-import type { RssFeed } from '../utils/rss'
+import type { Config } from '..'
+import type { RssFeed } from '../common'
 
-export default function PostView({
-    post,
-    postIndex,
-    total,
-}: { post: RssFeed['posts'][number]; postIndex: number; total: number }) {
-    const description = (post?.content || post.description).trim()
+type Props = {
+    post: RssFeed['posts'][number]
+    postIndex: number
+    total: number
+    config: Config
+}
+
+export default function PostView({ post, postIndex, total, config }: Props) {
+    const backgroundProp: Record<string, string> = {}
+
+    if (config.pageBackground) {
+        if (config.pageBackground.startsWith('#')) {
+            backgroundProp['backgroundColor'] = config.pageBackground
+        } else {
+            backgroundProp['backgroundImage'] = config.pageBackground
+        }
+    } else {
+        backgroundProp['backgroundImage'] = 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
+    }
+    const description = (post?.content || post.description || '').trim()
     return (
         <div
             style={{
@@ -13,11 +28,11 @@ export default function PostView({
                 flexFlow: 'column',
                 height: '100%',
                 width: '100%',
-                color: '#ffffff',
                 padding: '15px 20px',
                 gap: '15px',
-                fontFamily: 'Roboto',
-                backgroundColor: 'black',
+                fontFamily: config.fontFamily || 'Roboto',
+                color: config.primaryColor || '#ffffff',
+                ...backgroundProp,
             }}
         >
             <span
@@ -25,7 +40,6 @@ export default function PostView({
                     fontSize: '25px',
                     fontWeight: 900,
                     fontStyle: 'italic',
-                    color: '#ffe83f',
                 }}
             >
                 {post.title}
@@ -56,10 +70,10 @@ export default function PostView({
                     {description
                         .substring(0, 700)
                         .split('\n\n')
-                        .map((line: string) =>
-                            line.split('\n').map((line: string) => (
+                        .map((line, index) =>
+                            line.split('\n').map((subLine, subIndex) => (
                                 <div
-                                    key={line}
+                                    key={`${index}-${subIndex}`}
                                     style={{
                                         display: 'flex',
                                         flexDirection: 'row',
@@ -70,7 +84,7 @@ export default function PostView({
                                         lineHeight: '28px',
                                     }}
                                 >
-                                    {line}
+                                    {subLine}
                                 </div>
                             ))
                         )}
@@ -80,21 +94,15 @@ export default function PostView({
                     style={{
                         display: 'flex',
                         flexDirection: 'row',
+                        justifyContent: 'space-between',
                         width: '100%',
                         fontSize: '12px',
                         fontWeight: 'bold',
                         opacity: '0.8',
+                        color: config.secondaryColor || '#ffffff',
                     }}
                 >
-                    <div
-                        style={{
-                            width: '100%',
-                            display: 'flex',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        {post.pubDate}
-                    </div>
+                    <div>{post.pubDate}</div>
 
                     <div
                         style={{

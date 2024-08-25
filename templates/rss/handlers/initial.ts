@@ -4,13 +4,16 @@ import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import CoverView from '../views/Cover'
+import { fetchRssFeed, type RssFeed, toReadableDate } from '../common'
+import { FrameError } from '@/sdk/error'
 
 export default async function initial({
     config,
     params,
+    storage,
 }: {
-    // GET requests don't have a body.
     config: Config
+    storage?: Storage
     params?: {
         info?: {
             title: string
@@ -18,26 +21,55 @@ export default async function initial({
             lastUpdated: number
         }
     }
-    storage?: Storage
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    const info = params?.info || config.info || null
+    let info: RssFeed | null = null
     const buttons: FrameButtonMetadata[] = []
+    let newStorage = storage
 
-    if (config.rssUrl && info) {
-        buttons.push(
-            { label: 'Refresh' },
-            {
-                label: 'Read',
+    if (params?.info) {
+        console.log('initial handler refreshed', params)
+        info = {
+            title: params.info.title,
+            posts: [],
+            lastUpdated: {
+                ts: params.info.lastUpdated,
+                human: toReadableDate(params.info.lastUpdated),
+            },
+        }
+    } else {
+        if (config.rssUrl) {
+            const existingPosts = storage?.feed
+
+            try {
+                if (!existingPosts) {
+                    info = await fetchRssFeed(config.rssUrl)
+                    newStorage = {
+                        feed: info,
+                    }
+                    console.log('initial handler fetched', info)
+                } else {
+                    info = existingPosts
+                }
+
+                buttons.push(
+                    { label: 'Refresh' },
+                    {
+                        label: 'Read',
+                    }
+                )
+            } catch {
+                console.error('Failed to fetch RSS feed')
+                throw new FrameError(`Failed to fetch RSS feed for ${config.rssUrl}`)
             }
-        )
+        }
     }
-
     return {
+        storage: newStorage,
         buttons,
         fonts: roboto,
-        component: CoverView(info),
+        component: CoverView({ info, config }),
         handler: 'post',
-        params: info ? { lastUpdated: info.lastUpdated, initial: true } : undefined,
+        params: info ? { lastUpdated: info.lastUpdated.ts, initial: true } : undefined,
     }
 }

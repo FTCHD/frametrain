@@ -1,20 +1,20 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
+import type { RssFeed } from './common'
 import cover from './cover.jpeg'
 import handlers from './handlers'
-import type { RssFeed } from './utils/rss'
 
 export interface Config extends BaseConfig {
     rssUrl: string | null
-    info?: {
-        title: string
-        total: number
-        lastUpdated: number
-    }
+    primaryColor?: string
+    secondaryColor?: string
+    fontFamily?: string
+    coverBackground?: string
+    pageBackground?: string
 }
 
 export interface Storage extends BaseStorage {
-    [fid: string]: Record<string, RssFeed> | undefined
+    feed: RssFeed | undefined
 }
 
 export default {
@@ -26,7 +26,15 @@ export default {
     enabled: true,
     Inspector,
     handlers,
-    initialConfig: {},
+    initialConfig: {
+        rssUrl: null,
+        info: null,
+        primaryColor: 'white',
+        secondaryColor: '#ffe83f',
+        fontFamily: 'Roboto',
+        coverBackground: 'black',
+        pageBackground: 'black',
+    },
     requiresValidation: false,
     events: [],
 } satisfies BaseTemplate

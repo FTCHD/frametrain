@@ -1,7 +1,19 @@
-import { dayjs } from '../utils/dayjs'
-import type { RssFeedIntro } from '../utils/rss'
+import type { Config } from '..'
+import type { RssFeed } from '../common'
 
-export default function CoverView(info: RssFeedIntro | null) {
+export default function CoverView({ info, config }: { info: RssFeed | null; config: Config }) {
+    const backgroundProp: Record<string, string> = {}
+
+    if (config.coverBackground) {
+        if (config.coverBackground.startsWith('#')) {
+            backgroundProp['backgroundColor'] = config.coverBackground
+        } else {
+            backgroundProp['backgroundImage'] = config.coverBackground
+        }
+    } else {
+        backgroundProp['backgroundImage'] = 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
+    }
+
     if (info) {
         return (
             <div
@@ -14,11 +26,12 @@ export default function CoverView(info: RssFeedIntro | null) {
                     justifyContent: 'center',
                     alignItems: 'center',
                     textAlign: 'center',
-                    fontFamily: 'Roboto',
                     fontSize: '20px',
-                    color: '#ffffff',
                     gap: '100px',
                     padding: '70px',
+                    fontFamily: config.fontFamily || 'Roboto',
+                    color: config.primaryColor || '#ffffff',
+                    ...backgroundProp,
                 }}
             >
                 <h3
@@ -28,7 +41,7 @@ export default function CoverView(info: RssFeedIntro | null) {
                         fontWeight: 'bold',
                     }}
                 >
-                    {info.title} RSS Feed
+                    {info.title}
                 </h3>
                 <span
                     style={{
@@ -37,16 +50,18 @@ export default function CoverView(info: RssFeedIntro | null) {
                         fontWeight: 'medium',
                     }}
                 >
-                    Recent posts: {info.total}
+                    Recent posts: {info.posts.length}
                 </span>
                 <span
                     style={{
                         fontSize: '30px',
                         opacity: '0.8',
                         fontWeight: 'medium',
+
+                        color: config.secondaryColor || '#ffffff',
                     }}
                 >
-                    Last updated: {dayjs(info.lastUpdated).format('dddd, MMMM Do @ LT')}
+                    Last updated: {info.lastUpdated.human}
                 </span>
             </div>
         )
@@ -57,14 +72,14 @@ export default function CoverView(info: RssFeedIntro | null) {
             style={{
                 width: '100%',
                 height: '100%',
-                backgroundColor: 'black',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
-                fontFamily: 'Roboto',
                 fontSize: '50px',
-                color: '#ffffff',
+                fontFamily: config.fontFamily || 'Roboto',
+                color: config.primaryColor || '#ffffff',
+                ...backgroundProp,
             }}
         >
             Add an RSS feed URL to get started
