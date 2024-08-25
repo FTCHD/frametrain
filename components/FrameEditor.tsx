@@ -249,9 +249,7 @@ export default function FrameEditor({
                         <PopoverContent className="w-80 max-md:w-screen">
                             <div className="grid gap-4">
                                 <div className="space-y-2">
-                                    <h4 className="font-medium leading-none">
-                                        Connect your Airstack
-                                    </h4>
+                                    <h4 className="font-medium leading-none">Earn Moxie</h4>
                                     <p className="text-sm text-muted-foreground">
                                         Connect your own Airstack key to earn Moxie when other
                                         farcasters interact with your Frame!
