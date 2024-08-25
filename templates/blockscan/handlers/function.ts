@@ -8,9 +8,15 @@ import type { Config, Storage } from '..'
 import { FrameError } from '@/sdk/error'
 import { parseAbi, type AbiFunction } from 'abitype'
 import TextSlide from '@/sdk/components/TextSlide'
-import { getViemClient } from '../utils/viem'
-import { BaseError, ContractFunctionRevertedError, encodeFunctionData } from 'viem'
+import {
+    BaseError,
+    ContractFunctionRevertedError,
+    createPublicClient,
+    encodeFunctionData,
+    http,
+} from 'viem'
 import initial from './initial'
+import { chainByChainId } from '../common/constants'
 
 export default async function functionHandler({
     body,
@@ -74,7 +80,17 @@ export default async function functionHandler({
 
         return value
     })
-    const client = getViemClient(config.etherscan.chainId)
+    const chain = chainByChainId[config.etherscan.chainId]
+
+    if (!chain) {
+        throw new Error('Unsupported chain')
+    }
+
+    const client = createPublicClient({
+        chain,
+        transport: http(),
+        batch: { multicall: { wait: 10, batchSize: 1000 } },
+    })
     let nextIndex = 1
 
     console.log('before', {
@@ -125,6 +141,7 @@ export default async function functionHandler({
                 args,
                 address: config.etherscan.address,
             })
+
             if (typeof data.result !== undefined) {
                 subtitle = Array.isArray(data.result)
                     ? (data.result as unknown[]).join('\n')
