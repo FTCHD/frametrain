@@ -2,7 +2,8 @@
 
 import type { Abi, FormatAbi } from 'abitype'
 import { formatAbi } from 'abitype'
-import { apiKeyByChainId, chainExplorerByHostname, isAddress } from './viem'
+import { isAddress } from 'viem'
+import { apiKeyByChainId, chainExplorerByHostname } from './constants'
 
 type Address = `0x${string}`
 

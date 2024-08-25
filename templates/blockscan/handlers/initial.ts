@@ -7,7 +7,6 @@ import TextSlide, { type TextSlideProps } from '@/sdk/components/TextSlide'
 export default async function initial({
     config,
 }: {
-    // GET requests don't have a body.
     config: Config
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')

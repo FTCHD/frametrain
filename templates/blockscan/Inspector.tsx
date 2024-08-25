@@ -1,16 +1,8 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import type { Config } from '.'
-import { useDebouncedCallback } from 'use-debounce'
-import { getContractData } from './utils/etherscan'
-import toast from 'react-hot-toast'
-import { useState } from 'react'
-import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
 import { Label } from '@/components/shadcn/Label'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { Slider } from '@/components/shadcn/Slider'
+import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
 import {
     Select,
     SelectContent,
@@ -18,6 +10,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/shadcn/Select'
+import { Slider } from '@/components/shadcn/Slider'
+import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
+import { useDebouncedCallback } from 'use-debounce'
+import type { Config } from '.'
+import { getContractData } from './common/etherscan'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
