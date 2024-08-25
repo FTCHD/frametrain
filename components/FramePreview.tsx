@@ -55,7 +55,7 @@ function PlaceholderFrame() {
 function ErrorFrame() {
     return (
         <div className="flex justify-center items-center w-full h-full">
-            Edit your template configuration on the rigth side.
+            Edit your template configuration on the right side.
         </div>
     )
 }
