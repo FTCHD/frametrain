@@ -201,14 +201,20 @@ export default async function functionHandler({
     return {
         buttons,
         component: TextSlide({
-            title: functionName,
-            titleStyles: config.functionStyles?.titleStyles,
-            subtitle,
-            subtitleStyles: config.functionStyles?.subtitleStyles,
+            title: {
+                ...config.functionSlide?.title,
+                text: `Function #${signatureIndex + 1} ${functionName}`,
+            },
+            subtitle: {
+                ...config.functionSlide?.subtitle,
+                text: subtitle,
+            },
             ...(abiItem.inputs.length
                 ? {
-                      customMessage: 'Enter the values of the arguments separated by commas',
-                      customStyles: config.functionStyles?.customStyles,
+                      bottomMessage: {
+                          ...config.functionSlide?.bottomMessage,
+                          text: 'Enter the values of the arguments separated by commas',
+                      },
                   }
                 : {}),
         }),

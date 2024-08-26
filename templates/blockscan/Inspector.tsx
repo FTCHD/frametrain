@@ -3,38 +3,18 @@ import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/Label'
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
-import { Slider } from '@/components/shadcn/Slider'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
 import { getContractData } from './common/etherscan'
+import TextSlideEditor, { TextSlideStyleConfig } from '@/sdk/components/TextSlideEditor'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
     const [coverType, setCoverType] = useState<'text' | 'image'>(
         config.coverImage ? 'image' : 'text'
-    )
-    const [coverTitleFontSize, setCoverTitleFontSize] = useState(
-        config.coverText?.titleStyles?.size || 75
-    )
-    const [coverSubtitleFontSize, setCoverSubtitleFontSize] = useState(
-        config.coverText?.subtitleStyles?.size || 50
-    )
-    const [functionTitleFontSize, setFunctionTitleFontSize] = useState(
-        config.functionStyles?.titleStyles?.size || 75
-    )
-    const [functionSubtitleFontSize, setFunctionSubtitleFontSize] = useState(
-        config.functionStyles?.subtitleStyles?.size || 50
     )
     const uploadImage = useUploadImage()
 
@@ -166,339 +146,26 @@ export default function Inspector() {
                     </div>
                 ) : (
                     <div className="flex flex-col gap-4 w-full">
-                        <div className="flex flex-col gap-2 w-full">
-                            <div className="flex flex-col w-full">
-                                <h2 className="text-lg">Cover Title</h2>
-                                <Input
-                                    className="py-2 text-lg"
-                                    defaultValue={config.coverText?.title}
-                                    onChange={async (e) => {
-                                        const title = e.target.value.trim()
-                                        if (title === '') {
-                                            toast.error('Please enter a title for the cover')
-                                            return
-                                        }
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                title,
-                                            },
-                                        })
-                                    }}
-                                    placeholder="cover title"
-                                />
-                            </div>
-                            <div className="flex flex-col w-full">
-                                <h2 className="text-lg">Cover Subtitle</h2>
-                                <Input
-                                    className="py-2 text-lg"
-                                    defaultValue={config.coverText?.subtitle}
-                                    onChange={async (e) => {
-                                        const subtitle = e.target.value.trim()
-
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                subtitle: subtitle === '' ? undefined : subtitle,
-                                            },
-                                        })
-                                    }}
-                                    placeholder="cover subtitle"
-                                />
-                            </div>
-                            <div className="flex flex-col w-full">
-                                <h2 className="text-lg">Cover Custom Message</h2>
-                                <Input
-                                    className="py-2 text-lg"
-                                    defaultValue={config.coverText?.customMessage}
-                                    onChange={async (e) => {
-                                        const value = e.target.value.trim()
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                customMessage: value === '' ? undefined : value,
-                                            },
-                                        })
-                                    }}
-                                    placeholder="your custom message"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Styles config */}
-                        <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg text-center">Cover customizations</h2>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Cover background</h2>
-                                <ColorPicker
-                                    className="w-full"
-                                    enabledPickers={['solid', 'gradient', 'image']}
-                                    background={config.coverText?.backgroundColor || 'black'}
-                                    setBackground={(backgroundColor) => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                backgroundColor,
-                                            },
-                                        })
-                                    }}
-                                    uploadBackground={async (base64String, contentType) => {
-                                        const { filePath } = await uploadImage({
-                                            base64String: base64String,
-                                            contentType: contentType,
-                                        })
-
-                                        return filePath
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Title Color</h2>
-                                <ColorPicker
-                                    className="w-full"
-                                    background={config.coverText?.titleStyles?.color || 'white'}
-                                    setBackground={(color) => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                titleStyles: {
-                                                    ...config.coverText?.titleStyles,
-                                                    color,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <label className="text-lg font-semibold">
-                                    Title Size ({coverTitleFontSize}px)
-                                </label>
-
-                                <Slider
-                                    defaultValue={[coverTitleFontSize]}
-                                    max={140}
-                                    step={2}
-                                    onValueChange={(newRange) => {
-                                        const size = newRange[0]
-                                        setCoverTitleFontSize(size)
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                titleStyles: {
-                                                    ...config.coverText?.titleStyles,
-                                                    size,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Title Font</h2>
-                                <FontFamilyPicker
-                                    defaultValue={config.coverText?.titleStyles?.font || 'Roboto'}
-                                    onSelect={(font) => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                titleStyles: {
-                                                    ...config.coverText?.titleStyles,
-                                                    font,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Title Style</h2>
-                                <FontStylePicker
-                                    currentFont={config.coverText?.titleStyles?.font || 'Roboto'}
-                                    defaultValue={config.coverText?.titleStyles?.style || 'normal'}
-                                    onSelect={(style: string) => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                titleStyles: {
-                                                    ...config.coverText?.titleStyles,
-                                                    style,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Title Weight</h2>
-                                <FontWeightPicker
-                                    currentFont={config.coverText?.titleStyles?.font || 'Roboto'}
-                                    defaultValue={config.coverText?.titleStyles?.weight || 'normal'}
-                                    onSelect={(weight) => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                titleStyles: {
-                                                    ...config.coverText?.titleStyles,
-                                                    weight,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Title Position</h2>
-                                <Select
-                                    defaultValue={
-                                        config.coverText?.titleStyles?.alignment || 'center'
-                                    }
-                                    onValueChange={(alignment: 'left' | 'center' | 'right') => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                titleStyles: {
-                                                    ...config.coverText?.titleStyles,
-                                                    alignment,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Left" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value={'left'}>Left</SelectItem>
-                                        <SelectItem value={'center'}>Center</SelectItem>
-                                        <SelectItem value={'right'}>Right</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Subtitle Color</h2>
-                                <ColorPicker
-                                    className="w-full"
-                                    background={config.coverText?.subtitleStyles?.color || 'white'}
-                                    setBackground={(color) => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                subtitleStyles: {
-                                                    ...config.coverText?.subtitleStyles,
-                                                    color,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <label className="text-lg font-semibold">
-                                    Subtitle Size ({coverSubtitleFontSize}
-                                    px)
-                                </label>
-                                <Slider
-                                    defaultValue={[coverSubtitleFontSize]}
-                                    max={140}
-                                    step={2}
-                                    onValueChange={(newRange) => {
-                                        const size = newRange[0]
-                                        setCoverSubtitleFontSize(size)
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                titleStyles: {
-                                                    ...config.coverText?.subtitleStyles,
-                                                    size,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Subtitle Font</h2>
-                                <FontFamilyPicker
-                                    defaultValue={config.coverText?.titleStyles?.font || 'Roboto'}
-                                    onSelect={(font) => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                subtitleStyles: {
-                                                    ...config.coverText?.subtitleStyles,
-                                                    font,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Subtitle Style</h2>
-                                <FontStylePicker
-                                    currentFont={config.coverText?.titleStyles?.font || 'Roboto'}
-                                    defaultValue={config.coverText?.titleStyles?.style || 'normal'}
-                                    onSelect={(style) => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                subtitleStyles: {
-                                                    ...config.coverText?.subtitleStyles,
-                                                    style,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Subtitle Weight</h2>
-                                <FontWeightPicker
-                                    currentFont={config.coverText?.titleStyles?.font || 'Roboto'}
-                                    defaultValue={config.coverText?.titleStyles?.weight || 'normal'}
-                                    onSelect={(weight) => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                subtitleStyles: {
-                                                    ...config.coverText?.subtitleStyles,
-                                                    weight,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold">Subtitle Position</h2>{' '}
-                                <Select
-                                    defaultValue={
-                                        config.coverText?.titleStyles?.alignment || 'center'
-                                    }
-                                    onValueChange={(alignment: 'left' | 'center' | 'right') => {
-                                        updateConfig({
-                                            coverText: {
-                                                ...config.coverText,
-                                                subtitleStyles: {
-                                                    ...config.coverText?.subtitleStyles,
-                                                    alignment,
-                                                },
-                                            },
-                                        })
-                                    }}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Left" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value={'left'}>Left</SelectItem>
-                                        <SelectItem value={'center'}>Center</SelectItem>
-                                        <SelectItem value={'right'}>Right</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
+                        <TextSlideEditor
+                            name="Cover"
+                            title={{
+                                text: 'Cover Title',
+                                ...config.coverText?.title,
+                            }}
+                            subtitle={{
+                                text: 'Cover Subtitle',
+                                ...config.coverText?.subtitle,
+                            }}
+                            bottomMessage={{
+                                text: 'Cover Custom Message',
+                                ...config.coverText?.bottomMessage,
+                            }}
+                            onUpdate={(updated) => {
+                                updateConfig({
+                                    coverText: updated.title,
+                                })
+                            }}
+                        />
                     </div>
                 )}
 
@@ -510,274 +177,43 @@ export default function Inspector() {
                             viewers
                         </p>
                     </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function Slide background</h2>
-                        <ColorPicker
-                            className="w-full"
-                            enabledPickers={['solid', 'gradient', 'image']}
-                            background={config.functionStyles?.backgroundColor || 'black'}
-                            setBackground={(backgroundColor) => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        backgroundColor,
+                    {/* Function Slide */}
+                    <TextSlideStyleConfig
+                        name={'Function name'}
+                        config={config.functionSlide?.title}
+                        background={config.functionSlide?.background}
+                        setBackground={(background) =>
+                            updateConfig({ functionSlide: { ...config.functionSlide, background } })
+                        }
+                        updateConfig={(updatedStyle) => {
+                            //
+                            updateConfig({
+                                functionStyles: {
+                                    ...config.functionSlide,
+                                    title: {
+                                        ...config.functionSlide?.title,
+                                        ...updatedStyle,
                                     },
-                                })
-                            }}
-                            uploadBackground={async (base64String, contentType) => {
-                                const { filePath } = await uploadImage({
-                                    base64String: base64String,
-                                    contentType: contentType,
-                                })
-
-                                return filePath
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function title Color</h2>
-                        <ColorPicker
-                            className="w-full"
-                            background={config.functionStyles?.titleStyles?.color || 'white'}
-                            setBackground={(color) => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        titleStyles: {
-                                            ...config.functionStyles?.titleStyles,
-                                            color,
-                                        },
+                                },
+                            })
+                        }}
+                    />
+                    <TextSlideStyleConfig
+                        name={'Function information'}
+                        config={config.functionSlide?.subtitle}
+                        updateConfig={(updatedStyle) => {
+                            //
+                            updateConfig({
+                                functionStyles: {
+                                    ...config.functionSlide,
+                                    subtitle: {
+                                        ...config.functionSlide?.subtitle,
+                                        ...updatedStyle,
                                     },
-                                })
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <label className="text-lg font-semibold">
-                            Function title Size ({functionTitleFontSize}px)
-                        </label>
-
-                        <Slider
-                            defaultValue={[functionTitleFontSize]}
-                            max={140}
-                            step={2}
-                            onValueChange={(newRange) => {
-                                const size = newRange[0]
-                                setFunctionTitleFontSize(size)
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        titleStyles: {
-                                            ...config.functionStyles?.titleStyles,
-                                            size,
-                                        },
-                                    },
-                                })
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function title Font</h2>
-                        <FontFamilyPicker
-                            defaultValue={config.functionStyles?.titleStyles?.font || 'Roboto'}
-                            onSelect={(font) => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        titleStyles: {
-                                            ...config.functionStyles?.titleStyles,
-                                            font,
-                                        },
-                                    },
-                                })
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function title Style</h2>
-                        <FontStylePicker
-                            currentFont={config.functionStyles?.titleStyles?.font || 'Roboto'}
-                            defaultValue={config.functionStyles?.titleStyles?.style || 'normal'}
-                            onSelect={(style: string) => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        titleStyles: {
-                                            ...config.functionStyles?.titleStyles,
-                                            style,
-                                        },
-                                    },
-                                })
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function title Weight</h2>
-                        <FontWeightPicker
-                            currentFont={config.functionStyles?.titleStyles?.font || 'Roboto'}
-                            defaultValue={config.functionStyles?.titleStyles?.weight || 'normal'}
-                            onSelect={(weight) => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        titleStyles: {
-                                            ...config.functionStyles?.titleStyles,
-                                            weight,
-                                        },
-                                    },
-                                })
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function title Position</h2>
-                        <Select
-                            defaultValue={config.functionStyles?.titleStyles?.alignment || 'center'}
-                            onValueChange={(alignment: 'left' | 'center' | 'right') => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        titleStyles: {
-                                            ...config.functionStyles?.titleStyles,
-                                            alignment,
-                                        },
-                                    },
-                                })
-                            }}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Left" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value={'left'}>Left</SelectItem>
-                                <SelectItem value={'center'}>Center</SelectItem>
-                                <SelectItem value={'right'}>Right</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function information Color</h2>
-                        <ColorPicker
-                            className="w-full"
-                            background={config.functionStyles?.subtitleStyles?.color || 'white'}
-                            setBackground={(color) => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        subtitleStyles: {
-                                            ...config.functionStyles?.subtitleStyles,
-                                            color,
-                                        },
-                                    },
-                                })
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <label className="text-lg font-semibold">
-                            Function information Size ({functionSubtitleFontSize}
-                            px)
-                        </label>
-                        <Slider
-                            defaultValue={[functionSubtitleFontSize]}
-                            max={140}
-                            step={2}
-                            onValueChange={(newRange) => {
-                                const size = newRange[0]
-                                setFunctionSubtitleFontSize(size)
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        subtitleStyles: {
-                                            ...config.functionStyles?.subtitleStyles,
-                                            size,
-                                        },
-                                    },
-                                })
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function information Font</h2>
-                        <FontFamilyPicker
-                            defaultValue={config.functionStyles?.subtitleStyles?.font || 'Roboto'}
-                            onSelect={(font) => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        subtitleStyles: {
-                                            ...config.functionStyles?.subtitleStyles,
-                                            font,
-                                        },
-                                    },
-                                })
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function information Style</h2>
-                        <FontStylePicker
-                            currentFont={config.functionStyles?.subtitleStyles?.font || 'Roboto'}
-                            defaultValue={config.functionStyles?.subtitleStyles?.style || 'normal'}
-                            onSelect={(style) => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        subtitleStyles: {
-                                            ...config.functionStyles?.subtitleStyles,
-                                            style,
-                                        },
-                                    },
-                                })
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function information Weight</h2>
-                        <FontWeightPicker
-                            currentFont={config.functionStyles?.subtitleStyles?.font || 'Roboto'}
-                            defaultValue={config.functionStyles?.subtitleStyles?.weight || 'normal'}
-                            onSelect={(weight) => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        subtitleStyles: {
-                                            ...config.functionStyles?.subtitleStyles,
-                                            weight,
-                                        },
-                                    },
-                                })
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function information Position</h2>{' '}
-                        <Select
-                            defaultValue={
-                                config.functionStyles?.subtitleStyles?.alignment || 'center'
-                            }
-                            onValueChange={(alignment: 'left' | 'center' | 'right') => {
-                                updateConfig({
-                                    functionStyles: {
-                                        ...config.functionStyles,
-                                        subtitleStyles: {
-                                            ...config.functionStyles?.subtitleStyles,
-                                            alignment,
-                                        },
-                                    },
-                                })
-                            }}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Left" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value={'left'}>Left</SelectItem>
-                                <SelectItem value={'center'}>Center</SelectItem>
-                                <SelectItem value={'right'}>Right</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                                },
+                            })
+                        }}
+                    />
                 </div>
             </div>
         </div>

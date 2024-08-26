@@ -9,7 +9,7 @@ export interface Config extends BaseConfig {
     etherscan: SerializableConfig | null
     coverImage?: string
     coverText?: TextSlideProps
-    functionStyles?: TextSlideProps
+    functionSlide?: TextSlideProps
 }
 
 export interface Storage extends BaseStorage {

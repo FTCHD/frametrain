@@ -13,25 +13,33 @@ export default async function initial({
     const buttons: FrameButtonMetadata[] = []
     const fonts = [...roboto]
     const coverText: TextSlideProps = {
-        ...config.coverText,
-        title: 'Enter a contract address url to get started',
-        subtitle: 'Subtitle',
+        title: { text: 'Enter a contract address url to get started' },
+        subtitle: { text: 'Subtitle' },
+        background: config.coverText?.background,
     }
 
     if (config.etherscan) {
         buttons.push({ label: 'START' })
-        coverText.title = 'Title'
+        coverText.title.text = 'Title'
     }
 
     if (config.coverText) {
         coverText.title = config.coverText.title
         coverText.subtitle = config.coverText.subtitle
-        if (config.coverText.titleStyles?.font) {
-            const titleFont = await loadGoogleFontAllVariants(config.coverText.titleStyles.font)
+        coverText.bottomMessage = config.coverText.bottomMessage
+        if (config.coverText.title.fontFamily) {
+            const titleFont = await loadGoogleFontAllVariants(config.coverText.title.fontFamily)
             fonts.push(...titleFont)
         }
-        if (config.coverText.subtitleStyles?.font) {
-            const titleFont = await loadGoogleFontAllVariants(config.coverText.subtitleStyles.font)
+        if (config.coverText.subtitle.fontFamily) {
+            const titleFont = await loadGoogleFontAllVariants(config.coverText.subtitle.fontFamily)
+            fonts.push(...titleFont)
+        }
+
+        if (config.coverText.bottomMessage?.fontFamily) {
+            const titleFont = await loadGoogleFontAllVariants(
+                config.coverText.bottomMessage.fontFamily
+            )
             fonts.push(...titleFont)
         }
     }
