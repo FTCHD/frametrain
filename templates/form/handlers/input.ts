@@ -6,11 +6,12 @@ import { UsersState, removeFidFromUserState, updateUserState } from '../state'
 import { getIndexForFid, validateField } from '../utils'
 import ConfirmOverwriteView from '../views/ConfirmOverwrite'
 import ConfirmSubmitView from '../views/ConfirmSubmit'
-import InputView from '../views/Input'
 import SuccessView from '../views/Success'
 import about from './about'
 import initial from './initial'
 import { validateGatingOptions } from '@/lib/gating'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import TextSlide from '@/sdk/components/TextSlide'
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export default async function input({
@@ -23,6 +24,8 @@ export default async function input({
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts = [...roboto]
     const viewer = body.validatedData.interactor
     const cast = body.validatedData.cast
     const fid = viewer.fid
@@ -206,8 +209,40 @@ export default async function input({
             return initial({ config })
         case 'about':
             return about({ config })
-        case 'input':
+        case 'input': {
+            const field = config.fields[UsersState[fid].inputFieldNumber]
+            const title = {
+                text: field.fieldName,
+                ...field.fieldNameStyle,
+            }
+            const subtitle = {
+                text: field.fieldDescription,
+                ...field.fieldDescriptionStyle,
+            }
+            const bottomMessage = {
+                text: `Example: ${field.fieldExample}`,
+                ...field.fieldExampleStyle,
+            }
+            if (field.fieldNameStyle?.fontFamily) {
+                const nameFont = await loadGoogleFontAllVariants(field.fieldNameStyle.fontFamily)
+                fonts.push(...nameFont)
+            }
+
+            if (field.fieldDescriptionStyle?.fontFamily) {
+                const descFont = await loadGoogleFontAllVariants(
+                    field.fieldDescriptionStyle.fontFamily
+                )
+                fonts.push(...descFont)
+            }
+
+            if (field.fieldExampleStyle?.fontFamily) {
+                const exampleFont = await loadGoogleFontAllVariants(
+                    field.fieldExampleStyle.fontFamily
+                )
+                fonts.push(...exampleFont)
+            }
             return {
+                fonts,
                 buttons: [
                     {
                         label: 'Reset',
@@ -221,9 +256,15 @@ export default async function input({
                 ],
                 inputText: 'Enter The Value',
                 storage: newStorage,
-                component: InputView(config, UsersState[fid]),
+                component: TextSlide({
+                    title,
+                    subtitle,
+                    bottomMessage,
+                    background: field.background,
+                }),
                 handler: 'input',
             }
+        }
         case 'confirm_submit':
             return {
                 buttons: [
@@ -296,13 +337,44 @@ export default async function input({
     // RETURN INITIAL VIEW IF ANYTHING UNEXPECTED HAPPENS
     updateUserState(fid, { pageType: 'init', inputValues: [] })
 
+    const field = config.fields[UsersState[fid].inputFieldNumber]
+    const title = {
+        text: field.fieldName,
+        ...field.fieldNameStyle,
+    }
+    const subtitle = {
+        text: field.fieldDescription,
+        ...field.fieldDescriptionStyle,
+    }
+    const bottomMessage = {
+        text: `Example: ${field.fieldExample}`,
+        ...field.fieldExampleStyle,
+    }
+    if (field.fieldNameStyle?.fontFamily) {
+        const nameFont = await loadGoogleFontAllVariants(field.fieldNameStyle.fontFamily)
+        fonts.push(...nameFont)
+    }
+
+    if (field.fieldDescriptionStyle?.fontFamily) {
+        const descFont = await loadGoogleFontAllVariants(field.fieldDescriptionStyle.fontFamily)
+        fonts.push(...descFont)
+    }
+
+    if (field.fieldExampleStyle?.fontFamily) {
+        const exampleFont = await loadGoogleFontAllVariants(field.fieldExampleStyle.fontFamily)
+        fonts.push(...exampleFont)
+    }
+
+    console.log({ field })
+
     return {
+        fonts,
         buttons: [
             {
                 label: '←',
             },
         ],
-        component: InputView(config, UsersState[fid]),
+        component: TextSlide({ title, subtitle, bottomMessage, background: field.background }),
         handler: 'initial',
     }
 }

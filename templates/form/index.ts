@@ -3,6 +3,7 @@ import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
 import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
+import type { TextSlideStyle } from '@/sdk/components/TextSlide'
 
 export type fieldTypes = {
     fieldName: string
@@ -10,6 +11,10 @@ export type fieldTypes = {
     fieldExample: string
     required: boolean
     fieldType: 'text' | 'number' | 'email' | 'phone' | 'address'
+    fieldNameStyle?: TextSlideStyle
+    fieldDescriptionStyle?: TextSlideStyle
+    fieldExampleStyle?: TextSlideStyle
+    background?: string
 }
 
 export interface Config extends BaseConfig {
@@ -17,7 +22,7 @@ export interface Config extends BaseConfig {
         username: string
         fid: number
     }
-    fields: fieldTypes[] | []
+    fields: fieldTypes[]
     backgroundColor: string
     fontColor: string
     coverText: string
