@@ -45,10 +45,6 @@ export default function FormFieldEditor({
     const fieldRequiredInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-        console.log({ background })
-    }, [background])
-
-    useEffect(() => {
         if (!formField?.fieldName) return
         if (!fieldNameInputRef.current) return
         if (fieldNameInputRef.current.value) return

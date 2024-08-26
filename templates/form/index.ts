@@ -35,15 +35,16 @@ export interface Config extends BaseConfig {
     enableGating?: boolean
 }
 
-interface DATA_RECORD {
-    fid: number
-    inputValues: string[] | []
-    timestamp: number
-}
-
 export interface Storage extends BaseStorage {
     inputNames: string[]
-    data: DATA_RECORD[]
+    data: {
+        fid: number
+        values: {
+            field: string
+            value: string
+        }[]
+        timestamp: number
+    }[]
 }
 
 export default {

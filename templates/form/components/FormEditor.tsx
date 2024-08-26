@@ -31,14 +31,19 @@ import {
 import { ColorPicker } from '@/sdk/components'
 import GatingOptions from '@/sdk/components/GatingOptions'
 import FormFieldEditor from './FormFieldEditor'
+import { humanizeTimestamp } from '../utils'
 
 function downloadCSV(storage: Storage, fileName: string, inputNames: string[]): void {
     // Column names
     const columnNames = ['timestamp', 'fid', inputNames]
-    const inputValues = storage.data.map((record) => record.inputValues)
+    const inputValues = storage.data.map((record) => record.values)
 
     // Rows
-    const rows = storage.data.map((record) => [record.timestamp, record.fid, ...record.inputValues])
+    const rows = storage.data.map((record) => [
+        humanizeTimestamp(record.timestamp),
+        record.fid,
+        ...record.values.filter((v) => inputNames.includes(v.field)).map((v) => v.value),
+    ])
     console.log({ inputValues, columnNames, rows })
 
     // Combine column names and rows into CSV string
@@ -120,36 +125,40 @@ export default function FormEditor({ isEditing = false }: { isEditing?: boolean 
                                     </TableCaption>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead className="w-[100px]">Timestamp</TableHead>
+                                            <TableHead className="w-[100px]">Date</TableHead>
                                             <TableHead className="w-[100px]">FID</TableHead>
-                                            {[
-                                                ...config.fields.map(
-                                                    (field) => field.fieldName ?? ''
-                                                ),
-                                            ].map((name, index) => (
-                                                <TableHead key={index} className="w-[100px]">
-                                                    {name}
-                                                </TableHead>
-                                            ))}
+                                            {[...config.fields.map((field) => field.fieldName)].map(
+                                                (name, index) => (
+                                                    <TableHead key={index} className="w-[100px]">
+                                                        {name}
+                                                    </TableHead>
+                                                )
+                                            )}
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {storage.data?.map((record, rowIndex) => (
                                             <TableRow key={rowIndex}>
                                                 <TableCell className="font-medium">
-                                                    {record.timestamp}
+                                                    {humanizeTimestamp(record.timestamp)}
                                                 </TableCell>
                                                 <TableCell className="font-medium">
                                                     {record.fid}
                                                 </TableCell>
-                                                {record.inputValues.map((value, colIndex) => (
-                                                    <TableCell
-                                                        key={colIndex}
-                                                        className="font-medium"
-                                                    >
-                                                        {value}
-                                                    </TableCell>
-                                                ))}
+                                                {record.values
+                                                    .filter((v) =>
+                                                        config.fields.some(
+                                                            (f) => f.fieldName === v.field
+                                                        )
+                                                    )
+                                                    .map((v, colIndex) => (
+                                                        <TableCell
+                                                            key={colIndex}
+                                                            className="font-medium"
+                                                        >
+                                                            {v.value}
+                                                        </TableCell>
+                                                    ))}
                                             </TableRow>
                                         ))}
                                     </TableBody>

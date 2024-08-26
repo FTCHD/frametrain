@@ -3,7 +3,7 @@ import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaste
 import { FrameError } from '@/sdk/error'
 import type { Config, Storage } from '..'
 import { UsersState, removeFidFromUserState, updateUserState } from '../state'
-import { getIndexForFid, validateField } from '../utils'
+import { getIndexForFid, loadFontsAndtextElements, validateField } from '../utils'
 import ConfirmOverwriteView from '../views/ConfirmOverwrite'
 import ConfirmSubmitView from '../views/ConfirmSubmit'
 import SuccessView from '../views/Success'
@@ -18,11 +18,12 @@ export default async function input({
     body,
     config,
     storage,
+    params,
 }: {
     body: FrameValidatedActionPayload
     config: Config
     storage: Storage
-    params: any
+    params?: { from: string }
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const fonts = [...roboto]
@@ -30,7 +31,7 @@ export default async function input({
     const cast = body.validatedData.cast
     const fid = viewer.fid
     const buttonIndex = body.validatedData.tapped_button.index
-    const textInput = body.validatedData?.input?.text || ''
+    const textInput = (body.validatedData?.input?.text || '') as string
 
     let newStorage = storage
 
@@ -56,6 +57,7 @@ export default async function input({
     }
 
     const prevUserState = structuredClone(UsersState[fid])
+    console.log('required field >> prev state', prevUserState)
 
     switch (prevUserState.pageType) {
         case undefined:
@@ -72,7 +74,7 @@ export default async function input({
                 if (index >= 0) {
                     updateUserState(fid, {
                         pageType: 'confirm_overwrite',
-                        inputValues: newStorage.data[index].inputValues,
+                        inputValues: newStorage.data[index].values,
                         inputFieldNumber: 0,
                         totalInputFieldNumber: config.fields.length,
                         isOldUser: true,
@@ -122,9 +124,11 @@ export default async function input({
             if (config.fields[UsersState[fid].inputFieldNumber].required == true) {
                 // CHECK IF THE INPUT IS A "REQUIRED" ONE
                 if (
-                    // biome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
-                    !(textInput.trim().length > 0) &&
-                    !UsersState[fid].inputValues[UsersState[fid].inputFieldNumber]
+                    params?.from !== 'initial' &&
+                    !(
+                        textInput.trim().length > 0 ||
+                        UsersState[fid].inputValues[UsersState[fid].inputFieldNumber]
+                    )
                 ) {
                     updateUserState(fid, { pageType: 'input' })
                     throw new FrameError('You cannot leave a required field blank.')
@@ -132,7 +136,10 @@ export default async function input({
             }
 
             const _inputs = UsersState[fid].inputValues
-            _inputs[UsersState[fid].inputFieldNumber] = textInput
+            _inputs[UsersState[fid].inputFieldNumber] = {
+                field: config.fields[UsersState[fid].inputFieldNumber].fieldName,
+                value: textInput.trim(),
+            }
             updateUserState(fid, { inputValues: _inputs })
 
             if (prevUserState.inputFieldNumber + 1 == UsersState[fid].totalInputFieldNumber) {
@@ -211,36 +218,11 @@ export default async function input({
             return about({ config })
         case 'input': {
             const field = config.fields[UsersState[fid].inputFieldNumber]
-            const title = {
-                text: field.fieldName,
-                ...field.fieldNameStyle,
-            }
-            const subtitle = {
-                text: field.fieldDescription,
-                ...field.fieldDescriptionStyle,
-            }
-            const bottomMessage = {
-                text: `Example: ${field.fieldExample}`,
-                ...field.fieldExampleStyle,
-            }
-            if (field.fieldNameStyle?.fontFamily) {
-                const nameFont = await loadGoogleFontAllVariants(field.fieldNameStyle.fontFamily)
-                fonts.push(...nameFont)
-            }
-
-            if (field.fieldDescriptionStyle?.fontFamily) {
-                const descFont = await loadGoogleFontAllVariants(
-                    field.fieldDescriptionStyle.fontFamily
-                )
-                fonts.push(...descFont)
-            }
-
-            if (field.fieldExampleStyle?.fontFamily) {
-                const exampleFont = await loadGoogleFontAllVariants(
-                    field.fieldExampleStyle.fontFamily
-                )
-                fonts.push(...exampleFont)
-            }
+            const { title, subtitle, bottomMessage, ...loaded } =
+                await loadFontsAndtextElements(field)
+            fonts.push(...loaded.fonts)
+            console.log('required field >> input', UsersState[fid])
+            console.log('required field >> input', { title, subtitle, bottomMessage })
             return {
                 fonts,
                 buttons: [
@@ -295,7 +277,7 @@ export default async function input({
                     ...(newStorage.data || []),
                     {
                         fid,
-                        inputValues: UsersState[fid].inputValues,
+                        values: UsersState[fid].inputValues,
                         timestamp: new Date().getTime(),
                     },
                 ],
@@ -338,34 +320,8 @@ export default async function input({
     updateUserState(fid, { pageType: 'init', inputValues: [] })
 
     const field = config.fields[UsersState[fid].inputFieldNumber]
-    const title = {
-        text: field.fieldName,
-        ...field.fieldNameStyle,
-    }
-    const subtitle = {
-        text: field.fieldDescription,
-        ...field.fieldDescriptionStyle,
-    }
-    const bottomMessage = {
-        text: `Example: ${field.fieldExample}`,
-        ...field.fieldExampleStyle,
-    }
-    if (field.fieldNameStyle?.fontFamily) {
-        const nameFont = await loadGoogleFontAllVariants(field.fieldNameStyle.fontFamily)
-        fonts.push(...nameFont)
-    }
-
-    if (field.fieldDescriptionStyle?.fontFamily) {
-        const descFont = await loadGoogleFontAllVariants(field.fieldDescriptionStyle.fontFamily)
-        fonts.push(...descFont)
-    }
-
-    if (field.fieldExampleStyle?.fontFamily) {
-        const exampleFont = await loadGoogleFontAllVariants(field.fieldExampleStyle.fontFamily)
-        fonts.push(...exampleFont)
-    }
-
-    console.log({ field })
+    const { title, subtitle, bottomMessage, ...loaded } = await loadFontsAndtextElements(field)
+    fonts.push(...loaded.fonts)
 
     return {
         fonts,

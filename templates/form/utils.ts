@@ -1,4 +1,13 @@
-import type { Storage } from '.'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import type { fieldTypes, Storage } from '.'
+import dayjs from 'dayjs'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
+import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+
+dayjs.extend(LocalizedFormat)
+dayjs.extend(advancedFormat)
+
+export const humanizeTimestamp = (ts?: number) => dayjs(ts).format('dddd, MMMM Do @ LT')
 
 export function getIndexForFid(fid: number | string, storage: Storage): number {
     let index: number = -1
@@ -54,4 +63,36 @@ export function validateField(
     }
 
     return { isValid, errors }
+}
+
+export async function loadFontsAndtextElements(field: fieldTypes) {
+    const fonts = []
+    const title = {
+        text: field.fieldName,
+        ...field.fieldNameStyle,
+    }
+    const subtitle = {
+        text: field.fieldDescription,
+        ...field.fieldDescriptionStyle,
+    }
+    const bottomMessage = {
+        text: `Example: ${field.fieldExample}`,
+        ...field.fieldExampleStyle,
+    }
+    if (field.fieldNameStyle?.fontFamily) {
+        const nameFont = await loadGoogleFontAllVariants(field.fieldNameStyle.fontFamily)
+        fonts.push(...nameFont)
+    }
+
+    if (field.fieldDescriptionStyle?.fontFamily) {
+        const descFont = await loadGoogleFontAllVariants(field.fieldDescriptionStyle.fontFamily)
+        fonts.push(...descFont)
+    }
+
+    if (field.fieldExampleStyle?.fontFamily) {
+        const exampleFont = await loadGoogleFontAllVariants(field.fieldExampleStyle.fontFamily)
+        fonts.push(...exampleFont)
+    }
+
+    return { title, subtitle, bottomMessage, fonts }
 }
