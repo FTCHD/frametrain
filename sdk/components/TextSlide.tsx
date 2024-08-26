@@ -1,19 +1,16 @@
-type TextStyle = {
+export type TextSlideStyle = {
     color?: string
-    alignment?: 'left' | 'center' | 'right'
-    size?: number
-    weight?: string
-    font?: string
-    style?: string
+    position?: 'left' | 'center' | 'right'
+    fontSize?: number
+    fontWeight?: string
+    fontFamily?: string
+    fontStyle?: string
 }
 
 export type TextSlideProps = {
-    title: string
-    subtitle: string
-    customMessage?: string
-    titleStyles?: TextStyle
-    subtitleStyles?: TextStyle
-    customStyles?: TextStyle
+    title: { text: string } & TextSlideStyle
+    subtitle: { text: string } & TextSlideStyle
+    bottomMessage?: { text: string } & TextSlideStyle
     backgroundColor?: string
 }
 
@@ -21,10 +18,7 @@ export type TextSlideProps = {
 export default function TextSlide({
     title,
     subtitle,
-    customMessage,
-    titleStyles,
-    subtitleStyles,
-    customStyles,
+    bottomMessage,
     backgroundColor,
 }: TextSlideProps) {
     const backgroundProp: Record<string, string> = {}
@@ -39,7 +33,7 @@ export default function TextSlide({
         backgroundProp['backgroundColor'] = 'black'
     }
 
-    const alignmentToFlex = (alignment: TextStyle['alignment']): string => {
+    const alignmentToFlex = (alignment: TextSlideStyle['position']): string => {
         switch (alignment) {
             case 'left':
                 return 'flex-start'
@@ -65,43 +59,44 @@ export default function TextSlide({
         >
             <div
                 style={{
-                    fontFamily: titleStyles?.font || 'Roboto',
-                    fontSize: `${titleStyles?.size || 50}px`,
-                    color: titleStyles?.color || 'white',
-                    fontStyle: titleStyles?.style || 'normal',
-                    fontWeight: titleStyles?.weight || 'bold',
-                    justifyContent: alignmentToFlex(titleStyles?.alignment),
+                    fontFamily: title.fontFamily || 'Roboto',
+                    fontSize: `${title.fontFamily || 50}px`,
+                    color: title.color || 'white',
+                    fontStyle: title.fontStyle || 'normal',
+                    fontWeight: title.fontWeight || 'bold',
+                    justifyContent: alignmentToFlex(title.position),
                     textWrap: 'balance',
                 }}
             >
-                {title}
+                {title.text}
             </div>
             <div
                 style={{
-                    color: subtitleStyles?.color || 'white',
-                    fontFamily: subtitleStyles?.font || 'Roboto',
-                    fontSize: `${subtitleStyles?.size || 30}px`,
-                    fontStyle: subtitleStyles?.style || 'normal',
-                    fontWeight: subtitleStyles?.weight || 'medium',
-                    justifyContent: alignmentToFlex(subtitleStyles?.alignment),
-                    opacity: '0.8',
+                    fontFamily: subtitle.fontFamily || 'Roboto',
+                    fontSize: `${subtitle.fontFamily || 30}px`,
+                    color: subtitle.color || 'white',
+                    fontStyle: subtitle.fontStyle || 'medium',
+                    fontWeight: subtitle.fontWeight || 'bold',
+                    justifyContent: alignmentToFlex(subtitle.position),
                     textWrap: 'balance',
                 }}
             >
-                {subtitle}
+                {subtitle.text}
             </div>
-            {customMessage && (
+            {bottomMessage && (
                 <div
                     style={{
-                        fontFamily: customStyles?.font || 'Roboto',
-                        fontSize: `${customStyles?.size || 20}px`,
-                        color: customStyles?.color || 'white',
-                        fontStyle: customStyles?.style || 'normal',
-                        fontWeight: customStyles?.weight || 'medium',
-                        justifyContent: alignmentToFlex(customStyles?.alignment),
+                        fontFamily: bottomMessage.fontFamily || 'Roboto',
+                        fontSize: `${bottomMessage.fontFamily || 20}px`,
+                        color: bottomMessage.color || 'white',
+                        fontStyle: bottomMessage.fontStyle || 'normal',
+                        fontWeight: bottomMessage.fontWeight || 'lighter',
+                        justifyContent: alignmentToFlex(bottomMessage.position),
+                        textWrap: 'balance',
+                        opacity: '0.8',
                     }}
                 >
-                    {customMessage}
+                    {bottomMessage.text}
                 </div>
             )}
         </div>
