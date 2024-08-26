@@ -10,24 +10,19 @@ export type TextSlideStyle = {
 export type TextSlideProps = {
     title: { text: string } & TextSlideStyle
     subtitle: { text: string } & TextSlideStyle
-    bottomMessage?: { text: string } & TextSlideStyle
-    backgroundColor?: string
+    bottomMessage?: { text?: string } & TextSlideStyle
+    background?: string
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
-export default function TextSlide({
-    title,
-    subtitle,
-    bottomMessage,
-    backgroundColor,
-}: TextSlideProps) {
+export default function TextSlide({ title, subtitle, bottomMessage, background }: TextSlideProps) {
     const backgroundProp: Record<string, string> = {}
 
-    if (backgroundColor) {
-        if (backgroundColor.startsWith('#')) {
-            backgroundProp['backgroundColor'] = backgroundColor
+    if (background) {
+        if (background.startsWith('#')) {
+            backgroundProp['backgroundColor'] = background
         } else {
-            backgroundProp['backgroundImage'] = backgroundColor
+            backgroundProp['backgroundImage'] = background
         }
     } else {
         backgroundProp['backgroundColor'] = 'black'
