@@ -20,9 +20,8 @@ import type { TextSlideProps, TextSlideStyle } from './TextSlide'
 
 type TextSlideStyleConfigProps = {
     name: string
-    config: TextSlideStyle
+    config: TextSlideStyle | undefined
     background?: string
-    showBackground?: boolean
     setBackground?: (color: string) => void
     updateConfig: (updatedStyle: TextSlideStyle) => void
 }
@@ -30,20 +29,20 @@ type TextSlideStyleConfigProps = {
 type TextSlideEditorProps = {
     name: string
     title: TextSlideProps['title']
-    titleName: string
+    titleName?: string
     subtitle: TextSlideProps['subtitle']
-    subtitleName: string
+    subtitleName?: string
     bottomMessage?: TextSlideProps['bottomMessage']
-    bottomMessageName: string
+    bottomMessageName?: string
     background?: string
     onUpdate: (updatedSlide: TextSlideProps) => void
 }
 
 export default function TextSlideEditor({
     name,
-    titleName,
-    subtitleName,
-    bottomMessageName,
+    titleName = 'Title',
+    subtitleName = 'Subtitle',
+    bottomMessageName = 'Custom Message',
     onUpdate,
     ...slide
 }: TextSlideEditorProps) {
@@ -118,7 +117,7 @@ export default function TextSlideEditor({
                         onUpdate({
                             ...slide,
                             title: {
-                                ...slide.title,
+                                text: slide.title?.text,
                                 ...style,
                             },
                         })
@@ -129,12 +128,12 @@ export default function TextSlideEditor({
                 />
                 <TextSlideStyleConfig
                     name={subtitleName}
-                    config={slide.title || {}}
+                    config={slide.subtitle || {}}
                     updateConfig={(style) => {
                         onUpdate({
                             ...slide,
-                            title: {
-                                ...slide.title,
+                            subtitle: {
+                                ...slide.subtitle,
                                 ...style,
                             },
                         })
@@ -142,12 +141,12 @@ export default function TextSlideEditor({
                 />
                 <TextSlideStyleConfig
                     name={bottomMessageName}
-                    config={slide.subtitle || {}}
+                    config={slide.bottomMessage || {}}
                     updateConfig={(style) => {
                         onUpdate({
                             ...slide,
-                            title: {
-                                ...slide.title,
+                            bottomMessage: {
+                                ...slide.bottomMessage,
                                 ...style,
                             },
                         })
@@ -161,17 +160,17 @@ export default function TextSlideEditor({
 export const TextSlideStyleConfig = ({
     name,
     background = '#000000',
-    config,
+    config = {},
     updateConfig,
     setBackground,
 }: TextSlideStyleConfigProps) => {
     const uploadImage = useUploadImage()
-    const [fontSize, setFontSize] = useState(config.fontSize || 50)
+    const [fontSize, setFontSize] = useState(config?.fontSize || 50)
     return (
         <>
             {setBackground ? (
                 <div className="flex flex-col gap-2 w-full">
-                    <h2 className="text-lg font-semibold">{name} background</h2>
+                    <h2 className="text-lg font-semibold">Slide background</h2>
                     <ColorPicker
                         className="w-full"
                         enabledPickers={['solid', 'gradient', 'image']}
@@ -194,7 +193,7 @@ export const TextSlideStyleConfig = ({
                 <h2 className="text-lg font-semibold">{name} Color</h2>
                 <ColorPicker
                     className="w-full"
-                    background={config.color || 'white'}
+                    background={config?.color || 'white'}
                     setBackground={(color) => {
                         updateConfig({ ...config, color })
                     }}
@@ -219,7 +218,7 @@ export const TextSlideStyleConfig = ({
             <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-lg font-semibold">{name} Font</h2>
                 <FontFamilyPicker
-                    defaultValue={config.fontFamily || 'Roboto'}
+                    defaultValue={config?.fontFamily || 'Roboto'}
                     onSelect={(fontFamily) => {
                         updateConfig({ ...config, fontFamily })
                     }}
@@ -228,8 +227,8 @@ export const TextSlideStyleConfig = ({
             <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-lg font-semibold">{name} Style</h2>
                 <FontStylePicker
-                    currentFont={config.fontFamily || 'Roboto'}
-                    defaultValue={config.fontStyle || 'normal'}
+                    currentFont={config?.fontFamily || 'Roboto'}
+                    defaultValue={config?.fontStyle || 'normal'}
                     onSelect={(fontStyle: string) => {
                         updateConfig({ ...config, fontStyle })
                     }}
@@ -238,8 +237,8 @@ export const TextSlideStyleConfig = ({
             <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-lg font-semibold">{name} Weight</h2>
                 <FontWeightPicker
-                    currentFont={config.fontFamily || 'Roboto'}
-                    defaultValue={config.fontWeight || 'normal'}
+                    currentFont={config?.fontFamily || 'Roboto'}
+                    defaultValue={config?.fontWeight || 'normal'}
                     onSelect={(fontWeight) => {
                         updateConfig({ ...config, fontWeight })
                     }}
@@ -248,7 +247,7 @@ export const TextSlideStyleConfig = ({
             <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-lg font-semibold">{name} Position</h2>
                 <Select
-                    defaultValue={config.position || 'center'}
+                    defaultValue={config?.position || 'center'}
                     onValueChange={(position: 'left' | 'center' | 'right') => {
                         updateConfig({ ...config, position })
                     }}
