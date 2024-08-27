@@ -9,7 +9,7 @@ import {
     SelectValue,
 } from '@/components/shadcn/Select'
 import { Slider } from '@/components/shadcn/Slider'
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useUploadImage } from '../hooks'
 import { ColorPicker } from './ColorPicker'
@@ -36,6 +36,7 @@ type TextSlideEditorProps = {
     bottomMessageName?: string
     background?: string
     onUpdate: (updatedSlide: TextSlideProps) => void
+    children?: ReactNode
 }
 
 export default function TextSlideEditor({
@@ -107,6 +108,7 @@ export default function TextSlideEditor({
                     />
                 </div>
             </div>
+            {slide.children}
             <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-lg text-center">{name} customizations</h2>
                 <TextSlideStyleConfig
