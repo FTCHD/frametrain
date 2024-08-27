@@ -1,6 +1,9 @@
 'use server'
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import { validateGatingOptions } from '@/lib/gating'
+import TextSlide from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import { UsersState, removeFidFromUserState, updateUserState } from '../state'
 import { getIndexForFid, loadFontsAndtextElements, validateField } from '../utils'
@@ -9,9 +12,6 @@ import ConfirmSubmitView from '../views/ConfirmSubmit'
 import SuccessView from '../views/Success'
 import about from './about'
 import initial from './initial'
-import { validateGatingOptions } from '@/lib/gating'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextSlide from '@/sdk/components/TextSlide'
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export default async function input({
@@ -57,7 +57,6 @@ export default async function input({
     }
 
     const prevUserState = structuredClone(UsersState[fid])
-    console.log('required field >> prev state', prevUserState)
 
     switch (prevUserState.pageType) {
         case undefined:
@@ -191,7 +190,7 @@ export default async function input({
             // IF BACK WAS PRESSED
             if (buttonIndex == 1) {
                 updateUserState(fid, { pageType: 'init' })
-                break
+                return initial({ config })
             }
 
             // IF CONTINUE WAS PRESSED
@@ -221,8 +220,6 @@ export default async function input({
             const { title, subtitle, bottomMessage, ...loaded } =
                 await loadFontsAndtextElements(field)
             fonts.push(...loaded.fonts)
-            console.log('required field >> input', UsersState[fid])
-            console.log('required field >> input', { title, subtitle, bottomMessage })
             return {
                 fonts,
                 buttons: [
