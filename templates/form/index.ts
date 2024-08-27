@@ -29,7 +29,7 @@ export interface Config extends BaseConfig {
     aboutText: string
     successText: string
     shareText: string
-    frameId: string
+    frameId: string | undefined
     allowDuplicates: boolean
     gating?: GatingOptionsProps['config']
     enableGating?: boolean
@@ -62,7 +62,10 @@ export default {
         fields: [],
         backgroundColor: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)',
         fontColor: '#FFFFFF',
-        shareText: 'Check This Out!',
+        aboutText: 'This is a form frame!',
+        coverText: 'Untitled form',
+        shareText: `I'm inviting you all to fill out my new form!`,
+        successText: 'Your response has been recorded!',
         frameId: undefined,
         allowDuplicates: false,
         enableGating: false,
