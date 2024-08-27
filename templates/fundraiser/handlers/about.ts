@@ -14,20 +14,21 @@ export default async function about({
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const fonts = [...roboto]
 
-    if (config.about.titleStyles?.font) {
-        const titleFont = await loadGoogleFontAllVariants(config.about.titleStyles.font)
+    if (config.about.title?.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(config.about.title.fontFamily)
         fonts.push(...titleFont)
     }
 
-    if (config.about.subtitleStyles?.font) {
-        const subtitleFont = await loadGoogleFontAllVariants(config.about.subtitleStyles.font)
+    if (config.about.subtitle?.fontFamily) {
+        const subtitleFont = await loadGoogleFontAllVariants(config.about.subtitle.fontFamily)
         fonts.push(...subtitleFont)
     }
 
-    if (config.about.customStyles?.font) {
-        const customFont = await loadGoogleFontAllVariants(config.about.customStyles.font)
+    if (config.about.bottomMessage?.fontFamily) {
+        const customFont = await loadGoogleFontAllVariants(config.about.bottomMessage.fontFamily)
         fonts.push(...customFont)
     }
+
     return {
         buttons: [
             {

@@ -44,18 +44,18 @@ export default async function success({
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const fonts = [...roboto]
 
-    if (config.success.titleStyles?.font) {
-        const titleFont = await loadGoogleFontAllVariants(config.success.titleStyles.font)
+    if (config.success.title?.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(config.success.title.fontFamily)
         fonts.push(...titleFont)
     }
 
-    if (config.success.subtitleStyles?.font) {
-        const subtitleFont = await loadGoogleFontAllVariants(config.success.subtitleStyles.font)
+    if (config.success.subtitle?.fontFamily) {
+        const subtitleFont = await loadGoogleFontAllVariants(config.success.subtitle.fontFamily)
         fonts.push(...subtitleFont)
     }
 
-    if (config.success.customStyles?.font) {
-        const customFont = await loadGoogleFontAllVariants(config.success.customStyles.font)
+    if (config.success.bottomMessage?.fontFamily) {
+        const customFont = await loadGoogleFontAllVariants(config.success.bottomMessage.fontFamily)
         fonts.push(...customFont)
     }
 

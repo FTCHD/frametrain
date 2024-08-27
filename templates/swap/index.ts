@@ -34,22 +34,8 @@ export interface Config extends BaseConfig {
         image?: string
     }
     backgroundColor: string
-    coverMessage?: {
-        text: string
-        color: string
-        weight: string
-        size: number
-        style: string
-        font: string
-    }
-    pairName?: {
-        text: string
-        color: string
-        weight: string
-        size: number
-        style: string
-        font: string
-    }
+    coverMessage?: TextSlideProps['title']
+    pairName?: TextSlideProps['title']
 }
 
 export interface Storage extends BaseStorage {
@@ -71,9 +57,9 @@ export default {
         enablePredefinedAmounts: false,
         pool: null,
         success: {
-            title: 'Transaction was successful!',
-            subtitle: 'Your swap has been completed.',
-            customMessage: 'We appreciate your support.',
+            title: { text: 'Transaction was successful!' },
+            subtitle: { text: 'Your swap has been completed.' },
+            bottomMessage: { text: 'We appreciate your support.' },
         },
     },
     requiresValidation: true,

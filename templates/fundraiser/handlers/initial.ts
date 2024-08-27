@@ -21,18 +21,18 @@ export default async function initial({
         },
     ]
 
-    if (config.cover.titleStyles?.font) {
-        const titleFont = await loadGoogleFontAllVariants(config.cover.titleStyles.font)
+    if (config.cover.title?.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(config.cover.title.fontFamily)
         fonts.push(...titleFont)
     }
 
-    if (config.cover.subtitleStyles?.font) {
-        const subtitleFont = await loadGoogleFontAllVariants(config.cover.subtitleStyles.font)
+    if (config.cover.subtitle?.fontFamily) {
+        const subtitleFont = await loadGoogleFontAllVariants(config.cover.subtitle.fontFamily)
         fonts.push(...subtitleFont)
     }
 
-    if (config.cover.customStyles?.font) {
-        const customFont = await loadGoogleFontAllVariants(config.cover.customStyles.font)
+    if (config.cover.bottomMessage?.fontFamily) {
+        const customFont = await loadGoogleFontAllVariants(config.cover.bottomMessage.fontFamily)
         fonts.push(...customFont)
     }
 

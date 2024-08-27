@@ -29,7 +29,7 @@ export default {
     initialConfig: {
         rssUrl: null,
         info: null,
-        primaryColor: 'white',
+        primaryColor: '#ffffff',
         secondaryColor: '#ffe83f',
         fontFamily: 'Roboto',
         coverBackground: 'black',

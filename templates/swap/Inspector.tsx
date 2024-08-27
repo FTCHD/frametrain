@@ -31,18 +31,18 @@ export default function Inspector() {
     const [successType, setSuccessType] = useState<'text' | 'image'>(
         config.success ? 'image' : 'text'
     )
-    const [pairNameFontSize, setPairNameFontSize] = useState(config.pairName?.size || 20)
+    const [pairNameFontSize, setPairNameFontSize] = useState(config.pairName?.fontSize || 20)
     const [coverMessageFontSize, setCoverMessageFontSize] = useState(
-        config.coverMessage?.size || 50
+        config.coverMessage?.fontSize || 50
     )
     const [coverTitleFontSize, setSuccessTitleFontSize] = useState(
-        config.success?.titleStyles?.size || 50
+        config.success?.title?.fontSize || 50
     )
     const [successSubtitleFontSize, setSuccessSubtitleFontSize] = useState(
-        config.success?.subtitleStyles?.size || 30
+        config.success?.subtitle?.fontSize || 30
     )
     const [successMessageFontSize, setSuccessMessageFontSize] = useState(
-        config.success?.customStyles?.size || 20
+        config.success?.bottomMessage?.fontSize || 20
     )
 
     useEffect(() => {
@@ -291,7 +291,7 @@ export default function Inspector() {
                                                         variant={'destructive'}
                                                         onClick={() =>
                                                             updateConfig({
-                                                                fields: [
+                                                                amounts: [
                                                                     ...config.amounts.slice(
                                                                         0,
                                                                         index
@@ -338,10 +338,10 @@ export default function Inspector() {
                                 <ColorPicker
                                     className="w-full"
                                     enabledPickers={['solid', 'gradient', 'image']}
-                                    background={config.backgroundColor || 'black'}
-                                    setBackground={(backgroundColor) => {
+                                    background={config.background || 'black'}
+                                    setBackground={(background) => {
                                         updateConfig({
-                                            backgroundColor,
+                                            background,
                                         })
                                     }}
                                     uploadBackground={async (base64String, contentType) => {
@@ -379,12 +379,12 @@ export default function Inspector() {
                                     max={140}
                                     step={2}
                                     onValueChange={(newRange) => {
-                                        const size = newRange[0]
-                                        setPairNameFontSize(size)
+                                        const fontSize = newRange[0]
+                                        setPairNameFontSize(fontSize)
                                         updateConfig({
                                             pairName: {
                                                 ...config.pairName,
-                                                size,
+                                                fontSize,
                                             },
                                         })
                                     }}
@@ -393,12 +393,12 @@ export default function Inspector() {
                             <div className="flex flex-col gap-2 w-full">
                                 <h2 className="text-lg font-semibold">Pair name Font</h2>
                                 <FontFamilyPicker
-                                    defaultValue={config.pairName?.font || 'Roboto'}
-                                    onSelect={(font) => {
+                                    defaultValue={config.pairName?.fontFamily || 'Roboto'}
+                                    onSelect={(fontFamily) => {
                                         updateConfig({
                                             pairName: {
                                                 ...config.pairName,
-                                                font,
+                                                fontFamily,
                                             },
                                         })
                                     }}
@@ -407,13 +407,13 @@ export default function Inspector() {
                             <div className="flex flex-col gap-2 w-full">
                                 <h2 className="text-lg font-semibold">Pair name Style</h2>
                                 <FontStylePicker
-                                    currentFont={config.pairName?.font || 'Roboto'}
-                                    defaultValue={config.pairName?.style || 'normal'}
-                                    onSelect={(style: string) => {
+                                    currentFont={config.pairName?.fontFamily || 'Roboto'}
+                                    defaultValue={config.pairName?.fontStyle || 'normal'}
+                                    onSelect={(fontStyle) => {
                                         updateConfig({
                                             pairName: {
                                                 ...config.pairName,
-                                                style,
+                                                fontStyle,
                                             },
                                         })
                                     }}
@@ -422,13 +422,13 @@ export default function Inspector() {
                             <div className="flex flex-col gap-2 w-full">
                                 <h2 className="text-lg font-semibold">Pair name Weight</h2>
                                 <FontWeightPicker
-                                    currentFont={config.pairName?.font || 'Roboto'}
-                                    defaultValue={config.pairName?.weight || 'normal'}
-                                    onSelect={(weight) => {
+                                    currentFont={config.pairName?.fontFamily || 'Roboto'}
+                                    defaultValue={config.pairName?.fontWeight || 'normal'}
+                                    onSelect={(fontWeight) => {
                                         updateConfig({
                                             pairName: {
                                                 ...config.pairName,
-                                                weight,
+                                                fontWeight,
                                             },
                                         })
                                     }}
@@ -461,12 +461,12 @@ export default function Inspector() {
                                     max={140}
                                     step={2}
                                     onValueChange={(newRange) => {
-                                        const size = newRange[0]
-                                        setCoverMessageFontSize(size)
+                                        const fontSize = newRange[0]
+                                        setCoverMessageFontSize(fontSize)
                                         updateConfig({
                                             coverMessage: {
                                                 ...config.coverMessage,
-                                                size,
+                                                fontSize,
                                             },
                                         })
                                     }}
@@ -475,12 +475,12 @@ export default function Inspector() {
                             <div className="flex flex-col gap-2 w-full">
                                 <h2 className="text-lg font-semibold">Cover custom message Font</h2>
                                 <FontFamilyPicker
-                                    defaultValue={config.coverMessage?.font || 'Roboto'}
-                                    onSelect={(font) => {
+                                    defaultValue={config.coverMessage?.fontFamily || 'Roboto'}
+                                    onSelect={(fontFamily) => {
                                         updateConfig({
                                             coverMessage: {
                                                 ...config.coverMessage,
-                                                font,
+                                                fontFamily,
                                             },
                                         })
                                     }}
@@ -491,13 +491,13 @@ export default function Inspector() {
                                     Cover custom message Style
                                 </h2>
                                 <FontStylePicker
-                                    currentFont={config.coverMessage?.font || 'Roboto'}
-                                    defaultValue={config.coverMessage?.style || 'normal'}
-                                    onSelect={(style: string) => {
+                                    currentFont={config.coverMessage?.fontFamily || 'Roboto'}
+                                    defaultValue={config.coverMessage?.fontStyle || 'normal'}
+                                    onSelect={(fontStyle) => {
                                         updateConfig({
                                             coverMessage: {
                                                 ...config.coverMessage,
-                                                style,
+                                                fontStyle,
                                             },
                                         })
                                     }}
@@ -508,13 +508,13 @@ export default function Inspector() {
                                     Cover custom message Weight
                                 </h2>
                                 <FontWeightPicker
-                                    currentFont={config.coverMessage?.font || 'Roboto'}
-                                    defaultValue={config.coverMessage?.weight || 'normal'}
-                                    onSelect={(weight) => {
+                                    currentFont={config.coverMessage?.fontFamily || 'Roboto'}
+                                    defaultValue={config.coverMessage?.fontWeight || 'normal'}
+                                    onSelect={(fontWeight) => {
                                         updateConfig({
                                             coverMessage: {
                                                 ...config.coverMessage,
-                                                weight,
+                                                fontWeight,
                                             },
                                         })
                                     }}
@@ -619,7 +619,7 @@ export default function Inspector() {
                                             <h2 className="text-lg">Success Title</h2>
                                             <Input
                                                 className="py-2 text-lg"
-                                                defaultValue={config.success?.title}
+                                                defaultValue={config.success?.title.text}
                                                 onChange={async (e) => {
                                                     const title = e.target.value.trim()
                                                     if (title === '') {
@@ -631,7 +631,10 @@ export default function Inspector() {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            title,
+                                                            title: {
+                                                                ...config.success?.title,
+                                                                text: title,
+                                                            },
                                                         },
                                                     })
                                                 }}
@@ -642,7 +645,7 @@ export default function Inspector() {
                                             <h2 className="text-lg">Success Subtitle</h2>
                                             <Input
                                                 className="py-2 text-lg"
-                                                defaultValue={config.success?.subtitle}
+                                                defaultValue={config.success?.subtitle.text}
                                                 onChange={async (e) => {
                                                     const subtitle = e.target.value.trim()
 
@@ -656,7 +659,10 @@ export default function Inspector() {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            subtitle,
+                                                            subtitle: {
+                                                                ...config.success?.subtitle,
+                                                                text: subtitle,
+                                                            },
                                                         },
                                                     })
                                                 }}
@@ -667,14 +673,19 @@ export default function Inspector() {
                                             <h2 className="text-lg">Success Custom Message</h2>
                                             <Input
                                                 className="py-2 text-lg"
-                                                defaultValue={config.success?.customMessage}
+                                                defaultValue={config.success?.bottomMessage?.text}
                                                 onChange={async (e) => {
                                                     const value = e.target.value.trim()
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            customMessage:
-                                                                value === '' ? undefined : value,
+                                                            bottomMessage: {
+                                                                ...config.success?.bottomMessage,
+                                                                text:
+                                                                    value === ''
+                                                                        ? undefined
+                                                                        : value,
+                                                            },
                                                         },
                                                     })
                                                 }}
@@ -683,7 +694,6 @@ export default function Inspector() {
                                         </div>
                                     </div>
 
-                                    {/* Styles config */}
                                     <div className="flex flex-col gap-2 w-full">
                                         <h2 className="text-lg text-center">
                                             Success Slide customizations
@@ -695,14 +705,12 @@ export default function Inspector() {
                                             <ColorPicker
                                                 className="w-full"
                                                 enabledPickers={['solid', 'gradient', 'image']}
-                                                background={
-                                                    config.success?.backgroundColor || 'black'
-                                                }
-                                                setBackground={(backgroundColor) => {
+                                                background={config.success?.background || 'black'}
+                                                setBackground={(background) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            backgroundColor,
+                                                            background,
                                                         },
                                                     })
                                                 }}
@@ -723,15 +731,13 @@ export default function Inspector() {
                                             <h2 className="text-lg font-semibold">Title Color</h2>
                                             <ColorPicker
                                                 className="w-full"
-                                                background={
-                                                    config.success?.titleStyles?.color || 'white'
-                                                }
+                                                background={config.success?.title?.color || 'white'}
                                                 setBackground={(color) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            titleStyles: {
-                                                                ...config.success?.titleStyles,
+                                                            title: {
+                                                                ...config.success?.title,
                                                                 color,
                                                             },
                                                         },
@@ -749,14 +755,14 @@ export default function Inspector() {
                                                 max={140}
                                                 step={2}
                                                 onValueChange={(newRange) => {
-                                                    const size = newRange[0]
-                                                    setSuccessTitleFontSize(size)
+                                                    const fontSize = newRange[0]
+                                                    setSuccessTitleFontSize(fontSize)
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            titleStyles: {
-                                                                ...config.success?.titleStyles,
-                                                                size,
+                                                            title: {
+                                                                ...config.success?.title,
+                                                                fontSize,
                                                             },
                                                         },
                                                     })
@@ -767,15 +773,15 @@ export default function Inspector() {
                                             <h2 className="text-lg font-semibold">Title Font</h2>
                                             <FontFamilyPicker
                                                 defaultValue={
-                                                    config.success?.titleStyles?.font || 'Roboto'
+                                                    config.success?.title?.fontFamily || 'Roboto'
                                                 }
-                                                onSelect={(font) => {
+                                                onSelect={(fontFamily) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            titleStyles: {
-                                                                ...config.success?.titleStyles,
-                                                                font,
+                                                            title: {
+                                                                ...config.success?.title,
+                                                                fontFamily,
                                                             },
                                                         },
                                                     })
@@ -786,18 +792,18 @@ export default function Inspector() {
                                             <h2 className="text-lg font-semibold">Title Style</h2>
                                             <FontStylePicker
                                                 currentFont={
-                                                    config.success?.titleStyles?.font || 'Roboto'
+                                                    config.success?.title?.fontFamily || 'Roboto'
                                                 }
                                                 defaultValue={
-                                                    config.success?.titleStyles?.style || 'normal'
+                                                    config.success?.title?.fontStyle || 'normal'
                                                 }
-                                                onSelect={(style: string) => {
+                                                onSelect={(fontStyle) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            titleStyles: {
-                                                                ...config.success?.titleStyles,
-                                                                style,
+                                                            title: {
+                                                                ...config.success?.title,
+                                                                fontStyle,
                                                             },
                                                         },
                                                     })
@@ -808,18 +814,18 @@ export default function Inspector() {
                                             <h2 className="text-lg font-semibold">Title Weight</h2>
                                             <FontWeightPicker
                                                 currentFont={
-                                                    config.success?.titleStyles?.font || 'Roboto'
+                                                    config.success?.title?.fontFamily || 'Roboto'
                                                 }
                                                 defaultValue={
-                                                    config.success?.titleStyles?.weight || 'normal'
+                                                    config.success?.title?.fontWeight || 'normal'
                                                 }
-                                                onSelect={(weight) => {
+                                                onSelect={(fontWeight) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            titleStyles: {
-                                                                ...config.success?.titleStyles,
-                                                                weight,
+                                                            title: {
+                                                                ...config.success?.title,
+                                                                fontWeight,
                                                             },
                                                         },
                                                     })
@@ -834,14 +840,14 @@ export default function Inspector() {
                                             <ColorPicker
                                                 className="w-full"
                                                 background={
-                                                    config.success?.subtitleStyles?.color || 'white'
+                                                    config.success?.subtitle?.color || 'white'
                                                 }
                                                 setBackground={(color) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            subtitleStyles: {
-                                                                ...config.success?.subtitleStyles,
+                                                            subtitle: {
+                                                                ...config.success?.subtitle,
                                                                 color,
                                                             },
                                                         },
@@ -859,14 +865,14 @@ export default function Inspector() {
                                                 max={140}
                                                 step={2}
                                                 onValueChange={(newRange) => {
-                                                    const size = newRange[0]
-                                                    setSuccessSubtitleFontSize(size)
+                                                    const fontSize = newRange[0]
+                                                    setSuccessSubtitleFontSize(fontSize)
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            subtitleStyles: {
-                                                                ...config.success?.subtitleStyles,
-                                                                size,
+                                                            subtitle: {
+                                                                ...config.success?.subtitle,
+                                                                fontSize,
                                                             },
                                                         },
                                                     })
@@ -877,15 +883,15 @@ export default function Inspector() {
                                             <h2 className="text-lg font-semibold">Subtitle Font</h2>
                                             <FontFamilyPicker
                                                 defaultValue={
-                                                    config.success?.subtitleStyles?.font || 'Roboto'
+                                                    config.success?.subtitle?.fontFamily || 'Roboto'
                                                 }
-                                                onSelect={(font) => {
+                                                onSelect={(fontFamily) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            subtitleStyles: {
-                                                                ...config.success?.subtitleStyles,
-                                                                font,
+                                                            subtitle: {
+                                                                ...config.success?.subtitle,
+                                                                fontFamily,
                                                             },
                                                         },
                                                     })
@@ -898,19 +904,18 @@ export default function Inspector() {
                                             </h2>
                                             <FontStylePicker
                                                 currentFont={
-                                                    config.success?.subtitleStyles?.font || 'Roboto'
+                                                    config.success?.subtitle?.fontFamily || 'Roboto'
                                                 }
                                                 defaultValue={
-                                                    config.success?.subtitleStyles?.style ||
-                                                    'normal'
+                                                    config.success?.subtitle?.fontStyle || 'normal'
                                                 }
-                                                onSelect={(style: string) => {
+                                                onSelect={(fontStyle) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            subtitleStyles: {
-                                                                ...config.success?.subtitleStyles,
-                                                                style,
+                                                            subtitle: {
+                                                                ...config.success?.subtitle,
+                                                                fontStyle,
                                                             },
                                                         },
                                                     })
@@ -923,19 +928,18 @@ export default function Inspector() {
                                             </h2>
                                             <FontWeightPicker
                                                 currentFont={
-                                                    config.success?.subtitleStyles?.font || 'Roboto'
+                                                    config.success?.subtitle?.fontFamily || 'Roboto'
                                                 }
                                                 defaultValue={
-                                                    config.success?.subtitleStyles?.weight ||
-                                                    'normal'
+                                                    config.success?.subtitle?.fontWeight || 'normal'
                                                 }
-                                                onSelect={(weight) => {
+                                                onSelect={(fontWeight) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            subtitleStyles: {
-                                                                ...config.success?.subtitleStyles,
-                                                                weight,
+                                                            subtitle: {
+                                                                ...config.success?.subtitle,
+                                                                fontWeight,
                                                             },
                                                         },
                                                     })
@@ -950,14 +954,14 @@ export default function Inspector() {
                                             <ColorPicker
                                                 className="w-full"
                                                 background={
-                                                    config.success?.customStyles?.color || 'white'
+                                                    config.success?.bottomMessage?.color || 'white'
                                                 }
                                                 setBackground={(color) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            customStyles: {
-                                                                ...config.success?.customStyles,
+                                                            bottomMessage: {
+                                                                ...config.success?.bottomMessage,
                                                                 color,
                                                             },
                                                         },
@@ -975,14 +979,14 @@ export default function Inspector() {
                                                 max={140}
                                                 step={2}
                                                 onValueChange={(newRange) => {
-                                                    const size = newRange[0]
-                                                    setSuccessMessageFontSize(size)
+                                                    const fontSize = newRange[0]
+                                                    setSuccessMessageFontSize(fontSize)
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            customStyles: {
-                                                                ...config.success?.customStyles,
-                                                                size,
+                                                            bottomMessage: {
+                                                                ...config.success?.bottomMessage,
+                                                                fontSize,
                                                             },
                                                         },
                                                     })
@@ -995,15 +999,16 @@ export default function Inspector() {
                                             </h2>
                                             <FontFamilyPicker
                                                 defaultValue={
-                                                    config.success?.customStyles?.font || 'Roboto'
+                                                    config.success?.bottomMessage?.fontFamily ||
+                                                    'Roboto'
                                                 }
-                                                onSelect={(font) => {
+                                                onSelect={(fontFamily) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            subtitleStyles: {
-                                                                ...config.success?.customStyles,
-                                                                font,
+                                                            subtitle: {
+                                                                ...config.success?.bottomMessage,
+                                                                fontFamily,
                                                             },
                                                         },
                                                     })
@@ -1016,18 +1021,20 @@ export default function Inspector() {
                                             </h2>
                                             <FontStylePicker
                                                 currentFont={
-                                                    config.success?.customStyles?.font || 'Roboto'
+                                                    config.success?.bottomMessage?.fontFamily ||
+                                                    'Roboto'
                                                 }
                                                 defaultValue={
-                                                    config.success?.customStyles?.style || 'normal'
+                                                    config.success?.bottomMessage?.fontStyle ||
+                                                    'normal'
                                                 }
-                                                onSelect={(style: string) => {
+                                                onSelect={(fontStyle) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            customStyles: {
-                                                                ...config.success?.customStyles,
-                                                                style,
+                                                            bottomMessage: {
+                                                                ...config.success?.bottomMessage,
+                                                                fontStyle,
                                                             },
                                                         },
                                                     })
@@ -1040,18 +1047,20 @@ export default function Inspector() {
                                             </h2>
                                             <FontWeightPicker
                                                 currentFont={
-                                                    config.success?.customStyles?.font || 'Roboto'
+                                                    config.success?.bottomMessage?.fontFamily ||
+                                                    'Roboto'
                                                 }
                                                 defaultValue={
-                                                    config.success?.customStyles?.weight || 'normal'
+                                                    config.success?.bottomMessage?.fontWeight ||
+                                                    'normal'
                                                 }
-                                                onSelect={(weight) => {
+                                                onSelect={(fontWeight) => {
                                                     updateConfig({
                                                         success: {
                                                             ...config.success,
-                                                            titleStyles: {
-                                                                ...config.success?.customStyles,
-                                                                weight,
+                                                            title: {
+                                                                ...config.success?.bottomMessage,
+                                                                fontWeight,
                                                             },
                                                         },
                                                     })
