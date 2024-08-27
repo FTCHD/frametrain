@@ -12,34 +12,26 @@ export default async function initial({
     const roboto = await loadGoogleFontAllVariants('Roboto')
     const buttons: FrameButtonMetadata[] = []
     const fonts = [...roboto]
-    const coverText: TextSlideProps = {
-        title: { text: 'Enter a contract address url to get started' },
-        subtitle: { text: 'Subtitle' },
-        background: config.coverText?.background,
-    }
+    const cover: TextSlideProps = config.cover
 
     if (config.etherscan) {
         buttons.push({ label: 'START' })
-        coverText.title.text = 'Title'
+        cover.title.text = 'Title'
     }
 
-    if (config.coverText) {
-        coverText.title = config.coverText.title
-        coverText.subtitle = config.coverText.subtitle
-        coverText.bottomMessage = config.coverText.bottomMessage
-        if (config.coverText.title.fontFamily) {
-            const titleFont = await loadGoogleFontAllVariants(config.coverText.title.fontFamily)
+    if (config.cover) {
+        cover.title = config.cover.title
+        if (config.cover.title.fontFamily) {
+            const titleFont = await loadGoogleFontAllVariants(config.cover.title.fontFamily)
             fonts.push(...titleFont)
         }
-        if (config.coverText.subtitle.fontFamily) {
-            const titleFont = await loadGoogleFontAllVariants(config.coverText.subtitle.fontFamily)
+        if (config.cover.subtitle.fontFamily) {
+            const titleFont = await loadGoogleFontAllVariants(config.cover.subtitle.fontFamily)
             fonts.push(...titleFont)
         }
 
-        if (config.coverText.bottomMessage?.fontFamily) {
-            const titleFont = await loadGoogleFontAllVariants(
-                config.coverText.bottomMessage.fontFamily
-            )
+        if (config.cover.bottomMessage?.fontFamily) {
+            const titleFont = await loadGoogleFontAllVariants(config.cover.bottomMessage.fontFamily)
             fonts.push(...titleFont)
         }
     }
@@ -47,8 +39,8 @@ export default async function initial({
     return {
         fonts,
         buttons,
-        image: config.coverImage,
-        component: config.coverImage ? undefined : TextSlide(coverText),
+        image: config.cover.image,
+        component: config.cover.image ? undefined : TextSlide(cover),
         handler: 'function',
     }
 }

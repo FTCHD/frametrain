@@ -3,19 +3,17 @@ import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/Label'
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
+import TextSlideEditor from '@/sdk/components/TextSlideEditor'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
 import { getContractData } from './common/etherscan'
-import TextSlideEditor, { TextSlideStyleConfig } from '@/sdk/components/TextSlideEditor'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
-    const [coverType, setCoverType] = useState<'text' | 'image'>(
-        config.coverImage ? 'image' : 'text'
-    )
+    const [coverType, setCoverType] = useState<'text' | 'image'>(config.cover ? 'image' : 'text')
     const uploadImage = useUploadImage()
 
     const onChangeLink = useDebouncedCallback(async (link: string) => {
@@ -68,8 +66,15 @@ export default function Inspector() {
                     className="flex flex-row"
                     onValueChange={(val) => {
                         const value = val as 'image' | 'text'
-                        setCoverType(value as typeof coverType)
-                        if (val === 'text' && config.coverImage) updateConfig({ coverImage: null })
+                        setCoverType(value)
+                        if (val === 'text' && config.cover.image) {
+                            updateConfig({
+                                cover: {
+                                    ...config.cover,
+                                    image: null,
+                                },
+                            })
+                        }
                     }}
                 >
                     <div className="flex items-center space-x-2">
@@ -89,7 +94,7 @@ export default function Inspector() {
                             htmlFor="cover-image"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
-                            {config.coverImage ? 'Update' : 'Upload'} Cover Image
+                            {config.cover.image ? 'Update' : 'Upload'} Cover Image
                         </label>
                         <Input
                             accept="image/png, image/jpeg, image/gif, image/webp"
@@ -122,20 +127,26 @@ export default function Inspector() {
                                     })
 
                                     if (filePath) {
-                                        const coverImage = `${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath}`
+                                        const image = `${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath}`
                                         updateConfig({
-                                            coverImage,
+                                            cover: {
+                                                ...config.cover,
+                                                image,
+                                            },
                                         })
                                     }
                                 }
                             }}
                         />
-                        {config.coverImage ? (
+                        {config.cover.image ? (
                             <Button
                                 variant="destructive"
                                 onClick={() => {
                                     updateConfig({
-                                        coverImage: null,
+                                        cover: {
+                                            ...config.cover,
+                                            image: null,
+                                        },
                                     })
                                 }}
                                 className="w-full"
@@ -148,73 +159,18 @@ export default function Inspector() {
                     <div className="flex flex-col gap-4 w-full">
                         <TextSlideEditor
                             name="Cover"
-                            title={{
-                                text: 'Cover Title',
-                                ...config.coverText?.title,
-                            }}
-                            subtitle={{
-                                text: 'Cover Subtitle',
-                                ...config.coverText?.subtitle,
-                            }}
-                            bottomMessage={{
-                                text: 'Cover Custom Message',
-                                ...config.coverText?.bottomMessage,
-                            }}
-                            onUpdate={(updated) => {
+                            title={config.cover.title}
+                            subtitle={config.cover.subtitle}
+                            bottomMessage={config.cover.bottomMessage}
+                            background={config.cover.background}
+                            onUpdate={(cover) => {
                                 updateConfig({
-                                    coverText: updated.title,
+                                    cover,
                                 })
                             }}
                         />
                     </div>
                 )}
-
-                <div className="flex flex-col gap-2 w-full">
-                    <div className="flex flex-col gap-2 w-full">
-                        <h2 className="text-lg font-semibold">Function Slide Customization</h2>
-                        <p className="text-sm text-muted-foreground">
-                            Customize how your Smart Contract Frame functions are show to your
-                            viewers
-                        </p>
-                    </div>
-                    {/* Function Slide */}
-                    <TextSlideStyleConfig
-                        name={'Function name'}
-                        config={config.functionSlide?.title}
-                        background={config.functionSlide?.background}
-                        setBackground={(background) =>
-                            updateConfig({ functionSlide: { ...config.functionSlide, background } })
-                        }
-                        updateConfig={(updatedStyle) => {
-                            //
-                            updateConfig({
-                                functionStyles: {
-                                    ...config.functionSlide,
-                                    title: {
-                                        ...config.functionSlide?.title,
-                                        ...updatedStyle,
-                                    },
-                                },
-                            })
-                        }}
-                    />
-                    <TextSlideStyleConfig
-                        name={'Function information'}
-                        config={config.functionSlide?.subtitle}
-                        updateConfig={(updatedStyle) => {
-                            //
-                            updateConfig({
-                                functionStyles: {
-                                    ...config.functionSlide,
-                                    subtitle: {
-                                        ...config.functionSlide?.subtitle,
-                                        ...updatedStyle,
-                                    },
-                                },
-                            })
-                        }}
-                    />
-                </div>
             </div>
         </div>
     )

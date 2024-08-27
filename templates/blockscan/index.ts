@@ -7,8 +7,9 @@ import handlers from './handlers'
 
 export interface Config extends BaseConfig {
     etherscan: SerializableConfig | null
-    coverImage?: string
-    coverText?: TextSlideProps
+    cover: TextSlideProps & {
+        image?: string
+    }
     functionSlide?: TextSlideProps
 }
 
@@ -31,8 +32,18 @@ export default {
     handlers,
     initialConfig: {
         etherscan: null,
-        coverText: {
-            title: 'Title',
+        cover: {
+            title: {
+                text: 'Enter a contract address url to get started',
+            },
+            subtitle: {
+                text: 'Subtitle',
+            },
+            customMessage: {
+                text: 'Custom Message',
+            },
+            color: '#ffffff',
+            background: '#000000',
         },
     },
     requiresValidation: true,
