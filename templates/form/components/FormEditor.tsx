@@ -35,8 +35,7 @@ import { humanizeTimestamp } from '../utils'
 
 function downloadCSV(storage: Storage, fileName: string, inputNames: string[]): void {
     // Column names
-    const columnNames = ['timestamp', 'fid', inputNames]
-    const inputValues = storage.data.map((record) => record.values)
+    const columnNames = ['Date', 'fid', ...inputNames]
 
     // Rows
     const rows = storage.data.map((record) => [
@@ -44,12 +43,25 @@ function downloadCSV(storage: Storage, fileName: string, inputNames: string[]): 
         record.fid,
         ...record.values.filter((v) => inputNames.includes(v.field)).map((v) => v.value),
     ])
-    console.log({ inputValues, columnNames, rows })
+    const array = rows.map((row) => {
+        return columnNames.reduce(
+            (acc, colName, index) => {
+                acc[colName] = row[index]
+                return acc
+            },
+            {} as Record<string, unknown>
+        )
+    })
 
     // Combine column names and rows into CSV string
     const csvContent = [
-        columnNames.join(','), // Header row
-        ...rows.map((row) => row.join(',')), // Data rows
+        columnNames.join(','),
+        ...array.map((obj) =>
+            columnNames.reduce(
+                (acc, key) => `${acc}${!acc.length ? '' : ','}"${!obj[key] ? '' : obj[key]}"`,
+                ''
+            )
+        ),
     ].join('\n')
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
@@ -68,7 +80,6 @@ function downloadCSV(storage: Storage, fileName: string, inputNames: string[]): 
 export default function FormEditor({ isEditing = false }: { isEditing?: boolean }) {
     const storage = useFrameStorage() as Storage
     const [config, updateConfig] = useFrameConfig<Config>()
-    console.log({ storage })
 
     const [enableGating, setEnableGating] = useState<boolean>(config.enableGating ?? false)
 
