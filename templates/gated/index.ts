@@ -3,18 +3,22 @@ import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
 import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
+import type { TextSlideProps } from '@/sdk/components/TextSlide'
 
 export interface Config extends BaseConfig {
     owner: {
         username: string
         fid: number
     } | null
-    welcomeText: string | null
     label: string | null
-    rewardMessage: string | null
-    rewardImage: string | null
     links: string[]
     requirements: GatingOptionsProps['config']
+    cover: TextSlideProps & {
+        image?: string
+    }
+    success: TextSlideProps & {
+        image?: string
+    }
 }
 
 export interface Storage extends BaseStorage {}
@@ -22,6 +26,7 @@ export interface Storage extends BaseStorage {}
 export default {
     name: 'Gated',
     description: 'Create your own Gated Frame to reward your fans.',
+    shortDescription: 'Gate your Frame!',
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,
@@ -30,11 +35,18 @@ export default {
     handlers,
     initialConfig: {
         owner: null,
-        welcomeText: null,
-        rewardMessage: null,
         label: null,
-        rewardImage: null,
         links: [],
+        cover: {
+            title: { text: 'Untitled Gated Frame' },
+            subtitle: { text: 'Welcome to the Gated Frame!' },
+            customMessage: { text: 'You can add a custom message here.' },
+        },
+        success: {
+            title: { text: 'You have unlocked the content!' },
+            subtitle: { text: 'Enjoy your reward.' },
+            customMessage: { text: 'We appreciate you sticking around.' },
+        },
         requirements: {
             channels: {
                 checked: false,

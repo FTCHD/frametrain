@@ -7,8 +7,8 @@ import type {
 import { validateGatingOptions } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
 import type { Config } from '..'
-import DeclineView from '../views/Decline'
-import AcceptView from '../views/Accept'
+import TextSlide from '@/sdk/components/TextSlide'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 
 export default async function page({
     body,
@@ -21,15 +21,7 @@ export default async function page({
 }): Promise<BuildFrameData> {
     const viewer = body.validatedData.interactor
     const cast = body.validatedData.cast
-    const errors: {
-        message: string
-        type: string
-    }[] = []
-    const buttons: FrameButtonMetadata[] = [
-        {
-            label: 'Try again',
-        },
-    ]
+    const buttons: FrameButtonMetadata[] = []
 
     if (!config.owner) {
         throw new FrameError('Frame Owner not configured')
@@ -43,21 +35,26 @@ export default async function page({
     })
 
     if (validated !== null) {
-        if (validated.target) {
-            buttons.push({
-                label: 'View collection',
-                action: 'link',
-                target: validated.target,
-            })
-        }
-        return {
-            buttons,
-            component: DeclineView({ errors }),
-            handler: 'page',
-        }
+        throw new FrameError(validated.message)
     }
 
-    buttons.length = 0
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts = [...roboto]
+
+    if (config.success.title.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(config.success.title.fontFamily)
+        fonts.push(...titleFont)
+    }
+
+    if (config.success.subtitle.fontFamily) {
+        const subtitleFont = await loadGoogleFontAllVariants(config.success.subtitle.fontFamily)
+        fonts.push(...subtitleFont)
+    }
+
+    if (config.success.bottomMessage?.fontFamily) {
+        const customFont = await loadGoogleFontAllVariants(config.success.bottomMessage.fontFamily)
+        fonts.push(...customFont)
+    }
 
     if (config.links.length) {
         config.links.forEach((link, i) => {
@@ -77,11 +74,13 @@ export default async function page({
 
     const buildData: Record<string, unknown> = {
         buttons,
+        fonts,
     }
+
     if (config.rewardImage) {
         buildData.image = config.rewardImage
     } else {
-        buildData.component = AcceptView(config)
+        buildData.component = TextSlide(config.success)
     }
 
     return buildData as unknown as BuildFrameData
