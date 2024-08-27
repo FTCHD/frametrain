@@ -4,19 +4,20 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
-import type { Config, Storage } from '..'
+import TextSlide, { type TextSlideProps } from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
-import { parseAbi, type AbiFunction } from 'abitype'
-import TextSlide from '@/sdk/components/TextSlide'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { type AbiFunction, parseAbi } from 'abitype'
 import {
+    http,
     BaseError,
     ContractFunctionRevertedError,
     createPublicClient,
     encodeFunctionData,
-    http,
 } from 'viem'
-import initial from './initial'
+import type { Config, Storage } from '..'
 import { chainByChainId } from '../common/constants'
+import initial from './initial'
 
 export default async function functionHandler({
     body,
@@ -26,11 +27,14 @@ export default async function functionHandler({
     body: FrameValidatedActionPayload
     config: Config
     storage: Storage
-    params: { currentIndex?: string }
+    params: { currentIndex?: string; isInput?: string }
 }): Promise<BuildFrameData> {
     if (!config.etherscan) {
         throw new FrameError('Smart Contract config is missing')
     }
+
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts = [...roboto]
     const buttons: FrameButtonMetadata[] = [
         {
             label: '←',
@@ -43,12 +47,37 @@ export default async function functionHandler({
     const rawAbiString = config.etherscan.abis.flat()
     const abiString = rawAbiString.filter((abi) => abi.startsWith('function'))
     const signatureIndex = params.currentIndex === undefined ? 0 : Number(params.currentIndex)
+    const isInput = params.isInput === 'true'
     const signature = abiString[signatureIndex]
     const baseArgs = textInput.split(',').map((arg) => arg.trim())
-    let subtitle = signature
-
     const abiItem = (parseAbi([signature]) as AbiFunction[])[0]
     const functionName = abiItem.name
+    const view: TextSlideProps = {
+        title: {
+            ...config.functionSlide?.title,
+            text: `Function #${signatureIndex + 1} ${functionName}`,
+        },
+        subtitle: {
+            ...config.functionSlide?.subtitle,
+            text: signature,
+        },
+    }
+
+    if (view.title.fontFamily) {
+        const titleFont = await loadGoogleFontAllVariants(view.title.fontFamily)
+        fonts.push(...titleFont)
+    }
+
+    if (view.subtitle.fontFamily) {
+        const subtitleFont = await loadGoogleFontAllVariants(view.subtitle.fontFamily)
+        fonts.push(...subtitleFont)
+    }
+
+    if (view.bottomMessage?.fontFamily) {
+        const customFont = await loadGoogleFontAllVariants(view.bottomMessage.fontFamily)
+        fonts.push(...customFont)
+    }
+
     const args = abiItem.inputs.map((input, i) => {
         let value
         const arg = baseArgs[i]
@@ -83,7 +112,7 @@ export default async function functionHandler({
     const chain = chainByChainId[config.etherscan.chainId]
 
     if (!chain) {
-        throw new Error('Unsupported chain')
+        throw new FrameError('Unsupported chain')
     }
 
     const client = createPublicClient({
@@ -91,7 +120,8 @@ export default async function functionHandler({
         transport: http(),
         batch: { multicall: { wait: 10, batchSize: 1000 } },
     })
-    let nextIndex = 1
+
+    let nextIndex = 0
 
     console.log('before', {
         buttonIndex,
@@ -101,69 +131,114 @@ export default async function functionHandler({
         args: args.length,
         inputs: abiItem.inputs.length,
         functionName,
-        subtitle,
-        textInput,
         input,
+        isInput,
     })
-    switch (buttonIndex) {
-        case 1: {
-            if (
-                // (params.currentIndex === undefined && params.action) ||
-                signatureIndex === abiString.length
-            ) {
-                return initial({ config })
+
+    switch (isInput) {
+        case true: {
+            switch (buttonIndex) {
+                case 2: {
+                    const chain = chainByChainId[config.etherscan.chainId]
+
+                    if (!chain) {
+                        throw new FrameError('Unsupported chain')
+                    }
+
+                    const client = createPublicClient({
+                        chain,
+                        transport: http(),
+                        batch: { multicall: { wait: 10, batchSize: 1000 } },
+                    })
+
+                    try {
+                        const simulation = await client.simulateContract({
+                            abi: parseAbi(rawAbiString),
+                            functionName,
+                            args,
+                            address: config.etherscan.address,
+                        })
+
+                        if (typeof simulation.result !== undefined) {
+                            view.subtitle.text = Array.isArray(simulation.result)
+                                ? (simulation.result as unknown[]).join('\n')
+                                : `${simulation.result}`
+                            break
+                        }
+                        view.subtitle.text = encodeFunctionData({
+                            abi: parseAbi(rawAbiString),
+                            functionName,
+                            args,
+                        })
+                    } catch (e) {
+                        if (e instanceof BaseError) {
+                            const revertError = e.walk(
+                                (err) => err instanceof ContractFunctionRevertedError
+                            )
+                            if (revertError instanceof ContractFunctionRevertedError) {
+                                throw new FrameError(revertError.shortMessage)
+                            }
+                        }
+                        const error = e as Error
+                        throw new FrameError(error.message)
+                    }
+                    break
+                }
+                default: {
+                    if (buttonIndex === 1) {
+                        nextIndex = signatureIndex === 0 ? abiString.length - 1 : signatureIndex - 1
+                    } else {
+                        nextIndex = signatureIndex === abiString.length - 1 ? 0 : signatureIndex + 1
+                    }
+                }
             }
-            nextIndex =
-                params.currentIndex === undefined
-                    ? signatureIndex + 1
-                    : signatureIndex === 0
-                      ? abiString.length - 1
-                      : signatureIndex - 1
             break
         }
 
         default: {
-            if (buttonIndex === 3 || (buttonIndex === 2 && !abiItem.inputs.length)) {
-                nextIndex = signatureIndex === abiString.length - 1 ? 0 : signatureIndex + 1
-                break
-            }
-            nextIndex = signatureIndex + 1
-        }
-    }
-
-    if (!args.length) {
-        nextIndex = signatureIndex
-    } else {
-        try {
-            const data = await client.simulateContract({
-                abi: parseAbi(rawAbiString),
-                functionName,
-                args,
-                address: config.etherscan.address,
-            })
-
-            if (typeof data.result !== undefined) {
-                subtitle = Array.isArray(data.result)
-                    ? (data.result as unknown[]).join('\n')
-                    : `${data.result}`
-                console.log({ subtitle })
+            if (buttonIndex === 1) {
+                if (signatureIndex === abiString.length) {
+                    return initial({ config })
+                }
+                nextIndex = signatureIndex === 0 ? abiString.length - 1 : signatureIndex - 1
             } else {
-                console.log({ data })
-                subtitle = encodeFunctionData({
-                    abi: parseAbi(rawAbiString),
-                    functionName,
-                    args,
-                })
+                nextIndex = signatureIndex === abiString.length - 1 ? 0 : signatureIndex + 1
             }
-        } catch (e) {
-            if (e instanceof BaseError) {
-                const revertError = e.walk((err) => err instanceof ContractFunctionRevertedError)
-                if (revertError instanceof ContractFunctionRevertedError) {
-                    throw new FrameError(revertError.shortMessage)
+
+            if (abiItem.inputs.length) {
+                buttons.push({ label: 'Confirm' })
+                view.bottomMessage = {
+                    ...config.functionSlide?.bottomMessage,
+                    text: 'Enter the values of the arguments separated by commas',
+                }
+                nextIndex = signatureIndex
+            } else {
+                try {
+                    const data = await client.simulateContract({
+                        abi: parseAbi(rawAbiString),
+                        functionName,
+                        address: config.etherscan.address,
+                    })
+
+                    if (typeof data.result !== undefined) {
+                        view.subtitle.text = Array.isArray(data.result)
+                            ? (data.result as unknown[]).join('\n')
+                            : `${data.result}`
+                    }
+                } catch (e) {
+                    if (e instanceof BaseError) {
+                        const revertError = e.walk(
+                            (err) => err instanceof ContractFunctionRevertedError
+                        )
+                        if (revertError instanceof ContractFunctionRevertedError) {
+                            throw new FrameError(revertError.shortMessage)
+                        }
+                    }
+                    const error = e as Error
+                    throw new FrameError(error.message)
                 }
             }
-            const error = e as Error
-            throw new FrameError(error.message)
+            break
         }
     }
 
@@ -175,16 +250,9 @@ export default async function functionHandler({
         args: args.length,
         inputs: abiItem.inputs.length,
         functionName,
-        subtitle,
         textInput,
         input,
     })
-
-    if (abiItem.inputs.length) {
-        buttons.push({
-            label: 'Confirm',
-        })
-    }
 
     buttons.push({
         label: '→',
@@ -199,28 +267,13 @@ export default async function functionHandler({
     }
 
     return {
+        fonts,
         buttons,
-        component: TextSlide({
-            title: {
-                ...config.functionSlide?.title,
-                text: `Function #${signatureIndex + 1} ${functionName}`,
-            },
-            subtitle: {
-                ...config.functionSlide?.subtitle,
-                text: subtitle,
-            },
-            ...(abiItem.inputs.length
-                ? {
-                      bottomMessage: {
-                          ...config.functionSlide?.bottomMessage,
-                          text: 'Enter the values of the arguments separated by commas',
-                      },
-                  }
-                : {}),
-        }),
-        handler: 'function',
+        component: TextSlide(view),
+        handler: abiItem.inputs.length ? 'input' : 'function',
         params: {
             currentIndex: nextIndex,
+            isInput: abiItem.inputs.length,
         },
         inputText: abiItem.inputs.length ? 'arguments separated by commas' : undefined,
     }
