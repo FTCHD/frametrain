@@ -39,28 +39,30 @@ export async function readContract({
             address,
         })
 
-        if (typeof request.result !== undefined) {
+        if (typeof request.result !== 'undefined') {
             data = Array.isArray(request.result)
                 ? (request.result as unknown[]).join('\n')
                 : `${request.result}`
-        } else {
-            if (encode) {
-                data = encodeFunctionData({
-                    abi: parseAbi(signatures),
-                    functionName,
-                    args,
-                })
-            }
+        } else if (encode) {
+            data = encodeFunctionData({
+                abi: parseAbi(signatures),
+                functionName,
+                args,
+            })
         }
     } catch (e) {
-        if (e instanceof BaseError) {
-            const revertError = e.walk((err) => err instanceof ContractFunctionRevertedError)
+        const error = e as Error
+
+        if (error instanceof BaseError) {
+            const revertError = error.walk((err) => err instanceof ContractFunctionRevertedError)
             if (revertError instanceof ContractFunctionRevertedError) {
+                console.error('Contract function reverted:', revertError)
                 throw new Error(revertError.shortMessage)
             }
+            console.error('Base error:', error)
+        } else {
+            console.error('Unknown error:', error)
         }
-        const error = e as Error
-        console.error('Error reading contract:', error)
         throw new Error(error.message)
     }
 
@@ -70,38 +72,23 @@ export async function readContract({
 export function getSignature(signatures: string[], index: number, input: string) {
     const sign = signatures[index]
 
-    const baseArgs = input.split(',').map((arg) => arg.trim())
     const abiItem = (parseAbi([sign]) as AbiFunction[])[0]
+    const baseArgs = input.split(',').map((arg) => arg.trim())
+    if (baseArgs.length !== abiItem.inputs.length) {
+        throw new Error('Input string does not match the number of arguments in the ABI signature')
+    }
     const name = abiItem.name
 
     const args = abiItem.inputs.map((input, i) => {
-        let value
         const arg = baseArgs[i]
-        switch (input.type) {
-            case 'uint256': {
-                value = BigInt(arg || 0)
-                break
-            }
-            case 'address': {
-                value = arg as `0x${string}`
-                break
-            }
-
-            case 'bool': {
-                value = arg === 'true'
-                break
-            }
-
-            case 'string': {
-                value = arg
-                break
-            }
-
-            default: {
-                value = Number(arg || 0)
-                break
-            }
+        const typeMap: { [key: string]: () => any } = {
+            'uint256': () => BigInt(arg || 0),
+            'address': () => arg as `0x${string}`,
+            'bool': () => arg === 'true',
+            'string': () => arg,
+            'default': () => Number(arg || 0),
         }
+        const value = (typeMap[input.type] || typeMap['default'])()
 
         return value
     })
