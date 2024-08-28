@@ -21,7 +21,7 @@ export interface BaseHandlers {
     [key: string]: BaseHandler
 }
 
-type TemplateIcon =
+type Octicon =
     | 'number'
     | 'search'
     | 'image'
@@ -154,7 +154,8 @@ export interface BaseTemplate {
     description: string
     //! define a string with max 20 characters "length"
     shortDescription?: string | undefined
-    icon?: TemplateIcon | undefined
+    icon?: StaticImageData | undefined
+    octicon?: Octicon | undefined
     creatorFid: string // must be a farcaster fid
     creatorName: string
     enabled: boolean
