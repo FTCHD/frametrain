@@ -16,24 +16,26 @@ export default async function initial({
 
     if (config.etherscan) {
         buttons.push({ label: 'START' })
-        cover.title.text = 'Title'
     }
 
+    // Load additional fonts if specified in the view configuration
+    const loadAdditionalFonts = async (fontFamily?: string) => {
+        if (fontFamily) {
+            const additionalFonts = await loadGoogleFontAllVariants(fontFamily)
+            fonts.push(...additionalFonts)
+        }
+    }
     if (config.cover) {
-        cover.title = config.cover.title
-        if (config.cover.title.fontFamily) {
-            const titleFont = await loadGoogleFontAllVariants(config.cover.title.fontFamily)
-            fonts.push(...titleFont)
-        }
-        if (config.cover.subtitle.fontFamily) {
-            const titleFont = await loadGoogleFontAllVariants(config.cover.subtitle.fontFamily)
-            fonts.push(...titleFont)
-        }
-
-        if (config.cover.bottomMessage?.fontFamily) {
-            const titleFont = await loadGoogleFontAllVariants(config.cover.bottomMessage.fontFamily)
-            fonts.push(...titleFont)
-        }
+        // Load additional fonts specified in the view configuration
+        await Promise.all(
+            [
+                config.cover.title.fontFamily,
+                config.cover.subtitle.fontFamily,
+                config.cover.bottomMessage?.fontFamily,
+            ]
+                .filter(Boolean)
+                .map(loadAdditionalFonts)
+        )
     }
 
     return {

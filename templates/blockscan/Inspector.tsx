@@ -13,7 +13,9 @@ import { getContractData } from './common/etherscan'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
-    const [coverType, setCoverType] = useState<'text' | 'image'>(config.cover ? 'image' : 'text')
+    const [coverType, setCoverType] = useState<'text' | 'image'>(
+        config.cover.image ? 'image' : 'text'
+    )
     const uploadImage = useUploadImage()
 
     const onChangeLink = useDebouncedCallback(async (link: string) => {
