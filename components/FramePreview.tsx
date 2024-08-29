@@ -14,15 +14,6 @@ import { Delete, ExternalLink, PlusCircle } from 'react-feather'
 import toast from 'react-hot-toast'
 import { BorderBeam } from './BorderBeam'
 import BaseSpinner from './shadcn/BaseSpinner'
-import { Button } from './shadcn/Button'
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from './shadcn/Dialog'
 
 // warpcast.com colors
 const borderDefault = '#4c3a4ec0'
@@ -73,15 +64,8 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
     )
 
     const [inputText, setInputText] = useState('')
-    const [modalOpen, setModalOpen] = useState(false)
-    const [modalFn, setModalFn] = useState<any>()
 
     const loadingContainer = useAtomValue(previewLoadingAtom)
-
-    const handleOpenModal = useCallback((fn: any) => {
-        setModalOpen(true)
-        setModalFn(fn)
-    }, [])
 
     const handleInputChange = useCallback(
         (e: ChangeEvent<HTMLInputElement>) => setInputText(e.target.value),
@@ -89,97 +73,69 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
     )
 
     return (
-        <>
-            <div className="flex flex-col justify-center relative h-full  md:p-[1.5px] max-md:justify-end max-md:w-[75%]">
+        <div className="flex flex-col justify-center relative h-full  md:p-[1.5px] max-md:justify-end max-md:w-[75%]">
+            <div
+                className="relative overflow-hidden border-2 bg-[#2A2432] border-[#4c3a4e80]"
+                style={{ borderRadius: '0.48rem' }}
+            >
                 <div
-                    className="relative overflow-hidden border-2 bg-[#2A2432] border-[#4c3a4e80]"
-                    style={{ borderRadius: '0.48rem' }}
+                    className="relative border-0 border-b cursor-pointer border-[#4c3a4e80] w-full md:w-[min(calc(100dvw-45dvw),calc(100dvh-30dvh))]"
+                    style={{
+                        aspectRatio,
+                        // width: 'min(calc(100dvw - 45dvw), calc(100dvh - 30dvh))',
+                    }}
                 >
-                    <div
-                        className="relative border-0 border-b cursor-pointer border-[#4c3a4e80] w-full md:w-[min(calc(100dvw-45dvw),calc(100dvh-30dvh))]"
-                        style={{
-                            aspectRatio,
-                            // width: 'min(calc(100dvw - 45dvw), calc(100dvh - 30dvh))',
-                        }}
-                    >
-                        <img
-                            className={'object-cover absolute inset-0 w-full h-full'}
-                            src={image.src}
-                            alt=""
-                            style={{ aspectRatio }}
-                        />
-                    </div>
-
-                    <div className="space-y-2 rounded-lg rounded-t-none border border-t-0 px-4 py-2 border-[#4c3a4e80] bg-[#2A2432]">
-                        {!!input && (
-                            <div>
-                                <input
-                                    type="text"
-                                    className="p-2 w-full text-sm rounded border bg-input text-[#fff] px-[12px] py-[10px] border-[#4c3a4e80] bg-[#17101f]"
-                                    placeholder={input.text}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        )}
-                        <div className="flex flex-row w-full items-center gap-[10px] ">
-                            {buttons?.map((button, index) =>
-                                button ? (
-                                    <FrameButton
-                                        key={button.label}
-                                        buttonIndex={index + 1}
-                                        button={button}
-                                        inputText={inputText}
-                                        state={metadata.state}
-                                        handler={handler}
-                                        params={params}
-                                    >
-                                        {button.label}
-                                    </FrameButton>
-                                ) : undefined
-                            )}
-                        </div>
-                    </div>
-
-                    <div
-                        className="pointer-events-none absolute inset-0 overflow-hidden bg-white/30 backdrop-blur-[80px]"
-                        style={{ opacity: loadingContainer ? 1 : 0 }}
-                    />
-
-                    <BorderBeam
-                        className={`${loadingContainer ? 'visible' : 'invisible'}`}
-                        colorFrom="#7c65c1"
-                        colorTo="#7c65c1"
-                        borderWidth={4}
+                    <img
+                        className={'object-cover absolute inset-0 w-full h-full'}
+                        src={image.src}
+                        alt=""
+                        style={{ aspectRatio }}
                     />
                 </div>
-            </div>
 
-            <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Leaving website</DialogTitle>
-                        <DialogDescription>
-                            If you connect your wallet and the site is malicious, you may lose
-                            funds.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <Button
-                            onClick={() => {
-                                modalFn()
-                                setModalOpen(false)
-                            }}
-                            variant={'destructive'}
-                        >
-                            I understand
-                        </Button>
-                        <Button color="neutral" onClick={() => setModalOpen(false)}>
-                            Cancel
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </>
+                <div className="space-y-2 rounded-lg rounded-t-none border border-t-0 px-4 py-2 border-[#4c3a4e80] bg-[#2A2432]">
+                    {!!input && (
+                        <div>
+                            <input
+                                type="text"
+                                className="p-2 w-full text-sm rounded border bg-input text-[#fff] px-[12px] py-[10px] border-[#4c3a4e80] bg-[#17101f]"
+                                placeholder={input.text}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    )}
+                    <div className="flex flex-row w-full items-center gap-[10px] ">
+                        {buttons?.map((button, index) =>
+                            button ? (
+                                <FrameButton
+                                    key={button.label}
+                                    buttonIndex={index + 1}
+                                    button={button}
+                                    inputText={inputText}
+                                    state={metadata.state}
+                                    handler={handler}
+                                    params={params}
+                                >
+                                    {button.label}
+                                </FrameButton>
+                            ) : undefined
+                        )}
+                    </div>
+                </div>
+
+                <div
+                    className="pointer-events-none absolute inset-0 overflow-hidden bg-white/30 backdrop-blur-[80px]"
+                    style={{ opacity: loadingContainer ? 1 : 0 }}
+                />
+
+                <BorderBeam
+                    className={`${loadingContainer ? 'visible' : 'invisible'}`}
+                    colorFrom="#7c65c1"
+                    colorTo="#7c65c1"
+                    borderWidth={4}
+                />
+            </div>
+        </div>
     )
 }
 
