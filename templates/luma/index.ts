@@ -2,6 +2,7 @@ import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.png'
 import handlers from './handlers'
+import icon from './icon.jpeg'
 
 export interface Config extends BaseConfig {
     event?: {
@@ -35,7 +36,8 @@ export default {
     name: 'Lu.ma',
     description: 'Share your Lu.ma event as a Frame.',
     shortDescription: 'Events as Frames',
-    icon: 'star',
+    icon: icon,
+    octicon: 'star',
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,

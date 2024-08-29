@@ -24,11 +24,11 @@ export async function GET(
     return Response.json({
         'type': 'composer',
         'name': template.name,
-        'icon': template.icon, // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
+        'icon': template.octicon, // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
         'description': template.shortDescription,
         // 'aboutUrl': `https://${process.env.NEXT_PUBLIC_HOST}/templates/${template.name}`,
         // 'imageUrl': 'https://frametra.in/apple-icon.png',
-        'imageUrl': process.env.NEXT_PUBLIC_HOST + template.cover.src,
+        'imageUrl': process.env.NEXT_PUBLIC_HOST + template.icon.src,
         'action': {
             'type': 'post',
         },

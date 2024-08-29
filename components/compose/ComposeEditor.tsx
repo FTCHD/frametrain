@@ -85,7 +85,7 @@ export default function ComposeEditor({
             <ComposePreview />
 
             <div className="w-full p-4 dark:bg-[#201629] bg-white flex flex-col gap-4">
-                <div className="w-full text-lg font-medium p-4 border border-[#4c3a4e70] rounded-xl  bg-stone-100 dark:bg-[#0c0c0c]">
+                <div className="w-full text-base font-medium p-4 border border-[#4c3a4e70] rounded-xl  bg-stone-100 dark:bg-[#0c0c0c]">
                     <InfoIcon className="w-5 h-5 inline-block mr-2" /> {template.description}
                 </div>
 

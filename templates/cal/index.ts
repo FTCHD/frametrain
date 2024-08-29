@@ -2,6 +2,7 @@ import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.jpg'
 import handlers from './handlers'
+import icon from './icon.jpg'
 
 export interface Config extends BaseConfig {
     fontFamily?: string
@@ -46,7 +47,8 @@ export default {
     name: 'Cal',
     description: 'Let people book calls with you straight from a Frame. Gating options included.',
     shortDescription: 'Cal.com + Farcaster',
-    icon: 'task',
+    icon: icon,
+    octicon: 'task',
     creatorFid: '389273',
     creatorName: 'LeoFrank',
     cover,
