@@ -161,7 +161,7 @@ function FrameButton({
     const [, setPreviewData] = useAtom(previewParametersAtom)
     const previewLoading = useAtomValue(previewLoadingAtom)
 
-    const actionCallback = useCallback(async () => {
+    const actionCallback = useCallback(() => {
         const newData = {
             handler: handler,
             inputText: inputText,
@@ -179,7 +179,7 @@ function FrameButton({
                 break
             }
             case 'post': {
-                await actionCallback()
+                actionCallback()
                 break
             }
             default: {
