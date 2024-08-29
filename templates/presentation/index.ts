@@ -79,7 +79,7 @@ export default {
     name: 'Presentation',
     description: 'Turn your images and long texts into a slideshow.',
     shortDescription: 'Remember Powerpoint?',
-    icon: 'versions',
+    octicon: 'versions',
     creatorFid: '661506',
     creatorName: 'oynozan',
     cover,
