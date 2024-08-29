@@ -2,6 +2,7 @@ import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.webp'
 import handlers from './handlers'
+import icon from './icon.png'
 
 export interface Config extends BaseConfig {
     options: {
@@ -25,7 +26,8 @@ export default {
     name: 'Poll',
     description: 'Create your own Poll as a Farcaster Frame.',
     shortDescription: 'Customizable Polls',
-    icon: 'question',
+    octicon: 'question',
+    icon: icon,
     creatorFid: '3',
     creatorName: 'Dan',
     enabled: true,
