@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/Pop
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
 import { cn } from '@/lib/shadcn'
 import { Paintbrush } from 'lucide-react'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 const solids = [
     '#E2E2E2',
@@ -75,6 +75,16 @@ export function ColorPicker({
         return 'solid'
     }, [background])
 	
+	const [showInputPicker, setShowInputPicker] = useState(defaultTab === 'solid')
+
+    const textInputRef = useRef<HTMLInputElement>(null)
+    const colorInputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        if (textInputRef.current) textInputRef.current.value = background
+        if (colorInputRef.current) colorInputRef.current.value = background
+    }, [background])
+	
     return (
         <Popover>
             <PopoverTrigger asChild={true}>
@@ -103,7 +113,13 @@ export function ColorPicker({
             </PopoverTrigger>
             {/* set to loosely match the Inspector width of 40% */}
             <PopoverContent className="w-[30dvw] min-w-[400px]">
-                <Tabs defaultValue={defaultTab} className="w-full">
+                <Tabs
+                    defaultValue={defaultTab}
+                    className="w-full"
+                    onValueChange={(value) => {
+                        setShowInputPicker(value === 'solid')
+                    }}
+                >
                     <TabsList className="mb-4 w-full">
                         {enabledPickers.includes('solid') && (
                             <TabsTrigger className="flex-1" value="solid">
@@ -203,17 +219,21 @@ export function ColorPicker({
 
                 <div className="flex flex-row w-full items-center mt-4">
                     <BaseInput
+                        ref={textInputRef}
                         defaultValue={background}
                         variant={'sm'}
                         onChange={(e) => setBackground(e.currentTarget.value)}
                     />
 
-                    <input
-                        className="absolute right-7 bg-transparent cursor-pointer"
-                        defaultValue={background}
-                        type="color"
-                        onChange={(e) => setBackground(e.target.value)}
-                    />
+                    {showInputPicker && (
+                        <input
+                            className="absolute right-7 bg-transparent cursor-pointer"
+                            ref={colorInputRef}
+                            defaultValue={background}
+                            type="color"
+                            onChange={(e) => setBackground(e.target.value)}
+                        />
+                    )}
                 </div>
             </PopoverContent>
         </Popover>
