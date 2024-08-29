@@ -16,7 +16,9 @@ export const getPoolClient = async (address: `0x${string}`) => {
         try {
             await contract.read.slot0()
             return client
-        } catch {}
+        } catch (error) {
+            console.error(`Failed to fetch slot0 for ${address} on ${chain}`, error)
+        }
     }
 
     throw new Error('This pool address is not on any supported chain')
@@ -46,7 +48,7 @@ async function getTokenData({
             logo,
         }
     } catch (error) {
-        console.error(error)
+        console.error(`Failed to fetch token data for ${address}`, error)
     }
     return null
 }
@@ -68,8 +70,6 @@ async function getTokenLogo(network: number, address: string) {
             }
         }
     }
-
-    console.log(`Token logo for ${address}: ${data.data.attributes.image_url}`)
 
     return data.data.attributes.image_url
 }

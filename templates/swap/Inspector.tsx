@@ -29,9 +29,9 @@ export default function Inspector() {
     const disableAmountsField = amounts.length >= 3
 
     const [successType, setSuccessType] = useState<'text' | 'image'>(
-        config.success ? 'image' : 'text'
+        config.success.image ? 'image' : 'text'
     )
-    const [pairNameFontSize, setPairNameFontSize] = useState(config.pairName?.fontSize || 20)
+    const [pairNameFontSize, setPairNameFontSize] = useState(config.pairName?.fontSize || 50)
     const [coverMessageFontSize, setCoverMessageFontSize] = useState(
         config.coverMessage?.fontSize || 50
     )

@@ -3,7 +3,6 @@ import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import { formatSymbol } from '../common/shared'
-import CoverView from '../views/Cover'
 import EstimateView from '../views/Estimate'
 
 export default async function initial({
@@ -22,13 +21,13 @@ export default async function initial({
     const fonts = [...roboto]
     let newStorage = storage
 
-    if (config.coverMessage?.font) {
-        const customMessageFont = await loadGoogleFontAllVariants(config.coverMessage.font)
+    if (config.coverMessage?.fontFamily) {
+        const customMessageFont = await loadGoogleFontAllVariants(config.coverMessage.fontFamily)
         fonts.push(...customMessageFont)
     }
 
-    if (config.pairName?.font) {
-        const pairNameFont = await loadGoogleFontAllVariants(config.pairName.font)
+    if (config.pairName?.fontFamily) {
+        const pairNameFont = await loadGoogleFontAllVariants(config.pairName.fontFamily)
         fonts.push(...pairNameFont)
     }
 
@@ -56,7 +55,7 @@ export default async function initial({
         let price = 0
         const token0ToUsd: { price: number; lastUpdated: number } | undefined =
             storage?.tokenToUsd?.[token0.symbol.toLowerCase()]
-        
+
         const fetchUsdPrice = async (symbol: string) => {
             try {
                 const request = await fetch(
@@ -114,10 +113,6 @@ export default async function initial({
     return {
         buttons,
         fonts,
-        component: CoverView(config),
+        component: EstimateView(),
     }
-    // } catch (e) {
-    //     const error = e as Error
-    //     throw new FrameError(error.message)
-    // }
 }

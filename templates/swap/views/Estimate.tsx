@@ -15,7 +15,28 @@ type Config = {
     price: number
 }
 
-export default function EstimateView({ token0, token1, ...config }: Config) {
+export default function EstimateView(props?: Config) {
+    if (!props) {
+        return (
+            <div
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'black',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    fontFamily: 'Roboto',
+                    fontSize: '50px',
+                    color: '#ffffff',
+                }}
+            >
+                Press "VIEW"
+            </div>
+        )
+    }
+    const { token0, token1, ...config } = props
     const backgroundProp: Record<string, string> = {}
     if (config.backgroundColor) {
         if (config.backgroundColor?.startsWith('#')) {
@@ -66,10 +87,10 @@ export default function EstimateView({ token0, token1, ...config }: Config) {
                     <span
                         style={{
                             color: config.pairName?.color || 'white',
-                            fontSize: `${config.pairName?.size || 20}px`,
-                            fontWeight: config.pairName?.weight || 'bold',
-                            fontStyle: config.pairName?.style || 'normal',
-                            fontFamily: config.pairName?.font || 'Roboto',
+                            fontSize: `${config.pairName?.fontSize || 50}px`,
+                            fontWeight: config.pairName?.fontWeight || 'bold',
+                            fontStyle: config.pairName?.fontStyle || 'normal',
+                            fontFamily: config.pairName?.fontFamily || 'Roboto',
                             marginBottom: '5px',
                         }}
                     >
@@ -86,10 +107,10 @@ export default function EstimateView({ token0, token1, ...config }: Config) {
                 <span
                     style={{
                         color: config.pairName?.color || 'white',
-                        fontSize: `${config.pairName?.size || 20}px`,
-                        fontWeight: config.pairName?.weight || 'bold',
-                        fontStyle: config.pairName?.style || 'normal',
-                        fontFamily: config.pairName?.font || 'Roboto',
+                        fontSize: `${config.pairName?.fontSize || 30}px`,
+                        fontWeight: config.pairName?.fontWeight || 'bold',
+                        fontStyle: config.pairName?.fontStyle || 'normal',
+                        fontFamily: config.pairName?.fontFamily || 'Roboto',
                         marginBottom: '5px',
                     }}
                 >
@@ -101,10 +122,10 @@ export default function EstimateView({ token0, token1, ...config }: Config) {
                     tw="p-5"
                     style={{
                         color: config.coverMessage?.color || 'white',
-                        fontSize: `${config.coverMessage?.size || 20}px`,
-                        fontWeight: config.coverMessage?.weight || 'bold',
-                        fontStyle: config.coverMessage?.style || 'normal',
-                        fontFamily: config.coverMessage?.font || 'Roboto',
+                        fontSize: `${config.coverMessage?.fontSize || 20}px`,
+                        fontWeight: config.coverMessage?.fontWeight || 'bold',
+                        fontStyle: config.coverMessage?.fontStyle || 'normal',
+                        fontFamily: config.coverMessage?.fontFamily || 'Roboto',
                         position: 'absolute',
                         bottom: 20,
                         textAlign: 'left',

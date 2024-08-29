@@ -1,6 +1,5 @@
 import { corsFetch } from '@/sdk/scrape'
 import { type Address, type Hex, formatUnits, parseUnits } from 'viem'
-import { formatSymbol } from './shared'
 
 // https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-quote#response
 type ZeroXSwapQuote = {
@@ -61,6 +60,7 @@ const get0xApiBase = (networkId: number) => {
         10: 'optimism.api.0x.org',
         8453: 'base.api.0x.org',
         42161: 'arbitrum.api.0x.org',
+        137: 'polygon.api.0x.org',
     }
 
     const baseURL = CHAIN_ID_0X_API_BASE_MAP[networkId]
