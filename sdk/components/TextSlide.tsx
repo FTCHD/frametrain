@@ -46,7 +46,6 @@ export default function TextSlide({ title, subtitle, bottomMessage, background }
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
                 padding: '150px 20px',
                 gap: '70px',
                 ...backgroundProp,
