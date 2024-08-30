@@ -203,7 +203,7 @@ export default function Inspector() {
                                                     | 'image/gif'
                                                     | 'image/webp'
 
-                                                const filePath = await uploadImage({
+                                                const { filePath } = await uploadImage({
                                                     base64String,
                                                     contentType,
                                                 })
@@ -359,7 +359,7 @@ export default function Inspector() {
                                                     | 'image/gif'
                                                     | 'image/webp'
 
-                                                const filePath = await uploadImage({
+                                                const { filePath } = await uploadImage({
                                                     base64String,
                                                     contentType,
                                                 })
