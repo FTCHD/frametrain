@@ -142,7 +142,6 @@ export default function Inspector() {
                             buttonLabelInputRef.current.value = ''
                         }}
                         className="w-full"
-                        variant={'primary'}
                     >
                         Add Option
                     </Button>

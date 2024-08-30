@@ -5,7 +5,7 @@ import templates from '@/templates'
 import type { InferInsertModel } from 'drizzle-orm'
 import { encode } from 'next-auth/jwt'
 
-const SUPPORTED_TEMPLATES = ['cal', 'discourse', 'luma']
+const SUPPORTED_TEMPLATES = ['cal', 'discourse', 'luma', 'poll', 'medium']
 
 export async function GET(
     request: Request,
@@ -39,7 +39,7 @@ export async function POST(
     request: Request,
     { params }: { params: { templateId: keyof typeof templates } }
 ) {
-    if (!SUPPORTED_TEMPLATES.includes(params.templateId)) {
+    	if (!SUPPORTED_TEMPLATES.includes(params.templateId)) {
         throw new Error('This template is not yet supported')
     }
 

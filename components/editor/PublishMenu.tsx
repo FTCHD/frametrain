@@ -33,7 +33,7 @@ export default function PublishMenu({
     return (
         <Popover>
             <PopoverTrigger asChild={true}>
-                <Button variant={'default'}>Publish</Button>
+                <Button variant={'primary'}>Publish</Button>
             </PopoverTrigger>
             <PopoverContent className="w-80 md:mr-5 max-md:w-screen">
                 <div className="flex flex-col gap-6">
