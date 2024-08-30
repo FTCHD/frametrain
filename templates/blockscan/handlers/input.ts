@@ -20,7 +20,7 @@ export default async function functionHandler({
     body: FrameValidatedActionPayload
     config: Config
     storage?: Storage
-    params: { currentIndex?: string }
+    params: { currentIndex?: string; requiresInput?: string }
 }): Promise<BuildFrameData> {
     if (!config.etherscan) {
         throw new FrameError('Smart Contract config is missing')
@@ -39,28 +39,32 @@ export default async function functionHandler({
     const rawAbiString = config.etherscan.abis.flat()
     const signatures = rawAbiString.filter((abi) => abi.startsWith('function'))
     const currentIndex = params.currentIndex === undefined ? 0 : Number(params.currentIndex)
-    const signatureIndex =
-        buttonIndex === 1
-            ? params.currentIndex === undefined
-                ? 0
-                : currentIndex - 1
-            : currentIndex + 1
+    let signatureIndex = 0
 
-    console.log({ buttonIndex, currentIndex, signatureIndex })
+    switch (buttonIndex) {
+        case 2: {
+            signatureIndex = currentIndex
+            break
+        }
+
+        default: {
+            signatureIndex =
+                buttonIndex === 1
+                    ? params.currentIndex === undefined
+                        ? 0
+                        : currentIndex - 1
+                    : currentIndex + 1
+            break
+        }
+    }
 
     if (signatureIndex < 0 || signatureIndex >= signatures.length) {
         return initial({ config })
     }
 
     const { argStr, args, ...signature } = getSignature(signatures, signatureIndex, textInput)
-    const functionName = signature.name
 
-    console.log({
-        buttonIndex,
-        currentIndex,
-        signatureIndex,
-        args: args.length,
-    })
+    const functionName = signature.name
 
     const view: TextSlideProps = {
         ...config.functionSlide,
@@ -98,14 +102,7 @@ export default async function functionHandler({
         throw new FrameError('Unsupported chain')
     }
 
-    if (args.length) {
-        buttons.push({ label: 'Confirm' })
-        view.subtitle.text = argStr.join('\n')
-        view.bottomMessage = {
-            ...config.functionSlide?.bottomMessage,
-            text: `Enter the values of the arguments separated by commas (${signatureIndex}/${signatures.length})`,
-        }
-    } else {
+    if (buttonIndex == 2) {
         try {
             view.subtitle.text = await readContract({
                 signatures,
@@ -113,10 +110,21 @@ export default async function functionHandler({
                 args,
                 functionName,
                 chain,
+                encode: true,
             })
+            args.length = 0
         } catch (e) {
             const error = e as Error
             throw new FrameError(error.message)
+        }
+    } else {
+        if (args.length) {
+            buttons.push({ label: 'Confirm' })
+            view.subtitle.text = argStr.join('\n')
+            view.bottomMessage = {
+                ...config.functionSlide?.bottomMessage,
+                text: `Enter the values of the arguments separated by commas (${signatureIndex}/${signatures.length})`,
+            }
         }
     }
 
@@ -138,7 +146,7 @@ export default async function functionHandler({
         component: TextSlide(view),
         handler: args.length ? 'input' : 'function',
         params: {
-            currentIndex: signatureIndex,
+            currentIndex: buttonIndex === 2 ? signatureIndex + 1 : signatureIndex,
         },
         inputText: args.length ? 'arguments separated by commas' : undefined,
     }

@@ -69,14 +69,15 @@ export async function readContract({
     return data
 }
 
-export function getSignature(signatures: string[], index: number, input: string) {
+export function getSignature(signatures: string[], index: number, input?: string) {
     const sign = signatures[index]
 
     const abiItem = (parseAbi([sign]) as AbiFunction[])[0]
-    const baseArgs = input.split(',').map((arg) => arg.trim())
-    if (baseArgs.length !== abiItem.inputs.length) {
-        throw new Error('Input string does not match the number of arguments in the ABI signature')
-    }
+    const baseArgs = input ? input.split(',').map((arg) => arg.trim()) : []
+
+    // if (baseArgs.length !== abiItem.inputs.length) {
+    //     throw new Error('Input string does not match the number of arguments in the ABI signature')
+    // }
     const name = abiItem.name
 
     const args = abiItem.inputs.map((input, i) => {

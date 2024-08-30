@@ -34,10 +34,10 @@ export default {
         etherscan: null,
         cover: {
             title: {
-                text: 'Enter a contract address url to get started',
+                text: 'Welcome to Blockscan',
             },
             subtitle: {
-                text: 'Subtitle',
+                text: 'Navigate through all contract functions',
             },
             customMessage: {
                 text: 'Custom Message',

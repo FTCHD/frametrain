@@ -16,6 +16,8 @@ export default async function initial({
 
     if (config.etherscan) {
         buttons.push({ label: 'START' })
+    } else {
+        cover.title.text = 'Enter a contract address url to get started'
     }
 
     // Load additional fonts if specified in the view configuration
