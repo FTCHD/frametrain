@@ -18,6 +18,8 @@ function extractText(html: string): string {
     return result.trim()
 }
 
+const toReadableDate = (ts?: number | Date) => dayjs(ts).format('dddd, MMMM Do @ LT')
+
 export interface RssFeed {
     title: string
     lastUpdated: {
@@ -52,7 +54,7 @@ async function fetchRssFeed(url: string): Promise<RssFeed> {
             title: extractText(item.title || ''),
             link: item.link!,
             description: extractText(item.description || 'No description'),
-            pubDate: dayjs(item.pubDate).format('dddd, MMMM Do @ LT'),
+            pubDate: toReadableDate(item.pubDate),
             content: 'content' in item ? extractText(item.content as string) : null,
         }
     })
@@ -61,12 +63,10 @@ async function fetchRssFeed(url: string): Promise<RssFeed> {
         title: extractText(feed.title || ''),
         lastUpdated: {
             ts: dayjs(feed.updated).valueOf(),
-            human: dayjs(feed.updated).format('dddd, MMMM Do @ LT'),
+            human: toReadableDate(feed.updated),
         },
         posts,
     }
 }
 
-const toReadableDate = (ts?: number) => dayjs(ts).format('dddd, MMMM Do @ LT')
-
-export { dayjs, fetchRssFeed, toReadableDate }
+export { dayjs, fetchRssFeed }

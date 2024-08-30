@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import ms from 'ms'
 import type { Config, Storage } from '..'
@@ -16,13 +16,30 @@ export default async function post({
     body: FrameActionPayload
     config: Config
     storage: Storage
-    params: any
+    params: {
+        currentPage: string
+        cursor?: 'next' | 'prev'
+    }
 }): Promise<BuildFrameData> {
-    const fonts = await loadGoogleFontAllVariants('Roboto')
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts = [...roboto]
 
+    const buttons: FrameButtonMetadata[] = [
+        {
+            label: '🏠',
+        },
+        {
+            label: '⬅️',
+        },
+    ]
+
+    if (config.fontFamily) {
+        const customMessageFont = await loadGoogleFontAllVariants(config.fontFamily)
+        fonts.push(...customMessageFont)
+    }
     const buttonIndex = body.untrustedData.buttonIndex
 
-    let nextPage: number
+    let cursor = params.cursor
     const existingPosts = storage?.feed
 
     // redirect to cover view if no rss url or no existing posts
@@ -30,53 +47,52 @@ export default async function post({
         return initial({ config })
     }
 
-    // when clicked on refresh button from cover view
-    if (
-        buttonIndex === 1 &&
-        params?.initial === 'true' &&
-        Date.now() - existingPosts.lastUpdated.ts > ms('10m')
-    ) {
-        const feed = await fetchRssFeed(`${config.rssUrl}`)
-        const { lastUpdated: updatedAt, ...info } = feed
-        return initial({
-            config,
-            params: {
-                info: {
-                    total: info.posts.length,
-                    title: info.title,
-                    lastUpdated: updatedAt.ts,
-                },
-            },
-            storage: {
-                feed,
-            },
-        })
+    switch (buttonIndex) {
+        case 1: {
+            // when clicked on refresh button from cover view
+            if (
+                params?.currentPage === undefined &&
+                Date.now() - existingPosts.lastUpdated.ts > ms('10m')
+            ) {
+                const feed = await fetchRssFeed(config.rssUrl)
+                storage.feed = feed
+            }
+            return initial({ config, storage })
+        }
+
+        case 3: {
+            cursor = params.cursor
+            break
+        }
+
+        default: {
+            cursor = params.cursor === undefined ? 'next' : 'prev'
+            break
+        }
     }
 
-    if (buttonIndex === 2 && !params?.currentPage) {
-        nextPage = 1
-    } else {
-        nextPage =
-            params?.currentPage !== undefined
-                ? buttonIndex === 2
-                    ? Number(params.currentPage) - 1
-                    : Number(params.currentPage) + 1
-                : 1
+    const currentPage =
+        params?.currentPage === undefined
+            ? 0
+            : Number(params.currentPage) + (cursor === 'next' ? 1 : -1)
+
+    if (currentPage < 0) {
+        return initial({ config, storage })
     }
-    const post = existingPosts.posts[nextPage - 1]
+
+    const posts = existingPosts.posts.map((post, idx) => ({ index: idx + 1, ...post }))
+    const post = posts[currentPage]
+
+    if (currentPage < existingPosts.posts.length) {
+        buttons.push({
+            label: '➡️',
+        })
+    }
 
     return {
         aspectRatio: '1:1',
         buttons: [
-            {
-                label: '🏠',
-            },
-            {
-                label: '⬅️',
-            },
-            {
-                label: '➡️',
-            },
+            ...buttons,
             {
                 label: 'View',
                 action: 'link',
@@ -86,12 +102,12 @@ export default async function post({
         component: PostView({
             post,
             total: existingPosts.posts.length,
-            postIndex: nextPage,
+            postIndex: post.index,
             config,
         }),
         handler: 'post',
         fonts,
         storage,
-        params: { currentPage: nextPage },
+        params: { currentPage, cursor },
     }
 }

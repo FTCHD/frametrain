@@ -56,7 +56,7 @@ export default function Inspector() {
                 <h2 className="text-lg font-semibold">Title & Description Color</h2>
                 <ColorPicker
                     className="w-full"
-                    background={config.primaryColor || 'white'}
+                    background={config.primaryColor || '#ffffff'}
                     setBackground={(value) => updateConfig({ primaryColor: value })}
                 />
             </div>
@@ -65,7 +65,7 @@ export default function Inspector() {
                 <h2 className="text-lg font-semibold">Date & Pagination Color</h2>
                 <ColorPicker
                     className="w-full"
-                    background={config.secondaryColor || 'white'}
+                    background={config.secondaryColor || '#ffe83f'}
                     setBackground={(value) => updateConfig({ secondaryColor: value })}
                 />
             </div>
@@ -75,7 +75,7 @@ export default function Inspector() {
                 <ColorPicker
                     className="w-full"
                     enabledPickers={['solid', 'gradient', 'image']}
-                    background={config.coverBackground || 'black'}
+                    background={config.coverBackground || '#000000'}
                     setBackground={(coverBackground) => updateConfig({ coverBackground })}
                     uploadBackground={async (base64String, contentType) => {
                         const { filePath } = await uploadImage({
@@ -93,7 +93,7 @@ export default function Inspector() {
                 <ColorPicker
                     className="w-full"
                     enabledPickers={['solid', 'gradient', 'image']}
-                    background={config.pageBackground || 'black'}
+                    background={config.pageBackground || '#000000'}
                     setBackground={(pageBackground) => updateConfig({ pageBackground })}
                     uploadBackground={async (base64String, contentType) => {
                         const { filePath } = await uploadImage({

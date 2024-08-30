@@ -20,7 +20,9 @@ export default function PostView({ post, postIndex, total, config }: Props) {
     } else {
         backgroundProp['backgroundImage'] = 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
     }
+
     const description = (post?.content || post.description || '').trim()
+
     return (
         <div
             style={{
@@ -53,7 +55,7 @@ export default function PostView({ post, postIndex, total, config }: Props) {
                     padding: '15px 20px',
                     borderRadius: '10px',
                     background: 'rgba(0, 0, 0, 0.15)',
-                    gap: '10px',
+                    gap: '30px',
                     overflow: 'hidden',
                 }}
             >
@@ -64,7 +66,7 @@ export default function PostView({ post, postIndex, total, config }: Props) {
                         flexGrow: '1',
                         flexDirection: 'column',
                         gap: '10px',
-                        top: '40%',
+                        // top: '30%',
                     }}
                 >
                     {description

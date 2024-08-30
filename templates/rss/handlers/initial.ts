@@ -1,75 +1,59 @@
 'use server'
 
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
+import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
+import { type RssFeed, fetchRssFeed } from '../common'
 import CoverView from '../views/Cover'
-import { fetchRssFeed, type RssFeed, toReadableDate } from '../common'
-import { FrameError } from '@/sdk/error'
 
 export default async function initial({
     config,
-    params,
     storage,
 }: {
     config: Config
     storage?: Storage
-    params?: {
-        info?: {
-            title: string
-            total: number
-            lastUpdated: number
-        }
-    }
 }): Promise<BuildFrameData> {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    let info: RssFeed | null = null
     const buttons: FrameButtonMetadata[] = []
+    let info: RssFeed | null = null
     let newStorage = storage
+    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fonts = [...roboto]
 
-    if (params?.info) {
-        console.log('initial handler refreshed', params)
-        info = {
-            title: params.info.title,
-            posts: [],
-            lastUpdated: {
-                ts: params.info.lastUpdated,
-                human: toReadableDate(params.info.lastUpdated),
-            },
-        }
-    } else {
-        if (config.rssUrl) {
-            const existingPosts = storage?.feed
+    if (config.fontFamily) {
+        const customMessageFont = await loadGoogleFontAllVariants(config.fontFamily)
+        fonts.push(...customMessageFont)
+    }
 
-            try {
-                if (!existingPosts) {
-                    info = await fetchRssFeed(config.rssUrl)
-                    newStorage = {
-                        feed: info,
-                    }
-                    console.log('initial handler fetched', info)
-                } else {
-                    info = existingPosts
+    if (config.rssUrl) {
+        const existingPosts = storage?.feed
+        console.log({ existingPosts: existingPosts?.posts.length })
+
+        try {
+            if (!existingPosts) {
+                info = await fetchRssFeed(config.rssUrl)
+                newStorage = {
+                    feed: info,
                 }
-
-                buttons.push(
-                    { label: 'Refresh' },
-                    {
-                        label: 'Read',
-                    }
-                )
-            } catch {
-                console.error('Failed to fetch RSS feed')
-                throw new FrameError(`Failed to fetch RSS feed for ${config.rssUrl}`)
+            } else {
+                info = existingPosts
             }
+
+            buttons.push(
+                { label: 'Refresh' },
+                {
+                    label: 'Read',
+                }
+            )
+        } catch {
+            throw new FrameError(`Failed to fetch RSS feed for ${config.rssUrl}`)
         }
     }
     return {
         storage: newStorage,
         buttons,
-        fonts: roboto,
+        fonts,
         component: CoverView({ info, config }),
         handler: 'post',
-        params: info ? { lastUpdated: info.lastUpdated.ts, initial: true } : undefined,
     }
 }
