@@ -21,29 +21,32 @@ export async function GET() {
         })
         const objects = await s3.listObjects({ Bucket: `${process.env.S3_BUCKET}` })
         const files = (objects.Contents ?? []).map((object) => object.Key) as string[]
-        const frameIdsWithCdnRoute: string[] = []
+        const foundFiles: string[] = []
+
+        console.log(`Found ${files.length} files in S3 and ${frames.length} frames in the database`)
 
         for (const frame of frames) {
             const config = frame.config ?? {}
-            // some empty configs are saved as '{}' or {}
-            if (typeof config === 'string' || Object.keys(config).length === 0) continue
-            if (hasCdnRoute(frame.config, frame.id)) {
-                frameIdsWithCdnRoute.push(frame.id)
-            }
+            const urls = collectFilePaths(config)
+            foundFiles.push(...urls)
         }
 
-        const filesToDelete = files.filter((file) => {
-            const frameId = file.split('/')[1]
-            return !frameIdsWithCdnRoute.includes(frameId)
-        })
+        const filesToDelete = files.filter((file) => !foundFiles.includes(file))
 
         await deleteFilesFromR2(s3, filesToDelete)
 
         return Response.json({
-            frameIdsWithCdnRoute,
+            files: {
+                length: files.length,
+                files,
+            },
             filesToDelete: {
                 length: filesToDelete.length,
                 files: filesToDelete,
+            },
+            foundFiles: {
+                length: foundFiles.length,
+                files: foundFiles,
             },
         })
     } catch (e) {
@@ -52,19 +55,27 @@ export async function GET() {
     }
 }
 
-function hasCdnRoute(config: any, frameId: string): boolean {
-    const cdnWithId = `${process.env.NEXT_PUBLIC_CDN_HOST}/${frameId}`
-    if (typeof config === 'object') {
-        for (const key in config) {
-            if (
-                (typeof config[key] === 'string' && config[key].startsWith(cdnWithId)) ||
-                hasCdnRoute(config[key], frameId)
-            ) {
-                return true
+function collectFilePaths(jsonObject: any): string[] {
+    const baseUrl = `${process.env.NEXT_PUBLIC_CDN_HOST}/`
+
+    const urls: string[] = []
+    function traverse(obj: any) {
+        if (typeof obj === 'object' && obj !== null) {
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const value = obj[key]
+                    if (typeof value === 'string' && value.startsWith(baseUrl)) {
+                        urls.push(value.replace(baseUrl, ''))
+                    } else if (typeof value === 'object' && value !== null) {
+                        traverse(value)
+                    }
+                }
             }
         }
     }
-    return false
+
+    traverse(jsonObject)
+    return urls
 }
 
 async function deleteFilesFromR2(s3: S3, files: string[]) {
@@ -76,4 +87,5 @@ async function deleteFilesFromR2(s3: S3, files: string[]) {
         },
     }
     await s3.deleteObjects(deleteParams)
+    console.log(`[deleteFilesFromR2] Deleted ${files.length} files`)
 }
