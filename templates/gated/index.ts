@@ -54,7 +54,7 @@ export default {
             },
             followedBy: false,
             following: false,
-            liked: false,
+            liked: true,
             recasted: false,
             eth: false,
             sol: false,

@@ -77,8 +77,8 @@ export default async function page({
         fonts,
     }
 
-    if (config.rewardImage) {
-        buildData.image = config.rewardImage
+    if (config.success.image) {
+        buildData.image = config.success.image
     } else {
         buildData.component = TextSlide(config.success)
     }

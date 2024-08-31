@@ -2,10 +2,8 @@
 
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import type { Config } from '.'
-import { Textarea } from '@/components/shadcn/Textarea'
 import { type ReactNode, useRef, useState } from 'react'
 import { Input } from '@/components/shadcn/Input'
-import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/shadcn/Select'
 import { Button } from '@/components/shadcn/Button'
 import { Trash } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -38,14 +36,9 @@ function sidebarNavItems(obj: {
 }): MenuItem | NavBarItem[] {
     const items: MenuItem[] = [
         {
-            title: 'Rewards',
-            key: 'rewards',
-            description: 'Configure your rewards settings.',
-        },
-        {
-            title: 'Gating',
-            key: 'gating',
-            description: 'Configure your gating settings.',
+            title: 'General',
+            key: 'general',
+            description: 'Configure your general settings.',
         },
         {
             title: 'Cover',
@@ -53,9 +46,14 @@ function sidebarNavItems(obj: {
             description: 'Configure your cover slide.',
         },
         {
-            title: 'General',
-            key: 'general',
-            description: 'Configure your general settings.',
+            title: 'Gating',
+            key: 'gating',
+            description: 'Configure your gating settings.',
+        },
+        {
+            title: 'Rewards',
+            key: 'rewards',
+            description: 'Configure your rewards settings.',
         },
     ]
 
@@ -135,7 +133,7 @@ export default function Inspector() {
     const renderTabSection = () => {
         let component: ReactNode = null
 
-        switch (activeTab) {
+        switch (tab.key) {
             case 'cover': {
                 component = (
                     <>
@@ -261,35 +259,34 @@ export default function Inspector() {
 
             case 'gating': {
                 component = (
-                    <>
-                        <div className="flex flex-col gap-4 w-full">
-                            <h2 className="text-lg font-semibold">Requirements</h2>
-                            <GatingOptions
-                                onUpdate={(option) => {
-                                    if (option.channels) {
-                                        updateConfig({
-                                            requirements: {
-                                                ...config.requirements,
-                                                channels: {
-                                                    ...config.requirements.channels,
-                                                    data: option.channels.data,
-                                                },
+                    <div className="flex flex-col gap-4 w-full">
+                        <h2 className="text-lg font-semibold">Requirements</h2>
+                        <GatingOptions
+                            onUpdate={(option) => {
+                                if (option.channels) {
+                                    updateConfig({
+                                        requirements: {
+                                            ...config.requirements,
+                                            channels: {
+                                                ...config.requirements.channels,
+                                                data: option.channels.data,
                                             },
-                                        })
-                                    } else {
-                                        updateConfig({
-                                            requirements: {
-                                                ...config.requirements,
-                                                ...option,
-                                            },
-                                        })
-                                    }
-                                }}
-                                config={config.requirements}
-                            />
-                        </div>
-                    </>
+                                        },
+                                    })
+                                } else {
+                                    updateConfig({
+                                        requirements: {
+                                            ...config.requirements,
+                                            ...option,
+                                        },
+                                    })
+                                }
+                            }}
+                            config={config.requirements}
+                        />
+                    </div>
                 )
+                break
             }
 
             case 'rewards': {
@@ -493,6 +490,8 @@ export default function Inspector() {
                         </div>
                     </>
                 )
+
+                break
             }
 
             default: {
@@ -529,7 +528,6 @@ export default function Inspector() {
 
     return (
         <div className="flex flex-col gap-5 w-full h-full">
-            <p>{JSON.stringify(config)}</p>
             <div className="grid grid-cols-3 gap-2 w-full">
                 {tabs.map((item) => (
                     <Button
