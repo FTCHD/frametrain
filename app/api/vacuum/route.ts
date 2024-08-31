@@ -21,24 +21,27 @@ export async function GET() {
         })
         const objects = await s3.listObjects({ Bucket: `${process.env.S3_BUCKET}` })
         const files = (objects.Contents ?? []).map((object) => object.Key) as string[]
-        const foundFiles: string[] = []
+        const filesFound: string[] = []
 
         console.log(`Found ${files.length} files in R2 and ${frames.length} frames in the database`)
 
         for (const frame of frames) {
             const draftConfig = frame.draftConfig ?? {}
-            const urls = collectFilePaths(draftConfig)
-            foundFiles.push(...urls)
+            const config = frame.config ?? {}
+            const storage = frame.storage ?? {}
+            const paths = collectFilePaths([draftConfig, config, storage])
+
+            filesFound.push(...paths)
         }
 
-        const filesToDelete = files.filter((file) => !foundFiles.includes(file))
+        const filesToDelete = files.filter((file) => !filesFound.includes(file))
 
         await deleteFilesFromR2(s3, filesToDelete)
 
         return Response.json({
             files: files.length,
             filesToDelete: filesToDelete.length,
-            foundFiles: foundFiles.length,
+            filesFound: filesFound.length,
         })
     } catch (e) {
         const error = e as Error
@@ -46,7 +49,7 @@ export async function GET() {
     }
 }
 
-function collectFilePaths(jsonObject: any): string[] {
+function collectFilePaths(configs: any[]): string[] {
     const baseUrl = `${process.env.NEXT_PUBLIC_CDN_HOST}/`
 
     const urls: string[] = []
@@ -65,7 +68,10 @@ function collectFilePaths(jsonObject: any): string[] {
         }
     }
 
-    traverse(jsonObject)
+    for (const config of configs) {
+        traverse(config)
+    }
+
     return urls
 }
 
