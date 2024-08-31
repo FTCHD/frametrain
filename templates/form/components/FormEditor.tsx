@@ -1,11 +1,9 @@
 'use client'
 
-import { useFrameConfig, useFrameStorage } from '@/sdk/hooks'
-import { corsFetch } from '@/sdk/scrape'
-import { useState } from 'react'
+import { useFarcasterId, useFarcasterName, useFrameConfig, useFrameStorage } from '@/sdk/hooks'
+import { useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { useDebouncedCallback } from 'use-debounce'
-import type { Config, fieldTypes, Storage } from '..'
+import type { Config, Storage, fieldTypes } from '..'
 
 import { Button } from '@/components/shadcn/Button'
 import {
@@ -30,8 +28,8 @@ import {
 } from '@/components/shadcn/Table'
 import { ColorPicker } from '@/sdk/components'
 import GatingOptions from '@/sdk/components/GatingOptions'
-import FormFieldEditor from './FormFieldEditor'
 import { humanizeTimestamp } from '../utils'
+import FormFieldEditor from './FormFieldEditor'
 
 function downloadCSV(storage: Storage, fileName: string, inputNames: string[]): void {
     // Column names
@@ -80,43 +78,24 @@ function downloadCSV(storage: Storage, fileName: string, inputNames: string[]): 
 export default function FormEditor({ isEditing = false }: { isEditing?: boolean }) {
     const storage = useFrameStorage() as Storage
     const [config, updateConfig] = useFrameConfig<Config>()
+    const fid = useFarcasterId()
+    const username = useFarcasterName()
 
     const enabledGating = config.enableGating ?? false
 
     const fields: fieldTypes[] = config.fields || []
 
-    const onChangeUsername = useDebouncedCallback(async (username: string) => {
-        if (username === '' || username === config.owner?.username) {
-            return
-        }
-
-        try {
-            const response = await corsFetch(
-                `https://api.warpcast.com/v2/user-by-username?username=${username}`
-            )
-
-            if (!response) return
-
-            const data = JSON.parse(response) as
-                | {
-                      result: { user: { fid: number; username: string } }
-                  }
-                | { errors: unknown[] }
-
-            if ('errors' in data) {
-                toast.error(`No FID associated with username ${username}`)
-                return
-            }
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        if (!config?.owner) {
             updateConfig({
                 owner: {
-                    fid: data.result.user.fid,
-                    username: data.result.user.username,
+                    username,
+                    fid,
                 },
             })
-        } catch {
-            toast.error('Failed to fetch FID')
         }
-    }, 1000)
+    }, [])
 
     return (
         <div>
@@ -193,15 +172,6 @@ export default function FormEditor({ isEditing = false }: { isEditing?: boolean 
                 >
                     Download CSV
                 </Button>
-            </div>
-            <div className="flex flex-col gap-2 w-full">
-                <h2 className="text-lg font-semibold">Your Farcaster username</h2>
-                <Input
-                    className="w-full"
-                    placeholder="eg. vitalik.eth"
-                    defaultValue={config.owner?.username}
-                    onChange={async (e) => onChangeUsername(e.target.value)}
-                />
             </div>
             <div className="flex flex-col gap-2">
                 <h2 className="text-2xl font-semibold">Messages</h2>

@@ -1,19 +1,17 @@
 'use client'
 
-import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import type { Config } from '.'
-import { type ReactNode, useRef, useState } from 'react'
-import { Input } from '@/components/shadcn/Input'
 import { Button } from '@/components/shadcn/Button'
-import { Trash } from 'lucide-react'
-import toast from 'react-hot-toast'
-import { useDebouncedCallback } from 'use-debounce'
-import GatingOptions from '@/sdk/components/GatingOptions'
-import { corsFetch } from '@/sdk/scrape'
-import { Separator } from '@/components/shadcn/Separator'
-import TextSlideEditor from '@/sdk/components/TextSlideEditor'
-import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
+import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/Label'
+import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
+import { Separator } from '@/components/shadcn/Separator'
+import GatingOptions from '@/sdk/components/GatingOptions'
+import TextSlideEditor from '@/sdk/components/TextSlideEditor'
+import { useFarcasterId, useFarcasterName, useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { Trash } from 'lucide-react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { useDebouncedCallback } from 'use-debounce'
+import type { Config } from '.'
 
 type MenuItem = {
     title: string
@@ -70,11 +68,11 @@ function sidebarNavItems(obj: {
     return menu
 }
 
-const warpcastBaseApiUrl = 'https://api.warpcast.com/v2'
-
 export default function Inspector() {
     const uploadImage = useUploadImage()
     const [config, updateConfig] = useFrameConfig<Config>()
+    const fid = useFarcasterId()
+    const username = useFarcasterName()
     const [activeTab, setActiveTab] = useState<NavBarItem['key']>('general')
     const disableLinksField = config.links?.length >= 4
 
@@ -88,6 +86,18 @@ export default function Inspector() {
     const tab = sidebarNavItems({ tab: activeTab, showOne: true })
     const tabs = sidebarNavItems({ tab: activeTab })
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        if (!config?.owner) {
+            updateConfig({
+                owner: {
+                    username,
+                    fid,
+                },
+            })
+        }
+    }, [])
+
     const onChangeLabel = useDebouncedCallback(async (label: string) => {
         if (label === config.label) {
             return
@@ -95,39 +105,6 @@ export default function Inspector() {
         updateConfig({
             label: label === '' ? null : label,
         })
-    }, 1000)
-
-    const onChangeUsername = useDebouncedCallback(async (username: string) => {
-        if (username === '' || username === config.owner?.username) {
-            return
-        }
-
-        try {
-            const response = await corsFetch(
-                `${warpcastBaseApiUrl}/user-by-username?username=${username}`
-            )
-
-            if (!response) return
-
-            const data = JSON.parse(response) as
-                | {
-                      result: { user: { fid: number; username: string } }
-                  }
-                | { errors: unknown[] }
-
-            if ('errors' in data) {
-                toast.error(`No FID associated with username ${username}`)
-                return
-            }
-            updateConfig({
-                owner: {
-                    fid: data.result.user.fid,
-                    username: data.result.user.username,
-                },
-            })
-        } catch {
-            toast.error('Failed to fetch FID')
-        }
     }, 1000)
 
     const renderTabSection = () => {
@@ -485,15 +462,6 @@ export default function Inspector() {
             default: {
                 component = (
                     <>
-                        <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg font-semibold">Your Farcaster username</h2>
-                            <Input
-                                className="w-full"
-                                placeholder="eg. vitalik.eth"
-                                defaultValue={config.owner?.username}
-                                onChange={async (e) => onChangeUsername(e.target.value)}
-                            />
-                        </div>
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold">Button Label</h2>
                             <Input

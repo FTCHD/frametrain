@@ -5,65 +5,35 @@ import { Label } from '@/components/shadcn/Label'
 import { Switch } from '@/components/shadcn/Switch'
 import { ColorPicker } from '@/sdk/components'
 import GatingOptions from '@/sdk/components/GatingOptions'
-import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { corsFetch } from '@/sdk/scrape'
-import { useRef } from 'react'
+import { useFarcasterId, useFarcasterName, useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { useEffect, useRef } from 'react'
 import { X } from 'react-feather'
 import toast from 'react-hot-toast'
-import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
     const uploadImage = useUploadImage()
     const enabledGating = config.enableGating ?? false
+    const fid = useFarcasterId()
+    const username = useFarcasterName()
 
     const { options, gating } = config
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
     const buttonLabelInputRef = useRef<HTMLInputElement>(null)
 
-    const onChangeUsername = useDebouncedCallback(async (username: string) => {
-        if (username === '') {
-            updateConfig({ owner: null })
-            toast.success('FID cleared')
-            return
-        }
-        if (username === config.owner?.username) {
-            return
-        }
-
-        try {
-            const response = await corsFetch(
-                `https://api.warpcast.com/v2/user-by-username?username=${username}`
-            )
-
-            if (!response) {
-                toast.error('No response from server')
-                return
-            }
-
-            const data = JSON.parse(response) as
-                | {
-                      result: { user: { fid: number; username: string } }
-                  }
-                | { errors: unknown[] }
-
-            if ('errors' in data) {
-                toast.error(`No FID associated with username ${username}`)
-                return
-            }
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        if (!config?.owner) {
             updateConfig({
                 owner: {
-                    fid: data.result.user.fid,
-                    username: data.result.user.username,
+                    username,
+                    fid,
                 },
             })
-            toast.success('FID fetched successfully')
-        } catch {
-            toast.error('Failed to fetch FID')
         }
-    }, 1000)
+    }, [])
 
     const handleGatingToggle = (enableGating: boolean) => {
         if (enableGating && !config.owner) {
@@ -75,15 +45,6 @@ export default function Inspector() {
 
     return (
         <div className="flex flex-col gap-5 w-full h-full">
-            <div className="flex flex-col gap-2 w-full">
-                <h2 className="text-lg font-semibold">Your Farcaster username for gating</h2>
-                <Input
-                    className="w-full"
-                    placeholder="eg. vitalik.eth"
-                    defaultValue={config.owner?.username}
-                    onChange={async (e) => onChangeUsername(e.target.value)}
-                />
-            </div>
             <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold">Question</h2>
                 <Input
