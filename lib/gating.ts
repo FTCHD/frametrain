@@ -189,8 +189,8 @@ export async function validateGatingOptions({
     user: { fid: number; username: string }
     option: GatingOptionsProps['config']
 }): Promise<{ message: string } | null> {
-    let message = 'Must'
-    let errorType: { message: string; type: string; target?: string } | null = null
+    let message = 'Must '
+    let errorType: { message: string; type: string } | null = null
     let withSuffix = true
 
     try {
@@ -276,7 +276,6 @@ export async function validateGatingOptions({
                     } else {
                         errorType = {
                             message: `${option.erc1155.balance} ${tokenInfo.name}`,
-                            target: option.erc1155.collection,
                             type: 'erc',
                         }
                     }
@@ -301,7 +300,6 @@ export async function validateGatingOptions({
                     } else {
                         errorType = {
                             message: `${option.erc721.balance} ${tokenInfo.name}`,
-                            target: option.erc721.collection,
                             type: 'erc',
                         }
                     }
@@ -319,34 +317,34 @@ export async function validateGatingOptions({
 
     switch (errorType.type) {
         case 'ctx': {
-            message += `${message} this frame`
+            message += `${errorType.message} this frame`
             break
         }
 
         case 'wallets': {
-            message += `have ${message} wallet connected`
+            message += `have ${errorType.message} wallet connected`
             break
         }
 
         case 'have': {
-            message += `have ${message}`
+            message += `have ${errorType.message}`
             break
         }
 
         case 'erc': {
-            message = `${message} holders only`
+            message = `${errorType.message} holders only`
             withSuffix = false
             break
         }
 
         case 'error': {
-            message = `Failed to check validate requirements: ${message}`
+            message = `Failed to check validate requirements: ${errorType.message}`
             withSuffix = false
             break
         }
 
         default: {
-            message += `${message}`
+            message += `${errorType.message}`
             break
         }
     }
