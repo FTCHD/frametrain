@@ -23,11 +23,11 @@ export async function GET() {
         const files = (objects.Contents ?? []).map((object) => object.Key) as string[]
         const foundFiles: string[] = []
 
-        console.log(`Found ${files.length} files in S3 and ${frames.length} frames in the database`)
+        console.log(`Found ${files.length} files in R2 and ${frames.length} frames in the database`)
 
         for (const frame of frames) {
-            const config = frame.config ?? {}
-            const urls = collectFilePaths(config)
+            const draftConfig = frame.draftConfig ?? {}
+            const urls = collectFilePaths(draftConfig)
             foundFiles.push(...urls)
         }
 
@@ -36,18 +36,9 @@ export async function GET() {
         await deleteFilesFromR2(s3, filesToDelete)
 
         return Response.json({
-            files: {
-                length: files.length,
-                files,
-            },
-            filesToDelete: {
-                length: filesToDelete.length,
-                files: filesToDelete,
-            },
-            foundFiles: {
-                length: foundFiles.length,
-                files: foundFiles,
-            },
+            files: files.length,
+            filesToDelete: filesToDelete.length,
+            foundFiles: foundFiles.length,
         })
     } catch (e) {
         const error = e as Error
