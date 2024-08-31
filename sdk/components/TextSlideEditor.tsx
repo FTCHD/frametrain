@@ -1,14 +1,8 @@
 'use client'
 
 import { Input } from '@/components/shadcn/Input'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
 import { Slider } from '@/components/shadcn/Slider'
+import { Select } from '@/sdk/components/Select'
 import { type ReactNode, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useUploadImage } from '../hooks'
@@ -250,18 +244,14 @@ export const TextSlideStyleConfig = ({
                 <h2 className="text-lg font-semibold">{name} Position</h2>
                 <Select
                     defaultValue={config?.position || 'center'}
-                    onValueChange={(position: 'left' | 'center' | 'right') => {
+                    onChange={(value) => {
+                        const position = value as 'left' | 'center' | 'right'
                         updateConfig({ ...config, position })
                     }}
                 >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Left" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value={'left'}>Left</SelectItem>
-                        <SelectItem value={'center'}>Center</SelectItem>
-                        <SelectItem value={'right'}>Right</SelectItem>
-                    </SelectContent>
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
                 </Select>
             </div>
         </>

@@ -2,13 +2,8 @@
 
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
+import { Select } from '@/sdk/components/Select'
+
 import { TextSlideStyleConfig } from '@/sdk/components/TextSlideEditor'
 import { Loader } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -134,22 +129,17 @@ export default function FormFieldEditor({
                         Data Type
                     </label>
                     <Select
-                        onValueChange={(e) => {
+                        onChange={(e) => {
                             const type = e as fieldTypes['fieldType']
                             setFieldType(type)
                         }}
                         defaultValue={'text'}
                     >
-                        <SelectTrigger className="w-full h-12">
-                            <SelectValue placeholder="Select Type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="text">Text</SelectItem>
-                            <SelectItem value="number">Number</SelectItem>
-                            <SelectItem value="email">Email</SelectItem>
-                            <SelectItem value="phone">Phone</SelectItem>
-                            <SelectItem value="address">Address</SelectItem>
-                        </SelectContent>
+                        <option value="text">Text</option>
+                        <option value="number">Number</option>
+                        <option value="email">Email</option>
+                        <option value="phone">Phone</option>
+                        <option value="address">Address</option>
                     </Select>
                 </div>
 

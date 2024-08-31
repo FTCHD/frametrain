@@ -3,13 +3,8 @@ import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/InputLabel'
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
+import { Select } from '@/sdk/components/Select'
+
 import { Separator } from '@/components/shadcn/Separator'
 import { Switch } from '@/components/shadcn/Switch'
 import { ColorPicker } from '@/sdk/components'
@@ -190,7 +185,8 @@ export default function Inspector() {
                             <Select
                                 defaultValue={config.token?.chain}
                                 disabled={!config.token?.address}
-                                onValueChange={async (chain: ChainKey) => {
+                                onChange={async (value) => {
+                                    const chain = value as ChainKey
                                     if (!config.token?.address) return
                                     try {
                                         const symbol = await getTokenSymbol(
@@ -210,16 +206,11 @@ export default function Inspector() {
                                     }
                                 }}
                             >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select Chain" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {supportedChains.map((chain) => (
-                                        <SelectItem key={chain.id} value={chain.key}>
-                                            {chain.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
+                                {supportedChains.map((chain) => (
+                                    <option key={chain.id} value={chain.key}>
+                                        {chain.label}
+                                    </option>
+                                ))}
                             </Select>
                         </div>
                         {showTokenFields ? (

@@ -1,23 +1,16 @@
 'use client'
 
 import { Button } from '@/components/shadcn/Button'
+import { Checkbox } from '@/components/shadcn/Checkbox'
 import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/Label'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
+import { Slider } from '@/components/shadcn/Slider'
+import { Select } from '@/sdk/components/Select'
+import { LoaderIcon, Trash } from 'lucide-react'
+import Link from 'next/link'
 import { type ReactNode, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { getFarcasterChannelbyName } from '../neynar'
-import { LoaderIcon, Trash } from 'lucide-react'
-import { Slider } from '@/components/shadcn/Slider'
-import Link from 'next/link'
-import { Checkbox } from '@/components/shadcn/Checkbox'
-
 export type GatingERCType = {
     network?: string
     address?: string
@@ -82,24 +75,19 @@ const TokenGating = ({
                 </Label>
                 <Select
                     defaultValue={defaultValues.network as string | undefined}
-                    onValueChange={(network) => {
+                    onChange={(network) => {
                         onChange({ ...defaultValues, network })
                     }}
                 >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select network" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="ETH">Ethereum MainNet</SelectItem>
-                        <SelectItem value="BASE">Base</SelectItem>
-                        <SelectItem value="OP">Optimism</SelectItem>
-                        <SelectItem value="ZORA">Zora</SelectItem>
-                        <SelectItem value="BLAST">Blast</SelectItem>
-                        <SelectItem value="POLYGON">Polygon</SelectItem>
-                        <SelectItem value="FANTOM">Fantom</SelectItem>
-                        <SelectItem value="ARBITRUM">Arbitrum</SelectItem>
-                        <SelectItem value="BNB">Bnb</SelectItem>
-                    </SelectContent>
+                    <option value="ETH">Ethereum MainNet</option>
+                    <option value="BASE">Base</option>
+                    <option value="OP">Optimism</option>
+                    <option value="ZORA">Zora</option>
+                    <option value="BLAST">Blast</option>
+                    <option value="POLYGON">Polygon</option>
+                    <option value="FANTOM">Fantom</option>
+                    <option value="ARBITRUM">Arbitrum</option>
+                    <option value="BNB">Bnb</option>
                 </Select>
             </div>
             <div className="flex flex-row items-center w-full gap-2">

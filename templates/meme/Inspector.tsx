@@ -1,13 +1,7 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
+import { Select } from '@/sdk/components/Select'
 import { useFrameConfig, useFrameId } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -89,22 +83,17 @@ export default function Inspector() {
                 <Select
                     disabled={generating}
                     defaultValue={selectedMeme?.id}
-                    onValueChange={(e) => {
+                    onChange={(e) => {
                         const meme = memeTemplates.find((meme) => meme.id === e)
 
                         if (meme) setSelectedMeme(meme)
                     }}
                 >
-                    <SelectTrigger className="w-full h-12">
-                        <SelectValue placeholder="Select a meme template" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {memeTemplates.map((meme) => (
-                            <SelectItem key={meme.id} value={meme.id}>
-                                {meme.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
+                    {memeTemplates.map((meme) => (
+                        <option key={meme.id} value={meme.id}>
+                            {meme.name}
+                        </option>
+                    ))}
                 </Select>
             </div>
 
@@ -184,15 +173,10 @@ export default function Inspector() {
                         <h3 className="text-base font-medium">Aspect Ratio</h3>
                         <Select
                             defaultValue={config.aspectRatio}
-                            onValueChange={(aspectRatio) => updateConfig({ aspectRatio })}
+                            onChange={(aspectRatio) => updateConfig({ aspectRatio })}
                         >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select aspect ratio" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="1:1">1:1 (Square)</SelectItem>
-                                <SelectItem value="1.91:1">1.91:1 (Widescreen)</SelectItem>
-                            </SelectContent>
+                            <option value="1:1">1:1 (Square)</option>
+                            <option value="1.91:1">1.91:1 (Widescreen)</option>
                         </Select>
                     </div>
 
