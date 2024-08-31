@@ -10,7 +10,6 @@ import type {
 import type { ReactElement } from 'react'
 import type { BaseStorage } from './types'
 
-// We use the version from OnchainKit because it doesn't set the `action` and `target` fields as required.
 export type FrameButtonMetadata =
     | {
           action?: 'post' | 'post_redirect' | undefined
@@ -28,7 +27,6 @@ export type FrameButtonMetadata =
           callback?: string
       }
 
-// Can also use FrameRequest type from onchainkit
 export type FrameActionPayload = FramesJSFrameActionPayload
 
 export type FrameValidatedActionPayload = NeynarValidatedFrameActionResponse
@@ -56,4 +54,41 @@ export interface BuildFrameData {
         data: Record<string, unknown>
     }[]
     transaction?: TransactionTargetResponse
+}
+
+export interface FrameData {
+    buttonIndex: number
+    castId: {
+        fid: number
+        hash: string
+    }
+    inputText: string
+    fid: number
+    messageHash: string
+    network: number
+    state: string
+    timestamp: number
+    transactionId?: string
+    url: string
+}
+
+export interface FrameRequest {
+    untrustedData: FrameData
+    trustedData: {
+        messageBytes: string
+    }
+}
+
+export type FrameImageMetadata = {
+    src: string
+    aspectRatio?: '1.91:1' | '1:1'
+}
+
+export type FrameMetadataType = {
+    buttons?: [FrameButtonMetadata, ...FrameButtonMetadata[]]
+    image: string | FrameImageMetadata
+    input?: { text: string }
+    postUrl?: string
+    refreshPeriod?: number
+    state?: object
 }

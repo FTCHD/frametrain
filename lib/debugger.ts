@@ -1,10 +1,6 @@
-import type {
-    FrameImageMetadata,
-    FrameMetadataType,
-    FrameRequest,
-} from '@coinbase/onchainkit/frame'
 import toast from 'react-hot-toast'
 import { z } from 'zod'
+import type { FrameImageMetadata, FrameMetadataType, FrameRequest } from './farcaster'
 import type { MockOptions } from './store'
 
 export async function simulateCall(
