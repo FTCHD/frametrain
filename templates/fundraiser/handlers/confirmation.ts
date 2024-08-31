@@ -64,8 +64,10 @@ export default async function confirmation({
     const client = getClient(config.token.chain)
     const glideConfig = getGlideConfig(client.chain)
 
-    const chain =
-        Object.keys(chains).find((chain) => (chains as any)[chain].id === client.chain.id) || 'base'
+    const chain = Object.keys(chains).find((chain) => (chains as any)[chain].id === client.chain.id)
+    if (!chain) {
+        throw new FrameError('Chain not found for the given client chain ID.')
+    }
 
     const paymentCurrencyOnChain = (currencies as any)[config.token.symbol.toLowerCase()].on(
         (chains as any)[chain]

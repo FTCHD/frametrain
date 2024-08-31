@@ -49,9 +49,9 @@ function sidebarNavItems(obj: {
             description: 'Configure the progress bar color.',
         },
         {
-            title: 'Fundraise',
-            key: 'fundraise',
-            description: 'Configure your fundraiser settings.',
+            title: 'Cover Slide',
+            key: 'cover',
+            description: 'Configure what shows up on the cover screen of your Frame.',
         },
         {
             title: 'About Slide',
@@ -59,9 +59,9 @@ function sidebarNavItems(obj: {
             description: 'Configure what shows up on the about slide of your Frame.',
         },
         {
-            title: 'Cover Slide',
-            key: 'cover',
-            description: 'Configure what shows up on the cover screen of your Frame.',
+            title: 'Fundraise',
+            key: 'fundraise',
+            description: 'Configure your fundraiser settings.',
         },
         {
             title: 'Success Slide',
@@ -85,7 +85,7 @@ function sidebarNavItems(obj: {
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
-    const [activeTab, setActiveTab] = useState<NavBarItem['key']>('cover')
+    const [activeTab, setActiveTab] = useState<NavBarItem['key']>('progress')
     const fid = useFarcasterId()
 
     const amounts = config.amounts || []
