@@ -44,7 +44,6 @@ export default async function vote({
     }
 
     if (buttonIndex !== pastIndex) {
-        // console.log('pastIndex', pastIndex)
         const revertPastVote = pastIndex
             ? {
                   [pastIndex]:

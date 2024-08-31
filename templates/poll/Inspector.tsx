@@ -7,7 +7,7 @@ import { ColorPicker } from '@/sdk/components'
 import GatingOptions from '@/sdk/components/GatingOptions'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { corsFetch } from '@/sdk/scrape'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { X } from 'react-feather'
 import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
@@ -16,7 +16,7 @@ import type { Config } from '.'
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
     const uploadImage = useUploadImage()
-    const [enableGating, setEnableGating] = useState<boolean>(config.enableGating ?? false)
+    const enabledGating = config.enableGating ?? false
 
     const { options, gating } = config
 
@@ -24,7 +24,12 @@ export default function Inspector() {
     const buttonLabelInputRef = useRef<HTMLInputElement>(null)
 
     const onChangeUsername = useDebouncedCallback(async (username: string) => {
-        if (username === '' || username === config.owner?.username) {
+        if (username === '') {
+            updateConfig({ owner: null })
+            toast.success('FID cleared')
+            return
+        }
+        if (username === config.owner?.username) {
             return
         }
 
@@ -54,23 +59,24 @@ export default function Inspector() {
                     username: data.result.user.username,
                 },
             })
-        } catch (error) {
-            console.error('Error fetching FID:', error)
+            toast.success('FID fetched successfully')
+        } catch {
             toast.error('Failed to fetch FID')
         }
     }, 1000)
-    const handleGatingToggle = (checked: boolean) => {
-        if (checked && !config.owner) {
+
+    const handleGatingToggle = (enableGating: boolean) => {
+        if (enableGating && !config.owner) {
             toast.error('Please configure your farcaster username before enabling Poll Gating')
             return
         }
-        setEnableGating(checked)
+        updateConfig({ enableGating })
     }
 
     return (
         <div className="flex flex-col gap-5 w-full h-full">
             <div className="flex flex-col gap-2 w-full">
-                <h2 className="text-lg font-semibold">Your Farcaster username</h2>
+                <h2 className="text-lg font-semibold">Your Farcaster username for gating</h2>
                 <Input
                     className="w-full"
                     placeholder="eg. vitalik.eth"
@@ -201,34 +207,41 @@ export default function Inspector() {
                 <Label className="font-md" htmlFor="gating">
                     Enable Poll Gating?
                 </Label>
-                <Switch id="gating" checked={enableGating} onCheckedChange={handleGatingToggle} />
+                <Switch id="gating" checked={enabledGating} onCheckedChange={handleGatingToggle} />
             </div>
 
-            {enableGating && gating && (
+            {enabledGating && (
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg font-semibold">Poll Gating options</h2>
                     <GatingOptions
                         onUpdate={(option) => {
-                            if (option.channels) {
-                                updateConfig({
-                                    gating: {
-                                        ...gating,
-                                        channels: {
-                                            ...gating.channels,
-                                            data: option.channels.data,
-                                        },
-                                    },
-                                })
-                            } else {
-                                updateConfig({
-                                    gating: {
-                                        ...config.gating,
-                                        ...option,
-                                    },
-                                })
-                            }
+                            updateConfig({
+                                gating: {
+                                    ...config.gating,
+                                    ...option,
+                                },
+                            })
                         }}
-                        config={gating}
+                        config={
+                            gating ?? {
+                                channels: {
+                                    checked: false,
+                                    data: [],
+                                },
+                                followedBy: false,
+                                following: false,
+                                liked: false,
+                                recasted: false,
+                                eth: false,
+                                sol: false,
+                                powerBadge: false,
+                                maxFid: 0,
+                                score: 0,
+                                erc20: null,
+                                erc721: null,
+                                erc1155: null,
+                            }
+                        }
                     />
                 </div>
             )}
