@@ -13,15 +13,15 @@ import {
 import { Separator } from '@/components/shadcn/Separator'
 import { Switch } from '@/components/shadcn/Switch'
 import { ColorPicker } from '@/sdk/components'
+import TextSlideEditor from '@/sdk/components/TextSlideEditor'
 import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { getFarcasterProfiles } from '@/sdk/neynar'
 import { Trash } from 'lucide-react'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import type { Config } from '.'
 import { type ChainKey, getTokenSymbol, supportedChains } from './common/onchain'
 import { formatSymbol } from './common/shared'
-import { getFarcasterProfiles } from '@/sdk/neynar'
-import TextSlideEditor from '@/sdk/components/TextSlideEditor'
 
 type MenuItem = {
     title: string
@@ -44,11 +44,6 @@ function sidebarNavItems(obj: {
 }): MenuItem | NavBarItem[] {
     const items: MenuItem[] = [
         {
-            title: 'Progress Bar',
-            key: 'progress',
-            description: 'Configure the progress bar color.',
-        },
-        {
             title: 'Cover Slide',
             key: 'cover',
             description: 'Configure what shows up on the cover screen of your Frame.',
@@ -62,6 +57,11 @@ function sidebarNavItems(obj: {
             title: 'Fundraise',
             key: 'fundraise',
             description: 'Configure your fundraiser settings.',
+        },
+        {
+            title: 'Progress Bar',
+            key: 'progress',
+            description: 'Configure the progress bar color.',
         },
         {
             title: 'Success Slide',

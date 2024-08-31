@@ -31,6 +31,8 @@ export default async function confirmation({
     const amounts = config.enablePredefinedAmounts ? config.amounts : []
     const lastButtonIndex = amounts.length + 1
     const isCustomAmount = buttonIndex === lastButtonIndex
+    const client = getClient(config.token.chain)
+    const glideConfig = getGlideConfig(client.chain)
 
     if (buttonIndex === 1) {
         return about({ config, body, storage: undefined })
@@ -57,43 +59,48 @@ export default async function confirmation({
         amount = config.amounts[buttonIndex - 1]
     }
 
-    if (!config.address.startsWith('0x')) {
-        address = await getAddressFromEns(address)
-    }
-
-    const client = getClient(config.token.chain)
-    const glideConfig = getGlideConfig(client.chain)
-
     const chain = Object.keys(chains).find((chain) => (chains as any)[chain].id === client.chain.id)
     if (!chain) {
         throw new FrameError('Chain not found for the given client chain ID.')
     }
 
-    const paymentCurrencyOnChain = (currencies as any)[config.token.symbol.toLowerCase()].on(
-        (chains as any)[chain]
-    )
+    try {
+        if (!config.address.startsWith('0x')) {
+            address = await getAddressFromEns(address)
+        }
 
-    const session = await createSession(glideConfig, {
-        paymentAmount: amount,
-        chainId: client.chain.id,
-        paymentCurrency: paymentCurrencyOnChain,
-        address,
-    })
+        const paymentCurrencyOnChain = (currencies as any)[config.token.symbol.toLowerCase()].on(
+            (chains as any)[chain]
+        )
 
-    return {
-        buttons: [
-            {
-                label: 'Back',
-            },
-            {
-                label: 'Confirm',
-                action: 'tx',
-                handler: 'txData',
-            },
-        ],
-        fonts: roboto,
-        component: ConfirmationView({ config, amount: formatSymbol(amount, config.token.symbol) }),
-        handler: 'status',
-        params: { sessionId: session.sessionId },
+        const session = await createSession(glideConfig, {
+            paymentAmount: amount,
+            chainId: client.chain.id,
+            paymentCurrency: paymentCurrencyOnChain,
+            address,
+        })
+
+        return {
+            buttons: [
+                {
+                    label: 'Back',
+                },
+                {
+                    label: 'Confirm',
+                    action: 'tx',
+                    handler: 'txData',
+                },
+            ],
+            fonts: roboto,
+            component: ConfirmationView({
+                config,
+                amount: formatSymbol(amount, config.token.symbol),
+            }),
+            handler: 'status',
+            params: { sessionId: session.sessionId },
+        }
+    } catch (e) {
+        const error = e as Error
+        throw new FrameError(error.message)
     }
 }
