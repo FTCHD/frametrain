@@ -29,10 +29,10 @@ export default async function confirmation({
 
     const buttonIndex = body.validatedData.tapped_button.index as number
     const amounts = config.enablePredefinedAmounts ? config.amounts : []
-    const lastButtonIndex = amounts.length + 1
+    const lastButtonIndex = amounts.length + 2
     const isCustomAmount = buttonIndex === lastButtonIndex
-    const client = getClient(config.token.chain)
-    const glideConfig = getGlideConfig(client.chain)
+    const tokenClient = getClient(config.token.chain)
+    const glideConfig = getGlideConfig(tokenClient.chain)
 
     if (buttonIndex === 1) {
         return about({ config, body, storage: undefined })
@@ -56,10 +56,13 @@ export default async function confirmation({
         amount = Number.parseFloat(textInput)
     } else {
         // Handle predefined amounts
-        amount = config.amounts[buttonIndex - 1]
+        amount = config.amounts[buttonIndex - 2]
     }
 
-    const chain = Object.keys(chains).find((chain) => (chains as any)[chain].id === client.chain.id)
+    const chain = Object.keys(chains).find(
+        (chain) => (chains as any)[chain].id === tokenClient.chain.id
+    )
+
     if (!chain) {
         throw new FrameError('Chain not found for the given client chain ID.')
     }
@@ -75,7 +78,7 @@ export default async function confirmation({
 
         const session = await createSession(glideConfig, {
             paymentAmount: amount,
-            chainId: client.chain.id,
+            chainId: tokenClient.chain.id,
             paymentCurrency: paymentCurrencyOnChain,
             address,
         })

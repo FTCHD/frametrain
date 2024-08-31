@@ -85,7 +85,7 @@ function sidebarNavItems(obj: {
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
-    const [activeTab, setActiveTab] = useState<NavBarItem['key']>('progress')
+    const [activeTab, setActiveTab] = useState<NavBarItem['key']>('cover')
     const fid = useFarcasterId()
 
     const amounts = config.amounts || []
@@ -186,7 +186,7 @@ export default function Inspector() {
                             />
                         </div>
                         <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg">Token Chain</h2>
+                            <h2 className="text-lg">Token & Fundraise Address Chain</h2>
                             <Select
                                 defaultValue={config.token?.chain}
                                 disabled={!config.token?.address}
@@ -590,7 +590,6 @@ export default function Inspector() {
             case 'progress': {
                 return (
                     <div className="flex flex-col gap-2 w-full">
-                        {JSON.stringify(config, null, 2)}
                         <h2 className="text-lg font-semibold">Progress bar Color</h2>
                         <ColorPicker
                             className="w-full"
