@@ -1,17 +1,17 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
-import { ColorPicker } from '@/sdk/components'
-import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { useRef, useState } from 'react'
-import { X } from 'react-feather'
-import type { Config } from '.'
 import { Label } from '@/components/shadcn/Label'
 import { Switch } from '@/components/shadcn/Switch'
+import { ColorPicker } from '@/sdk/components'
 import GatingOptions from '@/sdk/components/GatingOptions'
+import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { corsFetch } from '@/sdk/scrape'
+import { useRef, useState } from 'react'
+import { X } from 'react-feather'
 import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
-import { corsFetch } from '@/sdk/scrape'
+import type { Config } from '.'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -33,7 +33,10 @@ export default function Inspector() {
                 `https://api.warpcast.com/v2/user-by-username?username=${username}`
             )
 
-            if (!response) return
+            if (!response) {
+                toast.error('No response from server')
+                return
+            }
 
             const data = JSON.parse(response) as
                 | {
@@ -51,10 +54,18 @@ export default function Inspector() {
                     username: data.result.user.username,
                 },
             })
-        } catch {
+        } catch (error) {
+            console.error('Error fetching FID:', error)
             toast.error('Failed to fetch FID')
         }
     }, 1000)
+    const handleGatingToggle = (checked: boolean) => {
+        if (checked && !config.owner) {
+            toast.error('Please configure your farcaster username before enabling Poll Gating')
+            return
+        }
+        setEnableGating(checked)
+    }
 
     return (
         <div className="flex flex-col gap-5 w-full h-full">
@@ -190,19 +201,7 @@ export default function Inspector() {
                 <Label className="font-md" htmlFor="gating">
                     Enable Poll Gating?
                 </Label>
-                <Switch
-                    id="gating"
-                    checked={enableGating}
-                    onCheckedChange={(checked) => {
-                        if (checked && !config.owner) {
-                            toast.error(
-                                'Please configure your farcaster username before enabling Poll Gating'
-                            )
-                            return
-                        }
-                        setEnableGating(checked)
-                    }}
-                />
+                <Switch id="gating" checked={enableGating} onCheckedChange={handleGatingToggle} />
             </div>
 
             {enableGating && gating && (
