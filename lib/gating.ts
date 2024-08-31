@@ -1,9 +1,9 @@
-import { getFarcasterUserChannels } from '@/sdk/neynar'
-import { http, createPublicClient, parseAbi, getAddress, formatUnits } from 'viem'
-import type { Abi, Chain } from 'viem'
-import { base, mainnet, optimism, zora, blast, arbitrum, fantom, polygon, bsc } from 'viem/chains'
-import type { FarcasterUserInfo } from './farcaster'
 import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
+import { getFarcasterUserChannels } from '@/sdk/neynar'
+import { http, createPublicClient, formatUnits, getAddress, parseAbi } from 'viem'
+import type { Abi, Chain } from 'viem'
+import { arbitrum, base, blast, bsc, fantom, mainnet, optimism, polygon, zora } from 'viem/chains'
+import type { FarcasterUserInfo } from './farcaster'
 
 const neynarApiBaseUrl = 'https://api.neynar.com/v2'
 
@@ -188,8 +188,8 @@ export async function validateGatingOptions({
     cast: { liked: boolean; recasted: boolean }
     user: { fid: number; username: string }
     option: GatingOptionsProps['config']
-}): Promise<{ message: string; target?: string } | null> {
-    let error: { message: string; target?: string } = { message: 'Must' }
+}): Promise<{ message: string } | null> {
+    let message = 'Must'
     let errorType: { message: string; type: string; target?: string } | null = null
     let withSuffix = true
 
@@ -319,42 +319,39 @@ export async function validateGatingOptions({
 
     switch (errorType.type) {
         case 'ctx': {
-            error.message += `${error.message} this frame`
+            message += `${message} this frame`
             break
         }
 
         case 'wallets': {
-            error.message += `have ${error.message} wallet connected`
+            message += `have ${message} wallet connected`
             break
         }
 
         case 'have': {
-            error.message += `have ${error.message}`
+            message += `have ${message}`
             break
         }
 
         case 'erc': {
-            error.message = `${error.message} holders only`
+            message = `${message} holders only`
             withSuffix = false
             break
         }
 
         case 'error': {
-            error.message = `Failed to check validate requirements: ${error.message}`
+            message = `Failed to check validate requirements: ${message}`
             withSuffix = false
             break
         }
 
         default: {
-            error.message += `${error.message}`
+            message += `${message}`
             break
         }
     }
 
-    error = {
-        message: `${error.message} ${withSuffix ? ' to reveal' : ''}`,
-        target: errorType.target,
-    }
+    message = `${message} ${withSuffix ? ' to reveal' : ''}`
 
-    return error
+    return { message }
 }
