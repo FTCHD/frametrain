@@ -4,7 +4,6 @@ import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaste
 import TextSlide from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import { bytesToHex } from 'viem'
 import type { Config, Storage } from '..'
 import initial from './initial'
 
@@ -22,8 +21,6 @@ export default async function success({
         | undefined
 }): Promise<BuildFrameData> {
     const transactionId = body.validatedData.transaction?.hash
-        ? bytesToHex(body.validatedData.transaction.hash)
-        : undefined
     const buttonIndex = body.validatedData.tapped_button?.index || 1
 
     if (!config.pool) {
