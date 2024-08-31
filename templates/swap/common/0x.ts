@@ -109,7 +109,7 @@ export async function fetchPrice({
     url.searchParams.append('feeRecipientTradeSurplus', FEE_RECIPIENT)
 
     const response = await corsFetch(url.toString(), {
-        headers: { '0x-api-key': process.env.ZEROX_API_KEY || '' },
+        headers: { '0x-api-key': process.env.ZEROEX_API_KEY || '' },
     })
 
     if (!response) return null
@@ -170,7 +170,7 @@ export async function fetchQuote({
     url.searchParams.append('feeRecipientTradeSurplus', FEE_RECIPIENT)
 
     const response = await corsFetch(url.toString(), {
-        headers: { '0x-api-key': process.env.ZEROX_API_KEY || '' },
+        headers: { '0x-api-key': process.env.ZEROEX_API_KEY || '' },
     })
 
     if (!response) return null
