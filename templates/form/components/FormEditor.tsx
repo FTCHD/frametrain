@@ -81,7 +81,7 @@ export default function FormEditor({ isEditing = false }: { isEditing?: boolean 
     const storage = useFrameStorage() as Storage
     const [config, updateConfig] = useFrameConfig<Config>()
 
-    const [enableGating, setEnableGating] = useState<boolean>(config.enableGating ?? false)
+    const enabledGating = config.enableGating ?? false
 
     const fields: fieldTypes[] = config.fields || []
 
@@ -334,42 +334,30 @@ export default function FormEditor({ isEditing = false }: { isEditing?: boolean 
                 </Label>
                 <Switch
                     id="gating"
-                    checked={enableGating}
-                    onCheckedChange={(checked) => {
-                        if (checked && !config.owner) {
+                    checked={enabledGating}
+                    onCheckedChange={(enableGating) => {
+                        if (enableGating && !config.owner) {
                             toast.error(
-                                'Please configure your farcaster username before enabling Form Gating'
+                                'Please configure your farcaster username before enabling Poll Gating'
                             )
                             return
                         }
-                        setEnableGating(checked)
+                        updateConfig({ enableGating })
                     }}
                 />
             </div>
 
-            {enableGating && config.gating && (
+            {enabledGating && (
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg font-semibold">Form Gating options</h2>
                     <GatingOptions
                         onUpdate={(option) => {
-                            if (option.channels) {
-                                updateConfig({
-                                    gating: {
-                                        ...config.gating,
-                                        channels: {
-                                            ...(config.gating?.channels ?? {}),
-                                            data: option.channels.data,
-                                        },
-                                    },
-                                })
-                            } else {
-                                updateConfig({
-                                    gating: {
-                                        ...config.gating,
-                                        ...option,
-                                    },
-                                })
-                            }
+                            updateConfig({
+                                gating: {
+                                    ...config.gating,
+                                    ...option,
+                                },
+                            })
                         }}
                         config={config.gating}
                     />

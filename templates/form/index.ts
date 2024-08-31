@@ -31,7 +31,7 @@ export interface Config extends BaseConfig {
     shareText: string
     frameId: string | undefined
     allowDuplicates: boolean
-    gating?: GatingOptionsProps['config']
+    gating: GatingOptionsProps['config']
     enableGating?: boolean
 }
 

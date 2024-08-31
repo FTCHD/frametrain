@@ -263,24 +263,12 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold">Requirements</h2>
                         <GatingOptions
                             onUpdate={(option) => {
-                                if (option.channels) {
-                                    updateConfig({
-                                        requirements: {
-                                            ...config.requirements,
-                                            channels: {
-                                                ...config.requirements.channels,
-                                                data: option.channels.data,
-                                            },
-                                        },
-                                    })
-                                } else {
-                                    updateConfig({
-                                        requirements: {
-                                            ...config.requirements,
-                                            ...option,
-                                        },
-                                    })
-                                }
+                                updateConfig({
+                                    requirements: {
+                                        ...config.requirements,
+                                        ...option,
+                                    },
+                                })
                             }}
                             config={config.requirements}
                         />
