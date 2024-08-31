@@ -5,10 +5,10 @@ import type {
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
 import { validateGatingOptions } from '@/lib/gating'
-import { FrameError } from '@/sdk/error'
-import type { Config } from '..'
 import TextSlide from '@/sdk/components/TextSlide'
+import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import type { Config } from '..'
 
 export default async function page({
     body,
@@ -66,7 +66,7 @@ export default async function page({
         })
     } else {
         buttons.push({
-            label: 'Create Your Own Frame',
+            label: 'Create Your Own',
             action: 'link',
             target: 'https://frametra.in',
         })

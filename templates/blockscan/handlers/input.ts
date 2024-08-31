@@ -134,7 +134,7 @@ export default async function functionHandler({
 
     if (signatureIndex === signatures.length) {
         buttons.push({
-            label: 'Create Your Own Frame',
+            label: 'Create Your Own',
             action: 'link',
             target: 'https://frametra.in',
         })

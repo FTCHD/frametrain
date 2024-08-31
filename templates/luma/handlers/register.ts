@@ -1,8 +1,8 @@
 'use server'
 
+import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import type { Config, Storage } from '..'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import SuccessView from '../views/Success'
 
 export async function register({
@@ -93,7 +93,7 @@ export async function register({
                 label: 'Back',
             },
             {
-                label: 'Create Your Own Frame',
+                label: 'Create Your Own',
                 action: 'link',
                 target: 'https://frametra.in',
             },
