@@ -529,8 +529,13 @@ export default function Inspector() {
                                 onValueChange={(val) => {
                                     const value = val as 'image' | 'text'
                                     setSuccessType(value as typeof successType)
-                                    if (val === 'text' && config.coverImage)
-                                        updateConfig({ coverImage: null })
+                                    if (val === 'text' && config.success.image)
+                                        updateConfig({
+                                            success: {
+                                                ...config.success,
+                                                image: null,
+                                            },
+                                        })
                                 }}
                             >
                                 <div className="flex items-center space-x-2">
