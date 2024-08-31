@@ -17,27 +17,21 @@ export default async function initial({
 }): Promise<BuildFrameData> {
     const buttons: FrameButtonMetadata[] = []
     // try {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
     let newStorage = storage
 
     if (config.coverMessage?.fontFamily) {
-        const customMessageFont = await loadGoogleFontAllVariants(config.coverMessage.fontFamily)
-        fonts.push(...customMessageFont)
+        fontSet.add(config.coverMessage.fontFamily)
     }
 
     if (config.pairName?.fontFamily) {
-        const pairNameFont = await loadGoogleFontAllVariants(config.pairName.fontFamily)
-        fonts.push(...pairNameFont)
+        fontSet.add(config.pairName.fontFamily)
     }
 
     if (pool) {
-        const customFonts = await Promise.all([
-            loadGoogleFontAllVariants('Inter'),
-            loadGoogleFontAllVariants('Nunito'),
-        ])
-
-        fonts.push(...customFonts.flat())
+        fontSet.add('Inter')
+        fontSet.add('Nunito')
 
         buttons.push({
             label: 'Buy',
@@ -108,6 +102,11 @@ export default async function initial({
             }),
             handler: 'estimate',
         }
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
     }
 
     return {

@@ -16,12 +16,16 @@ export default async function duration({
     body: FrameActionPayloadValidated
     config: Config
 }): Promise<BuildFrameData> {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
 
     if (config?.fontFamily) {
-        const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
-        fonts.push(...titleFont)
+        fontSet.add(config.fontFamily)
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
     }
 
     let containsUserFID = true

@@ -17,7 +17,8 @@ export default async function confirmation({
     config: Config
     storage: undefined
 }): Promise<BuildFrameData> {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
 
     if (!config.address) {
         throw new FrameError('Fundraiser address not found.')
@@ -25,6 +26,18 @@ export default async function confirmation({
 
     if (!(config.token?.chain && config.token.symbol)) {
         throw new FrameError('Fundraiser token not found.')
+    }
+
+    if (config.cover.title?.fontFamily) {
+        fontSet.add(config.cover.title.fontFamily)
+    }
+
+    if (config.cover.subtitle?.fontFamily) {
+        fontSet.add(config.cover.subtitle.fontFamily)
+    }
+
+    if (config.cover.bottomMessage?.fontFamily) {
+        fontSet.add(config.cover.bottomMessage.fontFamily)
     }
 
     const buttonIndex = body.validatedData.tapped_button.index as number
@@ -83,6 +96,11 @@ export default async function confirmation({
             address,
         })
 
+        for (const font of fontSet) {
+            const loadedFont = await loadGoogleFontAllVariants(font)
+            fonts.push(...loadedFont)
+        }
+
         return {
             buttons: [
                 {
@@ -94,7 +112,7 @@ export default async function confirmation({
                     handler: 'txData',
                 },
             ],
-            fonts: roboto,
+            fonts,
             component: ConfirmationView({
                 config,
                 amount: formatSymbol(amount, config.token.symbol),

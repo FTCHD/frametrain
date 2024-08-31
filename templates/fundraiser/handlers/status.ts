@@ -44,22 +44,24 @@ export default async function status({
         throw new FrameError('Session Id is missing')
     }
 
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
 
     if (config.success.title?.fontFamily) {
-        const titleFont = await loadGoogleFontAllVariants(config.success.title.fontFamily)
-        fonts.push(...titleFont)
+        fontSet.add(config.success.title.fontFamily)
     }
 
     if (config.success.subtitle?.fontFamily) {
-        const subtitleFont = await loadGoogleFontAllVariants(config.success.subtitle.fontFamily)
-        fonts.push(...subtitleFont)
+        fontSet.add(config.success.subtitle.fontFamily)
     }
 
     if (config.success.bottomMessage?.fontFamily) {
-        const customFont = await loadGoogleFontAllVariants(config.success.bottomMessage.fontFamily)
-        fonts.push(...customFont)
+        fontSet.add(config.success.bottomMessage.fontFamily)
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
     }
 
     const txHash = (

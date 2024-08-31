@@ -26,8 +26,8 @@ export default async function functionHandler({
         throw new FrameError('Smart Contract config is missing')
     }
 
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
     const buttons: FrameButtonMetadata[] = [
         {
             label: '←',
@@ -69,20 +69,17 @@ export default async function functionHandler({
         },
     }
 
-    // Load additional fonts if specified in the view configuration
-    const loadAdditionalFonts = async (fontFamily?: string) => {
-        if (fontFamily) {
-            const additionalFonts = await loadGoogleFontAllVariants(fontFamily)
-            fonts.push(...additionalFonts)
-        }
+    if (view.title?.fontFamily) {
+        fontSet.add(view.title.fontFamily)
     }
 
-    // Load additional fonts specified in the view configuration
-    await Promise.all(
-        [view.title.fontFamily, view.subtitle.fontFamily, view.bottomMessage?.fontFamily]
-            .filter(Boolean)
-            .map(loadAdditionalFonts)
-    )
+    if (view.subtitle?.fontFamily) {
+        fontSet.add(view.subtitle.fontFamily)
+    }
+
+    if (view.bottomMessage?.fontFamily) {
+        fontSet.add(view.bottomMessage.fontFamily)
+    }
 
     const chain = chainByChainId[config.etherscan.chainId]
     if (!chain) {
@@ -121,6 +118,11 @@ export default async function functionHandler({
             action: 'link',
             target: 'https://frametra.in',
         })
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
     }
 
     return {

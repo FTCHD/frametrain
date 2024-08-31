@@ -24,5 +24,5 @@ export default async function initial({
         buildData.fonts = await loadGoogleFontAllVariants('Roboto')
     }
 
-    return buildData as BuildFrameData
+    return buildData as unknown as BuildFrameData
 }

@@ -17,12 +17,16 @@ export default async function initial({
     const buttons: FrameButtonMetadata[] = []
     let info: RssFeed | null = null
     let newStorage = storage
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
 
     if (config.fontFamily) {
-        const customMessageFont = await loadGoogleFontAllVariants(config.fontFamily)
-        fonts.push(...customMessageFont)
+        fontSet.add(config.fontFamily)
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
     }
 
     if (config.rssUrl) {

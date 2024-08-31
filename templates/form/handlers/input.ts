@@ -3,7 +3,6 @@ import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaste
 import { validateGatingOptions } from '@/lib/gating'
 import TextSlide from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import { UsersState, removeFidFromUserState, updateUserState } from '../state'
 import { getIndexForFid, loadFontsAndtextElements, validateField } from '../utils'
@@ -25,8 +24,6 @@ export default async function input({
     storage: Storage
     params?: { from: string }
 }): Promise<BuildFrameData> {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
     const viewer = body.validatedData.interactor
     const cast = body.validatedData.cast
     const fid = viewer.fid
@@ -217,9 +214,8 @@ export default async function input({
             return about({ config })
         case 'input': {
             const field = config.fields[UsersState[fid].inputFieldNumber]
-            const { title, subtitle, bottomMessage, ...loaded } =
-                await loadFontsAndtextElements(field)
-            fonts.push(...loaded.fonts)
+            const { title, subtitle, bottomMessage, fonts } = await loadFontsAndtextElements(field)
+
             return {
                 fonts,
                 buttons: [
@@ -317,8 +313,7 @@ export default async function input({
     updateUserState(fid, { pageType: 'init', inputValues: [] })
 
     const field = config.fields[UsersState[fid].inputFieldNumber]
-    const { title, subtitle, bottomMessage, ...loaded } = await loadFontsAndtextElements(field)
-    fonts.push(...loaded.fonts)
+    const { title, subtitle, bottomMessage, fonts } = await loadFontsAndtextElements(field)
 
     return {
         fonts,

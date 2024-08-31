@@ -1,10 +1,10 @@
 'use server'
 
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
+import TextSlide from '@/sdk/components/TextSlide'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
 import { formatSymbol } from '../common/shared'
-import TextSlide from '@/sdk/components/TextSlide'
 
 export default async function initial({
     config,
@@ -13,8 +13,8 @@ export default async function initial({
     config: Config
     storage: undefined
 }): Promise<BuildFrameData> {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
     const buttons: FrameButtonMetadata[] = [
         {
             label: 'About',
@@ -22,18 +22,15 @@ export default async function initial({
     ]
 
     if (config.cover.title?.fontFamily) {
-        const titleFont = await loadGoogleFontAllVariants(config.cover.title.fontFamily)
-        fonts.push(...titleFont)
+        fontSet.add(config.cover.title.fontFamily)
     }
 
     if (config.cover.subtitle?.fontFamily) {
-        const subtitleFont = await loadGoogleFontAllVariants(config.cover.subtitle.fontFamily)
-        fonts.push(...subtitleFont)
+        fontSet.add(config.cover.subtitle.fontFamily)
     }
 
     if (config.cover.bottomMessage?.fontFamily) {
-        const customFont = await loadGoogleFontAllVariants(config.cover.bottomMessage.fontFamily)
-        fonts.push(...customFont)
+        fontSet.add(config.cover.bottomMessage.fontFamily)
     }
 
     if (config.token?.symbol && config.enablePredefinedAmounts && config.amounts.length) {
@@ -50,6 +47,11 @@ export default async function initial({
         buttons.push({
             label: 'Donate',
         })
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
     }
 
     return {

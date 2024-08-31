@@ -66,7 +66,8 @@ export function validateField(
 }
 
 export async function loadFontsAndtextElements(field: fieldTypes) {
-    const fonts = []
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
     const title = {
         text: field.fieldName,
         ...field.fieldNameStyle,
@@ -79,19 +80,21 @@ export async function loadFontsAndtextElements(field: fieldTypes) {
         text: `Example: ${field.fieldExample}`,
         ...field.fieldExampleStyle,
     }
-    if (field.fieldNameStyle?.fontFamily) {
-        const nameFont = await loadGoogleFontAllVariants(field.fieldNameStyle.fontFamily)
-        fonts.push(...nameFont)
+    if (title?.fontFamily) {
+        fontSet.add(title.fontFamily)
     }
 
-    if (field.fieldDescriptionStyle?.fontFamily) {
-        const descFont = await loadGoogleFontAllVariants(field.fieldDescriptionStyle.fontFamily)
-        fonts.push(...descFont)
+    if (subtitle?.fontFamily) {
+        fontSet.add(subtitle.fontFamily)
     }
 
-    if (field.fieldExampleStyle?.fontFamily) {
-        const exampleFont = await loadGoogleFontAllVariants(field.fieldExampleStyle.fontFamily)
-        fonts.push(...exampleFont)
+    if (bottomMessage?.fontFamily) {
+        fontSet.add(bottomMessage.fontFamily)
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
     }
 
     return { title, subtitle, bottomMessage, fonts }

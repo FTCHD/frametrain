@@ -37,23 +37,24 @@ export default async function page({
     if (validated !== null) {
         throw new FrameError(validated.message)
     }
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
 
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
-
-    if (config.success.title.fontFamily) {
-        const titleFont = await loadGoogleFontAllVariants(config.success.title.fontFamily)
-        fonts.push(...titleFont)
+    if (config.success.title?.fontFamily) {
+        fontSet.add(config.success.title.fontFamily)
     }
 
-    if (config.success.subtitle.fontFamily) {
-        const subtitleFont = await loadGoogleFontAllVariants(config.success.subtitle.fontFamily)
-        fonts.push(...subtitleFont)
+    if (config.success.subtitle?.fontFamily) {
+        fontSet.add(config.success.subtitle.fontFamily)
     }
 
     if (config.success.bottomMessage?.fontFamily) {
-        const customFont = await loadGoogleFontAllVariants(config.success.bottomMessage.fontFamily)
-        fonts.push(...customFont)
+        fontSet.add(config.success.bottomMessage.fontFamily)
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
     }
 
     if (config.links.length) {

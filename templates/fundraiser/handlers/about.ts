@@ -11,22 +11,24 @@ export default async function about({
     config: Config
     storage: undefined
 }): Promise<BuildFrameData> {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
 
     if (config.about.title?.fontFamily) {
-        const titleFont = await loadGoogleFontAllVariants(config.about.title.fontFamily)
-        fonts.push(...titleFont)
+        fontSet.add(config.about.title.fontFamily)
     }
 
     if (config.about.subtitle?.fontFamily) {
-        const subtitleFont = await loadGoogleFontAllVariants(config.about.subtitle.fontFamily)
-        fonts.push(...subtitleFont)
+        fontSet.add(config.about.subtitle.fontFamily)
     }
 
     if (config.about.bottomMessage?.fontFamily) {
-        const customFont = await loadGoogleFontAllVariants(config.about.bottomMessage.fontFamily)
-        fonts.push(...customFont)
+        fontSet.add(config.about.bottomMessage.fontFamily)
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
     }
 
     return {

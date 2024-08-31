@@ -50,21 +50,12 @@ export default async function page({
     }
 
     const tweet = config.tweets[nextPage - 1]
-
-    const fonts = []
-
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    fonts.push(...roboto)
-
-    if (tweet?.fontFamily) {
-        const font = await loadGoogleFontAllVariants(tweet.fontFamily)
-        fonts.push(...font)
-    }
+    const fonts = await loadGoogleFontAllVariants(tweet?.fontFamily ?? 'Roboto')
 
     return {
         buttons: buttons,
         aspectRatio: '1.91:1',
-        fonts: fonts,
+        fonts,
         component: PageView({
             profile: config.profile,
             ...tweet,
