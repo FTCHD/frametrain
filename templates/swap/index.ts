@@ -33,7 +33,7 @@ export interface Config extends BaseConfig {
     success: TextSlideProps & {
         image?: string
     }
-    backgroundColor: string
+    background: string
     coverMessage?: TextSlideProps['title']
     pairName?: TextSlideProps['title']
 }
@@ -52,7 +52,7 @@ export default {
     Inspector,
     handlers,
     initialConfig: {
-        backgroundColor: 'black',
+        background: '#000000',
         amounts: [],
         enablePredefinedAmounts: false,
         pool: null,

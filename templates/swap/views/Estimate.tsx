@@ -8,7 +8,7 @@ type Token = {
 type Config = {
     coverMessage?: BaseConfig['coverMessage']
     pairName?: BaseConfig['pairName']
-    backgroundColor?: BaseConfig['backgroundColor']
+    background: BaseConfig['background']
     token0: Token
     token1: Token
     network?: string
@@ -36,17 +36,16 @@ export default function EstimateView(props?: Config) {
             </div>
         )
     }
+
     const { token0, token1, ...config } = props
     const backgroundProp: Record<string, string> = {}
-    if (config.backgroundColor) {
-        if (config.backgroundColor?.startsWith('#')) {
-            backgroundProp['backgroundColor'] = config.backgroundColor
-        } else {
-            backgroundProp['backgroundImage'] = config.backgroundColor
-        }
+
+    if (config.background?.startsWith('#')) {
+        backgroundProp['backgroundColor'] = config.background
     } else {
-        backgroundProp['backgroundColor'] = '#black'
+        backgroundProp['backgroundImage'] = config.background
     }
+
     const assets = [
         {
             name: token0.symbol,
@@ -61,8 +60,8 @@ export default function EstimateView(props?: Config) {
         <div
             tw="flex flex-col w-full h-full overflow-hidden rounded-sm p-4"
             style={{
-                ...backgroundProp,
                 gap: 30,
+                ...backgroundProp,
             }}
         >
             <div
