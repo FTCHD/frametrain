@@ -46,21 +46,12 @@ export default async function functionHandler({
                 : currentIndex - 1
             : currentIndex + 1
 
-    console.log({ buttonIndex, currentIndex, signatureIndex })
-
     if (signatureIndex < 0 || signatureIndex >= signatures.length) {
         return initial({ config })
     }
 
     const { argStr, args, ...signature } = getSignature(signatures, signatureIndex, textInput)
     const functionName = signature.name
-
-    console.log({
-        buttonIndex,
-        currentIndex,
-        signatureIndex,
-        args: args.length,
-    })
 
     const view: TextSlideProps = {
         ...config.functionSlide,
