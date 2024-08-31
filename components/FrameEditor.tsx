@@ -28,11 +28,13 @@ export default function FrameEditor({
     frame,
     template,
     fid,
+    fname,
     // isComposeClient,
 }: {
     frame: InferSelectModel<typeof frameTable>
     template: (typeof templates)[keyof typeof templates]
     fid: string
+    fname: string
     // isComposeClient: boolean
 }) {
     const refreshPreview = useRefreshPreview(frame.id)
@@ -96,7 +98,7 @@ export default function FrameEditor({
         await updateFrameName(frame.id, temporaryName)
         setUpdating(false)
     }
-	
+
     useEffect(() => {
         if (width < 760) {
             setPreviewOpen(false)
@@ -117,8 +119,8 @@ export default function FrameEditor({
             window.removeEventListener('keydown', handleEnter)
         }
     })
-	
-	useOnClickOutside(tempNameRef, async () => await updateName())
+
+    useOnClickOutside(tempNameRef, async () => await updateName())
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <>
     useEffect(() => {
@@ -133,7 +135,6 @@ export default function FrameEditor({
         [writeConfig]
     )
 
-    
     const { Inspector } = template as any
 
     return (
@@ -324,6 +325,7 @@ export default function FrameEditor({
                                     storage: frame.storage!,
                                     update: updateConfig,
                                     fid: fid,
+                                    fname: fname,
                                     // setLoading
                                 }}
                             >
