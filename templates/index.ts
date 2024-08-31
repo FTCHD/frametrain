@@ -17,7 +17,7 @@ import rss from './rss'
 import swap from './swap'
 import fundraiser from './fundraiser'
 import gated from './gated'
-import blockscan from './blockscan'
+import smartContract from './smartContract'
 
 export default {
     // basic,
@@ -39,5 +39,5 @@ export default {
     swap,
     fundraiser,
     gated,
-    blockscan,
+    smartContract,
 }
