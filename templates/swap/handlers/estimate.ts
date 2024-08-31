@@ -34,11 +34,13 @@ export default async function estimate({
             amount = Number(params.buyAmount)
             break getAmount
         }
-        const buttonIndex = body.validatedData.tapped_button.index
+        const buttonIndex = body.validatedData.tapped_button.index as number
 
         switch (buttonIndex) {
             case 1: {
                 const textInput = body.validatedData.input?.text
+                console.log('textInput', textInput)
+
                 if (!textInput) {
                     throw new FrameError('An amount must be provided')
                 }
@@ -92,8 +94,5 @@ export default async function estimate({
         ],
         component: PriceView({ token0, token1, network: config.pool.network, amount, estimates }),
         handler: 'success',
-        params: {
-            buyAmount: amount,
-        },
     }
 }

@@ -14,10 +14,10 @@ export const getPoolClient = async (address: `0x${string}`) => {
         })
 
         try {
-            await contract.read.token0()
+            await contract.read.slot0()
             return client
         } catch {
-            console.error(`Failed to fetch token0 for ${address} on ${chain}`)
+            console.error(`Failed to fetch slot0 for ${address} on ${chain}`)
         }
     }
 

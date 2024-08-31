@@ -6,14 +6,11 @@ import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import { bytesToHex } from 'viem'
 import type { Config, Storage } from '..'
-import estimate from './estimate'
 import initial from './initial'
 
 export default async function success({
     body,
     config,
-    params,
-    storage,
 }: {
     body: FrameValidatedActionPayload
     config: Config
@@ -24,21 +21,21 @@ export default async function success({
           }
         | undefined
 }): Promise<BuildFrameData> {
-    const transactionId = body.validatedData.transaction
+    const transactionId = body.validatedData.transaction?.hash
         ? bytesToHex(body.validatedData.transaction.hash)
         : undefined
     const buttonIndex = body.validatedData.tapped_button?.index || 1
 
-    if (buttonIndex === 1) {
+    if (!config.pool) {
         return initial({ config })
     }
 
-    if (!(config.pool && transactionId)) {
-        throw new FrameError('Transaction hash missing')
+    if (!transactionId && buttonIndex === 1) {
+        return initial({ config })
     }
 
-    if (params?.buyAmount) {
-        return estimate({ body, config, params, storage })
+    if (!transactionId) {
+        throw new FrameError('Transaction hash missing')
     }
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
