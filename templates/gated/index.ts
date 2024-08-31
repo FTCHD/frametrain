@@ -12,7 +12,7 @@ export interface Config extends BaseConfig {
     } | null
     label: string | null
     links: string[]
-    requirements: GatingOptionsProps['config']
+    gating: GatingOptionsProps['config']
     cover: TextSlideProps & {
         image?: string
     }
@@ -47,7 +47,7 @@ export default {
             subtitle: { text: 'Enjoy your reward.' },
             customMessage: { text: 'We appreciate you sticking around.' },
         },
-        requirements: {
+        gating: {
             channels: {
                 checked: false,
                 data: [],
@@ -60,6 +60,7 @@ export default {
             sol: false,
             powerBadge: false,
             maxFid: 0,
+            minFid: 0,
             score: 0,
             erc20: null,
             erc721: null,

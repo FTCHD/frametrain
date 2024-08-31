@@ -6,10 +6,10 @@ import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
 import icon from './icon.png'
 
 export interface Config extends BaseConfig {
-    owner?: {
+    owner: {
         username: string
         fid: number
-    }
+    } | null
     options: {
         buttonLabel: string
         displayLabel: string
@@ -19,7 +19,7 @@ export interface Config extends BaseConfig {
     background?: string
     textColor?: string
     barColor?: string
-    gating?: GatingOptionsProps['config']
+    gating: GatingOptionsProps['config'] | null
     enableGating?: boolean
 }
 
@@ -43,6 +43,7 @@ export default {
     cover,
     requiresValidation: true,
     initialConfig: {
+        owner: null,
         enableGating: false,
         gating: {
             channels: {

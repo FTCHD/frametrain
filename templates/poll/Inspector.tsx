@@ -224,10 +224,7 @@ export default function Inspector() {
                         }}
                         config={
                             gating ?? {
-                                channels: {
-                                    checked: false,
-                                    data: [],
-                                },
+                                channel: null,
                                 followedBy: false,
                                 following: false,
                                 liked: false,
@@ -236,6 +233,7 @@ export default function Inspector() {
                                 sol: false,
                                 powerBadge: false,
                                 maxFid: 0,
+                                minFid: 0,
                                 score: 0,
                                 erc20: null,
                                 erc721: null,

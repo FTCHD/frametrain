@@ -264,13 +264,13 @@ export default function Inspector() {
                         <GatingOptions
                             onUpdate={(option) => {
                                 updateConfig({
-                                    requirements: {
-                                        ...config.requirements,
+                                    gating: {
+                                        ...config.gating,
                                         ...option,
                                     },
                                 })
                             }}
-                            config={config.requirements}
+                            config={config.gating}
                         />
                     </div>
                 )

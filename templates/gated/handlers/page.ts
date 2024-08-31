@@ -4,7 +4,7 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
-import { validateGatingOptions } from '@/lib/gating'
+import { runGatingChecks } from '@/lib/gating'
 import TextSlide from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
@@ -19,24 +19,13 @@ export default async function page({
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
-    const viewer = body.validatedData.interactor
-    const cast = body.validatedData.cast
     const buttons: FrameButtonMetadata[] = []
-
     if (!config.owner) {
         throw new FrameError('Frame Owner not configured')
     }
 
-    const validated = await validateGatingOptions({
-        user: config.owner,
-        option: config.requirements,
-        cast: cast.viewer_context,
-        viewer,
-    })
+    await runGatingChecks(body, config)
 
-    if (validated !== null) {
-        throw new FrameError(validated.message)
-    }
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
 

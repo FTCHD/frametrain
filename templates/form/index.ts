@@ -18,10 +18,10 @@ export type fieldTypes = {
 }
 
 export interface Config extends BaseConfig {
-    owner?: {
+    owner: {
         username: string
         fid: number
-    }
+    } | null
     fields: fieldTypes[]
     backgroundColor: string
     fontColor: string
@@ -60,6 +60,7 @@ export default {
     handlers,
     initialConfig: {
         fields: [],
+        owner: null,
         backgroundColor: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)',
         fontColor: '#FFFFFF',
         aboutText: 'This is a form frame!',
@@ -82,6 +83,7 @@ export default {
             sol: false,
             powerBadge: false,
             maxFid: 0,
+            minFid: 0,
             score: 0,
             erc20: null,
             erc721: null,

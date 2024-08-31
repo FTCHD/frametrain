@@ -1,6 +1,6 @@
 'use server'
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
-import { validateGatingOptions } from '@/lib/gating'
+import { runGatingChecks } from '@/lib/gating'
 import TextSlide from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
 import type { Config, Storage } from '..'
@@ -25,7 +25,6 @@ export default async function input({
     params?: { from: string }
 }): Promise<BuildFrameData> {
     const viewer = body.validatedData.interactor
-    const cast = body.validatedData.cast
     const fid = viewer.fid
     const buttonIndex = body.validatedData.tapped_button.index
     const textInput = (body.validatedData?.input?.text || '') as string
@@ -37,16 +36,7 @@ export default async function input({
             throw new FrameError('Frame Owner Info not configured')
         }
 
-        const validated = await validateGatingOptions({
-            user: config.owner,
-            option: config.gating,
-            cast: cast.viewer_context,
-            viewer,
-        })
-
-        if (validated !== null) {
-            throw new FrameError(validated.message)
-        }
+        await runGatingChecks(body, config)
     }
 
     if (!UsersState[fid]) {

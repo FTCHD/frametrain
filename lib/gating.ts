@@ -1,11 +1,10 @@
 import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
+import { FrameError } from '@/sdk/error'
 import { getFarcasterUserChannels } from '@/sdk/neynar'
-import { http, createPublicClient, formatUnits, getAddress, parseAbi } from 'viem'
-import type { Abi, Chain } from 'viem'
+import { http, createPublicClient, formatUnits, getAddress, getContract, parseAbi } from 'viem'
+import type { Chain } from 'viem'
 import { arbitrum, base, blast, bsc, fantom, mainnet, optimism, polygon, zora } from 'viem/chains'
-import type { FarcasterUserInfo } from './farcaster'
-
-const neynarApiBaseUrl = 'https://api.neynar.com/v2'
+import type { FrameValidatedActionPayload } from './farcaster'
 
 function getViemClient(network: string) {
     const networkToChainMap: Record<string, Chain> = {
@@ -23,7 +22,7 @@ function getViemClient(network: string) {
     const chain = networkToChainMap[network]
 
     if (!chain) {
-        throw new Error('Unsupported chain')
+        throw new FrameError('Unsupported chain')
     }
 
     return createPublicClient({
@@ -32,26 +31,6 @@ function getViemClient(network: string) {
         batch: { multicall: { wait: 10, batchSize: 1000 } },
     })
 }
-
-type BaseTokenParams = {
-    addresses: string[]
-    chain: string
-    contractAddress: string
-    minAmount?: number
-}
-
-type Erc20TokenParams = BaseTokenParams &
-    (
-        | {
-              erc: '721'
-              tokenId?: string
-          }
-        | { erc: '20' }
-        | {
-              erc: '1155'
-              tokenId: string
-          }
-    )
 
 const ERC20_ABI = parseAbi([
     'function name() public view returns (string)',
@@ -69,67 +48,12 @@ const ERC1155_ABI = parseAbi([
     'function balanceOf(address _owner, uint256 _id) public view returns (uint256)',
 ])
 
-export async function checkErcTokenOwnership(args: Erc20TokenParams) {
-    const { addresses, chain, contractAddress, ...rest } = args
-    const client = getViemClient(chain)
-    const abis: Record<string, Abi> = {
-        '20': ERC20_ABI,
-        '721': ERC721_ABI,
-        '1155': ERC1155_ABI,
-    }
-
-    const abi = abis[rest.erc]
-    if (!abi) {
-        throw new Error('Invalid ERC type')
-    }
-
-    const address = getAddress(contractAddress)
-    const name = (await client.readContract({
-        abi,
-        address,
-        functionName: 'name',
-    })) as string
-
-    const decimals = (await client
-        .readContract({
-            abi,
-            address,
-            functionName: 'decimals',
-        })
-        .catch(() => 1)) as number
-
-    const balances: number[] = []
-
-    if (rest.minAmount) {
-        for (const ownerAddress of addresses) {
-            const owner = getAddress(ownerAddress)
-            const args = (rest.erc === '1155' ? [owner, rest.tokenId] : [owner]) as
-                | [`0x${string}`, bigint]
-                | [`0x${string}`]
-            try {
-                const balanceOf = (await client.readContract({
-                    abi,
-                    address,
-                    functionName: 'balanceOf',
-                    args,
-                })) as bigint
-                const balance = formatUnits(balanceOf, decimals)
-                balances.push(Number(balance) >= rest.minAmount ? Number(balance) : 1)
-            } catch {}
-        }
-    }
-
-    const isHolding = balances.some((bal) => bal > 0)
-
-    return { isHolding, name }
-}
-
-export async function checkOpenRankScore(viewerFid: number, userFid: number, score: number) {
+export async function checkOpenRankScore(fid: number, owner: number, score: number) {
     const url = `https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=${score}&limit=1000&lite=true`
     const options = {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify([userFid]),
+        body: JSON.stringify([owner]),
     }
 
     try {
@@ -138,218 +62,255 @@ export async function checkOpenRankScore(viewerFid: number, userFid: number, sco
             result: { fid: number; score: number }[]
         }
 
-        return data.result.some((item) => item.fid === viewerFid)
+        const isPositive = data.result.some((item) => item.fid === fid)
+        if (!isPositive) {
+            throw new FrameError(`You must have a score of at least ${score}.`)
+        }
     } catch {
-        return false
+        throw new FrameError('Failed to fetch your engagement data')
     }
 }
 
-export async function checkFarcasterChannelsMembership(fid: number, channels: string[]) {
-    const userChannels = await getFarcasterUserChannels(fid)
-    const channelsToJoin = channels
-        .filter((channel) => !userChannels.map((c) => c.id).includes(channel))
-        .map((channel) => `/${channel}`)
+async function checkOwnsErc20(
+    addresses: string[],
+    chain: string,
+    contract: string,
+    minAmount?: number
+) {
+    const client = getViemClient(chain)
+    const address = getAddress(contract)
+    const token = getContract({
+        client,
+        address,
+        abi: ERC20_ABI,
+    })
+    const name = await token.read.name()
+    const decimals = await token.read.decimals()
+    const balances: number[] = []
 
-    return channelsToJoin
+    if (minAmount) {
+        for (const ownerAddress of addresses) {
+            const owner = getAddress(ownerAddress)
+            const balanceOf = await token.read.balanceOf([owner])
+            const balance = formatUnits(balanceOf, decimals)
+            balances.push(Number(balance) >= minAmount ? Number(balance) : 1)
+        }
+    }
+
+    const isHolding = balances.some((bal) => bal > 0)
+
+    if (!isHolding) {
+        throw new FrameError(`You must have at least ${minAmount} ${name}.`)
+    }
 }
 
-export async function checkFollowStatus(userFid: number, viewerFid: number) {
-    try {
-        const request = await fetch(
-            `${neynarApiBaseUrl}/farcaster/user/bulk?fids=${userFid}&viewer_fid=${viewerFid}`,
-            {
-                method: 'GET',
-                headers: {
-                    accept: 'application/json',
-                    api_key: `${process.env.NEYNAR_API_KEY}`,
-                    'content-type': 'application/json',
-                },
-            }
-        )
-        const response = await request.json()
+async function checkOwnsErc721(
+    addresses: string[],
+    chain: string,
+    contract: string,
+    minAmount?: number
+) {
+    const client = getViemClient(chain)
+    const address = getAddress(contract)
+    const token = getContract({
+        client,
+        address,
+        abi: ERC721_ABI,
+    })
+    const name = await token.read.name()
+    const balances: number[] = []
 
-        return response.users[0].viewer_context
-    } catch {
-        return {
-            'following': false,
-            'followed_by': false,
+    if (minAmount) {
+        for (const ownerAddress of addresses) {
+            const owner = getAddress(ownerAddress)
+            const balanceOf = await token.read.balanceOf([owner])
+            const balance = Number(balanceOf)
+            balances.push(balance >= minAmount ? balance : 1)
         }
+    }
+
+    const isHolding = balances.some((bal) => bal > 0)
+
+    if (!isHolding) {
+        throw new FrameError(`You must have at least ${minAmount} ${name}.`)
+    }
+}
+
+async function checkOwnsErc1155(
+    addresses: string[],
+    chain: string,
+    contract: string,
+    tokenId: number,
+    minAmount?: number
+) {
+    const client = getViemClient(chain)
+    const address = getAddress(contract)
+    const token = getContract({
+        client,
+        address,
+        abi: ERC1155_ABI,
+    })
+    const name = await token.read.name()
+    const balances: number[] = []
+
+    if (minAmount) {
+        for (const ownerAddress of addresses) {
+            const owner = getAddress(ownerAddress)
+            const balanceOf = await token.read.balanceOf([owner, BigInt(tokenId)])
+            const balance = Number(balanceOf)
+            balances.push(balance >= minAmount ? balance : 1)
+        }
+    }
+
+    const isHolding = balances.some((bal) => bal > 0)
+
+    if (!isHolding) {
+        throw new FrameError(`You must have at least ${minAmount} ${name}.`)
+    }
+}
+
+async function checkChannelMembership(fid: number, channel: string) {
+    const userChannels = await getFarcasterUserChannels(fid)
+    if (!userChannels.map((c) => c.id).includes(channel)) {
+        throw new FrameError(`You must be a member of /${channel} channel.`)
+    }
+}
+
+async function checkFid(fid: number, minFid: number, maxFid: number) {
+    if (minFid > 0 && fid < minFid) {
+        throw new FrameError(`You must have an FID greater than ${minFid}.`)
+    }
+
+    if (maxFid > 0 && fid >= maxFid) {
+        throw new FrameError(`You must have an FID less than ${maxFid}.`)
+    }
+}
+
+async function checkLiked(body: {
+    validatedData: { cast: { liked: boolean } }
+}) {
+    if (!body.validatedData.cast.liked) {
+        throw new FrameError('You must like this frame.')
+    }
+}
+
+async function checkRecasted(body: {
+    validatedData: { cast: { recasted: boolean } }
+}) {
+    if (!body.validatedData.cast.recasted) {
+        throw new FrameError('You must recast this frame.')
+    }
+}
+
+async function checkFollowing(body: {
+    validatedData: { interactor: { viewer_context: { following: boolean } } }
+}) {
+    if (!body.validatedData.interactor.viewer_context.following) {
+        throw new FrameError('You must follow the creator.')
+    }
+}
+
+async function checkFollowedBy(body: {
+    validatedData: { interactor: { viewer_context: { followed_by: boolean } } }
+}) {
+    if (!body.validatedData.interactor.viewer_context.followed_by) {
+        throw new FrameError('You must be followed by the creator.')
+    }
+}
+
+async function checkEthWallet(body: {
+    validatedData: { interactor: { verified_addresses: { eth_addresses: string[] } } }
+}) {
+    if (!body.validatedData.interactor.verified_addresses.eth_addresses.length) {
+        throw new FrameError('You must have an Ethereum wallet.')
+    }
+}
+
+async function checkSolWallet(body: {
+    validatedData: { interactor: { verified_addresses: { sol_addresses: string[] } } }
+}) {
+    if (!body.validatedData.interactor.verified_addresses.sol_addresses.length) {
+        throw new FrameError('You must have a Solana wallet.')
     }
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
-export async function validateGatingOptions({
-    user,
-    cast,
-    viewer,
-    option,
-}: {
-    viewer: FarcasterUserInfo
-    cast: { liked: boolean; recasted: boolean }
-    user: { fid: number; username: string }
-    option: GatingOptionsProps['config']
-}): Promise<{ message: string } | null> {
-    let message = 'Must '
-    let errorType: { message: string; type: string } | null = null
-    let withSuffix = true
+export async function runGatingChecks(
+    body: FrameValidatedActionPayload,
+    config: {
+        gating: GatingOptionsProps['config'] | null
+        owner: {
+            fid: number
+            username: string
+        } | null
+    }
+): Promise<void> {
+    if (!config.gating) {
+        return
+    }
+    if (!config.owner) {
+        throw new FrameError('Frame Owner not configured')
+    }
+    if (config.gating.recasted && !body.validatedData.cast.recasted) {
+        await checkRecasted(body)
+    } else if (config.gating.liked && !body.validatedData.cast.liked) {
+        await checkLiked(body)
+    } else if (config.gating.following && !body.validatedData.following) {
+        await checkFollowing(body)
+    } else if (config.gating.followedBy && !body.validatedData.followed_by) {
+        await checkFollowedBy(body)
+    } else if (
+        config.gating.eth &&
+        !body.validatedData.interactor.verified_addresses.eth_addresses.length
+    ) {
+        await checkEthWallet(body)
+    } else if (
+        config.gating.sol &&
+        !body.validatedData.interactor.verified_addresses.sol_addresses.length
+    ) {
+        await checkSolWallet(body)
+    }
 
-    try {
+    if (config.gating.maxFid > 0 && body.validatedData.interactor.fid >= config.gating.maxFid) {
+        await checkFid(
+            body.validatedData.interactor.fid,
+            config.gating.minFid,
+            config.gating.maxFid
+        )
+    } else if (config.gating.score > 0) {
+        await checkOpenRankScore(
+            body.validatedData.interactor.fid,
+            body.validatedData.interactor.fid,
+            config.gating.score
+        )
+    } else if (config.gating.channel) {
         //
-        if (option.recasted && !cast.recasted) {
-            errorType = { message: 'recast', type: 'ctx' }
-        } else if (option.liked && !cast.liked) {
-            errorType = { message: 'like', type: 'ctx' }
-        } else if (option.following || option.followedBy) {
-            const status = await checkFollowStatus(user.fid, viewer.fid)
-            if (option.following && !status.following) {
-                errorType = { message: `follow @${user.username}`, type: 'follow' }
-            } else if (option.followedBy && !status.followed_by) {
-                errorType = { message: `be followed by @${user.username}`, type: 'follow' }
-            }
-        } else if (option.powerBadge && !viewer.power_badge) {
-            errorType = { message: 'power badge user', type: 'be' }
-        } else if (option.eth && !viewer.verified_addresses.eth_addresses.length) {
-            errorType = { message: 'an ethereum', type: 'wallets' }
-        } else if (option.sol && !viewer.verified_addresses.sol_addresses.length) {
-            errorType = { message: 'a solana', type: 'wallets' }
-        }
-
-        if (option.maxFid > 0 && viewer.fid >= option.maxFid) {
-            errorType = { message: `an FID less than ${option.maxFid}`, type: 'have' }
-        } else if (option.score > 0) {
-            const containsUserFID = await checkOpenRankScore(viewer.fid, user.fid, option.score)
-
-            if (!containsUserFID) {
-                errorType = {
-                    message: `an Open Rank score closer to that of @${user.username}`,
-                    type: 'have',
-                }
-            }
-        } else if (option.channels.checked && option.channels.data.length) {
-            const channels = await checkFarcasterChannelsMembership(
-                viewer.fid,
-                option.channels.data
-            )
-
-            if (channels.length) {
-                errorType = { message: `joined "${channels.join(', ')}" channels`, type: 'have' }
-            }
-        } else if (option.erc20?.address && option.erc20.network) {
-            //
-            try {
-                const tokenInfo = await checkErcTokenOwnership({
-                    addresses: viewer.verified_addresses.eth_addresses,
-                    chain: option.erc20.network,
-                    contractAddress: option.erc20.address,
-                    erc: '20',
-                    minAmount: option.erc20.balance,
-                })
-
-                if (!tokenInfo.isHolding) {
-                    if (!option.erc20.balance) {
-                        errorType = { message: tokenInfo.name, type: 'erc' }
-                    } else {
-                        errorType = {
-                            message: `${option.erc20.balance} ${tokenInfo.name}`,
-                            type: 'erc',
-                        }
-                    }
-                }
-            } catch {
-                errorType = { message: 'ERC-20 token', type: 'erc' }
-            }
-        } else if (option.erc1155?.address && option.erc1155.network && option.erc1155.tokenId) {
-            //
-            try {
-                const tokenInfo = await checkErcTokenOwnership({
-                    addresses: viewer.verified_addresses.eth_addresses,
-                    chain: option.erc1155.network,
-                    contractAddress: option.erc1155.address,
-                    erc: '1155',
-                    tokenId: option.erc1155.tokenId,
-                    minAmount: option.erc1155.balance,
-                })
-
-                if (!tokenInfo.isHolding) {
-                    if (!option.erc1155.balance) {
-                        errorType = { message: tokenInfo.name, type: 'erc' }
-                    } else {
-                        errorType = {
-                            message: `${option.erc1155.balance} ${tokenInfo.name}`,
-                            type: 'erc',
-                        }
-                    }
-                }
-            } catch {
-                errorType = { message: 'ERC-1155 token', type: 'erc' }
-            }
-        } else if (option.erc721?.address && option.erc721.network) {
-            //
-            try {
-                const tokenInfo = await checkErcTokenOwnership({
-                    addresses: viewer.verified_addresses.eth_addresses,
-                    chain: option.erc721.network,
-                    contractAddress: option.erc721.address,
-                    erc: '721',
-                    minAmount: option.erc721.balance,
-                })
-
-                if (!tokenInfo.isHolding) {
-                    if (!option.erc721.balance) {
-                        errorType = { message: tokenInfo.name, type: 'erc' }
-                    } else {
-                        errorType = {
-                            message: `${option.erc721.balance} ${tokenInfo.name}`,
-                            type: 'erc',
-                        }
-                    }
-                }
-            } catch {
-                errorType = { message: 'an ERC-721', type: 'erc' }
-            }
-        }
-    } catch (e) {
-        const err = e as Error
-        errorType = { message: err.message, type: 'error' }
+        await checkChannelMembership(body.validatedData.interactor.fid, config.gating.channel)
+    } else if (config.gating.erc20?.address && config.gating.erc20.network) {
+        await checkOwnsErc20(
+            body.validatedData.interactor.verified_addresses.eth_addresses,
+            config.gating.erc20.network,
+            config.gating.erc20.address,
+            config.gating.erc20.balance
+        )
+    } else if (
+        config.gating.erc1155?.address &&
+        config.gating.erc1155.network &&
+        config.gating.erc1155.tokenId
+    ) {
+        await checkOwnsErc1155(
+            body.validatedData.interactor.verified_addresses.eth_addresses,
+            config.gating.erc1155.network,
+            config.gating.erc1155.address,
+            config.gating.erc1155.tokenId,
+            config.gating.erc1155.balance
+        )
+    } else if (config.gating.erc721?.address && config.gating.erc721.network) {
+        await checkOwnsErc721(
+            body.validatedData.interactor.verified_addresses.eth_addresses,
+            config.gating.erc721.network,
+            config.gating.erc721.address,
+            config.gating.erc721.balance
+        )
     }
-
-    if (!errorType) return null
-
-    switch (errorType.type) {
-        case 'ctx': {
-            message += `${errorType.message} this frame`
-            break
-        }
-
-        case 'wallets': {
-            message += `have ${errorType.message} wallet connected`
-            break
-        }
-
-        case 'have': {
-            message += `have ${errorType.message}`
-            break
-        }
-
-        case 'erc': {
-            message = `${errorType.message} holders only`
-            withSuffix = false
-            break
-        }
-
-        case 'error': {
-            message = `Failed to check validate requirements: ${errorType.message}`
-            withSuffix = false
-            break
-        }
-
-        default: {
-            message += `${errorType.message}`
-            break
-        }
-    }
-
-    message = `${message} ${withSuffix ? ' to reveal' : ''}`
-
-    return { message }
 }

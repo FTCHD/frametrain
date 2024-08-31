@@ -4,7 +4,7 @@ import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import ResultsView from '../views/Results'
 import { FrameError } from '@/sdk/error'
-import { validateGatingOptions } from '@/lib/gating'
+import { runGatingChecks } from '@/lib/gating'
 
 export default async function vote({
     body,
@@ -16,7 +16,6 @@ export default async function vote({
     storage: Storage
 }): Promise<BuildFrameData> {
     const viewer = body.validatedData.interactor
-    const cast = body.validatedData.cast
     const voter = viewer.fid.toString()
     const buttonIndex = body.validatedData.tapped_button.index as number
     const username = body.validatedData.interactor.username
@@ -31,16 +30,7 @@ export default async function vote({
             throw new FrameError('Frame Owner Info not configured')
         }
 
-        const validated = await validateGatingOptions({
-            user: config.owner,
-            option: config.gating,
-            cast: cast.viewer_context,
-            viewer,
-        })
-
-        if (validated !== null) {
-            throw new FrameError(validated.message)
-        }
+        await runGatingChecks(body, config)
     }
 
     if (buttonIndex !== pastIndex) {

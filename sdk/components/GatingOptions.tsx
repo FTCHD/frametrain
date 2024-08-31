@@ -11,15 +11,16 @@ import Link from 'next/link'
 import { type ReactNode, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { getFarcasterChannelbyName } from '../neynar'
+import { useDebounceCallback } from 'usehooks-ts'
 export type GatingERCType = {
     network?: string
     address?: string
     balance?: number
-    tokenId?: string
+    tokenId?: number
     collection?: string
 }
 type GatingConfig = {
-    channels: { checked: boolean; data: string[] }
+    channel: string | null
     followedBy: boolean
     following: boolean
     liked: boolean
@@ -27,6 +28,7 @@ type GatingConfig = {
     eth: boolean
     sol: boolean
     powerBadge: boolean
+    minFid: number
     maxFid: number
     score: number
     erc20: GatingERCType | null
@@ -41,8 +43,9 @@ type GatingTypes =
     | 'eth'
     | 'sol'
     | 'powerBadge'
-    | 'channels'
+    | 'channel'
     | 'maxFid'
+    | 'minFid'
     | 'score'
     | 'erc20'
     | 'erc721'
@@ -142,11 +145,17 @@ const TokenGating = ({
                         disabled={!(defaultValues.address && defaultValues.network)}
                         defaultValue={defaultValues.tokenId}
                         onChange={(e) => {
-                            const tokenId = e.target.value
+                            const value = e.target.value.trim()
+                            if (isNaN(Number(value))) {
+                                toast.error('Please enter a valid token ID')
+                                return
+                            }
+
+                            const tokenId = Number(value)
 
                             onChange({
                                 ...defaultValues,
-                                tokenId: tokenId.length === 0 ? undefined : tokenId,
+                                tokenId,
                             })
                         }}
                     />
@@ -194,13 +203,26 @@ export default function GatingOptions({
         powerBadge: config.powerBadge,
         eth: config.eth,
         sol: config.sol,
-        channels: config.channels.data.length > 0 && config.channels.checked,
-        fid: config.maxFid > 0,
+        channel: Boolean(config.channel),
+        maxFid: config.maxFid > 0,
+        minFid: config.minFid > 0,
         score: config.score > 0,
         erc721: Boolean(config.erc721),
         erc1155: Boolean(config.erc1155),
         erc20: Boolean(config.erc20),
     })
+
+    const onChangeChannelName = useDebounceCallback(async (name: string) => {
+        if (name === '') onUpdate({ channel: null })
+
+        try {
+            const channel = await getFarcasterChannelbyName(name)
+            onUpdate({ channel: channel.id })
+            toast.success('Channel added successfully')
+        } catch {
+            toast.error('Failed to fetch channel')
+        }
+    }, 500)
 
     const requirements: {
         key: string
@@ -253,102 +275,62 @@ export default function GatingOptions({
             enabled: enabledOptions.includes('liked'),
         },
         {
-            key: 'channels',
+            key: 'channel',
             label: 'Must be a member of channel(s)',
             isBasic: false,
-            enabled: enabledOptions.includes('channels'),
+            enabled: enabledOptions.includes('channel'),
             onChange: (checked: boolean) => {
                 if (!checked) {
                     onUpdate({
-                        channels: {
-                            checked,
-                            data: config.channels.data,
-                        },
+                        channel: null,
                     })
                 }
             },
             children: (
+                <div className="flex flex-row justify-center gap-2 w-full items-center">
+                    <Input
+                        className="text-lg border rounded py-2 px-4 w-full"
+                        onChange={(e) => onChangeChannelName(e.target.value)}
+                    />
+                </div>
+            ),
+        },
+        {
+            key: 'minFid',
+            label: 'FID must be greater than',
+            isBasic: false,
+            enabled: enabledOptions.includes('minFid'),
+            children: (
                 <>
-                    <div className="flex flex-row justify-center gap-2 w-full items-center">
+                    <div className="flex flex-row items-center">
+                        <Label htmlFor="fid" className="text-sm font-medium leading-none w-1/2">
+                            Min FID:
+                        </Label>
                         <Input
-                            disabled={addingChannel || config.channels.data.length >= 4}
-                            ref={channelInputRef}
-                            className="text-lg border rounded py-2 px-4 w-full"
-                        />
-                        <Button
-                            type="button"
-                            disabled={addingChannel}
-                            className="px-4 py-2 rounded-md"
-                            onClick={async () => {
-                                if (!channelInputRef.current) return
-
-                                const channel = channelInputRef.current.value.trim()
-
-                                if (channel.length < 3) return
-                                setAddingChannel(true)
-
-                                try {
-                                    await getFarcasterChannelbyName(channel)
-
-                                    onUpdate({
-                                        channels: {
-                                            ...config.channels,
-                                            data: [...config.channels.data, channel],
-                                        },
-                                    })
-
-                                    channelInputRef.current.value = ''
-                                    toast.success('Channel added successfully')
-                                } catch {
-                                    toast.error('Failed to fetch channel')
-                                } finally {
-                                    setAddingChannel(false)
-                                }
+                            id="fid"
+                            type="number"
+                            min={1}
+                            className="w-full"
+                            onChange={(e) => {
+                                const value = e.target.value
+                                const minFid = value === '' ? 0 : Number(value)
+                                setSelectedOptions({
+                                    ...selectedOptions,
+                                    minFid: minFid > 0,
+                                })
+                                onUpdate({ minFid })
                             }}
-                        >
-                            {addingChannel ? (
-                                <LoaderIcon className="animate-spin" />
-                            ) : (
-                                'Add Channel'
-                            )}
-                        </Button>
+                        />
                     </div>
-
-                    {config.channels.data.length ? (
-                        <div className="flex flex-col gap-1 w-full">
-                            {config.channels.data.map((channel, index) => (
-                                <div
-                                    key={index}
-                                    className="flex flex-row items-center justify-between bg-slate-50 bg-opacity-10 p-2 rounded"
-                                >
-                                    <span>
-                                        {index + 1}. {channel}
-                                    </span>
-                                    <Button
-                                        variant={'destructive'}
-                                        onClick={() =>
-                                            onUpdate({
-                                                channels: {
-                                                    ...config.channels,
-                                                    data: [
-                                                        ...config.channels.data.slice(0, index),
-                                                        ...config.channels.data.slice(index + 1),
-                                                    ],
-                                                },
-                                            })
-                                        }
-                                    >
-                                        <Trash />
-                                    </Button>
-                                </div>
-                            ))}
-                        </div>
-                    ) : null}
+                    <p className="text-sm text-muted-foreground">
+                        Only users with FID greater than this value will be able eligible for the
+                        rewards
+                    </p>
                 </>
             ),
         },
         {
-            key: 'fid',
+            key: 'maxFid',
             label: 'FID must be less than',
             isBasic: false,
             enabled: enabledOptions.includes('maxFid'),
@@ -368,7 +350,7 @@ export default function GatingOptions({
                                 const maxFid = value === '' ? 0 : Number(value)
                                 setSelectedOptions({
                                     ...selectedOptions,
-                                    fid: maxFid > 0,
+                                    maxFid: maxFid > 0,
                                 })
                                 onUpdate({ maxFid })
                             }}
@@ -465,7 +447,7 @@ export default function GatingOptions({
                         network: config.erc1155?.network,
                         address: config.erc1155?.address as string | undefined,
                         balance: config.erc1155?.balance || 0,
-                        tokenId: config.erc1155?.tokenId as string | undefined,
+                        tokenId: config.erc1155?.tokenId as number | undefined,
                         collection: config.erc1155?.collection as string | undefined,
                     }}
                     onChange={(erc1155) => {
