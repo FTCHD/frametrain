@@ -1,8 +1,8 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import Inspector from './Inspector'
-import cover from './cover.webp'
-import handlers from './handlers'
 import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
+import Inspector from './Inspector'
+import cover from './cover.jpg'
+import handlers from './handlers'
 import icon from './icon.png'
 
 export interface Config extends BaseConfig {
@@ -31,7 +31,7 @@ export interface Storage extends BaseStorage {
 
 export default {
     name: 'Poll',
-    description: 'Create your own Poll as a Farcaster Frame.',
+    description: 'Your very own customizable Poll, now as a Farcaster Frame.',
     shortDescription: 'Customizable Polls',
     octicon: 'question',
     icon: icon,
