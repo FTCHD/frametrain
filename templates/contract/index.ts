@@ -2,7 +2,7 @@ import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import type { TextSlideProps } from '@/sdk/components/TextSlide'
 import Inspector from './Inspector'
 import type { SerializableConfig } from './common/etherscan'
-import cover from './cover.png'
+import cover from './cover.jpg'
 import handlers from './handlers'
 
 export interface Config extends BaseConfig {
@@ -23,7 +23,7 @@ export interface Storage extends BaseStorage {
 
 export default {
     name: 'Smart Contract',
-    description: 'Your own Smart Contract Frame',
+    description: 'Interact with any Smart Contract right from a Frame.',
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,
@@ -34,10 +34,10 @@ export default {
         etherscan: null,
         cover: {
             title: {
-                text: 'Welcome to Blockscan',
+                text: 'My Contract',
             },
             subtitle: {
-                text: 'Navigate through all contract functions',
+                text: 'Use the arrow buttons to navigate through all contract functions.',
             },
             customMessage: {
                 text: 'Custom Message',

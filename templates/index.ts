@@ -1,4 +1,5 @@
 import cal from './cal'
+import contract from './contract'
 import discourse from './discourse'
 import figma from './figma'
 import form from './form'
@@ -16,7 +17,6 @@ import rss from './rss'
 import swap from './swap'
 import fundraiser from './fundraiser'
 import gated from './gated'
-import smartContract from './smartContract'
 
 export default {
     // basic,
@@ -37,5 +37,5 @@ export default {
     swap,
     fundraiser,
     gated,
-    smartContract,
+    contract,
 }
