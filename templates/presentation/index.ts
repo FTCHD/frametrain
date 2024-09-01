@@ -77,7 +77,7 @@ export const PRESENTATION_DEFAULTS: Config = {
 
 export default {
     name: 'Presentation',
-    description: 'Turn your images and long texts into a slideshow.',
+    description: 'Turn images and long texts into powerful slideshows.',
     shortDescription: 'Remember Powerpoint?',
     octicon: 'versions',
     creatorFid: '661506',
