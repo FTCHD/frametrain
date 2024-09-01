@@ -18,7 +18,7 @@ function extractText(html: string): string {
     return result.trim()
 }
 
-const toReadableDate = (ts?: number | Date) => dayjs(ts).format('dddd, MMMM Do @ LT')
+const toReadableDate = (ts?: number | Date) => dayjs(ts).format('dddd, MMMM Do YYYY @ LT')
 
 export interface RssFeed {
     title: string

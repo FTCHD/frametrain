@@ -31,7 +31,6 @@ export default async function initial({
 
     if (config.rssUrl) {
         const existingPosts = storage?.feed
-        console.log({ existingPosts: existingPosts?.posts.length })
 
         try {
             if (!existingPosts) {
