@@ -16,7 +16,7 @@ import type { Config } from '.'
 type MenuItem = {
     title: string
     description: string
-    key: 'cover' | 'rewards' | 'gating' | 'general'
+    key: 'cover' | 'rewards' | 'gating'
 }
 
 type NavBarItem = MenuItem & {
@@ -33,11 +33,6 @@ function sidebarNavItems(obj: {
     showOne?: true
 }): MenuItem | NavBarItem[] {
     const items: MenuItem[] = [
-        {
-            title: 'General',
-            key: 'general',
-            description: 'Configure your general settings.',
-        },
         {
             title: 'Cover',
             key: 'cover',
@@ -73,7 +68,7 @@ export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
     const fid = useFarcasterId()
     const username = useFarcasterName()
-    const [activeTab, setActiveTab] = useState<NavBarItem['key']>('general')
+    const [activeTab, setActiveTab] = useState<NavBarItem['key']>('cover')
     const disableLinksField = config.links?.length >= 4
 
     const [coverType, setCoverType] = useState<'text' | 'image'>(
@@ -114,6 +109,17 @@ export default function Inspector() {
             case 'cover': {
                 component = (
                     <>
+                        <div className="flex flex-col gap-2 w-full">
+                            <h2 className="text-lg font-semibold">Button Label</h2>
+                            <Input
+                                className="w-full"
+                                placeholder="View"
+                                defaultValue={config.label || ''}
+                                onChange={async (e) => {
+                                    onChangeLabel(e.target.value)
+                                }}
+                            />
+                        </div>
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold">Cover Type</h2>
                             <RadioGroup
@@ -456,25 +462,6 @@ export default function Inspector() {
                     </>
                 )
 
-                break
-            }
-
-            default: {
-                component = (
-                    <>
-                        <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg font-semibold">Button Label</h2>
-                            <Input
-                                className="w-full"
-                                placeholder="View"
-                                defaultValue={config.label || ''}
-                                onChange={async (e) => {
-                                    onChangeLabel(e.target.value)
-                                }}
-                            />
-                        </div>
-                    </>
-                )
                 break
             }
         }
