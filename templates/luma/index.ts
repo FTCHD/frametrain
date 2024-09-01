@@ -1,8 +1,8 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.png'
+import cover from './cover.avif'
 import handlers from './handlers'
-import icon from './icon.jpeg'
+import icon from './icon.avif'
 
 export interface Config extends BaseConfig {
     event?: {
@@ -34,7 +34,7 @@ export interface Storage extends BaseStorage {
 
 export default {
     name: 'Lu.ma',
-    description: 'Share your Lu.ma event as a Frame.',
+    description: 'Share your Lu.ma event and let other join straight from a Frame.',
     shortDescription: 'Events as Frames',
     icon: icon,
     octicon: 'star',
