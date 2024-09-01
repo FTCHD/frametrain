@@ -1,23 +1,21 @@
 'use client'
 
-import { Button } from '@/components/shadcn/Button'
 import { Checkbox } from '@/components/shadcn/Checkbox'
 import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/Label'
 import { Slider } from '@/components/shadcn/Slider'
 import { Select } from '@/sdk/components/Select'
-import { LoaderIcon, Trash } from 'lucide-react'
 import Link from 'next/link'
-import { type ReactNode, useRef, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import toast from 'react-hot-toast'
-import { getFarcasterChannelbyName } from '../neynar'
 import { useDebounceCallback } from 'usehooks-ts'
+import { getFarcasterChannelbyName } from '../neynar'
+
 export type GatingERCType = {
     network?: string
     address?: string
     balance?: number
     tokenId?: number
-    collection?: string
 }
 type GatingConfig = {
     channel: string | null
@@ -161,29 +159,6 @@ const TokenGating = ({
                     />
                 </div>
             ) : null}
-
-            {id !== 'erc20' ? (
-                <div className="flex flex-row items-center w-full gap-2">
-                    <Label htmlFor="collection" className="text-sm font-medium leading-none">
-                        Collection URL
-                    </Label>
-                    <Input
-                        id="collection"
-                        type="text"
-                        placeholder="https://opensea.io/collection/xyz"
-                        disabled={!(defaultValues.address && defaultValues.network)}
-                        defaultValue={defaultValues.collection}
-                        onChange={(e) => {
-                            const collection = e.target.value
-
-                            onChange({
-                                ...defaultValues,
-                                collection: collection.length === 0 ? undefined : collection,
-                            })
-                        }}
-                    />
-                </div>
-            ) : null}
         </>
     )
 }
@@ -193,8 +168,6 @@ export default function GatingOptions({
     onUpdate,
     enabledOptions = 'all',
 }: GatingOptionsProps) {
-    const [addingChannel, setAddingChannel] = useState(false)
-    const channelInputRef = useRef<HTMLInputElement>(null)
     const [selectedOptions, setSelectedOptions] = useState<Record<string, boolean>>({
         liked: config.liked,
         recasted: config.recasted,
@@ -418,7 +391,6 @@ export default function GatingOptions({
                         network: config.erc721?.network,
                         address: config.erc721?.address as string | undefined,
                         balance: config.erc721?.balance || 0,
-                        collection: config.erc721?.collection as string | undefined,
                     }}
                     onChange={(erc721) => {
                         onUpdate({
@@ -448,7 +420,6 @@ export default function GatingOptions({
                         address: config.erc1155?.address as string | undefined,
                         balance: config.erc1155?.balance || 0,
                         tokenId: config.erc1155?.tokenId as number | undefined,
-                        collection: config.erc1155?.collection as string | undefined,
                     }}
                     onChange={(erc1155) => {
                         onUpdate({
@@ -478,7 +449,6 @@ export default function GatingOptions({
                         address: config.erc20?.address as string | undefined,
                         balance: config.erc20?.balance || 0,
                         tokenId: undefined,
-                        collection: config.erc20?.collection as string | undefined,
                     }}
                     onChange={(erc20) => {
                         onUpdate({
