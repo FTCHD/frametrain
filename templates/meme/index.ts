@@ -20,7 +20,7 @@ export interface Storage extends BaseStorage {}
 
 export default {
     name: 'Meme Creator',
-    description: 'Create your own Meme from awesome images.',
+    description: 'Create Memes using Imgflip and share them as a Frame.',
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,
