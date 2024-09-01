@@ -1,7 +1,10 @@
 'use client'
 import { Button } from '@/components/shadcn/Button'
+import { Label } from '@/components/shadcn/Label'
 import { Separator } from '@/components/shadcn/Separator'
-import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { Switch } from '@/components/shadcn/Switch'
+import GatingOptions from '@/sdk/components/GatingOptions'
+import { useFarcasterId, useFarcasterName, useFrameConfig, useFrameId } from '@/sdk/hooks'
 import { Trash } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import type { Config, fieldTypes } from '.'
@@ -16,26 +19,35 @@ type FormFieldMenuItem = {
 
 export default function Inspector() {
     const frameId = useFrameId()
+    const fid = useFarcasterId()
+    const username = useFarcasterName()
     const [config, updateConfig] = useFrameConfig<Config>()
+    const enabledGating = config.enableGating ?? false
 
     const [activeTab, setActiveTab] = useState('form')
     const [savingField, setSavingField] = useState(false)
 
     const fields: fieldTypes[] = config.fields
     const fieldIds = fields.map((field, index) => `${index + 1}_${field.fieldName}`)
-    const tabs = ['form', ...fieldIds].map((tab) => {
+    const tabs = ['form', 'gating', ...fieldIds].map((tab) => {
         const key = tab
         const split = key.split('_')
         let title = 'Form'
         if (split.length > 1) {
             title = `${split[0]}. ${split[1]}`
+        } else if (key === 'gating') {
+            title = 'Gating'
         }
 
         return {
             key,
             title,
             description: `Configure ${
-                key === 'form' ? 'your form' : `the settings for ${split[1]} for field`
+                key === 'form'
+                    ? 'your form'
+                    : key === 'gating'
+                      ? 'gating options'
+                      : `the settings for ${split[1]} for field`
             }`,
         }
     })
@@ -52,11 +64,60 @@ export default function Inspector() {
     const fieldId = Number(tab.key.split('_')[0]) - 1
     const field = fields.find((_, index) => index === fieldId)
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        if (!config?.owner) {
+            updateConfig({
+                owner: {
+                    username,
+                    fid,
+                },
+            })
+        }
+    }, [])
+
     const renderTab = (tab: FormFieldMenuItem) => {
         let component: ReactNode = null
         switch (tab.key) {
             case 'form': {
                 component = <FormEditor isEditing={savingField} />
+                break
+            }
+
+            case 'gating': {
+                component = (
+                    <div className="flex flex-col gap-2">
+                        <div className="flex flex-row items-center justify-between gap-2 ">
+                            <Label className="font-md" htmlFor="gating">
+                                Enable Form Gating?
+                            </Label>
+                            <Switch
+                                id="gating"
+                                checked={enabledGating}
+                                onCheckedChange={(enableGating) => {
+                                    updateConfig({ enableGating })
+                                }}
+                            />
+                        </div>
+
+                        {enabledGating && (
+                            <div className="flex flex-col gap-2 w-full">
+                                <h2 className="text-lg font-semibold">Form Gating options</h2>
+                                <GatingOptions
+                                    onUpdate={(option) => {
+                                        updateConfig({
+                                            gating: {
+                                                ...config.gating,
+                                                ...option,
+                                            },
+                                        })
+                                    }}
+                                    config={config.gating}
+                                />
+                            </div>
+                        )}
+                    </div>
+                )
                 break
             }
 

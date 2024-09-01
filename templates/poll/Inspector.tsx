@@ -8,7 +8,6 @@ import GatingOptions from '@/sdk/components/GatingOptions'
 import { useFarcasterId, useFarcasterName, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useEffect, useRef } from 'react'
 import { X } from 'react-feather'
-import toast from 'react-hot-toast'
 import type { Config } from '.'
 
 export default function Inspector() {
@@ -34,14 +33,6 @@ export default function Inspector() {
             })
         }
     }, [])
-
-    const handleGatingToggle = (enableGating: boolean) => {
-        if (enableGating && !config.owner) {
-            toast.error('Please configure your farcaster username before enabling Poll Gating')
-            return
-        }
-        updateConfig({ enableGating })
-    }
 
     return (
         <div className="flex flex-col gap-5 w-full h-full">
@@ -168,7 +159,13 @@ export default function Inspector() {
                 <Label className="font-md" htmlFor="gating">
                     Enable Poll Gating?
                 </Label>
-                <Switch id="gating" checked={enabledGating} onCheckedChange={handleGatingToggle} />
+                <Switch
+                    id="gating"
+                    checked={enabledGating}
+                    onCheckedChange={(enableGating) => {
+                        updateConfig({ enableGating })
+                    }}
+                />
             </div>
 
             {enabledGating && (
