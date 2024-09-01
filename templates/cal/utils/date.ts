@@ -1,3 +1,14 @@
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import timezone from 'dayjs/plugin/timezone'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(relativeTime)
+dayjs.extend(timezone)
+dayjs.extend(localizedFormat)
+dayjs.extend(utc)
+
 export const months: { [key: number]: string } = {
     1: 'January',
     2: 'February',
@@ -13,22 +24,16 @@ export const months: { [key: number]: string } = {
     12: 'December',
 }
 
-export function getCurrentAndFutureDate(days: number) {
-    const formatDate = (date: any) => {
-        const year = date.getFullYear()
-        const month = String(date.getMonth() + 1).padStart(2, '0') // Months are 0-based, so we add 1
-        const day = String(date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
-    }
+export function getTimezoneOffset(timezone: string) {
+    return dayjs().tz(timezone).format('Z')
+}
 
-    const currentDate = new Date()
-    const futureDate = new Date()
-    futureDate.setDate(currentDate.getDate() + days)
+export function getCurrentAndFutureDate(month: number) {
+    const chosenMonth = dayjs().set('month', month)
+    const startOfTheMonth = chosenMonth.startOf('month').toISOString()
+    const endOfTheMonth = chosenMonth.endOf('month').toISOString()
 
-    const formattedCurrentDate = formatDate(currentDate)
-    const formattedFutureDate = formatDate(futureDate)
-
-    return [formattedCurrentDate, formattedFutureDate]
+    return [startOfTheMonth, endOfTheMonth]
 }
 
 /**
@@ -81,4 +86,61 @@ export function extractDatesAndSlots(data: any, timeZone = 'Europe/London') {
     })
 
     return [dates, timeSlots]
+}
+
+export function parseTime(timeString: string): Date | null {
+    const regex12 = /^([01]?[0-9]|1[0-2]):([0-5]\d)\s*(AM|PM)$/i
+    const regex24 = /^([01][0-9]|2[0-3]|[0-9]):([0-5]\d)$/
+
+    const match12 = timeString.match(regex12)
+    const match24 = timeString.match(regex24)
+
+    if (match12) {
+        let hours = Number.parseInt(match12[1], 10)
+        const minutes = Number.parseInt(match12[2], 10)
+        const period = match12[3]?.toUpperCase()
+
+        // Adjust hours for 12-hour format
+        if (period === 'PM' && hours !== 12) {
+            hours += 12
+        } else if (period === 'AM' && hours === 12) {
+            hours = 0
+        }
+
+        // Create and return a Date object
+        const date = new Date()
+        date.setHours(hours, minutes, 0, 0)
+        return date
+    }
+    if (match24) {
+        const hours = Number.parseInt(match24[1], 10)
+        const minutes = Number.parseInt(match24[2], 10)
+
+        // Create and return a Date object
+        const date = new Date()
+        date.setHours(hours, minutes, 0, 0)
+        return date
+    }
+    return null
+}
+
+export function getDateIndex(date: string, dates: string[]) {
+    if (date.length > 2 || isNaN(Number(date))) {
+        return -2
+    }
+
+    const day = date.length < 2 ? `0${date}` : date
+
+    const dateIndex = dates.findIndex((d) => d.split('-')[2] === day)
+    return dateIndex
+}
+
+export function getTimeIndex(hour: string, slots: string[]) {
+    const date = parseTime(hour)
+
+    if (!date) return -2
+
+    const userDate = dayjs(date).format('hh:mm A')
+    const slotIndex = slots.findIndex((slot) => slot === userDate)
+    return slotIndex
 }

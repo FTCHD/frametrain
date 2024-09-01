@@ -1,5 +1,5 @@
 import type { Config } from '..'
-import { months } from '../utils/date'
+import { getTimezoneOffset, months } from '../utils/date'
 
 export default function CoverView(
     config: Config,
@@ -25,7 +25,7 @@ export default function CoverView(
 
     const firstRowDates = visibleDates.slice(0, 6)
     const secondRowDates = visibleDates.slice(6, 12)
-    const timezone = config.timezone || 'Europe/London'
+    const timezone = getTimezoneOffset(config.timezone || 'Europe/London')
 
     return (
         <div
@@ -102,28 +102,20 @@ export default function CoverView(
             >
                 <div
                     style={{
-                        color: config.primaryColor || 'white',
-                        display: 'flex',
-
-                        fontSize: 36,
-                    }}
-                >
-                    Choose a date
-                </div>
-                <div
-                    style={{
                         display: 'flex',
                         alignSelf: 'center',
+                        fontSize: 28,
                     }}
                 >
-                    Month: {months[Number.parseInt(dates[dateParam].split('-')[1])]}
+                    {months[Number.parseInt(dates[dateParam].split('-')[1])]}
                 </div>
                 <div
                     style={{
                         display: 'flex',
+                        fontSize: 28,
                     }}
                 >
-                    Duration: {mins}
+                    {mins}
                 </div>
 
                 <div
@@ -133,7 +125,7 @@ export default function CoverView(
                         fontSize: 28,
                     }}
                 >
-                    Timezone: {timezone}
+                    GMT{timezone}
                 </div>
             </div>
             <div

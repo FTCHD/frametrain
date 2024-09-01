@@ -1,13 +1,14 @@
 'use server'
 import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
-import { getCurrentAndFutureDate } from '../utils/date'
+import { getCurrentAndFutureDate, getTimeIndex } from '../utils/date'
 import { extractDatesAndSlots } from '../utils/date'
 import NextView from '../views/Confirm'
 import PageView from '../views/Hour'
 
-export default async function slot({
+export default async function hour({
     body,
     config,
     params,
@@ -29,13 +30,16 @@ export default async function slot({
     }
 
     const buttonIndex = body.untrustedData.buttonIndex
+    const inputText = body.untrustedData.inputText
+    const month = params?.month === undefined ? new Date().getMonth() : Number(params?.month)
+    const dates = getCurrentAndFutureDate(month)
+
     switch (buttonIndex) {
         case 1: {
             const slot =
                 Number.parseInt(params.slot) == 0
                     ? params.slotLength - 1
                     : Number.parseInt(params.slot) - 1
-            const dates = getCurrentAndFutureDate(30)
             const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                 JSON.stringify({
                     json: {
@@ -79,20 +83,21 @@ export default async function slot({
                     },
                 ],
                 fonts: fonts,
-
+                inputText: 'Hour slot as 11:00 PM or 23:00',
                 component: PageView(config, slotsArray[params.date], slot),
-                handler: 'slot',
+                handler: 'hour',
                 params: {
                     durationFixed: 'fixed',
                     duration: params.duration,
                     date: params.date,
                     slot: slot,
                     slotLength: slotsArray[params.date].length,
+                    month,
                 },
             }
         }
         case 2: {
-            const dates = getCurrentAndFutureDate(30)
+            let slot = Number.parseInt(params.slot)
             const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                 JSON.stringify({
                     json: {
@@ -102,7 +107,6 @@ export default async function slot({
                         startTime: dates[0],
                         endTime: dates[1],
                         timeZone: config.timezone || 'Europe/London',
-
                         duration: null,
                         rescheduleUid: null,
                         orgSlug: null,
@@ -124,6 +128,18 @@ export default async function slot({
                 config.timezone
             )
 
+            if (inputText) {
+                slot = getTimeIndex(inputText, slotsArray[Number(params.date)])
+
+                if (slot === -2) {
+                    throw new FrameError('Invalid Day format')
+                }
+
+                if (slot === -1) {
+                    throw new FrameError('Day not found')
+                }
+            }
+
             return {
                 buttons: [
                     {
@@ -137,17 +153,14 @@ export default async function slot({
 
                 inputText: 'Enter your email address',
 
-                component: NextView(
-                    config,
-                    datesArray[params.date],
-                    slotsArray[params.date][params.slot]
-                ),
+                component: NextView(config, datesArray[params.date], slotsArray[params.date][slot]),
                 handler: 'confirm',
                 params: {
                     durationFixed: 'fixed',
                     duration: params.duration,
                     date: params.date,
-                    slot: params.slot,
+                    slot,
+                    month,
                 },
             }
         }
@@ -157,7 +170,6 @@ export default async function slot({
                 Number.parseInt(params.slot) == params.slotLength - 1
                     ? 0
                     : Number.parseInt(params.slot) + 1
-            const dates = getCurrentAndFutureDate(30)
             const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                 JSON.stringify({
                     json: {
@@ -201,19 +213,21 @@ export default async function slot({
                     },
                 ],
                 fonts: fonts,
-
+                inputText: 'Hour slot as 11:00 PM or 23:00',
                 component: PageView(config, slotsArray[params.date], slot),
-                handler: 'slot',
+                handler: 'hour',
                 params: {
                     durationFixed: 'fixed',
                     duration: params.duration,
                     date: params.date,
                     slot: slot,
                     slotLength: slotsArray[params.date].length,
+                    month,
                 },
             }
         }
     }
+
     return {
         buttons: [
             {
@@ -227,14 +241,15 @@ export default async function slot({
             },
         ],
         fonts: fonts,
-
+        inputText: 'Hour slot as 11:00 PM or 23:00',
         component: PageView(config, [], 0),
-        handler: 'slot',
+        handler: 'hour',
         params: {
             durationFixed: 'fixed',
             duration: params.duration,
             date: params.date,
             slot: 0,
+            month,
         },
     }
 }

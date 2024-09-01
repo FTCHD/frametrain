@@ -104,7 +104,7 @@ export default async function duration({
 
     if (config.events.length === 1) {
         const event = config.events[0]
-        const dates = getCurrentAndFutureDate(30)
+        const dates = getCurrentAndFutureDate(new Date().getMonth())
         const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
             JSON.stringify({
                 json: {
@@ -151,15 +151,19 @@ export default async function duration({
                 {
                     label: '➡️',
                 },
+                {
+                    label: 'Change Month',
+                },
             ],
             component: DateView(config, datesArray, 0, event.formattedDuration),
-            inputText: 'Enter a booking date from slide',
+            inputText: 'Enter day as 02 or 2 or 20',
             params: {
                 date: 0,
                 eventSlug: event.slug,
                 dateLength: datesArray.length,
+                month: new Date().getMonth(),
             },
-            handler: 'date',
+            handler: 'day',
         }
     }
 
@@ -169,6 +173,6 @@ export default async function duration({
         })),
         fonts: fonts,
         component: PageView(config),
-        handler: 'date',
+        handler: 'day',
     }
 }

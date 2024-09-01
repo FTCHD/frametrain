@@ -1,4 +1,5 @@
 import type { Config } from '..'
+import { getTimezoneOffset } from '../utils/date'
 
 export default function CoverView(config: Config, slots: string[], slotParam: number) {
     const backgroundProp: Record<string, string> = {}
@@ -97,19 +98,10 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
                     style={{
                         color: config.primaryColor || 'white',
                         display: 'flex',
-                        fontSize: 36,
-                    }}
-                >
-                    Choose a slot
-                </div>
-                <div
-                    style={{
-                        color: config.primaryColor || 'white',
-                        display: 'flex',
                         fontSize: 28,
                     }}
                 >
-                    Timezone: {config.timezone || 'Europe/London'}
+                    Timezone: GMT{getTimezoneOffset(config.timezone || 'Europe/London')}
                 </div>
             </div>
 

@@ -3,8 +3,7 @@ import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
-import { getCurrentAndFutureDate } from '../utils/date'
-import { extractDatesAndSlots } from '../utils/date'
+import { extractDatesAndSlots, getCurrentAndFutureDate, getDateIndex } from '../utils/date'
 import PageView from '../views/Day'
 import NextView from '../views/Hour'
 
@@ -21,19 +20,10 @@ export default async function date({
 
     const buttonIndex = body.untrustedData.buttonIndex
     const inputText = body.untrustedData.inputText
+    const month = params?.month === undefined ? new Date().getMonth() : Number(params?.month)
+    const dates = getCurrentAndFutureDate(month)
 
-    const getDate = () => {
-        if (inputText) {
-            const date = dates.find((d) => d === inputText)
-            if (!date) {
-                throw new FrameError('The date you entered is invalid')
-            }
-            return Number(date)
-        }
-        return params?.date === undefined || params?.date === 'NaN' ? 0 : Number(params?.date)
-    }
-
-    let date = getDate()
+    let date = 0
     const eventIndex = params?.eventSlug
         ? config.events.findIndex((event) => event.slug === params.eventSlug)
         : buttonIndex - 1
@@ -45,7 +35,8 @@ export default async function date({
                 break
             }
 
-            const dates = getCurrentAndFutureDate(30)
+            date = Number.parseInt(params.date)
+
             const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                 JSON.stringify({
                     json: {
@@ -72,10 +63,22 @@ export default async function date({
             const slots = await fetch(url)
             const slotsResponse = await slots.json()
 
-            const [_, slotsArray] = extractDatesAndSlots(
+            const [datesArray, slotsArray] = extractDatesAndSlots(
                 slotsResponse.result.data.json.slots,
                 config.timezone
             )
+
+            if (inputText) {
+                date = getDateIndex(inputText, datesArray)
+
+                if (date === -2) {
+                    throw new Error('Invalid Day format')
+                }
+                if (date === -1) {
+                    throw new Error('Day not found')
+                }
+            }
+
             return {
                 buttons: [
                     {
@@ -90,14 +93,20 @@ export default async function date({
                 ],
                 fonts,
                 component: NextView(config, slotsArray[date], 0),
-                handler: 'slot',
+                handler: 'hour',
+                inputText: 'Enter hour as 11:00 PM or 23:00',
                 params: {
                     duration: event.slug,
                     date,
                     slot: 0,
                     slotLength: slotsArray[date].length,
+                    month,
                 },
             }
+        }
+
+        case 4: {
+            break
         }
 
         default: {
@@ -111,7 +120,6 @@ export default async function date({
         }
     }
 
-    const dates = getCurrentAndFutureDate(30)
     const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
         JSON.stringify({
             json: {
@@ -154,15 +162,19 @@ export default async function date({
             {
                 label: '➡️',
             },
+            {
+                label: 'Change Month',
+            },
         ],
         fonts,
         component: PageView(config, datesArray, date, event.formattedDuration),
-        handler: 'date',
-        inputText: 'Enter a booking date from slide',
+        handler: 'day',
+        inputText: 'Enter day as 03 or 3',
         params: {
             date,
             eventSlug: event.slug,
             dateLength: datesArray.length,
+            month,
         },
     }
 }
