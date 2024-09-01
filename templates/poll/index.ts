@@ -1,9 +1,9 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
 import Inspector from './Inspector'
-import cover from './cover.jpg'
+import cover from './cover.avif'
 import handlers from './handlers'
-import icon from './icon.png'
+import icon from './icon.avif'
 
 export interface Config extends BaseConfig {
     owner: {
