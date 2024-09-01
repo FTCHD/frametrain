@@ -1,9 +1,9 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
+import type { TextSlideProps } from '@/sdk/components/TextSlide'
 import Inspector from './Inspector'
 import type { ChainKey } from './common/onchain'
-import cover from './cover.jpeg'
+import cover from './cover.avif'
 import handlers from './handlers'
-import type { TextSlideProps } from '@/sdk/components/TextSlide'
 
 export interface Config extends BaseConfig {
     address?: string
@@ -31,7 +31,7 @@ export interface Storage extends BaseStorage {}
 
 export default {
     name: 'Fundraiser',
-    description: 'Create a Fundraiser Frame!',
+    description: 'Start your own onchain GoFundMe as a Frame.',
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,
