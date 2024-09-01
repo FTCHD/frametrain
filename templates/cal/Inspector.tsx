@@ -99,6 +99,46 @@ export default function Inspector() {
         })
     }
 
+    const fetchEventDetails = async (eventSlug: string) => {
+        if (eventSlugs.includes(eventSlug)) {
+            setLoading(false)
+            toast.error(`Event type ${eventSlug} already added`)
+            return
+        }
+
+        setLoading(true)
+
+        const text = await corsFetch(
+            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        )
+        const data = JSON.parse(text as string)
+        const json = data[0].result.data.json
+        if (json === null) {
+            toast.error(`No event type found for: ${eventSlug}`)
+            setLoading(false)
+            return
+        }
+
+        const slug = data[0].result.data.json.slug as string
+        const duration = data[0].result.data.json.length as number
+        const newEvents = [
+            ...events,
+            {
+                slug: slug,
+                duration: duration,
+                formattedDuration: getDurationFormatted(duration),
+            },
+        ]
+        updateConfig({ events: newEvents })
+        setLoading(false)
+    }
+
     return (
         <div className="flex flex-col gap-5 w-full h-full max-md:gap-3">
             <div className="flex flex-col gap-2 max-md:gap-1">
@@ -118,7 +158,7 @@ export default function Inspector() {
                     <>
                         <div className="flex gap-2 items-center">
                             <Input
-                                disabled={!config.username}
+                                disabled={!config.username || loading}
                                 ref={slugInputRef}
                                 placeholder="Event ID/Slug (eg. 15min/30min/secret)"
                             />
@@ -134,38 +174,9 @@ export default function Inspector() {
                                         setLoading(false)
                                         return
                                     }
-                                    try {
-                                        const text = await corsFetch(
-                                            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
-                                            {
-                                                method: 'GET',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                },
-                                            }
-                                        )
-                                        const data = JSON.parse(text as string)
-                                        const json = data[0].result.data.json
-                                        if (json === null) {
-                                            throw new Error('error')
-                                        }
-                                        const slug = data[0].result.data.json.slug as string
-                                        const duration = data[0].result.data.json.length as number
-                                        const newEvents = [
-                                            ...events,
-                                            {
-                                                slug: slug,
-                                                duration: duration,
-                                                formattedDuration: getDurationFormatted(duration),
-                                            },
-                                        ]
-                                        updateConfig({ events: newEvents })
-                                    } catch {
-                                        toast.error(`No event type found for: ${eventSlug}`)
-                                    } finally {
-                                        setLoading(false)
-                                        slugInputRef.current.value = ''
-                                    }
+
+                                    await fetchEventDetails(eventSlug)
+                                    slugInputRef.current.value = ''
                                 }}
                             >
                                 {loading ? <LoaderIcon className="animate-spin" /> : 'ADD'}
@@ -178,53 +189,25 @@ export default function Inspector() {
                                     variant={
                                         eventSlugs.includes(eventSlug) ? 'secondary' : 'outline'
                                     }
-                                    className={`cursor-pointer ${
-                                        eventSlugs.includes(eventSlug) ? 'opacity-50' : ''
+                                    className={`${
+                                        config.username && !eventSlugs.includes(eventSlug)
+                                            ? 'cursor-pointer'
+                                            : 'opacity-50'
                                     }`}
-                                    role="button"
+                                    role={
+                                        config.username && !eventSlugs.includes(eventSlug)
+                                            ? 'button'
+                                            : undefined
+                                    }
                                     aria-label={`${eventSlug} event type`}
                                     aria-disabled={
                                         !config.username || eventSlugs.includes(eventSlug)
                                     }
-                                    onClick={async () => {
+                                    onClick={() => {
                                         if (!config.username || eventSlugs.includes(eventSlug)) {
                                             return
                                         }
-                                        setLoading(true)
-
-                                        try {
-                                            const text = await corsFetch(
-                                                `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
-                                                {
-                                                    method: 'GET',
-                                                    headers: {
-                                                        'Content-Type': 'application/json',
-                                                    },
-                                                }
-                                            )
-                                            const data = JSON.parse(text as string)
-                                            const json = data[0].result.data.json
-                                            if (json === null) {
-                                                throw new Error('error')
-                                            }
-                                            const slug = data[0].result.data.json.slug as string
-                                            const duration = data[0].result.data.json
-                                                .length as number
-                                            const newEvents = [
-                                                ...events,
-                                                {
-                                                    slug: slug,
-                                                    duration: duration,
-                                                    formattedDuration:
-                                                        getDurationFormatted(duration),
-                                                },
-                                            ]
-                                            updateConfig({ events: newEvents })
-                                        } catch {
-                                            toast.error(`No event type found for: ${eventSlug}`)
-                                        } finally {
-                                            setLoading(false)
-                                        }
+                                        return fetchEventDetails(eventSlug)
                                     }}
                                 >
                                     {eventSlug}
@@ -271,6 +254,7 @@ export default function Inspector() {
                     Choose your preferred timezone to display the event start time.
                 </p>
                 <Select
+                    disabled={config.events.length === 0}
                     defaultValue={config.timezone ?? 'Europe/London'}
                     onChange={async (value) => {
                         if (!config.events.length) return
