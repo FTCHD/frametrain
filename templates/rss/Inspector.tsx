@@ -25,7 +25,9 @@ export default function Inspector() {
                     <h2 className="text-lg font-semibold">RSS Feed URL</h2>
                     <Input
                         className="py-2 text-lg"
+                        type="url"
                         ref={rssUrlRef}
+                        placeholder="Your RSS URL here"
                         onChange={async (e) => {
                             const rssUrl = e.target.value
 
