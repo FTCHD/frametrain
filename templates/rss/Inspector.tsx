@@ -19,27 +19,25 @@ export default function Inspector() {
     }, [config.rssUrl])
 
     return (
-        <div className=" h-full flex flex-col gap-10">
-            <div className="w-full h-full flex flex-col gap-5">
-                <div className="flex flex-col gap-2">
-                    <h2 className="text-lg font-semibold">RSS Feed URL</h2>
-                    <Input
-                        className="py-2 text-lg"
-                        type="url"
-                        ref={rssUrlRef}
-                        placeholder="Your RSS URL here"
-                        onChange={async (e) => {
-                            const rssUrl = e.target.value
+        <div className=" h-full flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+                <h2 className="text-lg font-semibold">RSS Feed URL</h2>
+                <Input
+                    className="py-2 text-lg"
+                    type="url"
+                    ref={rssUrlRef}
+                    placeholder="Your RSS URL here"
+                    onChange={async (e) => {
+                        const rssUrl = e.target.value
 
-                            if (!rssUrl.length) {
-                                updateConfig({ rssUrl: null })
-                                return
-                            }
+                        if (!rssUrl.length) {
+                            updateConfig({ rssUrl: null })
+                            return
+                        }
 
-                            updateConfig({ rssUrl })
-                        }}
-                    />
-                </div>
+                        updateConfig({ rssUrl })
+                    }}
+                />
             </div>
 
             <div className="flex flex-col gap-2 w-full">
