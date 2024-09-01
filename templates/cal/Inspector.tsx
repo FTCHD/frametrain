@@ -27,6 +27,7 @@ export default function Inspector() {
     const [loading, setLoading] = useState(false)
     const events = config.events || []
     const eventSlugs = events.map((evt) => evt.slug)
+    const disbaleFields = config.events.length === 0
 
     const timezones = Intl.supportedValuesOf('timeZone')
     const timezoneOptions = timezones.map((tz) => {
@@ -254,7 +255,7 @@ export default function Inspector() {
                     Choose your preferred timezone to display the event start time.
                 </p>
                 <Select
-                    disabled={config.events.length === 0}
+                    disabled={disbaleFields}
                     defaultValue={config.timezone ?? 'Europe/London'}
                     onChange={async (value) => {
                         if (!config.events.length) return
@@ -278,6 +279,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">Karma Gating</h2>
 
                         <Switch
+                            disabled={disbaleFields}
                             checked={config.gatingOptions.karmaGating}
                             onCheckedChange={(checked) => {
                                 updateConfig({
@@ -304,6 +306,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">NFT Gating</h2>
 
                         <Switch
+                            disabled={disbaleFields}
                             checked={config.gatingOptions.nftGating}
                             onCheckedChange={(checked) => {
                                 updateConfig({
@@ -325,6 +328,7 @@ export default function Inspector() {
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold max-md:text-base">Choose Chain</h2>
                             <Select
+                                disabled={disbaleFields}
                                 onChange={handleChainChange}
                                 defaultValue={config.nftOptions.nftChain}
                             >
@@ -344,6 +348,7 @@ export default function Inspector() {
                                 Choose NFT Type
                             </h2>
                             <Select
+                                disabled={disbaleFields}
                                 defaultValue={config.nftOptions.nftType}
                                 onChange={handleNftTypeChange}
                             >
@@ -355,6 +360,7 @@ export default function Inspector() {
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold max-md:text-base">NFT address</h2>
                             <Input
+                                disabled={disbaleFields}
                                 className="text-lg max-md:text-base"
                                 placeholder="Enter your NFT address"
                                 onChange={async (e) => {
@@ -379,6 +385,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">Recasted</h2>
 
                         <Switch
+                            disabled={disbaleFields}
                             checked={config.gatingOptions.recasted}
                             onCheckedChange={(checked) => {
                                 if (checked) {
@@ -408,6 +415,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">Liked</h2>
 
                         <Switch
+                            disabled={disbaleFields}
                             checked={config.gatingOptions.liked}
                             onCheckedChange={(checked) => {
                                 if (checked) {
@@ -437,6 +445,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">Follower</h2>
 
                         <Switch
+                            disabled={disbaleFields}
                             checked={config.gatingOptions.follower}
                             onCheckedChange={(checked) => {
                                 if (checked) {
@@ -466,6 +475,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">Following</h2>
 
                         <Switch
+                            disabled={disbaleFields}
                             checked={config.gatingOptions.following}
                             onCheckedChange={(checked) => {
                                 if (checked) {
