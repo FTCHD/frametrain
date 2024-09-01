@@ -1,7 +1,7 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import type { RssFeed } from './common'
-import cover from './cover.jpeg'
+import cover from './cover.png'
 import handlers from './handlers'
 
 export interface Config extends BaseConfig {
@@ -19,7 +19,7 @@ export interface Storage extends BaseStorage {
 
 export default {
     name: 'RSS',
-    description: 'Turn any RSS feed into a Farcaster Frame.',
+    description: "Turn any RSS feed into a Farcaster Frame that's always up to date.",
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,
