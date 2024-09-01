@@ -6,7 +6,7 @@ import type { Config } from '..'
 import { getCurrentAndFutureDate } from '../utils/date'
 import { extractDatesAndSlots } from '../utils/date'
 import { holdsErc721, holdsErc1155 } from '../utils/nft'
-import DateView from '../views/Date'
+import DateView from '../views/Day'
 import PageView from '../views/Duration'
 
 export default async function duration({

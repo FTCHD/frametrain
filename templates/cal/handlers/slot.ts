@@ -5,7 +5,7 @@ import type { Config } from '..'
 import { getCurrentAndFutureDate } from '../utils/date'
 import { extractDatesAndSlots } from '../utils/date'
 import NextView from '../views/Confirm'
-import PageView from '../views/Slot'
+import PageView from '../views/Hour'
 
 export default async function slot({
     body,

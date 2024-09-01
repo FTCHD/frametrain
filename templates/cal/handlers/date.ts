@@ -5,8 +5,8 @@ import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
 import { getCurrentAndFutureDate } from '../utils/date'
 import { extractDatesAndSlots } from '../utils/date'
-import PageView from '../views/Date'
-import NextView from '../views/Slot'
+import PageView from '../views/Day'
+import NextView from '../views/Hour'
 
 export default async function date({
     body,
