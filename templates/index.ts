@@ -10,7 +10,6 @@ import pdf from './pdf'
 import poll from './poll'
 import presentation from './presentation'
 import quizlet from './quizlet'
-import sablier from './sablier'
 import twitter from './twitter'
 import meme from './meme'
 import rss from './rss'
@@ -24,7 +23,6 @@ export default {
     pdf,
     poll,
     figma,
-    sablier,
     twitter,
     discourse,
     gif,
