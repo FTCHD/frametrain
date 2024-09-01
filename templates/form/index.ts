@@ -1,9 +1,10 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import Inspector from './Inspector'
-import cover from './cover.jpeg'
-import handlers from './handlers'
 import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
 import type { TextSlideStyle } from '@/sdk/components/TextSlide'
+import Inspector from './Inspector'
+import cover from './cover.avif'
+import handlers from './handlers'
+import icon from './icon.avif'
 
 export type fieldTypes = {
     fieldName: string
@@ -49,9 +50,10 @@ export interface Storage extends BaseStorage {
 
 export default {
     name: 'Form',
-    description: 'Create forms and save the user inputs!',
-    shortDescription: 'Validated Responses!',
-    icon: 'project',
+    description: 'Create forms, save the user inputs, and even download them as CSV!',
+    shortDescription: 'Download as CSV',
+    icon: icon,
+    octicon: 'project',
     creatorFid: '417554',
     creatorName: 'onten.eth',
     cover,
