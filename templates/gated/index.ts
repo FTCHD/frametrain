@@ -1,9 +1,9 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import Inspector from './Inspector'
-import cover from './cover.jpeg'
-import handlers from './handlers'
 import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
 import type { TextSlideProps } from '@/sdk/components/TextSlide'
+import Inspector from './Inspector'
+import cover from './cover.webp'
+import handlers from './handlers'
 
 export interface Config extends BaseConfig {
     owner: {
@@ -25,8 +25,8 @@ export interface Storage extends BaseStorage {}
 
 export default {
     name: 'Gated',
-    description: 'Create your own Gated Frame to reward your fans.',
-    shortDescription: 'Gate your Frame!',
+    description: 'Lock anything behind this Frame with more than 10 gating options.',
+    shortDescription: 'Gate anything!',
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,
