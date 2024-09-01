@@ -1,8 +1,8 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
+import type { TextSlideProps } from '@/sdk/components/TextSlide'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
-import type { TextSlideProps } from '@/sdk/components/TextSlide'
 
 export type PoolToken = {
     address: `0x${string}`
@@ -43,8 +43,8 @@ export interface Storage extends BaseStorage {
 }
 
 export default {
-    name: 'TokenSwap',
-    description: 'Create your own Token Swap Frame',
+    name: 'Swap',
+    description: 'Enable followers to Swap tokens straight from a Frame, with no extra fees.',
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,
