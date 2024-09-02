@@ -40,7 +40,7 @@ export interface Config extends BaseConfig {
 }
 
 export interface Storage extends BaseStorage {
-    tokenToUsd: Record<string, { price: number; lastUpdated: number }>
+    livePriceData: Record<string, { price: number; lastUpdated: number }>
 }
 
 export default {

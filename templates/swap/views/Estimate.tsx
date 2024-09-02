@@ -1,4 +1,5 @@
 import type { Config as BaseConfig } from '..'
+import { formatSymbol } from '../common/shared'
 
 type Token = {
     logo: string
@@ -56,6 +57,7 @@ export default function EstimateView(props?: Config) {
             image: token1.logo,
         },
     ]
+    const price = formatSymbol(config.price, token1.symbol)
     return (
         <div
             tw="flex flex-col w-full h-full overflow-hidden rounded-sm p-4"
@@ -113,7 +115,7 @@ export default function EstimateView(props?: Config) {
                         marginBottom: '5px',
                     }}
                 >
-                    ${config.price}
+                    {price}
                 </span>
             </div>
             {config.coverMessage && (

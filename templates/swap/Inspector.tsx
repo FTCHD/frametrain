@@ -169,6 +169,7 @@ export default function Inspector() {
                                 >
                                     <ToggleGroupItem
                                         value="token0"
+                                        disabled={config.pool.primary === 'token0'}
                                         className="border-2 border-zinc-600"
                                         onClick={() => {
                                             updateConfig({
@@ -183,6 +184,7 @@ export default function Inspector() {
                                     </ToggleGroupItem>
                                     <ToggleGroupItem
                                         value="token1"
+                                        disabled={config.pool.primary === 'token1'}
                                         className="border-2 border-zinc-600"
                                         onClick={() => {
                                             updateConfig({

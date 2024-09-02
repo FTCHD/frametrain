@@ -39,7 +39,6 @@ export default async function estimate({
         switch (buttonIndex) {
             case 1: {
                 const textInput = body.validatedData.input?.text
-                console.log('textInput', textInput)
 
                 if (!textInput) {
                     throw new FrameError('An amount must be provided')
