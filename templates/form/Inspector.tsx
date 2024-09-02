@@ -3,7 +3,7 @@ import { Button } from '@/components/shadcn/Button'
 import { Label } from '@/components/shadcn/Label'
 import { Separator } from '@/components/shadcn/Separator'
 import { Switch } from '@/components/shadcn/Switch'
-import GatingOptions from '@/sdk/components/GatingOptions'
+import GatingInspector from '@/sdk/components/gating/GatingInspector'
 import { useFarcasterId, useFarcasterName, useFrameConfig, useFrameId } from '@/sdk/hooks'
 import { Trash } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
@@ -103,7 +103,9 @@ export default function Inspector() {
                         {enabledGating && (
                             <div className="flex flex-col gap-2 w-full">
                                 <h2 className="text-lg font-semibold">Form Gating options</h2>
-                                <GatingOptions
+                                <GatingInspector
+                                    fid={fid}
+                                    config={config.gating}
                                     onUpdate={(option) => {
                                         updateConfig({
                                             gating: {
@@ -112,7 +114,6 @@ export default function Inspector() {
                                             },
                                         })
                                     }}
-                                    config={config.gating}
                                 />
                             </div>
                         )}
