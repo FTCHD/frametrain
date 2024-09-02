@@ -24,6 +24,16 @@ export const months: { [key: number]: string } = {
     12: 'December',
 }
 
+export function getMonthIndex(month: number | string): number {
+    const monthArray = Object.values(months)
+
+    if (!isNaN(Number(month))) {
+        return monthArray.findIndex((m) => months[Number(month)] === m)
+    }
+
+    return monthArray.findIndex((m) => m.toLowerCase() === month + ''.toLowerCase())
+}
+
 export function getTimezoneOffset(timezone: string) {
     return dayjs().tz(timezone).format('Z')
 }
@@ -143,4 +153,10 @@ export function getTimeIndex(hour: string, slots: string[]) {
     const userDate = dayjs(date).format('hh:mm A')
     const slotIndex = slots.findIndex((slot) => slot === userDate)
     return slotIndex
+}
+
+export function formatDateMonth(day: number, month: number, timezone = 'Europe/London') {
+    const date = dayjs().tz(timezone).set('date', day).set('month', month)
+
+    return date.format('dddd, MMMM Do YYYY [GMT]Z')
 }

@@ -14,7 +14,6 @@ export default async function confirm({
     body,
     config,
     params,
-    storage,
 }: {
     body: FrameActionPayload
     config: Config

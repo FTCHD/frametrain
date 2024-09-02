@@ -15,7 +15,7 @@ export default function CoverView(
             backgroundProp['backgroundImage'] = config.background
         }
     } else {
-        backgroundProp['backgroundColor'] = '#black'
+        backgroundProp['backgroundColor'] = 'black'
     }
 
     const visibleIndex = Math.floor(Number.parseInt(dateParam.toString()) / 12)

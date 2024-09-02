@@ -84,7 +84,7 @@ export default async function hour({
                 ],
                 fonts: fonts,
                 inputText: 'Hour slot as 11:00 PM or 23:00',
-                component: PageView(config, slotsArray[params.date], slot),
+                component: PageView(config, slotsArray[params.date], slot, month),
                 handler: 'hour',
                 params: {
                     durationFixed: 'fixed',
@@ -214,7 +214,7 @@ export default async function hour({
                 ],
                 fonts: fonts,
                 inputText: 'Hour slot as 11:00 PM or 23:00',
-                component: PageView(config, slotsArray[params.date], slot),
+                component: PageView(config, slotsArray[params.date], slot, month),
                 handler: 'hour',
                 params: {
                     durationFixed: 'fixed',
@@ -242,7 +242,7 @@ export default async function hour({
         ],
         fonts: fonts,
         inputText: 'Hour slot as 11:00 PM or 23:00',
-        component: PageView(config, [], 0),
+        component: PageView(config, [], 0, month),
         handler: 'hour',
         params: {
             durationFixed: 'fixed',

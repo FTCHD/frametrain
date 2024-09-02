@@ -6,6 +6,7 @@ import type { Config } from '..'
 import { extractDatesAndSlots, getCurrentAndFutureDate, getDateIndex } from '../utils/date'
 import PageView from '../views/Day'
 import NextView from '../views/Hour'
+import MonthView from '../views/Month'
 
 export default async function date({
     body,
@@ -92,7 +93,7 @@ export default async function date({
                     },
                 ],
                 fonts,
-                component: NextView(config, slotsArray[date], 0),
+                component: NextView(config, slotsArray[date], 0, month),
                 handler: 'hour',
                 inputText: 'Enter hour as 11:00 PM or 23:00',
                 params: {
@@ -106,17 +107,42 @@ export default async function date({
         }
 
         case 4: {
-            break
+            return {
+                buttons: [
+                    {
+                        label: '⬅️',
+                    },
+                    {
+                        label: 'Select',
+                    },
+                    {
+                        label: '➡️',
+                    },
+                ],
+                fonts,
+                component: MonthView(config, month, event.formattedDuration),
+                handler: 'month',
+                inputText: 'Enter month as January or 1',
+                params: {
+                    month,
+                    eventSlug: event.slug,
+                    date: params.date,
+                },
+            }
         }
 
         default: {
-            if (buttonIndex === 1) {
-                date =
-                    params.date === undefined ? date : date === 0 ? params.dateLength - 1 : date - 1
-            } else {
-                date =
-                    params.date === undefined ? date : date === params.dateLength - 1 ? 0 : date + 1
-            }
+            const currentDate = params.date === undefined ? 0 : Number(params.date)
+            const isPreviousButton = buttonIndex === 1
+
+            const previousDate = isPreviousButton ? Math.max(0, currentDate - 1) : currentDate
+            const nextDate = isPreviousButton
+                ? currentDate
+                : params.dateLength === currentDate + 1
+                  ? 0
+                  : Math.min(currentDate + 1)
+
+            date = isPreviousButton ? previousDate : nextDate
         }
     }
 

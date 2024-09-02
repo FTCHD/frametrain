@@ -1,7 +1,12 @@
 import type { Config } from '..'
-import { getTimezoneOffset } from '../utils/date'
+import { formatDateMonth, getTimezoneOffset } from '../utils/date'
 
-export default function CoverView(config: Config, slots: string[], slotParam: number) {
+export default function CoverView(
+    config: Config,
+    slots: string[],
+    slotParam: number,
+    month: number
+) {
     const backgroundProp: Record<string, string> = {}
     if (config.background) {
         if (config.background?.startsWith('#')) {
@@ -10,7 +15,7 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
             backgroundProp['backgroundImage'] = config.background
         }
     } else {
-        backgroundProp['backgroundColor'] = '#black'
+        backgroundProp['backgroundColor'] = 'black'
     }
 
     const visibleIndex = Math.floor(Number.parseInt(slotParam.toString()) / 10)
@@ -96,12 +101,12 @@ export default function CoverView(config: Config, slots: string[], slotParam: nu
             >
                 <div
                     style={{
-                        color: config.primaryColor || 'white',
                         display: 'flex',
+                        alignSelf: 'center',
                         fontSize: 28,
                     }}
                 >
-                    Timezone: GMT{getTimezoneOffset(config.timezone || 'Europe/London')}
+                    {formatDateMonth(slotParam, month, config.timezone)}
                 </div>
             </div>
 

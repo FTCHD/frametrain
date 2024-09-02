@@ -9,7 +9,7 @@ export default function CoverView(config: Config) {
             backgroundProp['backgroundImage'] = config.background
         }
     } else {
-        backgroundProp['backgroundColor'] = '#black'
+        backgroundProp['backgroundColor'] = 'black'
     }
 
     const paragraphs =
