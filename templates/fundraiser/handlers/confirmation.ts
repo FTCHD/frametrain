@@ -19,6 +19,11 @@ export default async function confirmation({
 }): Promise<BuildFrameData> {
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
+    const buttonIndex = body.validatedData.tapped_button.index as number
+
+    if (buttonIndex === 1) {
+        return about({ config, body, storage: undefined })
+    }
 
     if (!config.address) {
         throw new FrameError('Fundraiser address not found.')
@@ -40,16 +45,11 @@ export default async function confirmation({
         fontSet.add(config.cover.bottomMessage.fontFamily)
     }
 
-    const buttonIndex = body.validatedData.tapped_button.index as number
     const amounts = config.enablePredefinedAmounts ? config.amounts : []
     const lastButtonIndex = amounts.length + 2
     const isCustomAmount = buttonIndex === lastButtonIndex
     const tokenClient = getClient(config.token.chain)
     const glideConfig = getGlideConfig(tokenClient.chain)
-
-    if (buttonIndex === 1) {
-        return about({ config, body, storage: undefined })
-    }
 
     let amount = 0
     let address = config.address as `0x${string}`
