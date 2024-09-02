@@ -6,7 +6,6 @@ import type {
 } from '@/lib/farcaster'
 import { runGatingChecks } from '@/lib/gating'
 import TextSlide from '@/sdk/components/TextSlide'
-import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
 
@@ -19,13 +18,10 @@ export default async function page({
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
+    await runGatingChecks(body, config.gating)
+	
     const buttons: FrameButtonMetadata[] = []
-    if (!config.owner) {
-        throw new FrameError('Frame Owner not configured')
-    }
-
-    await runGatingChecks(body, config)
-
+	
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
 

@@ -1,6 +1,6 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
 import type { TextSlideProps } from '@/sdk/components/TextSlide'
+import type { GatingType } from '@/sdk/components/gating/types'
 import Inspector from './Inspector'
 import cover from './cover.avif'
 import handlers from './handlers'
@@ -13,7 +13,7 @@ export interface Config extends BaseConfig {
     } | null
     label: string | null
     links: string[]
-    gating: GatingOptionsProps['config']
+    gating: GatingType | undefined
     cover: TextSlideProps & {
         image?: string
     }
@@ -51,23 +51,11 @@ export default {
             customMessage: { text: 'We appreciate you sticking around.' },
         },
         gating: {
-            channels: {
-                checked: false,
-                data: [],
+            enabled: [],
+            requirements: {
+                followedByMe: false,
+                followingMe: false,
             },
-            followedBy: false,
-            following: false,
-            liked: true,
-            recasted: false,
-            eth: false,
-            sol: false,
-            powerBadge: false,
-            maxFid: 0,
-            minFid: 0,
-            score: 0,
-            erc20: null,
-            erc721: null,
-            erc1155: null,
         },
     },
     requiresValidation: true,

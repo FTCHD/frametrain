@@ -5,11 +5,11 @@ import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/Label'
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
 import { Separator } from '@/components/shadcn/Separator'
-import GatingOptions from '@/sdk/components/GatingOptions'
 import TextSlideEditor from '@/sdk/components/TextSlideEditor'
-import { useFarcasterId, useFarcasterName, useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import GatingInspector from '@/sdk/components/gating/GatingInspector'
+import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { Trash } from 'lucide-react'
-import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { type ReactNode, useRef, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
 
@@ -67,7 +67,6 @@ export default function Inspector() {
     const uploadImage = useUploadImage()
     const [config, updateConfig] = useFrameConfig<Config>()
     const fid = useFarcasterId()
-    const username = useFarcasterName()
     const [activeTab, setActiveTab] = useState<NavBarItem['key']>('cover')
     const disableLinksField = config.links?.length >= 4
 
@@ -80,18 +79,6 @@ export default function Inspector() {
     const linkInputRef = useRef<HTMLInputElement>(null)
     const tab = sidebarNavItems({ tab: activeTab, showOne: true })
     const tabs = sidebarNavItems({ tab: activeTab })
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    useEffect(() => {
-        if (!config?.owner) {
-            updateConfig({
-                owner: {
-                    username,
-                    fid,
-                },
-            })
-        }
-    }, [])
 
     const onChangeLabel = useDebouncedCallback(async (label: string) => {
         if (label === config.label) {
@@ -244,16 +231,17 @@ export default function Inspector() {
                 component = (
                     <div className="flex flex-col gap-4 w-full">
                         <h2 className="text-lg font-semibold">Requirements</h2>
-                        <GatingOptions
-                            onUpdate={(option) => {
+                        <GatingInspector
+                            config={config.gating}
+                            fid={fid}
+                            onUpdate={(newGating) => {
                                 updateConfig({
                                     gating: {
                                         ...config.gating,
-                                        ...option,
+                                        ...newGating,
                                     },
                                 })
                             }}
-                            config={config.gating}
                         />
                     </div>
                 )
@@ -466,7 +454,7 @@ export default function Inspector() {
             }
         }
 
-        return <>{component}</>
+        return component
     }
 
     return (
