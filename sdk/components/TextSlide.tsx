@@ -59,7 +59,6 @@ export default function TextSlide({ title, subtitle, bottomMessage, background }
                     fontStyle: title.fontStyle || 'normal',
                     fontWeight: title.fontWeight || 'bold',
                     justifyContent: alignmentToFlex(title.position),
-                    textWrap: 'balance',
                 }}
             >
                 {title.text}
@@ -72,7 +71,6 @@ export default function TextSlide({ title, subtitle, bottomMessage, background }
                     fontStyle: subtitle.fontStyle || 'medium',
                     fontWeight: subtitle.fontWeight || 'bold',
                     justifyContent: alignmentToFlex(subtitle.position),
-                    textWrap: 'balance',
                 }}
             >
                 {subtitle.text}
@@ -86,7 +84,6 @@ export default function TextSlide({ title, subtitle, bottomMessage, background }
                         fontStyle: bottomMessage.fontStyle || 'normal',
                         fontWeight: bottomMessage.fontWeight || 'lighter',
                         justifyContent: alignmentToFlex(bottomMessage.position),
-                        textWrap: 'balance',
                         opacity: '0.8',
                     }}
                 >
