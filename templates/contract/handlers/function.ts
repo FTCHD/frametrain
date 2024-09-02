@@ -1,12 +1,9 @@
 'use server'
-import type {
-    BuildFrameData,
-    FrameButtonMetadata,
-    FrameValidatedActionPayload,
-} from '@/lib/farcaster'
+import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import TextSlide, { type TextSlideProps } from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { BaseError } from 'viem'
 import type { Config, Storage } from '..'
 import { chainByChainId } from '../common/constants'
 import { getSignature, readContract } from '../common/signature'
@@ -17,7 +14,7 @@ export default async function functionHandler({
     config,
     params,
 }: {
-    body: FrameValidatedActionPayload
+    body: FrameActionPayload
     config: Config
     storage?: Storage
     params: { currentIndex?: string }
@@ -34,8 +31,8 @@ export default async function functionHandler({
         },
     ]
 
-    const buttonIndex = body.validatedData.tapped_button.index as number
-    const textInput = body.validatedData?.input?.text as string | undefined
+    const buttonIndex = body.untrustedData.buttonIndex
+    const textInput = body.untrustedData?.inputText
     const rawAbiString = config.etherscan.abis.flat()
     const signatures = rawAbiString.filter((abi) => abi.startsWith('function'))
     const currentIndex = params.currentIndex === undefined ? 0 : Number(params.currentIndex)
@@ -50,8 +47,7 @@ export default async function functionHandler({
         return initial({ config })
     }
 
-    const { argStr, args, ...signature } = getSignature(signatures, signatureIndex, textInput)
-    const functionName = signature.name
+    const { argStr, args, name: functionName } = getSignature(signatures, signatureIndex, textInput)
 
     const view: TextSlideProps = {
         ...config.functionSlide,
@@ -103,8 +99,23 @@ export default async function functionHandler({
                 chain,
             })
         } catch (e) {
-            const error = e as Error
-            throw new FrameError(error.message)
+            if (e instanceof BaseError) {
+                const message = e.shortMessage.split('\n').pop()
+
+                if (message) {
+                    if (message.startsWith('0x') && e.metaMessages)
+                        throw new FrameError(e.metaMessages.join('\n'))
+
+                    throw new FrameError(message)
+                }
+
+                throw new FrameError(e.message)
+            }
+            throw new FrameError(
+                e instanceof Error
+                    ? e.message
+                    : e?.toString() || `Unable to read data for: ${functionName}`
+            )
         }
     }
 

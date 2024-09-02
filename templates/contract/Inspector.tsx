@@ -81,9 +81,8 @@ export default function Inspector() {
             const etherscan = await getContractData(link)
             toast.success('Contract data fetched successfully')
             updateConfig({ etherscan })
-        } catch (e) {
-            const error = e as Error
-            toast.error(error.message)
+        } catch {
+            toast.error('Error fetching contract data')
         }
     }, 100)
 
