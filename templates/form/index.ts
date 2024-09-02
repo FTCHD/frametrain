@@ -1,6 +1,6 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
 import type { TextSlideStyle } from '@/sdk/components/TextSlide'
+import type { GatingType } from '@/sdk/components/gating/types'
 import Inspector from './Inspector'
 import cover from './cover.avif'
 import handlers from './handlers'
@@ -32,8 +32,8 @@ export interface Config extends BaseConfig {
     shareText: string
     frameId: string | undefined
     allowDuplicates: boolean
-    gating: GatingOptionsProps['config']
-    enableGating?: boolean
+    gating: GatingType | undefined
+    enableGating: boolean | undefined
 }
 
 export interface Storage extends BaseStorage {
@@ -73,23 +73,23 @@ export default {
         allowDuplicates: false,
         enableGating: false,
         gating: {
-            channels: {
-                checked: false,
-                data: [],
+            enabled: [],
+            requirements: {
+                liked: false,
+                recasted: false,
+                followedByMe: false,
+                followingMe: false,
+                eth: false,
+                sol: false,
+                channels: [],
+                maxFid: 0,
+                minFid: 0,
+                exactFids: [],
+                score: 0,
+                erc20: null,
+                erc721: null,
+                erc1155: null,
             },
-            followedByMe: false,
-            followingMe: false,
-            liked: false,
-            recasted: false,
-            eth: false,
-            sol: false,
-            powerBadge: false,
-            maxFid: 0,
-            minFid: 0,
-            score: 0,
-            erc20: null,
-            erc721: null,
-            erc1155: null,
         },
     },
     requiresValidation: true,

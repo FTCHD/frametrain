@@ -25,12 +25,8 @@ export default async function vote({
 
     let newStorage = storage
 
-    if (config.enableGating && config.gating) {
-        if (!config.owner) {
-            throw new FrameError('Frame Owner Info not configured')
-        }
-
-        await runGatingChecks(body, config)
+    if (config.enableGating) {
+        await runGatingChecks(body, config.gating)
     }
 
     if (buttonIndex !== pastIndex) {

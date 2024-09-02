@@ -1,5 +1,5 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import type { GatingType } from '@/sdk/components/gating/GatingInspector'
+import type { GatingType } from '@/sdk/components/gating/types'
 import Inspector from './Inspector'
 import cover from './cover.avif'
 import handlers from './handlers'
@@ -20,7 +20,7 @@ export interface Config extends BaseConfig {
     textColor?: string
     barColor?: string
     gating: GatingType | undefined
-    enableGating?: boolean
+    enableGating: boolean | undefined
 }
 
 export interface Storage extends BaseStorage {
@@ -46,20 +46,22 @@ export default {
         owner: null,
         enableGating: false,
         gating: {
+            enabled: [],
             requirements: {
-                channels: [],
-                followedByMe: false,
-                followingMe: false,
                 liked: false,
                 recasted: false,
+                followedByMe: false,
+                followingMe: false,
                 eth: false,
                 sol: false,
-                powerBadge: false,
+                channels: [],
                 maxFid: 0,
+                minFid: 0,
+                exactFids: [],
                 score: 0,
-                erc20: [],
-                erc721: [],
-                erc1155: [],
+                erc20: null,
+                erc721: null,
+                erc1155: null,
             },
         },
     },

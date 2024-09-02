@@ -17,7 +17,7 @@ export default function Inspector() {
     const fid = useFarcasterId()
     const username = useFarcasterName()
 
-    const { options, gating } = config
+    const { options } = config
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
     const buttonLabelInputRef = useRef<HTMLInputElement>(null)
