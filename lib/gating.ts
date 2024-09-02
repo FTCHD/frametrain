@@ -1,12 +1,32 @@
-import type { GatingOptionsProps } from '@/sdk/components/GatingOptions'
+import {
+    GATING_ADVANCED_OPTIONS,
+    type GATING_ALL_OPTIONS,
+    type GatingRequirementsType,
+    type GatingType,
+} from '@/sdk/components/GatingInspector'
 import { FrameError } from '@/sdk/error'
 import { getFarcasterUserChannels } from '@/sdk/neynar'
-import { http, createPublicClient, formatUnits, getAddress, getContract, parseAbi } from 'viem'
+import {
+    http,
+    createPublicClient,
+    erc20Abi,
+    erc721Abi,
+    formatUnits,
+    getAddress,
+    getContract,
+    parseAbi,
+} from 'viem'
 import type { Chain } from 'viem'
 import { arbitrum, base, blast, bsc, fantom, mainnet, optimism, polygon, zora } from 'viem/chains'
 import type { FrameValidatedActionPayload } from './farcaster'
 
-function getViemClient(network: string) {
+const ERC1155_ABI = parseAbi([
+    'function name() public view returns (string)',
+    'function symbol() public view returns (string)',
+    'function balanceOf(address _owner, uint256 _id) public view returns (uint256)',
+])
+
+export function getViemClient(network: string) {
     const networkToChainMap: Record<string, Chain> = {
         'ETH': mainnet,
         'BASE': base,
@@ -32,23 +52,7 @@ function getViemClient(network: string) {
     })
 }
 
-const ERC20_ABI = parseAbi([
-    'function name() public view returns (string)',
-    'function decimals() public view returns (uint8)',
-    'function balanceOf(address _owner) public view returns (uint256 balance)',
-])
-
-const ERC721_ABI = parseAbi([
-    'function name() public view returns (string)',
-    'function balanceOf(address _owner) public view returns (uint256 balance)',
-])
-
-const ERC1155_ABI = parseAbi([
-    'function name() public view returns (string)',
-    'function balanceOf(address _owner, uint256 _id) public view returns (uint256)',
-])
-
-export async function checkOpenRankScore(fid: number, owner: number, score: number) {
+async function checkOpenRankScore(fid: number, owner: number, score: number) {
     const url = `https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=${score}&limit=1000&lite=true`
     const options = {
         method: 'POST',
@@ -67,7 +71,7 @@ export async function checkOpenRankScore(fid: number, owner: number, score: numb
             throw new FrameError(`You must have a score of at least ${score}.`)
         }
     } catch {
-        throw new FrameError('Failed to fetch your engagement data')
+        throw new FrameError('Could not fetch your OpenRank data.')
     }
 }
 
@@ -75,98 +79,81 @@ async function checkOwnsErc20(
     addresses: string[],
     chain: string,
     contract: string,
-    minAmount?: number
+    symbol: string,
+    minAmount = 1
 ) {
-    const client = getViemClient(chain)
-    const address = getAddress(contract)
     const token = getContract({
-        client,
-        address,
-        abi: ERC20_ABI,
+        client: getViemClient(chain),
+        address: getAddress(contract),
+        abi: erc20Abi,
     })
-    const name = await token.read.name()
-    const decimals = await token.read.decimals()
-    const balances: number[] = []
 
-    if (minAmount) {
-        for (const ownerAddress of addresses) {
-            const owner = getAddress(ownerAddress)
-            const balanceOf = await token.read.balanceOf([owner])
-            const balance = formatUnits(balanceOf, decimals)
-            balances.push(Number(balance) >= minAmount ? Number(balance) : 1)
+    const decimals = await token.read.decimals()
+
+    for (const ownerAddress of addresses) {
+        const owner = getAddress(ownerAddress)
+        const balanceOf = await token.read.balanceOf([owner])
+        const balance = formatUnits(balanceOf, decimals)
+
+        if (Number(balance) >= minAmount) {
+            return
         }
     }
 
-    const isHolding = balances.some((bal) => bal > 0)
-
-    if (!isHolding) {
-        throw new FrameError(`You must have at least ${minAmount} ${name}.`)
-    }
+    throw new FrameError(`You must have at least ${minAmount} ${symbol}.`)
 }
 
 async function checkOwnsErc721(
     addresses: string[],
     chain: string,
     contract: string,
-    minAmount?: number
+    symbol: string,
+    minAmount = 1
 ) {
-    const client = getViemClient(chain)
-    const address = getAddress(contract)
     const token = getContract({
-        client,
-        address,
-        abi: ERC721_ABI,
+        client: getViemClient(chain),
+        address: getAddress(contract),
+        abi: erc721Abi,
     })
-    const name = await token.read.name()
-    const balances: number[] = []
 
-    if (minAmount) {
-        for (const ownerAddress of addresses) {
-            const owner = getAddress(ownerAddress)
-            const balanceOf = await token.read.balanceOf([owner])
-            const balance = Number(balanceOf)
-            balances.push(balance >= minAmount ? balance : 1)
+    for (const ownerAddress of addresses) {
+        const owner = getAddress(ownerAddress)
+        const balanceOf = await token.read.balanceOf([owner])
+        const balance = Number(balanceOf)
+
+        if (balance >= minAmount) {
+            return
         }
     }
 
-    const isHolding = balances.some((bal) => bal > 0)
-
-    if (!isHolding) {
-        throw new FrameError(`You must have at least ${minAmount} ${name}.`)
-    }
+    throw new FrameError(`You must have at least ${minAmount} ${symbol}.`)
 }
 
 async function checkOwnsErc1155(
     addresses: string[],
     chain: string,
     contract: string,
+    symbol: string,
     tokenId: number,
-    minAmount?: number
+    minAmount = 1
 ) {
-    const client = getViemClient(chain)
-    const address = getAddress(contract)
     const token = getContract({
-        client,
-        address,
+        client: getViemClient(chain),
+        address: getAddress(contract),
         abi: ERC1155_ABI,
     })
-    const name = await token.read.name()
-    const balances: number[] = []
 
-    if (minAmount) {
-        for (const ownerAddress of addresses) {
-            const owner = getAddress(ownerAddress)
-            const balanceOf = await token.read.balanceOf([owner, BigInt(tokenId)])
-            const balance = Number(balanceOf)
-            balances.push(balance >= minAmount ? balance : 1)
+    for (const ownerAddress of addresses) {
+        const owner = getAddress(ownerAddress)
+        const balanceOf = await token.read.balanceOf([owner, BigInt(tokenId)])
+        const balance = Number(balanceOf)
+
+        if (balance >= minAmount) {
+            return
         }
     }
 
-    const isHolding = balances.some((bal) => bal > 0)
-
-    if (!isHolding) {
-        throw new FrameError(`You must have at least ${minAmount} ${name}.`)
-    }
+    throw new FrameError(`You must have at least ${minAmount} ${symbol}.`)
 }
 
 async function checkChannelMembership(fid: number, channel: string) {
@@ -202,7 +189,7 @@ async function checkRecasted(body: {
     }
 }
 
-async function checkFollowing(body: {
+async function checkFollowingMe(body: {
     validatedData: { interactor: { viewer_context: { following: boolean } } }
 }) {
     if (!body.validatedData.interactor.viewer_context.following) {
@@ -210,7 +197,7 @@ async function checkFollowing(body: {
     }
 }
 
-async function checkFollowedBy(body: {
+async function checkFollowedByMe(body: {
     validatedData: { interactor: { viewer_context: { followed_by: boolean } } }
 }) {
     if (!body.validatedData.interactor.viewer_context.followed_by) {
@@ -234,83 +221,89 @@ async function checkSolWallet(body: {
     }
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
+const keyToValidator: Record<
+    (typeof GATING_ALL_OPTIONS)[number],
+    (requirements: GatingRequirementsType, body: any) => Promise<void>
+> = {
+    channels: async (requirements, body) => {
+        for (const channel of requirements['channels']!) {
+            await checkChannelMembership(body.validatedData.interactor.fid, channel)
+        }
+    },
+    followedByMe: async (requirements, body) => await checkFollowedByMe(body),
+    followingMe: async (requirements, body) => await checkFollowingMe(body),
+    liked: async (requirements, body) => await checkLiked(body),
+    recasted: async (requirements, body) => await checkRecasted(body),
+    eth: async (requirements, body) => await checkEthWallet(body),
+    sol: async (requirements, body) => await checkSolWallet(body),
+    minFid: async (requirements, body) =>
+        await checkFid(body.validatedData.interactor.fid, requirements['minFid']!, 0),
+    maxFid: async (requirements, body) =>
+        await checkFid(body.validatedData.interactor.fid, 0, requirements['maxFid']!),
+    exactFids: async (requirements, body) => {
+        for (const fid of requirements['exactFids']!) {
+            await checkFid(body.validatedData.interactor.fid, fid, fid)
+        }
+    },
+    erc20: async (requirements, body) => {
+        for (const token of requirements['erc20']!) {
+            await checkOwnsErc20(
+                body.validatedData.interactor.verified_addresses.eth_addresses,
+                token.network,
+                token.address,
+                token.symbol,
+                token.balance
+            )
+        }
+    },
+    erc721: async (requirements, body) => {
+        for (const token of requirements['erc721']!) {
+            await checkOwnsErc721(
+                body.validatedData.interactor.verified_addresses.eth_addresses,
+                token.network,
+                token.address,
+                token.symbol,
+                token.balance
+            )
+        }
+    },
+    erc1155: async (requirements, body) => {
+        for (const token of requirements['erc1155']!) {
+            await checkOwnsErc1155(
+                body.validatedData.interactor.verified_addresses.eth_addresses,
+                token.network,
+                token.address,
+                token.symbol,
+                token.tokenId!,
+                token.balance
+            )
+        }
+    },
+    score: async (requirements, body) =>
+        await checkOpenRankScore(
+            body.validatedData.interactor,
+            requirements['score']!.owner,
+            requirements['score']!.score
+        ),
+}
+
 export async function runGatingChecks(
     body: FrameValidatedActionPayload,
-    config: {
-        gating: GatingOptionsProps['config'] | null
-        owner: {
-            fid: number
-            username: string
-        } | null
-    }
+    config: GatingType | undefined
 ): Promise<void> {
-    if (!config.gating) {
+    if (!config) {
         return
     }
-    if (!config.owner) {
-        throw new FrameError('Frame Owner not configured')
-    }
-    if (config.gating.recasted && !body.validatedData.cast.recasted) {
-        await checkRecasted(body)
-    } else if (config.gating.liked && !body.validatedData.cast.liked) {
-        await checkLiked(body)
-    } else if (config.gating.following && !body.validatedData.following) {
-        await checkFollowing(body)
-    } else if (config.gating.followedBy && !body.validatedData.followed_by) {
-        await checkFollowedBy(body)
-    } else if (
-        config.gating.eth &&
-        !body.validatedData.interactor.verified_addresses.eth_addresses.length
-    ) {
-        await checkEthWallet(body)
-    } else if (
-        config.gating.sol &&
-        !body.validatedData.interactor.verified_addresses.sol_addresses.length
-    ) {
-        await checkSolWallet(body)
-    }
 
-    if (config.gating.maxFid > 0 && body.validatedData.interactor.fid >= config.gating.maxFid) {
-        await checkFid(
-            body.validatedData.interactor.fid,
-            config.gating.minFid,
-            config.gating.maxFid
-        )
-    } else if (config.gating.score > 0) {
-        await checkOpenRankScore(
-            body.validatedData.interactor.fid,
-            body.validatedData.interactor.fid,
-            config.gating.score
-        )
-    } else if (config.gating.channel) {
-        //
-        await checkChannelMembership(body.validatedData.interactor.fid, config.gating.channel)
-    } else if (config.gating.erc20?.address && config.gating.erc20.network) {
-        await checkOwnsErc20(
-            body.validatedData.interactor.verified_addresses.eth_addresses,
-            config.gating.erc20.network,
-            config.gating.erc20.address,
-            config.gating.erc20.balance
-        )
-    } else if (
-        config.gating.erc1155?.address &&
-        config.gating.erc1155.network &&
-        config.gating.erc1155.tokenId
-    ) {
-        await checkOwnsErc1155(
-            body.validatedData.interactor.verified_addresses.eth_addresses,
-            config.gating.erc1155.network,
-            config.gating.erc1155.address,
-            config.gating.erc1155.tokenId,
-            config.gating.erc1155.balance
-        )
-    } else if (config.gating.erc721?.address && config.gating.erc721.network) {
-        await checkOwnsErc721(
-            body.validatedData.interactor.verified_addresses.eth_addresses,
-            config.gating.erc721.network,
-            config.gating.erc721.address,
-            config.gating.erc721.balance
-        )
+    for (const key of config.enabled) {
+        // handle case where this check is enabled, but not configured
+        if (
+            GATING_ADVANCED_OPTIONS.includes(key) &&
+            !config.requirements[key as keyof GatingRequirementsType]
+        ) {
+            continue
+        }
+        const validator = keyToValidator[key as keyof GatingRequirementsType]
+        await validator(config.requirements, body)
     }
 }
