@@ -2,8 +2,6 @@
 import { auth } from '@/auth'
 import { client } from '@/db/client'
 import { frameTable, interactionTable } from '@/db/schema'
-import type { GatingType } from '@/sdk/components/GatingInspector'
-import { GATING_ADVANCED_OPTIONS } from '@/sdk/components/gating/constants'
 import templates from '@/templates'
 import { type InferInsertModel, and, count, desc, eq, getTableColumns } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
@@ -152,23 +150,24 @@ export async function publishFrameConfig(id: string) {
     if (!frame) {
         notFound()
     }
-	
-	const newDraftConfig = frame.draftConfig!
 
-    if (newDraftConfig.gating) {
-        // disables advanced options that have no requirements set
-        const gating = frame.draftConfig!.gating as GatingType
-        for (const enabledOption of gating.enabled) {
-            if (
-                GATING_ADVANCED_OPTIONS.includes(enabledOption) &&
-                !gating.requirements?.[enabledOption as keyof GatingType['requirements']]
-            ) {
-                newDraftConfig.gating.enabled = newDraftConfig.gating.enabled.filter(
-                    (option: string) => option !== enabledOption
-                )
-            }
-        }
-    }
+    const newDraftConfig = frame.draftConfig!
+
+    // if (newDraftConfig.gating) {
+    //     // disables advanced options that have no requirements set
+    //     // enabled this once revalidation works
+    //     const gating = frame.draftConfig!.gating as GatingType
+    //     for (const enabledOption of gating.enabled) {
+    //         if (
+    //             GATING_ADVANCED_OPTIONS.includes(enabledOption) &&
+    //             !gating.requirements?.[enabledOption as keyof GatingType['requirements']]
+    //         ) {
+    //             newDraftConfig.gating.enabled = newDraftConfig.gating.enabled.filter(
+    //                 (option: string) => option !== enabledOption
+    //             )
+    //         }
+    //     }
+    // }
 
     await client
         .update(frameTable)

@@ -1,5 +1,5 @@
-import type { GatingRequirementsType, GatingType } from '@/sdk/components/GatingInspector'
 import { GATING_ADVANCED_OPTIONS, type GATING_ALL_OPTIONS } from '@/sdk/components/gating/constants'
+import type { GatingRequirementsType, GatingType } from '@/sdk/components/gating/types'
 import { FrameError } from '@/sdk/error'
 import { getFarcasterUserChannels } from '@/sdk/neynar'
 import {
