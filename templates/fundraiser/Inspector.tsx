@@ -120,7 +120,9 @@ export default function Inspector() {
                     address: ethAddresses[0],
                 })
                 toast.success('We set the address to your verified Warpcast address')
-            } catch {}
+            } catch {
+                toast.error('We could not set the address to your verified Warpcast address')
+            }
         }
 
         setUserAddress()
@@ -200,9 +202,8 @@ export default function Inspector() {
                                                 symbol,
                                             },
                                         })
-                                    } catch (e) {
-                                        const error = e as Error
-                                        toast.error(error.message)
+                                    } catch {
+                                        toast.error(`Could not fetch token info on ${chain}`)
                                     }
                                 }}
                             >

@@ -32,52 +32,31 @@ export default async function initial({
         fontSet.add(config.pairName.fontFamily)
     }
 
-    try {
-        for (const font of fontSet) {
-            const loadedFont = await loadGoogleFontAllVariants(font)
-            fonts.push(...loadedFont)
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
+    }
+
+    if (pool) {
+        buttons.push({
+            label: 'Buy',
+        })
+
+        const token0 = pool.primary === 'token0' ? pool.token0 : pool.token1
+        const token1 = pool.primary === 'token0' ? pool.token1 : pool.token0
+
+        for (const amount of config.amounts) {
+            buttons.push({
+                label: formatSymbol(amount, token1.symbol),
+            })
         }
 
-        if (pool) {
-            buttons.push({
-                label: 'Buy',
-            })
+        let price = 0
+        const livePriceData: { price: number; lastUpdated: number } | undefined =
+            storage?.livePriceData?.[token0.symbol.toLowerCase()]
 
-            const token0 = pool.primary === 'token0' ? pool.token0 : pool.token1
-            const token1 = pool.primary === 'token0' ? pool.token1 : pool.token0
-
-            for (const amount of config.amounts) {
-                buttons.push({
-                    label: formatSymbol(amount, token1.symbol),
-                })
-            }
-
-            let price = 0
-            const livePriceData: { price: number; lastUpdated: number } | undefined =
-                storage?.livePriceData?.[token0.symbol.toLowerCase()]
-
-            if (livePriceData) {
-                if (Date.now() - livePriceData.lastUpdated >= ms('10')) {
-                    price = await fetchCoverPrice({
-                        network: pool.network,
-                        buyToken: token1,
-                        sellToken: token0,
-                    })
-
-                    newStorage = {
-                        ...storage,
-                        livePriceData: {
-                            ...storage?.livePriceData,
-                            [token0.symbol.toLowerCase()]: {
-                                price,
-                                lastUpdated: Date.now(),
-                            },
-                        },
-                    }
-                } else {
-                    price = livePriceData.price
-                }
-            } else {
+        if (livePriceData) {
+            if (Date.now() - livePriceData.lastUpdated >= ms('10')) {
                 price = await fetchCoverPrice({
                     network: pool.network,
                     buyToken: token1,
@@ -94,32 +73,47 @@ export default async function initial({
                         },
                     },
                 }
+            } else {
+                price = livePriceData.price
             }
+        } else {
+            price = await fetchCoverPrice({
+                network: pool.network,
+                buyToken: token1,
+                sellToken: token0,
+            })
 
-            return {
-                storage: newStorage,
-                buttons,
-                inputText: `Buy ${token1.symbol} amount (eg. 0.1)`,
-                fonts,
-                component: EstimateView({
-                    token0,
-                    token1,
-                    price,
-                    network: pool.network.name,
-                    ...config,
-                }),
-                handler: 'estimate',
+            newStorage = {
+                ...storage,
+                livePriceData: {
+                    ...storage?.livePriceData,
+                    [token0.symbol.toLowerCase()]: {
+                        price,
+                        lastUpdated: Date.now(),
+                    },
+                },
             }
         }
 
         return {
+            storage: newStorage,
             buttons,
+            inputText: `Buy ${token1.symbol} amount (eg. 0.1)`,
             fonts,
-            component: EstimateView(),
+            component: EstimateView({
+                token0,
+                token1,
+                price,
+                network: pool.network.name,
+                ...config,
+            }),
+            handler: 'estimate',
         }
-    } catch (e) {
-        const error = e as Error
-        console.error(error)
-        throw new FrameError('Failed to fetch token data')
+    }
+
+    return {
+        buttons,
+        fonts,
+        component: EstimateView(),
     }
 }

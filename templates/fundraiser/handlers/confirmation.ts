@@ -122,6 +122,7 @@ export default async function confirmation({
         }
     } catch (e) {
         const error = e as Error
-        throw new FrameError(error.message)
+        console.error('Error creating session', error)
+        throw new FrameError('Failed to create a donation session. Please try again')
     }
 }

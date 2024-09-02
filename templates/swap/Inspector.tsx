@@ -131,10 +131,11 @@ export default function Inspector() {
                                     amounts: [],
                                 })
 
-                                toast.success(`Client found on chain ${pool.chain}`)
-                            } catch (e) {
-                                const error = e as Error
-                                toast.error(error.message)
+                                toast.success(`Pool found on ${pool.chain}`)
+                            } catch {
+                                toast.error(
+                                    `Pool not found for ${poolAddress} on any supported chain`
+                                )
                             }
                         }}
                     />
