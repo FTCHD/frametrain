@@ -4,7 +4,7 @@ import { Input } from '@/components/shadcn/Input'
 import { Label } from '@/components/shadcn/Label'
 import { Switch } from '@/components/shadcn/Switch'
 import { ColorPicker } from '@/sdk/components'
-import GatingOptions from '@/sdk/components/GatingOptions'
+import GatingInspector from '@/sdk/components/gating/GatingInspector'
 import { useFarcasterId, useFarcasterName, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useEffect, useRef } from 'react'
 import { X } from 'react-feather'
@@ -171,7 +171,9 @@ export default function Inspector() {
             {enabledGating && (
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg font-semibold">Poll Gating options</h2>
-                    <GatingOptions
+                    <GatingInspector
+                        fid={fid}
+                        config={config.gating}
                         onUpdate={(option) => {
                             updateConfig({
                                 gating: {
@@ -180,24 +182,6 @@ export default function Inspector() {
                                 },
                             })
                         }}
-                        config={
-                            gating ?? {
-                                channel: null,
-                                followedBy: false,
-                                following: false,
-                                liked: false,
-                                recasted: false,
-                                eth: false,
-                                sol: false,
-                                powerBadge: false,
-                                maxFid: 0,
-                                minFid: 0,
-                                score: 0,
-                                erc20: null,
-                                erc721: null,
-                                erc1155: null,
-                            }
-                        }
                     />
                 </div>
             )}
