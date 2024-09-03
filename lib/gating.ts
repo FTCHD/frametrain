@@ -161,26 +161,26 @@ async function checkChannelMembership(fid: number, channel: string) {
 
 async function checkFid(fid: number, minFid: number, maxFid: number) {
     if (minFid > 0 && fid < minFid) {
-        throw new FrameError(`You must have an FID greater than ${minFid}.`)
+        throw new FrameError(`FID must be greater than or equal to ${minFid}.`)
     }
 
     if (maxFid > 0 && fid >= maxFid) {
-        throw new FrameError(`You must have an FID less than ${maxFid}.`)
+        throw new FrameError(`FID must be less than or equal to ${maxFid}.`)
     }
 }
 
 async function checkLiked(body: {
-    validatedData: { cast: { liked: boolean } }
+    validatedData: { cast: { viewer_context: { liked: boolean } } }
 }) {
-    if (!body.validatedData.cast.liked) {
+    if (!body.validatedData.cast.viewer_context.liked) {
         throw new FrameError('You must like this frame.')
     }
 }
 
 async function checkRecasted(body: {
-    validatedData: { cast: { recasted: boolean } }
+    validatedData: { cast: { viewer_context: { recasted: boolean } } }
 }) {
-    if (!body.validatedData.cast.recasted) {
+    if (!body.validatedData.cast.viewer_context.recasted) {
         throw new FrameError('You must recast this frame.')
     }
 }
@@ -226,12 +226,12 @@ const keyToValidator: Record<
             await checkChannelMembership(body.validatedData.interactor.fid, channel)
         }
     },
-    followedByMe: async (requirements, body) => await checkFollowedByMe(body),
-    followingMe: async (requirements, body) => await checkFollowingMe(body),
-    liked: async (requirements, body) => await checkLiked(body),
-    recasted: async (requirements, body) => await checkRecasted(body),
-    eth: async (requirements, body) => await checkEthWallet(body),
-    sol: async (requirements, body) => await checkSolWallet(body),
+    followedByMe: async (_requirements, body) => await checkFollowedByMe(body),
+    followingMe: async (_requirements, body) => await checkFollowingMe(body),
+    liked: async (_requirements, body) => await checkLiked(body),
+    recasted: async (_requirements, body) => await checkRecasted(body),
+    eth: async (_requirements, body) => await checkEthWallet(body),
+    sol: async (_requirements, body) => await checkSolWallet(body),
     minFid: async (requirements, body) =>
         await checkFid(body.validatedData.interactor.fid, requirements['minFid']!, 0),
     maxFid: async (requirements, body) =>
