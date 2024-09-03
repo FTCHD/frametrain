@@ -5,8 +5,8 @@ import type {
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
 import { runGatingChecks } from '@/lib/gating'
-import TextSlide from '@/sdk/components/TextSlide'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import TextSlide from '@/sdk/views/TextSlide'
 import type { Config } from '..'
 
 export default async function page({

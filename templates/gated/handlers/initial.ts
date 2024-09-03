@@ -1,8 +1,8 @@
 'use server'
 import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import TextSlide from '@/sdk/views/TextSlide'
 import type { Config, Storage } from '..'
-import TextSlide from '@/sdk/components/TextSlide'
 
 export default async function initial({
     config,

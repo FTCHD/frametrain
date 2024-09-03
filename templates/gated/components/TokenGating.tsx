@@ -1,7 +1,5 @@
 'use client'
-import { Input } from '@/components/shadcn/Input'
-import { Label } from '@/components/shadcn/InputLabel'
-import { Select } from '@/sdk/components/Select'
+import { Input, Label, Select } from '@/sdk/components'
 import toast from 'react-hot-toast'
 
 export default function TokenGating({
