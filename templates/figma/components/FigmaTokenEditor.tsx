@@ -1,6 +1,6 @@
 'use client'
 import { Button, Input } from '@/sdk/components'
-import { Info, Save, X } from 'lucide-react'
+import { InfoIcon, SaveIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 
 type FigmaTokenEditorProps = {
@@ -39,17 +39,17 @@ export default function FigmaTokenEditor({ figmaPAT, onChange, onCancel }: Figma
                     }
                     variant="link"
                 >
-                    <Info className="mr-1" />
+                    <InfoIcon className="mr-1" />
                     Help
                 </Button>
             </div>
             <div className="flex items-center space-x-2">
                 <Button onClick={() => onChange(newFigmaPAT)}>
-                    <Save className="mr-1" />
+                    <SaveIcon className="mr-1" />
                     Save
                 </Button>
                 <Button onClick={() => onCancel()} variant="secondary">
-                    <X className="mr-1" />
+                    <XIcon className="mr-1" />
                     Cancel
                 </Button>
             </div>

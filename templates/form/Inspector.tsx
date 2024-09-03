@@ -2,7 +2,7 @@
 import { Button, Label, Separator, Switch } from '@/sdk/components'
 import GatingInspector from '@/sdk/components/gating/GatingInspector'
 import { useFarcasterId, useFarcasterName, useFrameConfig, useFrameId } from '@/sdk/hooks'
-import { Trash } from 'lucide-react'
+import { TrashIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import type { Config, fieldTypes } from '.'
 import FormEditor from './components/FormEditor'
@@ -183,7 +183,7 @@ export default function Inspector() {
                                 })
                             }}
                         >
-                            <Trash />
+                            <TrashIcon />
                         </Button>
                     ) : null}
                 </div>

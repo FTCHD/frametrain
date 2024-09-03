@@ -14,7 +14,7 @@ import {
     ToggleGroup,
 } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { Trash } from 'lucide-react'
+import { TrashIcon } from 'lucide-react'
 import Image from 'next/image'
 import type { AnchorHTMLAttributes, FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
@@ -311,7 +311,7 @@ export default function Inspector() {
                                                             })
                                                         }
                                                     >
-                                                        <Trash />
+                                                        <TrashIcon />
                                                     </Button>
                                                 </div>
                                             ))}

@@ -15,7 +15,7 @@ import {
     AlignRightIcon,
     ArrowDownFromLineIcon,
     ArrowUpFromLineIcon,
-    CirclePower,
+    CirclePowerIcon,
     FoldVerticalIcon,
     LockIcon,
     LockOpenIcon,
@@ -58,7 +58,7 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                             onChange({ ...config, enabled: pressed })
                         }}
                     >
-                        <CirclePower className="h-6 w-6" />
+                        <CirclePowerIcon className="h-6 w-6" />
                     </Toggle>
                 </div>
                 <div className="grid grid-cols-[1fr_3fr_1fr_3fr] gap-4">

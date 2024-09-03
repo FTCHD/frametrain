@@ -2,7 +2,12 @@
 import { AlertDialog, Button, Checkbox, Label } from '@/sdk/components'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { useFrameConfig, useFramePreview } from '@/sdk/hooks'
-import { ArrowBigLeftDash, ArrowBigRightDash, KeySquare, Trash2 } from 'lucide-react'
+import {
+    ArrowBigLeftDashIcon,
+    ArrowBigRightDashIcon,
+    KeySquareIcon,
+    Trash2Icon,
+} from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import type { FramePressConfig, SlideConfig, TextLayerConfigs } from './Config'
@@ -176,23 +181,23 @@ export default function Inspector() {
                     <div className="w-full flex items-center justify-between">
                         <div className="flex flex-row items-center justify-end gap-2">
                             <Button onClick={() => setEditingFigmaPAT(true)} variant={'secondary'}>
-                                <KeySquare className="mr-1" />
+                                <KeySquareIcon className="mr-1" />
                                 Figma PAT
                             </Button>
                         </div>
                         <div className="flex flex-row items-center justify-end gap-2">
                             <Button onClick={() => swapSlide('left')} disabled={!canMoveLeft}>
-                                <ArrowBigLeftDash /> Move left
+                                <ArrowBigLeftDashIcon /> Move left
                             </Button>
                             <Button onClick={() => swapSlide('right')} disabled={!canMoveRight}>
-                                Move right <ArrowBigRightDash />
+                                Move right <ArrowBigRightDashIcon />
                             </Button>
                             <Button
                                 variant="destructive"
                                 disabled={!canDelete}
                                 onClick={removeSlide}
                             >
-                                <Trash2 />
+                                <Trash2Icon />
                             </Button>
                         </div>
                     </div>

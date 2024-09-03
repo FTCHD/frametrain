@@ -6,7 +6,7 @@ import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from
 import { Select } from '@/sdk/components/Select'
 import { useFarcasterId, useFrameConfig, useResetPreview, useUploadImage } from '@/sdk/hooks'
 import { corsFetch } from '@/sdk/scrape'
-import { LoaderIcon, Trash } from 'lucide-react'
+import { LoaderIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -242,7 +242,7 @@ export default function Inspector() {
                                     })
                                 }
                             >
-                                <Trash />
+                                <TrashIcon />
                             </Button>
                         </div>
                     </div>

@@ -2,7 +2,7 @@
 import { Badge, Button, Input, Select } from '@/sdk/components'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { useFrameId, useUploadImage } from '@/sdk/hooks'
-import { CloudDownload, Loader2 } from 'lucide-react'
+import { CloudDownloadIcon, Loader2Icon } from 'lucide-react'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import type {
@@ -222,13 +222,13 @@ export const PropertiesTab = ({
                     <Button disabled={isUpdating || !figmaPAT || !newUrl} onClick={updateUrl}>
                         {isUpdating && (
                             <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
                                 Please wait
                             </>
                         )}
                         {!isUpdating && (
                             <>
-                                <CloudDownload className="mr-2 h-4 w-4" />
+                                <CloudDownloadIcon className="mr-2 h-4 w-4" />
                                 {figmaUrl ? 'Update' : 'Load'}
                             </>
                         )}

@@ -12,7 +12,7 @@ import {
 import TextSlideEditor from '@/sdk/components/TextSlideEditor'
 import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { getFarcasterProfiles } from '@/sdk/neynar'
-import { Trash } from 'lucide-react'
+import { TrashIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import type { Config } from '.'
@@ -324,7 +324,7 @@ export default function Inspector() {
                                                                     })
                                                                 }
                                                             >
-                                                                <Trash />
+                                                                <TrashIcon />
                                                             </Button>
                                                         </div>
                                                     ))}

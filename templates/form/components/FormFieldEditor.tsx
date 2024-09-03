@@ -1,7 +1,7 @@
 'use client'
 import { Button, Input, Select } from '@/sdk/components'
 import { TextSlideStyleConfig } from '@/sdk/components/TextSlideEditor'
-import { Loader } from 'lucide-react'
+import { LoaderIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { fieldTypes } from '..'
 
@@ -256,7 +256,7 @@ export default function FormFieldEditor({
                     className="w-full bg-border hover:bg-secondary-border text-primary"
                 >
                     {isEditing ? (
-                        <Loader className="animate-spin" />
+                        <LoaderIcon className="animate-spin" />
                     ) : (
                         `${formField ? 'Edit' : 'Add'} Field`
                     )}

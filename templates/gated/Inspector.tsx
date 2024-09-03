@@ -3,7 +3,7 @@ import { Button, Input, Label, RadioGroup, Separator } from '@/sdk/components'
 import TextSlideEditor from '@/sdk/components/TextSlideEditor'
 import GatingInspector from '@/sdk/components/gating/GatingInspector'
 import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { Trash } from 'lucide-react'
+import { TrashIcon } from 'lucide-react'
 import { type ReactNode, useRef, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
@@ -431,7 +431,7 @@ export default function Inspector() {
                                                                     })
                                                                 }
                                                             >
-                                                                <Trash />
+                                                                <TrashIcon />
                                                             </Button>
                                                         </div>
                                                     ))}
