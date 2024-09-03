@@ -6,11 +6,11 @@ import { Select } from '@/sdk/components/Select'
 import { type ReactNode, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useUploadImage } from '../hooks'
+import type { TextSlideProps, TextSlideStyle } from '../views/TextSlide'
 import { ColorPicker } from './ColorPicker'
 import { FontFamilyPicker } from './FontFamilyPicker'
 import { FontStylePicker } from './FontStylePicker'
 import { FontWeightPicker } from './FontWeightPicker'
-import type { TextSlideProps, TextSlideStyle } from './TextSlide'
 
 type TextSlideStyleConfigProps = {
     name: string
