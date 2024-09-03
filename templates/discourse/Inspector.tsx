@@ -1,6 +1,5 @@
 'use client'
-import { Input } from '@/components/shadcn/Input'
-import { ColorPicker, FontFamilyPicker } from '@/sdk/components'
+import { ColorPicker, FontFamilyPicker, Input } from '@/sdk/components'
 import { useFrameConfig } from '@/sdk/hooks'
 import { corsFetch } from '@/sdk/scrape'
 import { useEffect, useRef } from 'react'
