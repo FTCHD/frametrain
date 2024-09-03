@@ -1,9 +1,8 @@
 'use client'
-import { Input } from '@/components/shadcn/Input'
+import { ColorPicker, FontFamilyPicker, Input } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useEffect, useRef } from 'react'
 import type { Config } from '.'
-import { ColorPicker, FontFamilyPicker } from '@/sdk/components'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
