@@ -1,4 +1,7 @@
 'use client'
+import BaseSpinner from '@/components/shadcn/BaseSpinner'
+import { Button } from '@/components/shadcn/Button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/Popover'
 import type { FrameMetadataWithImageObject } from '@/lib/debugger'
 import type { FrameButtonMetadata } from '@/lib/farcaster'
 import {
@@ -9,7 +12,7 @@ import {
 } from '@/lib/store'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useAtom, useAtomValue } from 'jotai'
-import { X } from 'lucide-react'
+import { XIcon } from 'lucide-react'
 import {
     type ChangeEvent,
     type PropsWithChildren,
@@ -18,11 +21,12 @@ import {
     useMemo,
     useState,
 } from 'react'
-import { Delete, ExternalLink, PlusCircle } from 'react-feather'
+import {
+    Delete as DeleteIcon,
+    ExternalLink as ExternalLinkIcon,
+    PlusCircle as PlusCircleIcon,
+} from 'react-feather'
 import toast from 'react-hot-toast'
-import BaseSpinner from '../shadcn/BaseSpinner'
-import { Button } from '../shadcn/Button'
-import { Popover, PopoverContent, PopoverTrigger } from '../shadcn/Popover'
 
 export function ComposePreview() {
     const preview = useAtomValue(previewStateAtom)
@@ -73,10 +77,10 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
     useEffect(() => {
         console.log(image)
     }, [image])
-	
-	useEffect(() => {
-    toggleEnabled(!loadingContainer)
-}, [toggleEnabled, loadingContainer])
+
+    useEffect(() => {
+        toggleEnabled(!loadingContainer)
+    }, [toggleEnabled, loadingContainer])
 
     return (
         <Popover open={isOpen}>
@@ -92,7 +96,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                         <BaseSpinner />
                     ) : isOpen ? (
                         <Button variant="secondary">
-                            <X className="text-stone-900 dark:text-white" size={28} />
+                            <XIcon className="text-stone-900 dark:text-white" size={28} />
                         </Button>
                     ) : (
                         <img
@@ -224,11 +228,11 @@ function FrameButton({
 const buttonIcon = ({ action }: { action?: string }) => {
     switch (action) {
         case 'link':
-            return <ExternalLink size={14} color="#9fa3af" className="ml-1" />
+            return <ExternalLinkIcon size={14} color="#9fa3af" className="ml-1" />
         case 'post_redirect':
-            return <Delete size={14} color="#9fa3af" className="ml-1" />
+            return <DeleteIcon size={14} color="#9fa3af" className="ml-1" />
         case 'mint':
-            return <PlusCircle size={14} color="#9fa3af" className="ml-1" />
+            return <PlusCircleIcon size={14} color="#9fa3af" className="ml-1" />
         default:
             return null
     }

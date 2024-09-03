@@ -10,7 +10,11 @@ import {
 } from '@/lib/store'
 import { useAtom, useAtomValue } from 'jotai'
 import { type ChangeEvent, type PropsWithChildren, useCallback, useMemo, useState } from 'react'
-import { Delete, ExternalLink, PlusCircle } from 'react-feather'
+import {
+    Delete as DeleteIcon,
+    ExternalLink as ExternalLinkIcon,
+    PlusCircle as PlusCircleIcon,
+} from 'react-feather'
 import toast from 'react-hot-toast'
 import { BorderBeam } from './BorderBeam'
 import BaseSpinner from './shadcn/BaseSpinner'
@@ -205,11 +209,11 @@ function FrameButton({
 const buttonIcon = ({ action }: { action?: string }) => {
     switch (action) {
         case 'link':
-            return <ExternalLink size={14} color="#9fa3af" className="ml-1" />
+            return <ExternalLinkIcon size={14} color="#9fa3af" className="ml-1" />
         case 'post_redirect':
-            return <Delete size={14} color="#9fa3af" className="ml-1" />
+            return <DeleteIcon size={14} color="#9fa3af" className="ml-1" />
         case 'mint':
-            return <PlusCircle size={14} color="#9fa3af" className="ml-1" />
+            return <PlusCircleIcon size={14} color="#9fa3af" className="ml-1" />
         default:
             return null
     }

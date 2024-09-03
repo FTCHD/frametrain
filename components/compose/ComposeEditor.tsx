@@ -6,7 +6,7 @@ import { previewParametersAtom } from '@/lib/store'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
 import { useAtom } from 'jotai'
-import { InfoIcon } from 'lucide-react'
+import { BadgeInfoIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { InspectorContext } from '../editor/Context'
@@ -86,7 +86,7 @@ export default function ComposeEditor({
 
             <div className="w-full p-4 dark:bg-[#201629] bg-white flex flex-col gap-4">
                 <div className="w-full text-base font-medium p-4 border border-[#4c3a4e70] rounded-xl  bg-stone-100 dark:bg-[#0c0c0c]">
-                    <InfoIcon className="w-5 h-5 inline-block mr-2" /> {template.description}
+                    <BadgeInfoIcon className="w-5 h-5 inline-block mr-2" /> {template.description}
                 </div>
 
                 <div className="flex flex-col w-full p-3 px-4  bg-stone-100 dark:bg-[#0c0c0c] rounded-xl ">

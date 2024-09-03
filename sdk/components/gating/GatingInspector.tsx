@@ -14,7 +14,7 @@ import {
 } from '@/components/shadcn/Table'
 import { getViemClient } from '@/lib/gating'
 import { Select } from '@/sdk/components/Select'
-import { Trash2 } from 'lucide-react'
+import { Trash2Icon } from 'lucide-react'
 import NextLink from 'next/link'
 import { type ReactNode, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -66,7 +66,7 @@ const ErcGating = ({
                                             )
                                         }}
                                     >
-                                        <Trash2 />
+                                        <Trash2Icon />
                                     </Button>
                                 </TableCell>
                             </TableRow>
@@ -330,7 +330,7 @@ export default function GatingInspector({
                                                         })
                                                     }
                                                 >
-                                                    <Trash2 />
+                                                    <Trash2Icon />
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

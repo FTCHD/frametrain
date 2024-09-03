@@ -12,7 +12,7 @@ import {
 import { Switch } from '@/components/shadcn/Switch'
 import { mockOptionsAtom } from '@/lib/store'
 import { useAtom } from 'jotai'
-import { User } from 'lucide-react'
+import { UserIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Input } from '../shadcn/Input'
 
@@ -57,7 +57,7 @@ export default function MockOptions({ fid }: { fid: string }) {
 
                 <DropdownMenuGroup>
                     <DropdownMenuItem>
-                        <User className="mr-2 w-4 h-4" />
+                        <UserIcon className="mr-2 w-4 h-4" />
                         <span className="w-full">Recasted</span>
                         <Switch
                             checked={mockOptions.recasted}
@@ -67,7 +67,7 @@ export default function MockOptions({ fid }: { fid: string }) {
                         />
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <User className="mr-2 w-4 h-4" />
+                        <UserIcon className="mr-2 w-4 h-4" />
                         <span className="w-full">Liked</span>
                         <Switch
                             checked={mockOptions.liked}
@@ -77,7 +77,7 @@ export default function MockOptions({ fid }: { fid: string }) {
                         />
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <User className="mr-2 w-4 h-4" />
+                        <UserIcon className="mr-2 w-4 h-4" />
                         <span className="w-full">Following</span>
                         <Switch
                             checked={mockOptions.following}
@@ -90,7 +90,7 @@ export default function MockOptions({ fid }: { fid: string }) {
                         />
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <User className="mr-2 w-4 h-4" />
+                        <UserIcon className="mr-2 w-4 h-4" />
                         <span className="w-full">Follower</span>
                         <Switch
                             checked={mockOptions.follower}
