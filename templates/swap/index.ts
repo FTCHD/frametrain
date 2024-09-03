@@ -1,5 +1,5 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import type { TextSlideProps } from '@/sdk/views/TextSlide'
+import type { TextViewProps } from '@/sdk/views/TextView'
 import Inspector from './Inspector'
 import cover from './cover.avif'
 import handlers from './handlers'
@@ -31,12 +31,12 @@ export interface Config extends BaseConfig {
         // mainly used to determine which token is the primary token for the Inspector
         primary: 'token0' | 'token1'
     } | null
-    success: TextSlideProps & {
+    success: TextViewProps & {
         image?: string
     }
     background: string
-    coverMessage?: TextSlideProps['title']
-    pairName?: TextSlideProps['title']
+    coverMessage?: TextViewProps['title']
+    pairName?: TextViewProps['title']
 }
 
 export interface Storage extends BaseStorage {

@@ -1,7 +1,7 @@
 'use server'
 import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextSlide from '@/sdk/views/TextSlide'
+import TextView from '@/sdk/views/TextView'
 import type { Config, Storage } from '..'
 
 export default async function initial({
@@ -35,7 +35,7 @@ export default async function initial({
     return {
         buttons: [{ label: config.label || 'VIEW' }],
         fonts,
-        component: TextSlide(config.cover),
+        component: TextView(config.cover),
         handler: 'page',
     }
 }

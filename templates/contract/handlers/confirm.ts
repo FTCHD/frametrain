@@ -2,7 +2,7 @@
 import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextSlide, { type TextSlideProps } from '@/sdk/views/TextSlide'
+import TextView, { type TextViewProps } from '@/sdk/views/TextView'
 import type { Config, Storage } from '..'
 import { chainByChainId } from '../common/constants'
 import { getSignature, readContract } from '../common/signature'
@@ -44,7 +44,7 @@ export default async function confirm({
         ...signature
     } = getSignature(signatures, signatureIndex, textInput)
 
-    const view: TextSlideProps = {
+    const view: TextViewProps = {
         ...config.functionSlide,
         title: {
             ...config.functionSlide?.title,
@@ -129,7 +129,7 @@ export default async function confirm({
                 label: '→',
             },
         ],
-        component: TextSlide(view),
+        component: TextView(view),
         handler: 'confirm',
         params: {
             currentIndex: nextIndex,

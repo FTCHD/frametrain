@@ -1,7 +1,13 @@
 'use client'
-import { Button, Input, Label, RadioGroup, Separator } from '@/sdk/components'
-import TextSlideEditor from '@/sdk/components/TextSlideEditor'
-import GatingInspector from '@/sdk/components/gating/GatingInspector'
+import {
+    Button,
+    GatingInspector,
+    Input,
+    Label,
+    RadioGroup,
+    Separator,
+    TextViewInspector,
+} from '@/sdk/components'
 import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { TrashIcon } from 'lucide-react'
 import { type ReactNode, useRef, useState } from 'react'
@@ -202,7 +208,7 @@ export default function Inspector() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-4 w-full">
-                                    <TextSlideEditor
+                                    <TextViewInspector
                                         name="Cover"
                                         title={config.cover.title}
                                         subtitle={config.cover.subtitle}
@@ -346,7 +352,7 @@ export default function Inspector() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-4 w-full">
-                                    <TextSlideEditor
+                                    <TextViewInspector
                                         name="Rewards"
                                         title={config.success.title}
                                         subtitle={config.success.subtitle}
@@ -438,7 +444,7 @@ export default function Inspector() {
                                                 </div>
                                             )}
                                         </div>
-                                    </TextSlideEditor>
+                                    </TextViewInspector>
                                 </div>
                             )}
                         </div>

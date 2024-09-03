@@ -8,8 +8,8 @@ import {
     Select,
     Separator,
     Switch,
+    TextViewInspector,
 } from '@/sdk/components'
-import TextSlideEditor from '@/sdk/components/TextSlideEditor'
 import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { getFarcasterProfiles } from '@/sdk/neynar'
 import { TrashIcon } from 'lucide-react'
@@ -442,7 +442,7 @@ export default function Inspector() {
                                     ) : null}
                                 </div>
                             ) : (
-                                <TextSlideEditor
+                                <TextViewInspector
                                     name="Success Slide"
                                     title={config.success.title}
                                     subtitle={config.success.subtitle}
@@ -562,7 +562,7 @@ export default function Inspector() {
                                     ) : null}
                                 </div>
                             ) : (
-                                <TextSlideEditor
+                                <TextViewInspector
                                     name="About Slide"
                                     title={config.about.title}
                                     subtitle={config.about.subtitle}
@@ -708,7 +708,7 @@ export default function Inspector() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-4 w-full">
-                                    <TextSlideEditor
+                                    <TextViewInspector
                                         name="Cover"
                                         title={config.cover.title}
                                         subtitle={config.cover.subtitle}

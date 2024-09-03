@@ -6,7 +6,7 @@ import type {
 } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextSlide from '@/sdk/views/TextSlide'
+import TextView from '@/sdk/views/TextView'
 import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
 import type { Config } from '..'
 import { getClient } from '../common/onchain'
@@ -103,7 +103,7 @@ export default async function status({
         if (config.success?.image) {
             buildData['image'] = config.success?.image
         } else {
-            buildData['component'] = TextSlide(config.success)
+            buildData['component'] = TextView(config.success)
         }
 
         return buildData as BuildFrameData
@@ -147,7 +147,7 @@ export default async function status({
         if (config.success?.image) {
             buildData['image'] = paid ? config.success?.image : undefined
         } else {
-            buildData['component'] = paid ? TextSlide(config.success) : RefreshView()
+            buildData['component'] = paid ? TextView(config.success) : RefreshView()
         }
 
         return buildData as BuildFrameData

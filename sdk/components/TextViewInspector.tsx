@@ -1,46 +1,45 @@
 'use client'
-
 import { Input } from '@/components/shadcn/Input'
 import { Slider } from '@/components/shadcn/Slider'
 import { Select } from '@/sdk/components/Select'
 import { type ReactNode, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useUploadImage } from '../hooks'
-import type { TextSlideProps, TextSlideStyle } from '../views/TextSlide'
+import type { TextViewProps, TextViewStyle } from '../views/TextView'
 import { ColorPicker } from './ColorPicker'
 import { FontFamilyPicker } from './FontFamilyPicker'
 import { FontStylePicker } from './FontStylePicker'
 import { FontWeightPicker } from './FontWeightPicker'
 
-type TextSlideStyleConfigProps = {
+type TextViewStyleConfigProps = {
     name: string
-    config: TextSlideStyle | undefined
+    config: TextViewStyle | undefined
     background?: string
     setBackground?: (color: string) => void
-    updateConfig: (updatedStyle: TextSlideStyle) => void
+    updateConfig: (updatedStyle: TextViewStyle) => void
 }
 
-type TextSlideEditorProps = {
+type TextViewInspectorProps = {
     name: string
-    title: TextSlideProps['title']
+    title: TextViewProps['title']
     titleName?: string
-    subtitle: TextSlideProps['subtitle']
+    subtitle: TextViewProps['subtitle']
     subtitleName?: string
-    bottomMessage?: TextSlideProps['bottomMessage']
+    bottomMessage?: TextViewProps['bottomMessage']
     bottomMessageName?: string
     background?: string
-    onUpdate: (updatedSlide: TextSlideProps) => void
+    onUpdate: (updatedSlide: TextViewProps) => void
     children?: ReactNode
 }
 
-export default function TextSlideEditor({
+export function TextViewInspector({
     name,
     titleName = 'Title',
     subtitleName = 'Subtitle',
     bottomMessageName = 'Custom Message',
     onUpdate,
     ...slide
-}: TextSlideEditorProps) {
+}: TextViewInspectorProps) {
     return (
         <div className="flex flex-col gap-4 w-full">
             <div className="flex flex-col gap-2 w-full">
@@ -105,7 +104,7 @@ export default function TextSlideEditor({
             {slide.children}
             <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-lg text-center">{name} customizations</h2>
-                <TextSlideStyleConfig
+                <TextViewStyleConfig
                     name={titleName}
                     background={slide.background}
                     config={slide.title || {}}
@@ -122,7 +121,7 @@ export default function TextSlideEditor({
                         onUpdate({ ...slide, background })
                     }}
                 />
-                <TextSlideStyleConfig
+                <TextViewStyleConfig
                     name={subtitleName}
                     config={slide.subtitle || {}}
                     updateConfig={(style) => {
@@ -135,7 +134,7 @@ export default function TextSlideEditor({
                         })
                     }}
                 />
-                <TextSlideStyleConfig
+                <TextViewStyleConfig
                     name={bottomMessageName}
                     config={slide.bottomMessage || {}}
                     updateConfig={(style) => {
@@ -153,13 +152,13 @@ export default function TextSlideEditor({
     )
 }
 
-export const TextSlideStyleConfig = ({
+export const TextViewStyleConfig = ({
     name,
     background = '#000000',
     config = {},
     updateConfig,
     setBackground,
-}: TextSlideStyleConfigProps) => {
+}: TextViewStyleConfigProps) => {
     const uploadImage = useUploadImage()
     const [fontSize, setFontSize] = useState(config?.fontSize || 50)
     return (

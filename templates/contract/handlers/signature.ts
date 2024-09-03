@@ -1,10 +1,10 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
-import type { Config, Storage } from '..'
 import { FrameError } from '@/sdk/error'
-import { getSignature } from '../common/signature'
-import TextSlide, { type TextSlideProps } from '@/sdk/components/TextSlide'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import TextView, { type TextViewProps } from '@/sdk/views/TextView'
+import type { Config } from '..'
+import { getSignature } from '../common/signature'
 import initial from './initial'
 
 export default async function signature({
@@ -37,7 +37,7 @@ export default async function signature({
     }
     const { args, name: functionName, sign } = getSignature(signatures, signatureIndex)
 
-    const view: TextSlideProps = {
+    const view: TextViewProps = {
         ...config.functionSlide,
         title: {
             ...config.functionSlide?.title,
@@ -93,7 +93,7 @@ export default async function signature({
                 label: '→',
             },
         ],
-        component: TextSlide(view),
+        component: TextView(view),
         handler: 'confirm',
         params: {
             currentIndex: signatureIndex,

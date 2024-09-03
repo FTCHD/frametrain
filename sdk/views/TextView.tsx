@@ -1,4 +1,4 @@
-export type TextSlideStyle = {
+export type TextViewStyle = {
     color?: string
     position?: 'left' | 'center' | 'right'
     fontSize?: number
@@ -7,15 +7,15 @@ export type TextSlideStyle = {
     fontStyle?: string
 }
 
-export type TextSlideProps = {
-    title: { text: string } & TextSlideStyle
-    subtitle: { text: string } & TextSlideStyle
-    bottomMessage?: { text?: string } & TextSlideStyle
+export type TextViewProps = {
+    title: { text: string } & TextViewStyle
+    subtitle: { text: string } & TextViewStyle
+    bottomMessage?: { text?: string } & TextViewStyle
     background?: string
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
-export default function TextSlide({ title, subtitle, bottomMessage, background }: TextSlideProps) {
+export default function TextView({ title, subtitle, bottomMessage, background }: TextViewProps) {
     const backgroundProp: Record<string, string> = {}
 
     if (background) {
@@ -28,7 +28,7 @@ export default function TextSlide({ title, subtitle, bottomMessage, background }
         backgroundProp['backgroundColor'] = 'black'
     }
 
-    const alignmentToFlex = (alignment: TextSlideStyle['position']): string => {
+    const alignmentToFlex = (alignment: TextViewStyle['position']): string => {
         switch (alignment) {
             case 'left':
                 return 'flex-start'

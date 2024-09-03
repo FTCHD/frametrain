@@ -173,7 +173,7 @@ const ErcGating = ({
     )
 }
 
-export default function GatingInspector({
+export function GatingInspector({
     config,
     onUpdate,
     fid,

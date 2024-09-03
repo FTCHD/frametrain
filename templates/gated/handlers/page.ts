@@ -6,7 +6,7 @@ import type {
 } from '@/lib/farcaster'
 import { runGatingChecks } from '@/lib/gating'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextSlide from '@/sdk/views/TextSlide'
+import TextView from '@/sdk/views/TextView'
 import type { Config } from '..'
 
 export default async function page({
@@ -66,7 +66,7 @@ export default async function page({
     if (config.success.image) {
         buildData.image = config.success.image
     } else {
-        buildData.component = TextSlide(config.success)
+        buildData.component = TextView(config.success)
     }
 
     return buildData as unknown as BuildFrameData

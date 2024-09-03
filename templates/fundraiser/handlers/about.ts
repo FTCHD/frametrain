@@ -1,7 +1,7 @@
 'use server'
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextSlide from '@/sdk/views/TextSlide'
+import TextView from '@/sdk/views/TextView'
 import type { Config } from '..'
 
 export default async function about({
@@ -38,7 +38,7 @@ export default async function about({
             },
         ],
         image: config.about.image,
-        component: config.about.image ? undefined : TextSlide(config.about),
+        component: config.about.image ? undefined : TextView(config.about),
         handler: 'success',
     }
 }

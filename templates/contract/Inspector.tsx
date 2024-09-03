@@ -1,6 +1,6 @@
 'use client'
 import { Button, Input, Label, RadioGroup, Separator } from '@/sdk/components'
-import TextSlideEditor, { TextSlideStyleConfig } from '@/sdk/components/TextSlideEditor'
+import { TextViewInspector, TextViewStyleConfig } from '@/sdk/components/TextViewInspector'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { type ReactNode, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -211,7 +211,7 @@ export default function Inspector() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-4 w-full">
-                                    <TextSlideEditor
+                                    <TextViewInspector
                                         name="Cover"
                                         title={config.cover.title}
                                         subtitle={config.cover.subtitle}
@@ -234,7 +234,7 @@ export default function Inspector() {
                 section = (
                     <div className="flex flex-col gap-2 w-full">
                         <h2 className="text-2xl text-center">Field styles customizations</h2>
-                        <TextSlideStyleConfig
+                        <TextViewStyleConfig
                             name="Contract Function name"
                             config={config.functionSlide?.title}
                             updateConfig={(title) => {
@@ -255,7 +255,7 @@ export default function Inspector() {
                                 })
                             }}
                         />
-                        <TextSlideStyleConfig
+                        <TextViewStyleConfig
                             name="Contract Function data/signature"
                             config={config.functionSlide?.subtitle}
                             updateConfig={(subtitle) => {
@@ -267,7 +267,7 @@ export default function Inspector() {
                                 })
                             }}
                         />
-                        <TextSlideStyleConfig
+                        <TextViewStyleConfig
                             name="Progress"
                             config={config.functionSlide?.bottomMessage}
                             updateConfig={(bottomMessage) => {

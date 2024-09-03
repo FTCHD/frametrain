@@ -1,5 +1,5 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import type { TextSlideProps } from '@/sdk/views/TextSlide'
+import type { TextViewProps } from '@/sdk/views/TextView'
 import Inspector from './Inspector'
 import type { SerializableConfig } from './common/etherscan'
 import cover from './cover.avif'
@@ -8,10 +8,10 @@ import icon from './icon.avif'
 
 export interface Config extends BaseConfig {
     etherscan: SerializableConfig | null
-    cover: TextSlideProps & {
+    cover: TextViewProps & {
         image?: string
     }
-    functionSlide?: TextSlideProps
+    functionSlide?: TextViewProps
 }
 
 export interface Storage extends BaseStorage {
