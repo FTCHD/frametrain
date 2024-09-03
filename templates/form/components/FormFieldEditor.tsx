@@ -1,9 +1,5 @@
 'use client'
-
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
-import { Select } from '@/sdk/components/Select'
-
+import { Button, Input, Select } from '@/sdk/components'
 import { TextSlideStyleConfig } from '@/sdk/components/TextSlideEditor'
 import { Loader } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'

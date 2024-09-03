@@ -1,29 +1,8 @@
 'use client'
-
+import { Button, ColorPicker, Input, Modal, Table } from '@/sdk/components'
 import { useFrameConfig, useFrameStorage } from '@/sdk/hooks'
 import toast from 'react-hot-toast'
 import type { Config, Storage, fieldTypes } from '..'
-
-import { Button } from '@/components/shadcn/Button'
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/shadcn/Dialog'
-import { Input } from '@/components/shadcn/Input'
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/shadcn/Table'
-import { ColorPicker } from '@/sdk/components'
 import { humanizeTimestamp } from '../utils'
 import FormFieldEditor from './FormFieldEditor'
 
@@ -81,43 +60,43 @@ export default function FormEditor({ isEditing = false }: { isEditing?: boolean 
         <>
             <div className="flex flex-col gap-4">
                 <div className="w-full flex flex-row gap-2">
-                    <Dialog>
-                        <DialogTrigger asChild={true}>
+                    <Modal.Root>
+                        <Modal.Trigger asChild={true}>
                             <Button>Show Submissions</Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Form Submissions</DialogTitle>
-                                {/* <DialogDescription>{JSON.stringify(storage)}</DialogDescription> */}
-                                <DialogDescription>
-                                    <Table>
-                                        <TableCaption>
+                        </Modal.Trigger>
+                        <Modal.Content>
+                            <Modal.Header>
+                                <Modal.Title>Form Submissions</Modal.Title>
+                                {/* <Modal.Description>{JSON.stringify(storage)}</Modal.Description> */}
+                                <Modal.Description>
+                                    <Table.Root>
+                                        <Table.Caption>
                                             {storage.data?.length || 0} Submission(s)
-                                        </TableCaption>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead className="w-[100px]">Date</TableHead>
-                                                <TableHead className="w-[100px]">FID</TableHead>
+                                        </Table.Caption>
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.Head className="w-[100px]">Date</Table.Head>
+                                                <Table.Head className="w-[100px]">FID</Table.Head>
                                                 {[
                                                     ...config.fields.map(
                                                         (field) => field.fieldName
                                                     ),
                                                 ].map((name, index) => (
-                                                    <TableHead key={index} className="w-[100px]">
+                                                    <Table.Head key={index} className="w-[100px]">
                                                         {name}
-                                                    </TableHead>
+                                                    </Table.Head>
                                                 ))}
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Body>
                                             {storage.data?.map((record, rowIndex) => (
-                                                <TableRow key={rowIndex}>
-                                                    <TableCell className="font-medium">
+                                                <Table.Row key={rowIndex}>
+                                                    <Table.Cell className="font-medium">
                                                         {humanizeTimestamp(record.timestamp)}
-                                                    </TableCell>
-                                                    <TableCell className="font-medium">
+                                                    </Table.Cell>
+                                                    <Table.Cell className="font-medium">
                                                         {record.fid}
-                                                    </TableCell>
+                                                    </Table.Cell>
                                                     {record.values
                                                         .filter((v) =>
                                                             config.fields.some(
@@ -125,21 +104,21 @@ export default function FormEditor({ isEditing = false }: { isEditing?: boolean 
                                                             )
                                                         )
                                                         .map((v, colIndex) => (
-                                                            <TableCell
+                                                            <Table.Cell
                                                                 key={colIndex}
                                                                 className="font-medium"
                                                             >
                                                                 {v.value}
-                                                            </TableCell>
+                                                            </Table.Cell>
                                                         ))}
-                                                </TableRow>
+                                                </Table.Row>
                                             ))}
-                                        </TableBody>
-                                    </Table>
-                                </DialogDescription>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
+                                        </Table.Body>
+                                    </Table.Root>
+                                </Modal.Description>
+                            </Modal.Header>
+                        </Modal.Content>
+                    </Modal.Root>
 
                     <Button
                         onClick={() => {
