@@ -34,7 +34,8 @@
                 "noDefaultExport": "off",
                 "useNamingConvention": "off",
                 "useCollapsedElseIf": "off",
-                "noNegationElse": "off"
+                "noNegationElse": "off",
+                "noNamespaceImport": "off"
             },
             "suspicious": {
                 "all": false,
