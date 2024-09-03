@@ -75,12 +75,6 @@ export default {
         gating: {
             enabled: [],
             requirements: {
-                liked: false,
-                recasted: false,
-                followedByMe: false,
-                followingMe: false,
-                eth: false,
-                sol: false,
                 channels: [],
                 maxFid: 0,
                 minFid: 0,
