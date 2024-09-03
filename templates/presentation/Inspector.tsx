@@ -1,16 +1,15 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
 import {
+    Button,
+    ColorPicker,
+    FontFamilyPicker,
+    FontStylePicker,
+    FontWeightPicker,
+    Input,
     Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+} from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { LoaderIcon, Trash2 } from 'lucide-react'
+import { LoaderIcon, Trash2Icon } from 'lucide-react'
 import { type ChangeEvent, useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { type Config, type CustomButtonType, PRESENTATION_DEFAULTS, type Slide } from '.'
@@ -130,7 +129,7 @@ export default function Inspector() {
                             updateConfig({ slides: newSlides })
                         }}
                     >
-                        <Trash2 />
+                        <Trash2Icon />
                     </Button>
                 </div>
             </div>
@@ -246,31 +245,21 @@ export default function Inspector() {
             <h2 className="text-lg font-semibold">Type</h2>
             <Select
                 defaultValue={slide.type || 'text'}
-                onValueChange={(type: 'text' | 'image') => updateSlide({ type })}
+                onChange={(type) => updateSlide({ type: type as 'text' | 'image' })}
             >
-                <SelectTrigger>
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value={'text'}>Text</SelectItem>
-                    <SelectItem value={'image'}>Image</SelectItem>
-                </SelectContent>
+                <option value={'text'}>Text</option>
+                <option value={'image'}>Image</option>
             </Select>
 
             <h2 className="text-lg font-semibold">Aspect Ratio</h2>
             <Select
                 defaultValue={slide.aspectRatio || '1:1'}
-                onValueChange={(value: typeof slide.aspectRatio) =>
-                    updateSlide({ aspectRatio: value })
+                onChange={(value) =>
+                    updateSlide({ aspectRatio: value as typeof slide.aspectRatio })
                 }
             >
-                <SelectTrigger>
-                    <SelectValue placeholder="1:1" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value={'1:1'}>1:1</SelectItem>
-                    <SelectItem value={'1.91:1'}>1.91:1</SelectItem>
-                </SelectContent>
+                <option value={'1:1'}>1:1</option>
+                <option value={'1.91:1'}>1.91:1</option>
             </Select>
 
             {slide?.type === 'text' && (
@@ -313,20 +302,15 @@ export default function Inspector() {
                     <h2 className="text-lg font-semibold">Object Fit</h2>
                     <Select
                         defaultValue={slide.objectFit || 'fill'}
-                        onValueChange={(value: typeof slide.objectFit) =>
-                            updateSlide({ objectFit: value })
+                        onChange={(value) =>
+                            updateSlide({ objectFit: value as typeof slide.objectFit })
                         }
                     >
-                        <SelectTrigger>
-                            <SelectValue placeholder="1:1" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value={'fill'}>Fill</SelectItem>
-                            <SelectItem value={'contain'}>Contain</SelectItem>
-                            <SelectItem value={'cover'}>Cover</SelectItem>
-                            <SelectItem value={'none'}>None</SelectItem>
-                            <SelectItem value={'scale-down'}>Scale Down</SelectItem>
-                        </SelectContent>
+                        <option value={'fill'}>Fill</option>
+                        <option value={'contain'}>Contain</option>
+                        <option value={'cover'}>Cover</option>
+                        <option value={'none'}>None</option>
+                        <option value={'scale-down'}>Scale Down</option>
                     </Select>
                 </>
             )}
@@ -339,13 +323,13 @@ export default function Inspector() {
                         <div key={currentSlideIndex} className="flex flex-col gap-1">
                             <div className="flex flex-row items-center gap-2">
                                 <Select
-                                    defaultValue={button.type}
-                                    onValueChange={(type: CustomButtonType) => {
+                                    defaultValue={button.type || 'navigate'}
+                                    onChange={(type) => {
                                         const newButtons = slide.buttons.map((b, j) => {
                                             if (i === j) {
                                                 return {
                                                     ...b,
-                                                    type: type,
+                                                    type: type as CustomButtonType,
                                                     target: '',
                                                 }
                                             }
@@ -354,14 +338,9 @@ export default function Inspector() {
                                         updateSlide({ buttons: newButtons })
                                     }}
                                 >
-                                    <SelectTrigger className="w-32 bg-transparent">
-                                        <SelectValue placeholder="Type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value={'navigate'}>Navigate</SelectItem>
-                                        <SelectItem value={'link'}>Link</SelectItem>
-                                        <SelectItem value={'mint'}>Mint</SelectItem>
-                                    </SelectContent>
+                                    <option value={'navigate'}>Navigate</option>
+                                    <option value={'link'}>Link</option>
+                                    <option value={'mint'}>Mint</option>
                                 </Select>
 
                                 <Input
@@ -385,22 +364,17 @@ export default function Inspector() {
                                 {button.type === 'navigate' && (
                                     <Select
                                         defaultValue={button?.target || ''}
-                                        onValueChange={(v) => updateButtonTarget(v, i)}
+                                        onChange={(v) => updateButtonTarget(v, i)}
                                     >
-                                        <SelectTrigger className="flex-1">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {config.slides.map((_, slideIndex) => (
-                                                <SelectItem
-                                                    disabled={slideIndex === currentSlideIndex}
-                                                    key={slideIndex}
-                                                    value={slideIndex.toString()}
-                                                >
-                                                    Slide #{slideIndex + 1}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
+                                        {config.slides.map((_, slideIndex) => (
+                                            <option
+                                                disabled={slideIndex === currentSlideIndex}
+                                                key={slideIndex}
+                                                value={slideIndex.toString()}
+                                            >
+                                                Slide #{slideIndex + 1}
+                                            </option>
+                                        ))}
                                     </Select>
                                 )}
 
@@ -504,188 +478,178 @@ export default function Inspector() {
                             )}
                         </div>
                     </div>
-					</div>
+                </div>
             ) : (
-                    <div key={currentSlideIndex} className="flex flex-col gap-4">
-                        {/* Title */}
-                        <h2 className="text-lg font-semibold">Title</h2>
-                        <Input
-                            className="text-lg"
-                            placeholder="Title"
-                            defaultValue={slide?.title?.text}
-                            onBlur={(e) => {
-                                updateSlide({
-                                    title: {
-                                        ...slide?.title,
-                                        text: e.target.value,
-                                    },
-                                })
-                            }}
-                        />
+                <div key={currentSlideIndex} className="flex flex-col gap-4">
+                    {/* Title */}
+                    <h2 className="text-lg font-semibold">Title</h2>
+                    <Input
+                        className="text-lg"
+                        placeholder="Title"
+                        defaultValue={slide?.title?.text}
+                        onBlur={(e) => {
+                            updateSlide({
+                                title: {
+                                    ...slide?.title,
+                                    text: e.target.value,
+                                },
+                            })
+                        }}
+                    />
 
-                        <h2 className="text-lg font-semibold">Title Color</h2>
-                        <ColorPicker
-                            className="w-full"
-                            background={
-                                slide?.title?.color || PRESENTATION_DEFAULTS.slides[0].title!.color
-                            }
-                            setBackground={(value: string) =>
-                                updateSlide({
-                                    title: {
-                                        ...slide?.title,
-                                        color: value,
-                                    },
-                                })
-                            }
-                        />
+                    <h2 className="text-lg font-semibold">Title Color</h2>
+                    <ColorPicker
+                        className="w-full"
+                        background={
+                            slide?.title?.color || PRESENTATION_DEFAULTS.slides[0].title!.color
+                        }
+                        setBackground={(value: string) =>
+                            updateSlide({
+                                title: {
+                                    ...slide?.title,
+                                    color: value,
+                                },
+                            })
+                        }
+                    />
 
-                        <h2 className="text-lg font-semibold">Title Font</h2>
-                        <FontFamilyPicker
-                            defaultValue={
-                                slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
-                            }
-                            onSelect={(font) => {
-                                updateSlide({
-                                    title: {
-                                        ...slide?.title,
-                                        font,
-                                    },
-                                })
-                            }}
-                        />
+                    <h2 className="text-lg font-semibold">Title Font</h2>
+                    <FontFamilyPicker
+                        defaultValue={
+                            slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
+                        }
+                        onSelect={(font) => {
+                            updateSlide({
+                                title: {
+                                    ...slide?.title,
+                                    font,
+                                },
+                            })
+                        }}
+                    />
 
-                        <h2 className="text-lg font-semibold">Title Weight</h2>
-                        <FontWeightPicker
-                            currentFont={
-                                slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
-                            }
-                            defaultValue={
-                                slide?.title?.weight ||
-                                PRESENTATION_DEFAULTS.slides[0].title!.weight
-                            }
-                            onSelect={(weight: string) => {
-                                updateSlide({
-                                    title: {
-                                        ...slide?.title,
-                                        weight,
-                                    },
-                                })
-                            }}
-                        />
+                    <h2 className="text-lg font-semibold">Title Weight</h2>
+                    <FontWeightPicker
+                        currentFont={
+                            slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
+                        }
+                        defaultValue={
+                            slide?.title?.weight || PRESENTATION_DEFAULTS.slides[0].title!.weight
+                        }
+                        onSelect={(weight: string) => {
+                            updateSlide({
+                                title: {
+                                    ...slide?.title,
+                                    weight,
+                                },
+                            })
+                        }}
+                    />
 
-                        <h2 className="text-lg font-semibold">Title Style</h2>
-                        <FontStylePicker
-                            currentFont={
-                                slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
-                            }
-                            defaultValue={
-                                slide?.title?.style || PRESENTATION_DEFAULTS.slides[0].title!.style
-                            }
-                            onSelect={(style: string) =>
-                                updateSlide({
-                                    title: {
-                                        ...slide?.title,
-                                        style,
-                                    },
-                                })
-                            }
-                        />
+                    <h2 className="text-lg font-semibold">Title Style</h2>
+                    <FontStylePicker
+                        currentFont={
+                            slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
+                        }
+                        defaultValue={
+                            slide?.title?.style || PRESENTATION_DEFAULTS.slides[0].title!.style
+                        }
+                        onSelect={(style: string) =>
+                            updateSlide({
+                                title: {
+                                    ...slide?.title,
+                                    style,
+                                },
+                            })
+                        }
+                    />
 
-                        {/* Content */}
-                        <h2 className="text-lg font-semibold">Content</h2>
+                    {/* Content */}
+                    <h2 className="text-lg font-semibold">Content</h2>
 
-                        <textarea
-                            defaultValue={slide?.content?.text || ''}
-                            placeholder="Your content"
-                            onBlur={(e) => {
-                                updateSlide({
-                                    content: {
-                                        ...slide?.content,
-                                        text: e.target.value,
-                                    },
-                                })
-                            }}
-                            className="text-lg p-2 border-input border-[1px] rounded-md bg-transparent resize-y min-h-[184px]"
-                        />
+                    <textarea
+                        defaultValue={slide?.content?.text || ''}
+                        placeholder="Your content"
+                        onBlur={(e) => {
+                            updateSlide({
+                                content: {
+                                    ...slide?.content,
+                                    text: e.target.value,
+                                },
+                            })
+                        }}
+                        className="text-lg p-2 border-input border-[1px] rounded-md bg-transparent resize-y min-h-[184px]"
+                    />
 
-                        <h2 className="text-lg font-semibold">Content Color</h2>
-                        <ColorPicker
-                            className="w-full"
-                            background={
-                                slide?.content?.color ||
-                                PRESENTATION_DEFAULTS.slides[0].content!.color
-                            }
-                            setBackground={(value: string) =>
-                                updateSlide({
-                                    content: {
-                                        ...slide?.content,
-                                        color: value,
-                                    },
-                                })
-                            }
-                        />
+                    <h2 className="text-lg font-semibold">Content Color</h2>
+                    <ColorPicker
+                        className="w-full"
+                        background={
+                            slide?.content?.color || PRESENTATION_DEFAULTS.slides[0].content!.color
+                        }
+                        setBackground={(value: string) =>
+                            updateSlide({
+                                content: {
+                                    ...slide?.content,
+                                    color: value,
+                                },
+                            })
+                        }
+                    />
 
-                        <h2 className="text-lg font-semibold">Content Font</h2>
-                        <FontFamilyPicker
-                            defaultValue={
-                                slide?.content?.font ||
-                                PRESENTATION_DEFAULTS.slides[0].content!.font
-                            }
-                            onSelect={(font) => {
-                                updateSlide({
-                                    content: {
-                                        ...slide?.content,
-                                        font,
-                                    },
-                                })
-                            }}
-                        />
+                    <h2 className="text-lg font-semibold">Content Font</h2>
+                    <FontFamilyPicker
+                        defaultValue={
+                            slide?.content?.font || PRESENTATION_DEFAULTS.slides[0].content!.font
+                        }
+                        onSelect={(font) => {
+                            updateSlide({
+                                content: {
+                                    ...slide?.content,
+                                    font,
+                                },
+                            })
+                        }}
+                    />
 
-                        <h2 className="text-lg font-semibold">Content Weight</h2>
-                        <FontWeightPicker
-                            currentFont={
-                                slide?.content?.font ||
-                                PRESENTATION_DEFAULTS.slides[0].content!.font
-                            }
-                            defaultValue={
-                                slide?.content?.weight ||
-                                PRESENTATION_DEFAULTS.slides[0].content!.weight
-                            }
-                            onSelect={(weight: string) => {
-                                updateSlide({
-                                    content: {
-                                        ...slide?.content,
-                                        weight,
-                                    },
-                                })
-                            }}
-                        />
+                    <h2 className="text-lg font-semibold">Content Weight</h2>
+                    <FontWeightPicker
+                        currentFont={
+                            slide?.content?.font || PRESENTATION_DEFAULTS.slides[0].content!.font
+                        }
+                        defaultValue={
+                            slide?.content?.weight ||
+                            PRESENTATION_DEFAULTS.slides[0].content!.weight
+                        }
+                        onSelect={(weight: string) => {
+                            updateSlide({
+                                content: {
+                                    ...slide?.content,
+                                    weight,
+                                },
+                            })
+                        }}
+                    />
 
-                        <h2 className="text-lg font-semibold">Content Align</h2>
-                        <Select
-                            defaultValue={
-                                slide?.content?.align ||
-                                PRESENTATION_DEFAULTS.slides[0].content!.align
-                            }
-                            onValueChange={(value: 'left' | 'center' | 'right') =>
-                                updateSlide({
-                                    content: {
-                                        ...slide?.content,
-                                        align: value,
-                                    },
-                                })
-                            }
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Left" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value={'left'}>Left</SelectItem>
-                                <SelectItem value={'center'}>Center</SelectItem>
-                                <SelectItem value={'right'}>Right</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    <h2 className="text-lg font-semibold">Content Align</h2>
+                    <Select
+                        defaultValue={
+                            slide?.content?.align || PRESENTATION_DEFAULTS.slides[0].content!.align
+                        }
+                        onChange={(value) =>
+                            updateSlide({
+                                content: {
+                                    ...slide?.content,
+                                    align: value as 'left' | 'center' | 'right',
+                                },
+                            })
+                        }
+                    >
+                        <option value={'left'}>Left</option>
+                        <option value={'center'}>Center</option>
+                        <option value={'right'}>Right</option>
+                    </Select>
+                </div>
             )}
         </div>
     )
