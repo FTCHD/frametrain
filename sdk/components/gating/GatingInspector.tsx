@@ -396,6 +396,7 @@ export default function GatingInspector({
                                 max={5}
                                 step={1}
                                 className="w-full"
+                                defaultValue={[config?.requirements?.score?.score || 0]}
                                 onValueChange={([score]) => {
                                     onUpdate({
                                         requirements: {
