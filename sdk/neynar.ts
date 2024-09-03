@@ -21,8 +21,7 @@ export async function getFarcasterProfiles(fids: string[]): Promise<FarcasterUse
         .catch((err) => {
             console.error(err)
             return {
-                isValid: false,
-                message: undefined,
+                users: [],
             }
         })) as { users: FarcasterUserInfo[] }
 
@@ -79,8 +78,8 @@ export async function getFarcasterUserChannels(fid: number): Promise<FarcasterCh
             .catch((err) => {
                 console.error(err)
                 return {
-                    isValid: false,
-                    message: undefined,
+                    channels: [],
+                    next: { cursor: null },
                 }
             })) as { channels: FarcasterChannel[]; next: { cursor: string | null } }
 
