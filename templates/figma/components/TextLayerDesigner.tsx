@@ -1,12 +1,14 @@
 'use client'
-
-import { Slider } from '@/components/shadcn/Slider'
-import { Textarea } from '@/components/shadcn/Textarea'
-import { Toggle } from '@/components/shadcn/Toggle'
-import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
-import { FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { ColorPicker } from '@/sdk/components/ColorPicker'
-import { FontFamilyPicker } from '@/sdk/components/FontFamilyPicker'
+import {
+    ColorPicker,
+    FontFamilyPicker,
+    FontStylePicker,
+    FontWeightPicker,
+    Slider,
+    Textarea,
+    Toggle,
+    ToggleGroup,
+} from '@/sdk/components'
 import {
     AlignCenterIcon,
     AlignLeftIcon,
@@ -15,9 +17,9 @@ import {
     ArrowUpFromLineIcon,
     CirclePower,
     FoldVerticalIcon,
-    Lock,
-    LockOpen,
-    Type,
+    LockIcon,
+    LockOpenIcon,
+    TypeIcon,
 } from 'lucide-react'
 import React, { useState } from 'react'
 import type { TextLayerConfig } from '../Config'
@@ -35,7 +37,7 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
         <React.Fragment key={config.id}>
             <div className="pb-4 mb-2">
                 <div className="flex items-center mb-2 gap-x-2">
-                    <Type className="border-2" />
+                    <TypeIcon className="border-2" />
                     <p className="font-bold border-b border-slate-500 flex-grow">{config.name}</p>
                     <Toggle
                         variant="outline"
@@ -45,8 +47,8 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                             onChange({ ...config, allowFigmaUpdates: pressed })
                         }}
                     >
-                        {config.allowFigmaUpdates && <LockOpen className="h-6 w-6" />}
-                        {!config.allowFigmaUpdates && <Lock className="h-6 w-6" />}
+                        {config.allowFigmaUpdates && <LockOpenIcon className="h-6 w-6" />}
+                        {!config.allowFigmaUpdates && <LockIcon className="h-6 w-6" />}
                     </Toggle>
                     <Toggle
                         variant="outline"
@@ -104,7 +106,7 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                         }}
                     /> */}
                     <div className="col-span-2 flex justify-evenly">
-                        <ToggleGroup
+                        <ToggleGroup.Root
                             type="single"
                             variant="outline"
                             defaultValue={config.textAlignHorizontal}
@@ -115,17 +117,17 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                                 })
                             }}
                         >
-                            <ToggleGroupItem value="LEFT" aria-label="Left Align">
+                            <ToggleGroup.Item value="LEFT" aria-label="Left Align">
                                 <AlignLeftIcon className="h-4 w-4" />
-                            </ToggleGroupItem>
-                            <ToggleGroupItem value="CENTER" aria-label="Center Align">
+                            </ToggleGroup.Item>
+                            <ToggleGroup.Item value="CENTER" aria-label="Center Align">
                                 <AlignCenterIcon className="h-4 w-4" />
-                            </ToggleGroupItem>
-                            <ToggleGroupItem value="RIGHT" aria-label="Right Align">
+                            </ToggleGroup.Item>
+                            <ToggleGroup.Item value="RIGHT" aria-label="Right Align">
                                 <AlignRightIcon className="h-4 w-4" />
-                            </ToggleGroupItem>
-                        </ToggleGroup>
-                        <ToggleGroup
+                            </ToggleGroup.Item>
+                        </ToggleGroup.Root>
+                        <ToggleGroup.Root
                             type="single"
                             variant="outline"
                             defaultValue={config.textAlignVertical}
@@ -136,16 +138,16 @@ const TextLayerDesigner = ({ config, onChange }: TextLayerDesignerProps) => {
                                 })
                             }}
                         >
-                            <ToggleGroupItem value="TOP" aria-label="Top Align">
+                            <ToggleGroup.Item value="TOP" aria-label="Top Align">
                                 <ArrowUpFromLineIcon className="h-4 w-4" />
-                            </ToggleGroupItem>
-                            <ToggleGroupItem value="CENTER" aria-label="Middle Align">
+                            </ToggleGroup.Item>
+                            <ToggleGroup.Item value="CENTER" aria-label="Middle Align">
                                 <FoldVerticalIcon className="h-4 w-4" />
-                            </ToggleGroupItem>
-                            <ToggleGroupItem value="BOTTOM" aria-label="Bottom Align">
+                            </ToggleGroup.Item>
+                            <ToggleGroup.Item value="BOTTOM" aria-label="Bottom Align">
                                 <ArrowDownFromLineIcon className="h-4 w-4" />
-                            </ToggleGroupItem>
-                        </ToggleGroup>
+                            </ToggleGroup.Item>
+                        </ToggleGroup.Root>
                     </div>
 
                     <label className="text-sm font-semibold self-center">Fill</label>

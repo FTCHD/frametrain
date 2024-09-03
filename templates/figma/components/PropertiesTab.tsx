@@ -1,15 +1,5 @@
 'use client'
-
-import { Badge } from '@/components/shadcn/Badge'
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
+import { Badge, Button, Input, Select } from '@/sdk/components'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { useFrameId, useUploadImage } from '@/sdk/hooks'
 import { CloudDownload, Loader2 } from 'lucide-react'
@@ -198,7 +188,9 @@ export const PropertiesTab = ({
     return (
         <div>
             <div className="grid grid-cols-[1fr_2fr] space-y-2">
-                <div className="flex items-center">Title<span className='text-red-500'>*</span></div>
+                <div className="flex items-center">
+                    Title<span className="text-red-500">*</span>
+                </div>
                 <Input
                     placeholder="No title"
                     defaultValue={title}
@@ -211,7 +203,9 @@ export const PropertiesTab = ({
                     defaultValue={description}
                     onBlur={(e) => onUpdateDescription(e.target.value)}
                 />
-                <div className="flex items-center">Figma URL<span className='text-red-500'>*</span></div>
+                <div className="flex items-center">
+                    Figma URL<span className="text-red-500">*</span>
+                </div>
                 <div className="flex items-center">
                     <Input
                         type="url"
@@ -240,26 +234,23 @@ export const PropertiesTab = ({
                         )}
                     </Button>
                 </div>
-                <div className="flex items-center">Frame Aspect Ratio<span className='text-red-500'>*</span></div>
+                <div className="flex items-center">
+                    Frame Aspect Ratio<span className="text-red-500">*</span>
+                </div>
                 <div className="flex items-center">
                     <Select
                         defaultValue={aspectRatio}
-                        onValueChange={(value) => onUpdateAspectRatio(value as AspectRatio)}
+                        onChange={(value) => onUpdateAspectRatio(value as AspectRatio)}
                     >
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select aspect ratio" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="1:1">1:1 (Square)</SelectItem>
-                            <SelectItem value="1.91:1">1.91:1 (Widescreen)</SelectItem>
-                        </SelectContent>
+                        <option value="1:1">1:1 (Square)</option>
+                        <option value="1.91:1">1.91:1 (Widescreen)</option>
                     </Select>
                 </div>
 
                 {!isUpdating && figmaMetadata && (
                     <>
-                        <hr/>
-                        <hr/>
+                        <hr />
+                        <hr />
                         <div className="flex items-center">Figma Design</div>
                         <div className="flex items-center">{figmaMetadata?.name}</div>
 

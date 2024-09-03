@@ -1,14 +1,5 @@
 'use client'
-
-import { Checkbox } from '@/components/shadcn/Checkbox'
-import { Input } from '@/components/shadcn/Input'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
+import { Checkbox, Input, Select } from '@/sdk/components'
 import React, { useState } from 'react'
 import type { ButtonConfig } from '../Config'
 
@@ -55,24 +46,19 @@ const ButtonDesigner = ({ config, targets, onChange }: ButtonDesignerProps) => {
             <div className="flex items-center">
                 <Select
                     defaultValue={target}
-                    onValueChange={(newValue) => {
+                    onChange={(newValue) => {
                         setTarget(newValue)
                         onChange({ ...config, target: newValue })
                     }}
                 >
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a target" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem key="URL" value="URL">
-                            URL
-                        </SelectItem>
-                        {targets.map((t) => (
-                            <SelectItem key={t.id} value={t.id}>
-                                {t.title}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
+                    <option key="URL" value="URL">
+                        URL
+                    </option>
+                    {targets.map((t) => (
+                        <option key={t.id} value={t.id}>
+                            {t.title}
+                        </option>
+                    ))}
                 </Select>
             </div>
             <div className="flex items-center">

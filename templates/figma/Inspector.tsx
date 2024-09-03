@@ -1,19 +1,6 @@
 'use client'
-
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/shadcn/AlertDialog'
-import { Button } from '@/components/shadcn/Button'
-import { Checkbox } from '@/components/shadcn/Checkbox'
-import { Label } from '@/components/shadcn/Label'
+import { AlertDialog, Button, Checkbox, Label } from '@/sdk/components'
+import { dimensionsForRatio } from '@/sdk/constants'
 import { useFrameConfig, useFramePreview } from '@/sdk/hooks'
 import { ArrowBigLeftDash, ArrowBigRightDash, KeySquare, Trash2 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -24,17 +11,16 @@ import SlideEditor from './components/SlideEditor'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
 import FontConfig from './utils/FontConfig'
 import { FigmaView } from './views/FigmaView'
-import { dimensionsForRatio } from '@/sdk/constants'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
     const [_, setPreviewData] = useFramePreview()
-	
+
     const [editingFigmaPAT, setEditingFigmaPAT] = useState(config.figmaPAT === undefined)
     const [selectedSlideIndex, setSelectedSlideIndex] = useState(0)
-	
-	const [figmaUnderstood, setFigmaUnderstood] = useLocalStorage('figmaUnderstood', false)
-	const figmaUnderstoodRef = useRef(figmaUnderstood)
+
+    const [figmaUnderstood, setFigmaUnderstood] = useLocalStorage('figmaUnderstood', false)
+    const figmaUnderstoodRef = useRef(figmaUnderstood)
 
     // Slide selection
     function previewSlide(id: string) {
@@ -255,16 +241,16 @@ export default function Inspector() {
                                 <span className="text-4xl">+</span>
                             </div>
                         ) : (
-                            <AlertDialog>
-                                <AlertDialogTrigger>
+                            <AlertDialog.Root>
+                                <AlertDialog.Trigger>
                                     <div className="w-40 h-40 flex items-center justify-center mr-1 border-input border-[1px] rounded-md cursor-pointer">
                                         <span className="text-4xl">+</span>
                                     </div>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Resolution Notice</AlertDialogTitle>
-                                        <AlertDialogDescription className="flex flex-col gap-4">
+                                </AlertDialog.Trigger>
+                                <AlertDialog.Content>
+                                    <AlertDialog.Header>
+                                        <AlertDialog.Title>Resolution Notice</AlertDialog.Title>
+                                        <AlertDialog.Description className="flex flex-col gap-4">
                                             The Figma URL entered must lead to an artboard/section
                                             that is either 630x630 or 1200x630 pixels in size.
                                             <div className="flex flex-row items-center gap-2">
@@ -278,11 +264,11 @@ export default function Inspector() {
                                                     Don't show again.
                                                 </Label>
                                             </div>
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Back</AlertDialogCancel>
-                                        <AlertDialogAction
+                                        </AlertDialog.Description>
+                                    </AlertDialog.Header>
+                                    <AlertDialog.Footer>
+                                        <AlertDialog.Cancel>Back</AlertDialog.Cancel>
+                                        <AlertDialog.Action
                                             onClick={() => {
                                                 addSlide()
 
@@ -292,10 +278,10 @@ export default function Inspector() {
                                             }}
                                         >
                                             Understood
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+                                        </AlertDialog.Action>
+                                    </AlertDialog.Footer>
+                                </AlertDialog.Content>
+                            </AlertDialog.Root>
                         )}
                     </div>
 
