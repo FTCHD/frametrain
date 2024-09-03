@@ -1,14 +1,5 @@
-import { Button } from '@/components/shadcn/Button'
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/shadcn/Table'
 import type { frameTable } from '@/db/schema'
+import { Button, Table } from '@/sdk/components'
 import type { InferSelectModel } from 'drizzle-orm'
 import NextLink from 'next/link'
 
@@ -31,46 +22,46 @@ export default async function Page({
                 </NextLink>
             </div>
 
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[100px]">Time</TableHead>
-                        <TableHead>FID</TableHead>
-                        <TableHead>User</TableHead>
-                        <TableHead className="text-right">Vote</TableHead>
-                    </TableRow>
-                </TableHeader>
+            <Table.Root>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.Head className="w-[100px]">Time</Table.Head>
+                        <Table.Head>FID</Table.Head>
+                        <Table.Head>User</Table.Head>
+                        <Table.Head className="text-right">Vote</Table.Head>
+                    </Table.Row>
+                </Table.Header>
 
                 {frame.storage?.votesForId ? (
                     Object.keys(frame.storage?.votesForId).map((fid) => {
                         const currentVote = frame.storage!.votesForId[fid]
 
                         return (
-                            <TableBody key={fid}>
-                                <TableRow>
-                                    <TableCell className="font-medium w-[25%]">
+                            <Table.Body key={fid}>
+                                <Table.Row>
+                                    <Table.Cell className="font-medium w-[25%]">
                                         {new Date(currentVote.timestamp).toLocaleString()}
-                                    </TableCell>
-                                    <TableCell className="font-medium w-[25%]">{fid}</TableCell>
-                                    <TableCell className="font-medium w-[25%]">
+                                    </Table.Cell>
+                                    <Table.Cell className="font-medium w-[25%]">{fid}</Table.Cell>
+                                    <Table.Cell className="font-medium w-[25%]">
                                         {user?.fid === fid ? 'You' : currentVote.username}
-                                    </TableCell>
-                                    <TableCell className="text-right w-[25%]">
+                                    </Table.Cell>
+                                    <Table.Cell className="text-right w-[25%]">
                                         {
                                             frame.config?.options[currentVote.option - 1]
                                                 ?.displayLabel
                                         }
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
+                                    </Table.Cell>
+                                </Table.Row>
+                            </Table.Body>
                         )
                     })
                 ) : (
-                    <TableCaption>
+                    <Table.Caption>
                         <div className="text-2xl">No votes yet!</div>
-                    </TableCaption>
+                    </Table.Caption>
                 )}
-            </Table>
+            </Table.Root>
         </div>
     )
 }
