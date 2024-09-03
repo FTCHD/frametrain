@@ -7,9 +7,9 @@ import { BaseError } from 'viem'
 import type { Config, Storage } from '..'
 import { chainByChainId } from '../common/constants'
 import { getSignature, readContract } from '../common/signature'
-import initial from './initial'
+import signatureHandler from './signature'
 
-export default async function functionHandler({
+export default async function confirm({
     body,
     config,
     params,
@@ -17,7 +17,7 @@ export default async function functionHandler({
     body: FrameActionPayload
     config: Config
     storage?: Storage
-    params: { currentIndex?: string; requiresInput?: string }
+    params: { currentIndex?: string; navigation?: 'true' }
 }): Promise<BuildFrameData> {
     if (!config.etherscan) {
         throw new FrameError('Smart Contract config is missing')
@@ -36,30 +36,14 @@ export default async function functionHandler({
     const rawAbiString = config.etherscan.abis.flat()
     const signatures = rawAbiString.filter((abi) => abi.startsWith('function'))
     const currentIndex = params.currentIndex === undefined ? 0 : Number(params.currentIndex)
-    let signatureIndex = 0
+    let signatureIndex = currentIndex
 
-    switch (buttonIndex) {
-        case 2: {
-            signatureIndex = currentIndex
-            break
-        }
-
-        default: {
-            signatureIndex =
-                buttonIndex === 1
-                    ? params.currentIndex === undefined
-                        ? 0
-                        : currentIndex - 1
-                    : currentIndex + 1
-            break
-        }
-    }
-
-    if (signatureIndex < 0 || signatureIndex >= signatures.length) {
-        return initial({ config })
-    }
-
-    const { argStr, args, name: functionName } = getSignature(signatures, signatureIndex, textInput)
+    const {
+        argStr,
+        args,
+        name: functionName,
+        ...signature
+    } = getSignature(signatures, signatureIndex, textInput)
 
     const view: TextSlideProps = {
         ...config.functionSlide,
@@ -94,7 +78,7 @@ export default async function functionHandler({
         throw new FrameError('Unsupported chain')
     }
 
-    if (buttonIndex == 2) {
+    if (params.navigation !== 'true' && buttonIndex == 2) {
         try {
             view.subtitle.text = await readContract({
                 signatures,
@@ -102,9 +86,8 @@ export default async function functionHandler({
                 args,
                 functionName,
                 chain,
-                encode: true,
+                encode: signature.state === 'write',
             })
-            args.length = 0
         } catch (e) {
             if (e instanceof BaseError) {
                 const message = e.shortMessage.split('\n').pop()
@@ -125,15 +108,14 @@ export default async function functionHandler({
             )
         }
     } else {
-        if (args.length) {
-            buttons.push({ label: 'Confirm' })
-            view.subtitle.text = argStr.join('\n')
-            view.bottomMessage = {
-                ...config.functionSlide?.bottomMessage,
-                text: `Enter the values of the arguments separated by commas (${signatureIndex}/${signatures.length})`,
-            }
-        }
+        signatureIndex = buttonIndex === 1 ? currentIndex - 1 : currentIndex + 1
+        return signatureHandler({
+            config,
+            params: { currentIndex: signatureIndex.toString() },
+        })
     }
+
+    const nextIndex = signatureIndex + 1
 
     buttons.push({
         label: '→',
@@ -154,12 +136,20 @@ export default async function functionHandler({
 
     return {
         fonts,
-        buttons,
+
+        buttons: [
+            {
+                label: '←',
+            },
+            {
+                label: '→',
+            },
+        ],
         component: TextSlide(view),
-        handler: args.length ? 'input' : 'function',
+        handler: 'confirm',
         params: {
-            currentIndex: buttonIndex === 2 ? signatureIndex + 1 : signatureIndex,
+            currentIndex: nextIndex,
+            navigation: true,
         },
-        inputText: args.length ? 'arguments separated by commas' : undefined,
     }
 }

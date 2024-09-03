@@ -1,9 +1,9 @@
-import functionHandler from './function'
+import confirm from './confirm'
 import initial from './initial'
-import input from './input'
+import signature from './signature'
 
 export default {
     initial,
-    function: functionHandler,
-    input,
+    signature,
+    confirm,
 }

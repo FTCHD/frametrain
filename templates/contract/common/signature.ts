@@ -32,24 +32,21 @@ export async function readContract({
     let data = ''
 
     try {
-        const request = await client.simulateContract({
-            abi: parseAbi(signatures),
-            functionName,
-            args,
-            address,
-        })
-
-        if (typeof request.result !== 'undefined') {
-            data = Array.isArray(request.result)
-                ? (request.result as unknown[]).join('\n')
-                : `${request.result}`
-        } else if (encode) {
+        if (encode) {
             data = encodeFunctionData({
                 abi: parseAbi(signatures),
                 functionName,
                 args,
             })
         }
+        const result = await client.readContract({
+            abi: parseAbi(signatures),
+            functionName,
+            args,
+            address,
+        })
+
+        data = Array.isArray(result) ? (result as unknown[]).join('\n') : `${result}`
     } catch (e) {
         const error = e as Error
 
@@ -74,12 +71,10 @@ export function getSignature(signatures: string[], index: number, input?: string
 
     const abiItem = (parseAbi([sign]) as AbiFunction[])[0]
     const baseArgs = input ? input.split(',').map((arg) => arg.trim()) : []
-
+    abiItem.stateMutability
     // if (baseArgs.length !== abiItem.inputs.length) {
     //     throw new Error('Input string does not match the number of arguments in the ABI signature')
     // }
-    const name = abiItem.name
-
     const args = abiItem.inputs.map((input, i) => {
         const arg = baseArgs[i]
         const typeMap: { [key: string]: () => any } = {
@@ -96,5 +91,8 @@ export function getSignature(signatures: string[], index: number, input?: string
 
     const argStr = abiItem.inputs.map((arg) => `${arg.name} (${arg.type})`)
 
-    return { sign, abiItem, name, args, argStr }
+    const name = abiItem.name
+    const state = ['pure', 'view'].includes(abiItem.stateMutability) ? 'read' : 'write'
+
+    return { sign, abiItem, name, args, argStr, state }
 }

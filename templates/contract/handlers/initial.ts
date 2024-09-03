@@ -42,6 +42,6 @@ export default async function initial({
         buttons,
         image: config.cover.image,
         component: config.cover.image ? undefined : TextSlide(cover),
-        handler: 'function',
+        handler: 'signature',
     }
 }
