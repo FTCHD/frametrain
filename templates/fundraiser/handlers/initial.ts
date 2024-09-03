@@ -1,8 +1,8 @@
 'use server'
 
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
-import TextSlide from '@/sdk/components/TextSlide'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import TextSlide from '@/sdk/views/TextSlide'
 import type { Config } from '..'
 import { formatSymbol } from '../common/shared'
 

@@ -4,9 +4,9 @@ import type {
     FrameButtonMetadata,
     FrameValidatedActionPayload,
 } from '@/lib/farcaster'
-import TextSlide from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import TextSlide from '@/sdk/views/TextSlide'
 import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
 import type { Config } from '..'
 import { getClient } from '../common/onchain'

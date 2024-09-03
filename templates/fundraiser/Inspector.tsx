@@ -1,13 +1,14 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
-import { Label } from '@/components/shadcn/InputLabel'
-import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
-import { Select } from '@/sdk/components/Select'
-
-import { Separator } from '@/components/shadcn/Separator'
-import { Switch } from '@/components/shadcn/Switch'
-import { ColorPicker } from '@/sdk/components'
+import {
+    Button,
+    ColorPicker,
+    Input,
+    Label,
+    RadioGroup,
+    Select,
+    Separator,
+    Switch,
+} from '@/sdk/components'
 import TextSlideEditor from '@/sdk/components/TextSlideEditor'
 import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { getFarcasterProfiles } from '@/sdk/neynar'
@@ -343,7 +344,7 @@ export default function Inspector() {
                     <div className="flex flex-col gap-4 w-full">
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold">Success Slide Type</h2>
-                            <RadioGroup
+                            <RadioGroup.Root
                                 defaultValue={successType}
                                 className="flex flex-row"
                                 onValueChange={(val) => {
@@ -360,14 +361,14 @@ export default function Inspector() {
                                 }}
                             >
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="text" id="text" />
+                                    <RadioGroup.Item value="text" id="text" />
                                     <Label htmlFor="text">Text</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="image" id="image" />
+                                    <RadioGroup.Item value="image" id="image" />
                                     <Label htmlFor="image">Image</Label>
                                 </div>
-                            </RadioGroup>
+                            </RadioGroup.Root>
                         </div>
                         <div className="flex">
                             {successType === 'image' ? (
@@ -464,7 +465,7 @@ export default function Inspector() {
                     <div className="flex flex-col gap-4 w-full">
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold">About Slide Type</h2>
-                            <RadioGroup
+                            <RadioGroup.Root
                                 defaultValue={aboutType}
                                 className="flex flex-row"
                                 onValueChange={(val) => {
@@ -481,14 +482,14 @@ export default function Inspector() {
                                 }}
                             >
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="text" id="text" />
+                                    <RadioGroup.Item value="text" id="text" />
                                     <Label htmlFor="text">Text</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="image" id="image" />
+                                    <RadioGroup.Item value="image" id="image" />
                                     <Label htmlFor="image">Image</Label>
                                 </div>
-                            </RadioGroup>
+                            </RadioGroup.Root>
                         </div>
                         <div className="flex">
                             {aboutType === 'image' ? (
@@ -609,7 +610,7 @@ export default function Inspector() {
                     <div className="flex flex-col gap-4 w-full">
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold">Cover Type</h2>
-                            <RadioGroup
+                            <RadioGroup.Root
                                 defaultValue={coverType}
                                 className="flex flex-row"
                                 onValueChange={(val) => {
@@ -626,14 +627,14 @@ export default function Inspector() {
                                 }}
                             >
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="text" id="text" />
+                                    <RadioGroup.Item value="text" id="text" />
                                     <Label htmlFor="text">Text</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="image" id="image" />
+                                    <RadioGroup.Item value="image" id="image" />
                                     <Label htmlFor="image">Image</Label>
                                 </div>
-                            </RadioGroup>
+                            </RadioGroup.Root>
                         </div>
                         <div className="flex">
                             {coverType === 'image' ? (
