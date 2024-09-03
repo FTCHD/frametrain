@@ -3,6 +3,8 @@ import { frameTable } from '@/db/schema'
 import { S3 } from '@aws-sdk/client-s3'
 import { notFound } from 'next/navigation'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
     try {
         const frames = await client.select().from(frameTable).all()
