@@ -1,8 +1,5 @@
 'use client'
-
-import { Input } from '@/components/shadcn/Input'
-import { ColorPicker } from '@/sdk/components'
-import { Select } from '@/sdk/components/Select'
+import { ColorPicker, Input, Select } from '@/sdk/components'
 import { useFrameConfig } from '@/sdk/hooks'
 import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
