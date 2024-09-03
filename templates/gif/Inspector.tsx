@@ -1,6 +1,5 @@
 'use client'
-import { Input } from '@/components/shadcn/Input'
-import { ColorPicker, FontFamilyPicker } from '@/sdk/components'
+import { ColorPicker, FontFamilyPicker, Input } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
