@@ -1,6 +1,5 @@
 'use client'
-import { Button, ColorPicker, Input, Label, Switch } from '@/sdk/components'
-import GatingInspector from '@/sdk/components/gating/GatingInspector'
+import { Button, ColorPicker, GatingInspector, Input, Label, Switch } from '@/sdk/components'
 import { useFarcasterId, useFarcasterName, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useEffect, useRef } from 'react'
 import { X } from 'react-feather'
