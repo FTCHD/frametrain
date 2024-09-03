@@ -56,18 +56,26 @@ async function checkOpenRankScore(fid: number, owner: number, score: number) {
         body: JSON.stringify([owner]),
     }
 
-    try {
-        const response = await fetch(url, options)
-        const data = (await response.json()) as {
-            result: { fid: number; score: number }[]
-        }
+    const openRank = async () => {
+        try {
+            const response = await fetch(url, options)
+            const data = (await response.json()) as {
+                result: { fid: number; score: number }[]
+            }
 
-        const isPositive = data.result.some((item) => item.fid === fid)
-        if (!isPositive) {
-            throw new FrameError(`You must have a score of at least ${score}.`)
+            const isPositive = data.result.some((item) => item.fid === fid)
+            if (!isPositive) {
+                return `You must have a score of at least ${score}.`
+            }
+        } catch {
+            return 'Could not fetch your OpenRank data.'
         }
-    } catch {
-        throw new FrameError('Could not fetch your OpenRank data.')
+    }
+
+    const error = await openRank()
+
+    if (error) {
+        throw new FrameError(error)
     }
 }
 
