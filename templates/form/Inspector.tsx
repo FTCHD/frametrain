@@ -1,6 +1,5 @@
 'use client'
-import { Button, Label, Separator, Switch } from '@/sdk/components'
-import GatingInspector from '@/sdk/components/gating/GatingInspector'
+import { Button, GatingInspector, Label, Separator, Switch } from '@/sdk/components'
 import { useFarcasterId, useFarcasterName, useFrameConfig, useFrameId } from '@/sdk/hooks'
 import { TrashIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
