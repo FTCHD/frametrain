@@ -1,13 +1,18 @@
 'use client'
-import { Avatar, AvatarImage } from '@/components/shadcn/Avatar'
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
-import { Label } from '@/components/shadcn/InputLabel'
-import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
-import { Slider } from '@/components/shadcn/Slider'
-import { Switch } from '@/components/shadcn/Switch'
-import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/ToggleGroup'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import {
+    Avatar,
+    Button,
+    ColorPicker,
+    FontFamilyPicker,
+    FontStylePicker,
+    FontWeightPicker,
+    Input,
+    Label,
+    RadioGroup,
+    Slider,
+    Switch,
+    ToggleGroup,
+} from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { Trash } from 'lucide-react'
 import Image from 'next/image'
@@ -79,8 +84,8 @@ export default function Inspector() {
                 className="rounded-full inline-flex z-10 border-2 ring-gray-50 dark:ring-slate-950"
                 style={{ marginLeft: isLast ? -36 / 3 : 0 }}
             >
-                <Avatar style={{ width: 36, height: 36 }}>
-                    <AvatarImage src={token.logo} asChild={true}>
+                <Avatar.Root style={{ width: 36, height: 36 }}>
+                    <Avatar.Image src={token.logo} asChild={true}>
                         <Image
                             loader={coingeckoImageLoader}
                             alt="avatar"
@@ -88,8 +93,8 @@ export default function Inspector() {
                             width={36}
                             height={36}
                         />
-                    </AvatarImage>
-                </Avatar>
+                    </Avatar.Image>
+                </Avatar.Root>
             </div>
         )
     }
@@ -163,12 +168,12 @@ export default function Inspector() {
                                         </div>
                                     </div>
                                 </LinkExternal>
-                                <ToggleGroup
+                                <ToggleGroup.Root
                                     type="single"
                                     className="flex justify-start gap-2"
                                     defaultValue={config.pool.primary}
                                 >
-                                    <ToggleGroupItem
+                                    <ToggleGroup.Item
                                         value="token0"
                                         disabled={config.pool.primary === 'token0'}
                                         className="border-2 border-zinc-600"
@@ -182,8 +187,8 @@ export default function Inspector() {
                                         }}
                                     >
                                         {config.pool.token0.symbol}
-                                    </ToggleGroupItem>
-                                    <ToggleGroupItem
+                                    </ToggleGroup.Item>
+                                    <ToggleGroup.Item
                                         value="token1"
                                         disabled={config.pool.primary === 'token1'}
                                         className="border-2 border-zinc-600"
@@ -197,8 +202,8 @@ export default function Inspector() {
                                         }}
                                     >
                                         {config.pool.token1.symbol}
-                                    </ToggleGroupItem>
-                                </ToggleGroup>
+                                    </ToggleGroup.Item>
+                                </ToggleGroup.Root>
                             </div>
                             <p className="text-sm text-muted-foreground">
                                 The choosen token will be used as the primary token for the swap
@@ -526,7 +531,7 @@ export default function Inspector() {
                         </div>
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold">Success Slide Type</h2>
-                            <RadioGroup
+                            <RadioGroup.Root
                                 defaultValue={successType}
                                 className="flex flex-row"
                                 onValueChange={(val) => {
@@ -542,14 +547,14 @@ export default function Inspector() {
                                 }}
                             >
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="text" id="text" />
+                                    <RadioGroup.Item value="text" id="text" />
                                     <Label htmlFor="text">Text</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="image" id="image" />
+                                    <RadioGroup.Item value="image" id="image" />
                                     <Label htmlFor="image">Image</Label>
                                 </div>
-                            </RadioGroup>
+                            </RadioGroup.Root>
                         </div>
                         <div className="flex flex-col gap-2 w-full">
                             {successType === 'image' ? (

@@ -1,5 +1,5 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import type { TextSlideProps } from '@/sdk/components/TextSlide'
+import type { TextSlideProps } from '@/sdk/views/TextSlide'
 import Inspector from './Inspector'
 import cover from './cover.avif'
 import handlers from './handlers'

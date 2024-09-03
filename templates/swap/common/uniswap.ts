@@ -1,8 +1,7 @@
 'use server'
-
-import { getContract, erc20Abi } from 'viem'
-import { chains, chainsByChainId, getClient } from './viem'
+import { erc20Abi, getContract } from 'viem'
 import { UNI_V3_POOL_ABI } from './abis'
+import { chains, chainsByChainId, getClient } from './viem'
 
 export const getPoolClient = async (address: `0x${string}`) => {
     for (const chain of chains) {

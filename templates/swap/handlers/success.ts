@@ -1,9 +1,9 @@
 'use server'
 
 import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
-import TextSlide from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import TextSlide from '@/sdk/views/TextSlide'
 import type { Config, Storage } from '..'
 import initial from './initial'
 
