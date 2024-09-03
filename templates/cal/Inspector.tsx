@@ -1,10 +1,17 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
-import { Switch } from '@/components/shadcn/Switch'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { Select } from '@/sdk/components/Select'
+import {
+    Badge,
+    Button,
+    ColorPicker,
+    FontFamilyPicker,
+    FontStylePicker,
+    FontWeightPicker,
+    Input,
+    Select,
+    Switch,
+} from '@/sdk/components'
 import { useFarcasterId, useFrameConfig, useResetPreview, useUploadImage } from '@/sdk/hooks'
+import Configuration from '@/sdk/inspector'
 import { corsFetch } from '@/sdk/scrape'
 import { LoaderIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -15,7 +22,6 @@ import type { Config } from '.'
 import { fetchProfileData } from './utils/cal'
 import { getDurationFormatted } from './utils/date'
 import { getName } from './utils/nft'
-import { Badge } from '@/components/shadcn/Badge'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -141,9 +147,8 @@ export default function Inspector() {
     }
 
     return (
-        <div className="flex flex-col gap-5 w-full h-full max-md:gap-3">
-            <div className="flex flex-col gap-2 max-md:gap-1">
-                <h2 className="text-2xl font-semibold max-md:text-lg">Username</h2>
+        <Configuration.Root>
+            <Configuration.Section title="Username">
                 <Input
                     className="text-lg max-md:text-base"
                     placeholder="Your Cal.com username"
@@ -152,9 +157,8 @@ export default function Inspector() {
                         onChangeUsername(e.target.value)
                     }}
                 />
-            </div>
-            <div className="flex flex-col gap-4 w-full max-md:gap-2">
-                <h2 className="text-2xl font-bold max-md:text-lg">Event Slugs</h2>
+            </Configuration.Section>
+            <Configuration.Section title="Events">
                 {events.length < 4 && (
                     <>
                         <div className="flex gap-2 items-center">
@@ -247,10 +251,9 @@ export default function Inspector() {
                         </div>
                     </div>
                 ))}
-            </div>
+            </Configuration.Section>
 
-            <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold">Timezone</h2>
+            <Configuration.Section title="Timezone">
                 <p className="text-sm text-muted-foreground">
                     Choose your preferred timezone to display the event start time.
                 </p>
@@ -271,9 +274,8 @@ export default function Inspector() {
                         </option>
                     ))}
                 </Select>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-2xl font-semibold max-md:text-lg">Gating Options</h2>
+            </Configuration.Section>
+            <Configuration.Section title="Gating Options">
                 <div className="flex flex-col gap-2 w-full md:w-auto max-md:gap-0">
                     <div className="flex flex-row justify-between items-center w-full">
                         <h2 className="text-lg font-semibold max-md:text-base">Karma Gating</h2>
@@ -500,9 +502,8 @@ export default function Inspector() {
                         Only allow users who follow you to book a call.
                     </p>
                 </div>
-            </div>
-            <div className="flex flex-col gap-2 max-md:gap-1">
-                <h2 className="text-2xl font-semibold max-md:text-lg">Customization</h2>
+            </Configuration.Section>
+            <Configuration.Section title="Customization">
                 <div className="flex flex-col gap-2 w-full max-md:gap-0">
                     <h2 className="text-lg font-semibold max-md:text-base">Font</h2>
                     <FontFamilyPicker
@@ -583,7 +584,7 @@ export default function Inspector() {
                         }}
                     />
                 </div>
-            </div>
-        </div>
+            </Configuration.Section>
+        </Configuration.Root>
     )
 }
