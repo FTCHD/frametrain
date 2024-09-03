@@ -1,11 +1,11 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
+import { Drawer, DrawerClose, DrawerContent } from '@/components/shadcn/Drawer'
+import { Button } from '@/sdk/components'
 import { useFrameConfig } from '@/sdk/hooks'
 import { Trash, X } from 'lucide-react'
 import { useState } from 'react'
 import type { Config } from '../..'
 import QnaForm from './QnaForm'
-import { Drawer, DrawerClose, DrawerContent } from '@/components/shadcn/Drawer'
 
 export default function Questions() {
     const [config, updateConfig] = useFrameConfig<Config>()

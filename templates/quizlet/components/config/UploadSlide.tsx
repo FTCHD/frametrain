@@ -1,6 +1,5 @@
 'use client'
-
-import { Input } from '@/components/shadcn/Input'
+import { Input } from '@/sdk/components'
 
 export default function UploadSlide({
     setSlide,

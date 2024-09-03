@@ -1,9 +1,8 @@
 'use client'
-
+import { Button } from '@/sdk/components'
+import { useFrameConfig } from '@/sdk/hooks'
 import { useEffect, useState } from 'react'
 import type { Config } from '../..'
-import { useFrameConfig } from '@/sdk/hooks'
-import { Button } from '@/components/shadcn/Button'
 import QnaForm from './QnaForm'
 
 type QNA = Config['qna'][number]
