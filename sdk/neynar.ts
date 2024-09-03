@@ -1,7 +1,7 @@
 'use server'
 import type { FarcasterChannel, FarcasterUserInfo } from '@/lib/farcaster'
 
-const neynarApiBaseUrl = 'https://api.neynar.com/v2'
+const NEYNAR_API_URL = 'https://api.neynar.com/v2'
 
 export async function getFarcasterProfiles(fids: string[]): Promise<FarcasterUserInfo[]> {
     const options = {
@@ -13,10 +13,7 @@ export async function getFarcasterProfiles(fids: string[]): Promise<FarcasterUse
         },
     }
 
-    const r = (await fetch(
-        `${neynarApiBaseUrl}/farcaster/user/bulk?fids=${fids.join(',')}`,
-        options
-    )
+    const r = (await fetch(`${NEYNAR_API_URL}/farcaster/user/bulk?fids=${fids.join(',')}`, options)
         .then((response) => response.json())
         .catch((err) => {
             console.error(err)
@@ -30,7 +27,7 @@ export async function getFarcasterProfiles(fids: string[]): Promise<FarcasterUse
     return users
 }
 
-export async function getFarcasterChannelbyName(id: string): Promise<FarcasterChannel> {
+export async function getFarcasterChannelByName(id: string): Promise<FarcasterChannel> {
     const options = {
         method: 'GET',
         headers: {
@@ -40,7 +37,7 @@ export async function getFarcasterChannelbyName(id: string): Promise<FarcasterCh
         },
     }
 
-    const response = (await fetch(`${neynarApiBaseUrl}/farcaster/channel?id=${id}&type=id`, options)
+    const response = (await fetch(`${NEYNAR_API_URL}/farcaster/channel?id=${id}&type=id`, options)
         .then((response) => response.json())
         .catch((_) => {
             return {
@@ -68,7 +65,7 @@ export async function getFarcasterUserChannels(fid: number): Promise<FarcasterCh
     let cursor: string | null = null
 
     while (true) {
-        const url = new URL(`${neynarApiBaseUrl}/farcaster/user/channels`)
+        const url = new URL(`${NEYNAR_API_URL}/farcaster/user/channels`)
         url.searchParams.append('fid', `${fid}`)
         if (cursor) {
             url.searchParams.append('cursor', cursor)
