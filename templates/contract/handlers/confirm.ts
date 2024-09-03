@@ -3,7 +3,6 @@ import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/
 import TextSlide, { type TextSlideProps } from '@/sdk/components/TextSlide'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import { BaseError } from 'viem'
 import type { Config, Storage } from '..'
 import { chainByChainId } from '../common/constants'
 import { getSignature, readContract } from '../common/signature'
@@ -89,23 +88,8 @@ export default async function confirm({
                 encode: signature.state === 'write',
             })
         } catch (e) {
-            if (e instanceof BaseError) {
-                const message = e.shortMessage.split('\n').pop()
-
-                if (message) {
-                    if (message.startsWith('0x') && e.metaMessages)
-                        throw new FrameError(e.metaMessages.join('\n'))
-
-                    throw new FrameError(message)
-                }
-
-                throw new FrameError(e.message)
-            }
-            throw new FrameError(
-                e instanceof Error
-                    ? e.message
-                    : e?.toString() || `Unable to read data for: ${functionName}`
-            )
+            const error = e as Error
+            throw new FrameError(error.message)
         }
     } else {
         signatureIndex = buttonIndex === 1 ? currentIndex - 1 : currentIndex + 1

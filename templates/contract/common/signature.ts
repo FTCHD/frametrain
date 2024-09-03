@@ -1,13 +1,6 @@
 import type { AbiFunction, Address } from 'abitype'
 import { parseAbi } from 'abitype'
-import {
-    BaseError,
-    type Chain,
-    ContractFunctionRevertedError,
-    createPublicClient,
-    encodeFunctionData,
-    http,
-} from 'viem'
+import { http, BaseError, type Chain, createPublicClient, encodeFunctionData } from 'viem'
 
 export async function readContract({
     chain,
@@ -33,34 +26,39 @@ export async function readContract({
 
     try {
         if (encode) {
-            data = encodeFunctionData({
+            const result = encodeFunctionData({
                 abi: parseAbi(signatures),
                 functionName,
                 args,
             })
-        }
-        const result = await client.readContract({
-            abi: parseAbi(signatures),
-            functionName,
-            args,
-            address,
-        })
-
-        data = Array.isArray(result) ? (result as unknown[]).join('\n') : `${result}`
-    } catch (e) {
-        const error = e as Error
-
-        if (error instanceof BaseError) {
-            const revertError = error.walk((err) => err instanceof ContractFunctionRevertedError)
-            if (revertError instanceof ContractFunctionRevertedError) {
-                console.error('Contract function reverted:', revertError)
-                throw new Error(revertError.shortMessage)
-            }
-            console.error('Base error:', error)
+            data = typeof result === 'string' ? result : `${result}`
         } else {
-            console.error('Unknown error:', error)
+            const result = await client.readContract({
+                abi: parseAbi(signatures),
+                functionName,
+                args,
+                address,
+            })
+            data = Array.isArray(result) ? (result as unknown[]).join('\n') : `${result}`
         }
-        throw new Error(error.message)
+    } catch (e) {
+        if (e instanceof BaseError) {
+            const message = e.shortMessage.split('\n').pop()
+
+            if (message) {
+                if (message.startsWith('0x') && e.metaMessages)
+                    throw new Error(e.metaMessages.join('\n'))
+
+                throw new Error(message)
+            }
+
+            throw new Error(e.message)
+        }
+        throw new Error(
+            e instanceof Error
+                ? e.message
+                : e?.toString() || `Unable to read data for: ${functionName}`
+        )
     }
 
     return data
