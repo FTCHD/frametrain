@@ -189,8 +189,8 @@ export default function GatingInspector({
     >({
         liked: Boolean(config?.enabled.includes('liked')),
         recasted: Boolean(config?.enabled.includes('recasted')),
-        followedByMe: Boolean(config?.enabled.includes('followedBy')),
-        followingMe: Boolean(config?.enabled.includes('following')),
+        followedByMe: Boolean(config?.enabled.includes('followedByMe')),
+        followingMe: Boolean(config?.enabled.includes('followingMe')),
         eth: Boolean(config?.enabled.includes('eth')),
         sol: Boolean(config?.enabled.includes('sol')),
         channels: Boolean(config?.enabled.includes('channels')),
@@ -249,6 +249,8 @@ export default function GatingInspector({
                             id="fid"
                             type="number"
                             min={1}
+                            placeholder="FID (e.g. 175287)"
+                            defaultValue={config?.requirements?.minFid}
                             className="w-full"
                             onChange={(e) => {
                                 const value = e.target.value
@@ -278,6 +280,8 @@ export default function GatingInspector({
                             type="number"
                             min={1}
                             className="w-full"
+                            placeholder="FID (e.g. 175287)"
+                            defaultValue={config?.requirements?.maxFid}
                             onChange={(e) => {
                                 const value = e.target.value
                                 const maxFid = value === '' ? 0 : Number(value)
@@ -340,7 +344,7 @@ export default function GatingInspector({
                             onSubmit={(e) => {
                                 e.preventDefault()
 
-                                const fid = e.currentTarget.fid.value
+                                const fid = Number(e.currentTarget.fid.value)
 
                                 if (config?.requirements.exactFids?.includes(fid)) {
                                     toast.error(`FID ${fid} already exists in the list!`)
