@@ -1,12 +1,12 @@
 'use client'
 import {
+    BasicViewInspector,
     Button,
     GatingInspector,
     Input,
     Label,
     RadioGroup,
     Separator,
-    TextViewInspector,
 } from '@/sdk/components'
 import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { TrashIcon } from 'lucide-react'
@@ -208,7 +208,7 @@ export default function Inspector() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-4 w-full">
-                                    <TextViewInspector
+                                    <BasicViewInspector
                                         name="Cover"
                                         title={config.cover.title}
                                         subtitle={config.cover.subtitle}
@@ -352,7 +352,7 @@ export default function Inspector() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-4 w-full">
-                                    <TextViewInspector
+                                    <BasicViewInspector
                                         name="Rewards"
                                         title={config.success.title}
                                         subtitle={config.success.subtitle}
@@ -444,7 +444,7 @@ export default function Inspector() {
                                                 </div>
                                             )}
                                         </div>
-                                    </TextViewInspector>
+                                    </BasicViewInspector>
                                 </div>
                             )}
                         </div>

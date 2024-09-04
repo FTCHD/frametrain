@@ -45,6 +45,7 @@ export default async function InspectorTemplatePage({
             frame={frame}
             template={currentTemplate}
             fid={sesh.user.id}
+            fname={sesh.user.name!}
             castState={deserializedState.cast}
         />
     )

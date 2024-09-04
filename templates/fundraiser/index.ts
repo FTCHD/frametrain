@@ -1,5 +1,5 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import type { TextViewProps } from '@/sdk/views/TextView'
+import type { BasicViewProps } from '@/sdk/views/BasicView'
 import Inspector from './Inspector'
 import type { ChainKey } from './common/onchain'
 import cover from './cover.avif'
@@ -16,13 +16,13 @@ export interface Config extends BaseConfig {
     }
     enablePredefinedAmounts: boolean
     amounts: number[]
-    cover: TextViewProps & {
+    cover: BasicViewProps & {
         image?: string
     }
-    success: TextViewProps & {
+    success: BasicViewProps & {
         image?: string
     }
-    about: TextViewProps & {
+    about: BasicViewProps & {
         image?: string
     }
     barColor: string

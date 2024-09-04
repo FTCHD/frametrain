@@ -1,6 +1,6 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import type { GatingType } from '@/sdk/components/gating/types'
-import type { TextViewStyle } from '@/sdk/views/TextView'
+import type { BasicViewStyle } from '@/sdk/views/BasicView'
 import Inspector from './Inspector'
 import cover from './cover.avif'
 import handlers from './handlers'
@@ -12,9 +12,9 @@ export type fieldTypes = {
     fieldExample: string
     required: boolean
     fieldType: 'text' | 'number' | 'email' | 'phone' | 'address'
-    fieldNameStyle?: TextViewStyle
-    fieldDescriptionStyle?: TextViewStyle
-    fieldExampleStyle?: TextViewStyle
+    fieldNameStyle?: BasicViewStyle
+    fieldDescriptionStyle?: BasicViewStyle
+    fieldExampleStyle?: BasicViewStyle
     background?: string
 }
 

@@ -3,7 +3,7 @@ export { FontFamilyPicker } from './FontFamilyPicker'
 export { FontStylePicker } from './FontStylePicker'
 export { FontWeightPicker } from './FontWeightPicker'
 export { GatingInspector } from './gating/GatingInspector'
-export { TextViewInspector } from './TextViewInspector'
+export { BasicViewInspector } from './BasicViewInspector'
 
 export { Button } from '@/components/shadcn/Button'
 export { Checkbox } from '@/components/shadcn/Checkbox'

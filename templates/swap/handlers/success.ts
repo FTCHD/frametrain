@@ -3,7 +3,7 @@
 import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextView from '@/sdk/views/TextView'
+import BasicView from '@/sdk/views/BasicView'
 import type { Config, Storage } from '..'
 import initial from './initial'
 
@@ -78,7 +78,7 @@ export default async function success({
     if (config.success?.image) {
         buildData['image'] = config.success?.image
     } else {
-        buildData['component'] = TextView(config.success)
+        buildData['component'] = BasicView(config.success)
     }
 
     return buildData as BuildFrameData

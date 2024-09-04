@@ -1,5 +1,6 @@
 'use client'
 import {
+    BasicViewInspector,
     Button,
     ColorPicker,
     Input,
@@ -8,7 +9,6 @@ import {
     Select,
     Separator,
     Switch,
-    TextViewInspector,
 } from '@/sdk/components'
 import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { getFarcasterProfiles } from '@/sdk/neynar'
@@ -442,7 +442,7 @@ export default function Inspector() {
                                     ) : null}
                                 </div>
                             ) : (
-                                <TextViewInspector
+                                <BasicViewInspector
                                     name="Success Slide"
                                     title={config.success.title}
                                     subtitle={config.success.subtitle}
@@ -562,7 +562,7 @@ export default function Inspector() {
                                     ) : null}
                                 </div>
                             ) : (
-                                <TextViewInspector
+                                <BasicViewInspector
                                     name="About Slide"
                                     title={config.about.title}
                                     subtitle={config.about.subtitle}
@@ -708,7 +708,7 @@ export default function Inspector() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-4 w-full">
-                                    <TextViewInspector
+                                    <BasicViewInspector
                                         name="Cover"
                                         title={config.cover.title}
                                         subtitle={config.cover.subtitle}

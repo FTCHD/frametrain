@@ -2,7 +2,7 @@
 import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { runGatingChecks } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
-import TextView from '@/sdk/views/TextView'
+import BasicView from '@/sdk/views/BasicView'
 import type { Config, Storage } from '..'
 import { UsersState, removeFidFromUserState, updateUserState } from '../state'
 import { getIndexForFid, loadFontsAndtextElements, validateField } from '../utils'
@@ -217,7 +217,7 @@ export default async function input({
                 ],
                 inputText: 'Enter The Value',
                 storage: newStorage,
-                component: TextView({
+                component: BasicView({
                     title,
                     subtitle,
                     bottomMessage,
@@ -308,7 +308,7 @@ export default async function input({
                 label: '←',
             },
         ],
-        component: TextView({ title, subtitle, bottomMessage, background: field.background }),
+        component: BasicView({ title, subtitle, bottomMessage, background: field.background }),
         handler: 'initial',
     }
 }

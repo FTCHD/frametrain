@@ -2,7 +2,7 @@
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextView, { type TextViewProps } from '@/sdk/views/TextView'
+import BasicView, { type BasicViewProps } from '@/sdk/views/BasicView'
 import type { Config } from '..'
 import { getSignature } from '../common/signature'
 import initial from './initial'
@@ -37,7 +37,7 @@ export default async function signature({
     }
     const { args, name: functionName, sign } = getSignature(signatures, signatureIndex)
 
-    const view: TextViewProps = {
+    const view: BasicViewProps = {
         ...config.functionSlide,
         title: {
             ...config.functionSlide?.title,
@@ -93,7 +93,7 @@ export default async function signature({
                 label: '→',
             },
         ],
-        component: TextView(view),
+        component: BasicView(view),
         handler: 'confirm',
         params: {
             currentIndex: signatureIndex,
