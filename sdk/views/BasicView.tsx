@@ -1,4 +1,4 @@
-export type TextViewStyle = {
+export type BasicViewStyle = {
     color?: string
     position?: 'left' | 'center' | 'right'
     fontSize?: number
@@ -7,15 +7,15 @@ export type TextViewStyle = {
     fontStyle?: string
 }
 
-export type TextViewProps = {
-    title: { text: string } & TextViewStyle
-    subtitle: { text: string } & TextViewStyle
-    bottomMessage?: { text?: string } & TextViewStyle
+export type BasicViewProps = {
+    title: { text: string } & BasicViewStyle
+    subtitle: { text: string } & BasicViewStyle
+    bottomMessage?: { text?: string } & BasicViewStyle
     background?: string
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
-export default function TextView({ title, subtitle, bottomMessage, background }: TextViewProps) {
+export default function BasicView({ title, subtitle, bottomMessage, background }: BasicViewProps) {
     const backgroundProp: Record<string, string> = {}
 
     if (background) {
@@ -28,7 +28,7 @@ export default function TextView({ title, subtitle, bottomMessage, background }:
         backgroundProp['backgroundColor'] = 'black'
     }
 
-    const alignmentToFlex = (alignment: TextViewStyle['position']): string => {
+    const alignmentToFlex = (alignment: BasicViewStyle['position']): string => {
         switch (alignment) {
             case 'left':
                 return 'flex-start'

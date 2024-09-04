@@ -1,7 +1,7 @@
 'use server'
 import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextView from '@/sdk/views/TextView'
+import BasicView from '@/sdk/views/BasicView'
 import type { Config, Storage } from '..'
 
 export default async function initial({
@@ -35,7 +35,7 @@ export default async function initial({
     return {
         buttons: [{ label: config.label || 'VIEW' }],
         fonts,
-        component: TextView(config.cover),
+        component: BasicView(config.cover),
         handler: 'page',
     }
 }

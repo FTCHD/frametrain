@@ -1,7 +1,7 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextView, { type TextViewProps } from '@/sdk/views/TextView'
+import BasicView, { type BasicViewProps } from '@/sdk/views/BasicView'
 import type { Config } from '..'
 
 export default async function initial({
@@ -12,7 +12,7 @@ export default async function initial({
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
     const buttons: FrameButtonMetadata[] = []
-    const cover: TextViewProps = config.cover
+    const cover: BasicViewProps = config.cover
 
     if (config.etherscan) {
         buttons.push({ label: 'START' })
@@ -41,7 +41,7 @@ export default async function initial({
         fonts,
         buttons,
         image: config.cover.image,
-        component: config.cover.image ? undefined : TextView(cover),
+        component: config.cover.image ? undefined : BasicView(cover),
         handler: 'signature',
     }
 }

@@ -2,7 +2,7 @@
 import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
 import { runGatingChecks } from '@/lib/gating'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextView from '@/sdk/views/TextView'
+import BasicView from '@/sdk/views/BasicView'
 import type { Config } from '..'
 
 export default async function page({
@@ -62,7 +62,7 @@ export default async function page({
     if (config.success.image) {
         buildData.image = config.success.image
     } else {
-        buildData.component = TextView(config.success)
+        buildData.component = BasicView(config.success)
     }
 
     return buildData as unknown as BuildFrameData

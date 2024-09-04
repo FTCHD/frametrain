@@ -2,7 +2,7 @@
 import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextView from '@/sdk/views/TextView'
+import BasicView from '@/sdk/views/BasicView'
 import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
 import type { Config } from '..'
 import { getClient } from '../common/onchain'
@@ -99,7 +99,7 @@ export default async function status({
         if (config.success?.image) {
             buildData['image'] = config.success?.image
         } else {
-            buildData['component'] = TextView(config.success)
+            buildData['component'] = BasicView(config.success)
         }
 
         return buildData as BuildFrameData
@@ -143,7 +143,7 @@ export default async function status({
         if (config.success?.image) {
             buildData['image'] = paid ? config.success?.image : undefined
         } else {
-            buildData['component'] = paid ? TextView(config.success) : RefreshView()
+            buildData['component'] = paid ? BasicView(config.success) : RefreshView()
         }
 
         return buildData as BuildFrameData

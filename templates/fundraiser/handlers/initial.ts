@@ -2,7 +2,7 @@
 
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import TextView from '@/sdk/views/TextView'
+import BasicView from '@/sdk/views/BasicView'
 import type { Config } from '..'
 import { formatSymbol } from '../common/shared'
 
@@ -61,7 +61,7 @@ export default async function initial({
         buttons,
         fonts,
         image: config.cover.image,
-        component: config.cover.image ? undefined : TextView(config.cover),
+        component: config.cover.image ? undefined : BasicView(config.cover),
         handler: 'confirmation',
     }
 }

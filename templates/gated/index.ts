@@ -1,6 +1,6 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import type { GatingType } from '@/sdk/components/gating/types'
-import type { TextViewProps } from '@/sdk/views/TextView'
+import type { BasicViewProps } from '@/sdk/views/BasicView'
 import Inspector from './Inspector'
 import cover from './cover.avif'
 import handlers from './handlers'
@@ -14,10 +14,10 @@ export interface Config extends BaseConfig {
     label: string | null
     links: string[]
     gating: GatingType | undefined
-    cover: TextViewProps & {
+    cover: BasicViewProps & {
         image?: string
     }
-    success: TextViewProps & {
+    success: BasicViewProps & {
         image?: string
     }
 }

@@ -5,41 +5,41 @@ import { Select } from '@/sdk/components/Select'
 import { type ReactNode, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useUploadImage } from '../hooks'
-import type { TextViewProps, TextViewStyle } from '../views/TextView'
+import type { BasicViewProps, BasicViewStyle } from '../views/BasicView'
 import { ColorPicker } from './ColorPicker'
 import { FontFamilyPicker } from './FontFamilyPicker'
 import { FontStylePicker } from './FontStylePicker'
 import { FontWeightPicker } from './FontWeightPicker'
 
-type TextViewStyleConfigProps = {
+type BasicViewStyleConfigProps = {
     name: string
-    config: TextViewStyle | undefined
+    config: BasicViewStyle | undefined
     background?: string
     setBackground?: (color: string) => void
-    updateConfig: (updatedStyle: TextViewStyle) => void
+    updateConfig: (updatedStyle: BasicViewStyle) => void
 }
 
-type TextViewInspectorProps = {
+type BasicViewInspectorProps = {
     name: string
-    title: TextViewProps['title']
+    title: BasicViewProps['title']
     titleName?: string
-    subtitle: TextViewProps['subtitle']
+    subtitle: BasicViewProps['subtitle']
     subtitleName?: string
-    bottomMessage?: TextViewProps['bottomMessage']
+    bottomMessage?: BasicViewProps['bottomMessage']
     bottomMessageName?: string
     background?: string
-    onUpdate: (updatedSlide: TextViewProps) => void
+    onUpdate: (updatedSlide: BasicViewProps) => void
     children?: ReactNode
 }
 
-export function TextViewInspector({
+export function BasicViewInspector({
     name,
     titleName = 'Title',
     subtitleName = 'Subtitle',
     bottomMessageName = 'Custom Message',
     onUpdate,
     ...slide
-}: TextViewInspectorProps) {
+}: BasicViewInspectorProps) {
     return (
         <div className="flex flex-col gap-4 w-full">
             <div className="flex flex-col gap-2 w-full">
@@ -104,7 +104,7 @@ export function TextViewInspector({
             {slide.children}
             <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-lg text-center">{name} customizations</h2>
-                <TextViewStyleConfig
+                <BasicViewStyleConfig
                     name={titleName}
                     background={slide.background}
                     config={slide.title || {}}
@@ -121,7 +121,7 @@ export function TextViewInspector({
                         onUpdate({ ...slide, background })
                     }}
                 />
-                <TextViewStyleConfig
+                <BasicViewStyleConfig
                     name={subtitleName}
                     config={slide.subtitle || {}}
                     updateConfig={(style) => {
@@ -134,7 +134,7 @@ export function TextViewInspector({
                         })
                     }}
                 />
-                <TextViewStyleConfig
+                <BasicViewStyleConfig
                     name={bottomMessageName}
                     config={slide.bottomMessage || {}}
                     updateConfig={(style) => {
@@ -152,13 +152,13 @@ export function TextViewInspector({
     )
 }
 
-export const TextViewStyleConfig = ({
+export const BasicViewStyleConfig = ({
     name,
     background = '#000000',
     config = {},
     updateConfig,
     setBackground,
-}: TextViewStyleConfigProps) => {
+}: BasicViewStyleConfigProps) => {
     const uploadImage = useUploadImage()
     const [fontSize, setFontSize] = useState(config?.fontSize || 50)
     return (

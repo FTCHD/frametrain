@@ -1,6 +1,6 @@
 'use client'
 import { Button, Input, Select } from '@/sdk/components'
-import { TextViewStyleConfig } from '@/sdk/components/TextViewInspector'
+import { BasicViewStyleConfig } from '@/sdk/components/BasicViewInspector'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { fieldTypes } from '..'
@@ -165,7 +165,7 @@ export default function FormFieldEditor({
             </div>
             <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-2xl text-center">Field styles customizations</h2>
-                <TextViewStyleConfig
+                <BasicViewStyleConfig
                     name="Field name"
                     config={nameStyles}
                     updateConfig={(fieldNameStyle) => {
@@ -190,7 +190,7 @@ export default function FormFieldEditor({
                         setBackground(bg)
                     }}
                 />
-                <TextViewStyleConfig
+                <BasicViewStyleConfig
                     name="Field description"
                     config={descriptionStyles}
                     updateConfig={(fieldDescriptionStyle) => {
@@ -204,7 +204,7 @@ export default function FormFieldEditor({
                         setDescriptionStyles(fieldDescriptionStyle)
                     }}
                 />
-                <TextViewStyleConfig
+                <BasicViewStyleConfig
                     name="Field example"
                     config={exampleStyles}
                     updateConfig={(fieldExampleStyle) => {
