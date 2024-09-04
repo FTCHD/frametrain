@@ -1,6 +1,11 @@
 import toast from 'react-hot-toast'
 import { z } from 'zod'
-import type { FrameImageMetadata, FrameMetadataType, FrameRequest } from './farcaster'
+import type {
+    FrameImageMetadata,
+    FrameMetadataType,
+    FramePayloadValidated,
+    FrameRequest,
+} from './farcaster'
 import type { MockOptions } from './store'
 
 export async function simulateCall(
@@ -8,30 +13,31 @@ export async function simulateCall(
     requestPayload: FrameRequest | undefined,
     mockOptions: MockOptions
 ) {
-    const debugPayload = {
-        ...requestPayload,
-    } as any
+    const timestamp = new Date().toISOString()
+    const isRecasted = Boolean(mockOptions.recasted)
+    const isLiked = Boolean(mockOptions.liked)
+    const isFollower = Boolean(mockOptions.follower)
+    const isFollowing = Boolean(mockOptions.following)
 
-    const hasMock = Object.values(mockOptions).some(Boolean)
+    let res
 
-    if (hasMock && requestPayload) {
-        const timestamp = new Date().toISOString()
-        const isRecasted = mockOptions.recasted
-        const isLiked = mockOptions.liked
-        const isFollower = mockOptions.follower
-        const isFollowing = mockOptions.following
-
-        debugPayload.validatedData = {
+    if (requestPayload) {
+        const validatedPayload: FramePayloadValidated = {
             object: 'validated_frame_action',
             url: requestPayload.untrustedData.url,
             interactor: {
                 object: 'user',
                 fid: requestPayload.untrustedData.fid,
-                custody_address: null,
-                username: null,
-                display_name: null,
-                pfp_url: null,
-                profile: null,
+                custody_address: '0x02ef790dd7993a35fd847c053eddae940d055596',
+                username: 'frametrain',
+                display_name: 'FrameTrain',
+                pfp_url: 'https://i.imgur.com/3d6fFAI.png',
+                profile: {
+                    bio: {
+                        text: 'The Frames Builder',
+                        mentioned_profiles: [],
+                    },
+                },
                 follower_count: 0,
                 following_count: 0,
                 verifications: [],
@@ -57,11 +63,16 @@ export async function simulateCall(
                 author: {
                     object: 'user',
                     fid: requestPayload.untrustedData.fid,
-                    custody_address: null,
-                    username: null,
-                    display_name: null,
-                    pfp_url: null,
-                    profile: null,
+                    custody_address: '0x02ef790dd7993a35fd847c053eddae940d055596',
+                    username: 'warpcast',
+                    display_name: 'Warpcast',
+                    pfp_url: 'https://i.imgur.com/3d6fFAI.png',
+                    profile: {
+                        bio: {
+                            text: 'A Farcaster client',
+                            mentioned_profiles: [],
+                        },
+                    },
                     follower_count: 0,
                     following_count: 0,
                     verifications: [],
@@ -72,9 +83,9 @@ export async function simulateCall(
                     active_status: 'inactive',
                     power_badge: false,
                 },
-                text: null,
+                text: 'Simulated Cast',
                 timestamp: timestamp,
-                embeds: [['Object']],
+                embeds: [],
                 reactions: { likes_count: 0, recasts_count: 0, likes: [], recasts: [] },
                 replies: { count: 0 },
                 mentioned_profiles: [],
@@ -89,35 +100,50 @@ export async function simulateCall(
                     username: 'warpcast',
                     display_name: 'Warpcast',
                     pfp_url: 'https://i.imgur.com/3d6fFAI.png',
-                    profile: null,
+                    profile: {
+                        bio: {
+                            text: 'A Farcaster client',
+                            mentioned_profiles: [],
+                        },
+                    },
                     follower_count: 7379,
                     following_count: 50,
                     verifications: [],
-                    verified_addresses: null,
+                    verified_addresses: {
+                        eth_addresses: [],
+                        sol_addresses: [],
+                    },
                     active_status: 'inactive',
                     power_badge: false,
                 },
             },
         }
+
+        if (requestPayload.untrustedData?.inputText !== '') {
+            validatedPayload.input = {
+                text: requestPayload.untrustedData.inputText,
+            }
+        }
+
+        const options: RequestInit | undefined = requestPayload
+            ? {
+                  method: 'POST',
+                  body: JSON.stringify(validatedPayload),
+                  redirect: 'manual',
+              }
+            : undefined
+
+        res = await fetch(postUrl, options)
+    } else {
+        res = await fetch(postUrl)
     }
-
-    const options: RequestInit | undefined = requestPayload
-        ? {
-              method: 'POST',
-              body: JSON.stringify(debugPayload),
-              redirect: 'manual',
-          }
-        : undefined
-
-    const res = await fetch(postUrl, options)
 
     if (res.status !== 200) {
         try {
             const message = await res.json().then((json) => json.message)
             toast.error(message)
-        } finally {
-			return
-        }
+        } catch {}
+        return
     }
 
     // if (res.status === 302) {

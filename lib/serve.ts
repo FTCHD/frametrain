@@ -4,9 +4,9 @@ import { ImageResponse } from '@vercel/og'
 import sharp from 'sharp'
 import type {
     BuildFrameData,
-    FrameActionPayload,
     FrameButtonMetadata,
-    FrameValidatedActionPayload,
+    FramePayload,
+    FramePayloadValidated,
 } from './farcaster'
 
 export async function buildFramePage({
@@ -244,9 +244,7 @@ export async function buildFrame({
     return metadata
 }
 
-export async function validatePayload(
-    body: FrameActionPayload
-): Promise<FrameValidatedActionPayload> {
+export async function validatePayload(body: FramePayload): Promise<FramePayloadValidated> {
     const options = {
         method: 'POST',
         headers: {
@@ -262,22 +260,25 @@ export async function validatePayload(
         }),
     }
 
-    const r = (await fetch('https://api.neynar.com/v2/farcaster/frame/validate', options)
+    const r = await fetch('https://api.neynar.com/v2/farcaster/frame/validate', options)
         .then((response) => response.json())
         .catch((err) => {
             console.error(err)
-            return {
-                isValid: false,
-                message: undefined,
-            }
-        })) as FrameValidatedActionPayload
+            throw new Error('PAYLOAD_COULD_NOT_BE_VALIDATED')
+        })
 
-    return r
+    if (!r.valid) {
+        throw new Error('PAYLOAD_NOT_VALID')
+    }
+
+    console.log(r.action)
+
+    return r.action
 }
 export async function validatePayloadAirstack(
-    body: FrameActionPayload,
+    body: FramePayload,
     airstackKey: string
-): Promise<FrameValidatedActionPayload | { valid: false; message: undefined }> {
+): Promise<any> {
     const options = {
         method: 'POST',
         headers: {
@@ -289,15 +290,12 @@ export async function validatePayloadAirstack(
         ),
     }
 
-    const r = (await fetch('https://hubs.airstack.xyz/v1/validateMessage', options)
+    const r = await fetch('https://hubs.airstack.xyz/v1/validateMessage', options)
         .then((response) => response.json())
         .catch((err) => {
             console.error(err)
-            return {
-                valid: false,
-                message: undefined,
-            }
-        })) as FrameValidatedActionPayload
+            throw new Error('AIRSTACK_PAYLOAD_COULD_NOT_BE_VALIDATED')
+        })
 
     return r
 }

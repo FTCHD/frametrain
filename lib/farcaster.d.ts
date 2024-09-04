@@ -1,7 +1,7 @@
 import type {
     Channel as NeynarChannel,
     User as NeynarUser,
-    ValidatedFrameActionResponse as NeynarValidatedFrameActionResponse,
+    ValidateFrameActionResponse as NeynarValidatedFrameActionResponse,
 } from '@neynar/nodejs-sdk/build/neynar-api/v2'
 import type {
     FrameActionPayload as FramesJSFrameActionPayload,
@@ -27,16 +27,11 @@ export type FrameButtonMetadata =
           callback?: string
       }
 
-export type FrameActionPayload = FramesJSFrameActionPayload
-
-export type FrameValidatedActionPayload = NeynarValidatedFrameActionResponse
+export type FramePayload = FramesJSFrameActionPayload
+export type FramePayloadValidated = NeynarValidatedFrameActionResponse['action']
 
 export type FarcasterUserInfo = NeynarUser
 export type FarcasterChannel = NeynarChannel
-
-export type FrameActionPayloadValidated = FrameActionPayload & {
-    validatedData: FrameValidatedActionPayload['validatedData']
-}
 
 export interface BuildFrameData {
     buttons: FrameButtonMetadata[]

@@ -40,8 +40,7 @@ export function useRefreshPreview(frameId: string) {
                           timestamp: 0,
                           network: 1,
                           buttonIndex: previewData.buttonIndex,
-                          //! change
-                          inputText: previewData.inputText || '',
+                          inputText: previewData.inputText,
                           state: 'Debug',
                           castId: {
                               fid,

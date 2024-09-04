@@ -14,7 +14,6 @@ import { useDebouncedCallback } from 'use-debounce'
 import { useOnClickOutside, useWindowSize } from 'usehooks-ts'
 import { FramePreview } from './FramePreview'
 import { InspectorContext } from './editor/Context'
-import MockOptions from './editor/MockOptions'
 import PublishMenu from './editor/PublishMenu'
 import WebhookEventOptions from './editor/WebhookEventOptions'
 import BaseSpinner from './shadcn/BaseSpinner'
@@ -272,7 +271,7 @@ export default function FrameEditor({
                         </PopoverContent>
                     </Popover>
 
-                    {template.requiresValidation && (
+                    {/*                  
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
                                 <TooltipTrigger asChild={true}>
@@ -292,8 +291,7 @@ export default function FrameEditor({
                                     </p>
                                 </TooltipContent>
                             </Tooltip>
-                        </TooltipProvider>
-                    )}
+                        </TooltipProvider> */}
 
                     <PublishMenu frame={frame} />
                 </div>

@@ -163,6 +163,5 @@ export interface BaseTemplate {
     handlers: BaseHandlers
     initialConfig?: any
     cover: StaticImageData
-    requiresValidation: boolean
     events: string[]
 }

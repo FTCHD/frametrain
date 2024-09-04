@@ -1,22 +1,10 @@
 'use client'
-
 import type { FrameMetadataWithImageObject } from '@/lib/debugger'
-import type { FrameButtonMetadata } from '@/lib/farcaster'
-import {
-    previewErrorAtom,
-    previewLoadingAtom,
-    previewParametersAtom,
-    previewStateAtom,
-} from '@/lib/store'
-import { useAtom, useAtomValue } from 'jotai'
-import { type ChangeEvent, type PropsWithChildren, useCallback, useMemo, useState } from 'react'
-import {
-    Delete as DeleteIcon,
-    ExternalLink as ExternalLinkIcon,
-    PlusCircle as PlusCircleIcon,
-} from 'react-feather'
-import toast from 'react-hot-toast'
+import { previewErrorAtom, previewLoadingAtom, previewStateAtom } from '@/lib/store'
+import { useAtomValue } from 'jotai'
+import { type ChangeEvent, useCallback, useMemo, useState } from 'react'
 import { BorderBeam } from './BorderBeam'
+import { FramePreviewButton } from './FramePreviewButton'
 import BaseSpinner from './shadcn/BaseSpinner'
 
 // warpcast.com colors
@@ -103,7 +91,9 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                             <input
                                 type="text"
                                 className="p-2 w-full text-sm rounded border bg-input text-[#fff] px-[12px] py-[10px] border-[#4c3a4e80] bg-[#17101f]"
-                                placeholder={input.text}
+                                placeholder={
+                                    input?.text || 'Please set a placeholder for your field.'
+                                }
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -111,7 +101,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                     <div className="flex flex-row w-full items-center gap-[10px] ">
                         {buttons?.map((button, index) =>
                             button ? (
-                                <FrameButton
+                                <FramePreviewButton
                                     key={button.label}
                                     buttonIndex={index + 1}
                                     button={button}
@@ -121,7 +111,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                                     params={params}
                                 >
                                     {button.label}
-                                </FrameButton>
+                                </FramePreviewButton>
                             ) : undefined
                         )}
                     </div>
@@ -143,78 +133,3 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
     )
 }
 
-function FrameButton({
-    children,
-    button,
-    buttonIndex,
-    inputText,
-    state,
-    handler,
-    params,
-}: PropsWithChildren<{
-    //! Changed from NonNullable<FrameMetadataWithImageObject['buttons']>[0]
-    button: FrameButtonMetadata
-    buttonIndex: number
-    inputText: string
-    state: any
-    handler: string | undefined
-    params: string | undefined
-}>) {
-    const { action, target } = button
-
-    const [, setPreviewData] = useAtom(previewParametersAtom)
-    const previewLoading = useAtomValue(previewLoadingAtom)
-
-    const actionCallback = useCallback(() => {
-        const newData = {
-            handler: handler,
-            inputText: inputText,
-            buttonIndex: buttonIndex,
-            params: params,
-        }
-
-        setPreviewData(newData)
-    }, [buttonIndex, inputText, handler, params, setPreviewData])
-
-    const handleClick = useCallback(async () => {
-        switch (action) {
-            case 'link': {
-                window.open(target, '_blank')
-                break
-            }
-            case 'post': {
-                actionCallback()
-                break
-            }
-            default: {
-                toast.error('Use the Warpcast Frames Validator to test transactions!')
-                break
-            }
-        }
-    }, [action, target, actionCallback])
-
-    return (
-        <button
-            className="rounded-lg font-normal disabled:opacity-50 border border-[#4c3a4ec0] px-4 py-2 text-sm flex h-10 flex-row items-center justify-center  bg-[#ffffff1a] hover:bg-[#ffffff1a] w-full"
-            type="button"
-            onClick={handleClick}
-            disabled={previewLoading || button?.action === 'mint'}
-        >
-            <span className="items-center font-normal text-white line-clamp-1">{children}</span>
-            {buttonIcon({ action })}
-        </button>
-    )
-}
-
-const buttonIcon = ({ action }: { action?: string }) => {
-    switch (action) {
-        case 'link':
-            return <ExternalLinkIcon size={14} color="#9fa3af" className="ml-1" />
-        case 'post_redirect':
-            return <DeleteIcon size={14} color="#9fa3af" className="ml-1" />
-        case 'mint':
-            return <PlusCircleIcon size={14} color="#9fa3af" className="ml-1" />
-        default:
-            return null
-    }
-}
