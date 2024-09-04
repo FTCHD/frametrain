@@ -61,4 +61,4 @@ const Configuration = {
     Root,
 }
 
-export default Configuration
+export { Configuration }

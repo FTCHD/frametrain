@@ -11,7 +11,7 @@ import {
     Switch,
 } from '@/sdk/components'
 import { useFarcasterId, useFrameConfig, useResetPreview, useUploadImage } from '@/sdk/hooks'
-import Configuration from '@/sdk/inspector'
+import { Configuration } from '@/sdk/inspector'
 import { corsFetch } from '@/sdk/scrape'
 import { LoaderIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
