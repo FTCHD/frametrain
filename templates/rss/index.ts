@@ -38,6 +38,5 @@ export default {
         coverBackground: '#000000',
         pageBackground: '#000000',
     },
-    requiresValidation: false,
     events: [],
 } satisfies BaseTemplate

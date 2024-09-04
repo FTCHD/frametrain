@@ -44,7 +44,6 @@ export default {
     enabled: true,
     Inspector,
     handlers,
-    requiresValidation: true,
     initialConfig: {
         event: undefined,
     },

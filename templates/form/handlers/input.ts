@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { runGatingChecks } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
 import TextView from '@/sdk/views/TextView'
@@ -19,14 +19,14 @@ export default async function input({
     storage,
     params,
 }: {
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params?: { from: string }
 }): Promise<BuildFrameData> {
-    const viewer = body.validatedData.interactor
+    const viewer = body.interactor
     const fid = viewer.fid
-    const buttonIndex = body.validatedData.tapped_button.index
+    const buttonIndex = body.tapped_button.index
     const textInput = (body.validatedData?.input?.text || '') as string
 
     let newStorage = storage

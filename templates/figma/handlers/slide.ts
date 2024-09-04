@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData } from '@/lib/farcaster'
 import type { FramePressConfig } from '../Config'
 import buildFigmaFrame from '../utils/FigmaFrameBuilder'
 
@@ -8,7 +8,7 @@ export default async function click({
     config,
     params,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: FramePressConfig
     params: { slideId: string }
 }): Promise<BuildFrameData> {

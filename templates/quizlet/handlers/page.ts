@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import QuestionView from '../views/Question'
@@ -10,11 +10,11 @@ export default async function page({
     config,
     storage,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
 }): Promise<BuildFrameData> {
-    const user = body.untrustedData.fid.toString()
+    const user = body.interactor.fid.toString()
     const qna = config.qna[0]
     const fonts = await loadGoogleFontAllVariants(qna.design?.qnaFont ?? 'Roboto')
     const buttons: FrameButtonMetadata[] = []

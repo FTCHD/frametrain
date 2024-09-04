@@ -1,6 +1,6 @@
 'use server'
 
-import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import { choicesRepresentation } from '../utils'
@@ -13,13 +13,13 @@ export default async function answer({
     storage,
     params,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
-    const student = body.untrustedData.fid.toString()
-    const choice = body.untrustedData.buttonIndex - 1
+    const student = body.interactor.fid.toString()
+    const choice = body.tapped_button.index - 1
     const pastAnswers = storage.answers?.[student] ?? []
 
     let newStorage = storage

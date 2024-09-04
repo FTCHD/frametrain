@@ -1,9 +1,5 @@
 'use server'
-import type {
-    BuildFrameData,
-    FrameButtonMetadata,
-    FrameValidatedActionPayload,
-} from '@/lib/farcaster'
+import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import TextView from '@/sdk/views/TextView'
@@ -19,7 +15,7 @@ export default async function status({
     config,
     params,
 }: {
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params: { transactionId?: string; sessionId?: string }
@@ -32,11 +28,11 @@ export default async function status({
         throw new FrameError('Fundraiser token not found.')
     }
 
-    if (!body.validatedData.transaction && body.validatedData.tapped_button) {
+    if (!body.transaction && body.tapped_button) {
         return initial({ config, body, storage: undefined })
     }
 
-    if (!(body.validatedData.transaction?.hash || params.transactionId)) {
+    if (!(body.transaction?.hash || params.transactionId)) {
         throw new FrameError('Transaction Hash is missing')
     }
 
@@ -65,7 +61,7 @@ export default async function status({
     }
 
     const txHash = (
-        body.validatedData.transaction ? body.validatedData.transaction.hash : params.transactionId
+        body.transaction ? body.transaction.hash : params.transactionId
     ) as `0x${string}`
 
     const client = getClient(config.token.chain)

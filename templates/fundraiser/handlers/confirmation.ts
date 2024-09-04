@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import { chains, createSession, currencies } from '@paywithglide/glide-js'
@@ -13,13 +13,13 @@ export default async function confirmation({
     config,
     body,
 }: {
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: undefined
 }): Promise<BuildFrameData> {
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
-    const buttonIndex = body.validatedData.tapped_button.index as number
+    const buttonIndex = body.tapped_button.index as number
 
     if (buttonIndex === 1) {
         return about({ config, body, storage: undefined })
@@ -56,7 +56,7 @@ export default async function confirmation({
 
     if (isCustomAmount) {
         // Handle custom amount
-        const textInput = body.validatedData.input?.text
+        const textInput = body.input?.text
 
         if (!textInput) {
             throw new FrameError('A custom amount is required.')

@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import type { Config } from '..'
 import { fetchQuote } from '../common/0x'
@@ -9,7 +9,7 @@ export default async function txData({
     config,
     params,
 }: {
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params:

@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import ms from 'ms'
 import type { Config, Storage } from '..'
@@ -13,7 +13,7 @@ export default async function post({
     storage,
     params,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params: {
@@ -41,7 +41,7 @@ export default async function post({
         const loadedFont = await loadGoogleFontAllVariants(font)
         fonts.push(...loadedFont)
     }
-    const buttonIndex = body.untrustedData.buttonIndex
+    const buttonIndex = body.tapped_button.index
 
     let cursor = params.cursor
     const existingPosts = storage?.feed

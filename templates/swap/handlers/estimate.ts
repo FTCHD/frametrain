@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import type { Config, Storage } from '..'
 import { fetchPrice } from '../common/0x'
@@ -11,7 +11,7 @@ export default async function estimate({
     config,
     params,
 }: {
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params:
@@ -34,11 +34,11 @@ export default async function estimate({
             amount = Number(params.buyAmount)
             break getAmount
         }
-        const buttonIndex = body.validatedData.tapped_button.index as number
+        const buttonIndex = body.tapped_button.index as number
 
         switch (buttonIndex) {
             case 1: {
-                const textInput = body.validatedData.input?.text
+                const textInput = body.input?.text
 
                 if (!textInput) {
                     throw new FrameError('An amount must be provided')

@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import TextView, { type TextViewProps } from '@/sdk/views/TextView'
@@ -13,7 +13,7 @@ export default async function confirm({
     config,
     params,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     storage?: Storage
     params: { currentIndex?: string; navigation?: 'true' }
@@ -30,8 +30,8 @@ export default async function confirm({
         },
     ]
 
-    const buttonIndex = body.untrustedData.buttonIndex
-    const textInput = body.untrustedData?.inputText
+    const buttonIndex = body.tapped_button.index
+    const textInput = body.input?.text
     const rawAbiString = config.etherscan.abis.flat()
     const signatures = rawAbiString.filter((abi) => abi.startsWith('function'))
     const currentIndex = params.currentIndex === undefined ? 0 : Number(params.currentIndex)

@@ -1,6 +1,6 @@
 'use server'
 
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import TextView from '@/sdk/views/TextView'
@@ -11,7 +11,7 @@ export default async function success({
     body,
     config,
 }: {
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params:
@@ -20,8 +20,8 @@ export default async function success({
           }
         | undefined
 }): Promise<BuildFrameData> {
-    const transactionId = body.validatedData.transaction?.hash
-    const buttonIndex = body.validatedData.tapped_button?.index || 1
+    const transactionId = body.transaction?.hash
+    const buttonIndex = body.tapped_button?.index || 1
 
     if (!config.pool) {
         return initial({ config })

@@ -64,6 +64,5 @@ export default {
             bottomMessage: { text: 'You can customize this message.' },
         },
     },
-    requiresValidation: true,
     events: [],
 } satisfies BaseTemplate

@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { getSessionById } from '@paywithglide/glide-js'
 import type { Config } from '..'
@@ -10,7 +10,7 @@ export default async function txData({
     config,
     params,
 }: {
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params: {

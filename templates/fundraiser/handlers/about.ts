@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import TextView from '@/sdk/views/TextView'
 import type { Config } from '..'
@@ -7,7 +7,7 @@ import type { Config } from '..'
 export default async function about({
     config,
 }: {
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: undefined
 }): Promise<BuildFrameData> {

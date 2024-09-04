@@ -41,7 +41,6 @@ export default {
     Inspector,
     handlers,
     cover,
-    requiresValidation: true,
     initialConfig: {
         owner: null,
         enableGating: false,

@@ -66,6 +66,5 @@ export default {
             bottomMessage: { text: 'We appreciate your support.' },
         },
     },
-    requiresValidation: true,
     events: [],
 } satisfies BaseTemplate

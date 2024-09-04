@@ -31,7 +31,6 @@ export default {
     enabled: true,
     Inspector,
     handlers,
-    requiresValidation: false,
     initialConfig: {
         memeUrl: null,
         template: null,

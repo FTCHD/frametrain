@@ -89,6 +89,5 @@ export default {
     enabled: true,
     Inspector,
     handlers,
-    requiresValidation: false,
     events: [],
 } satisfies BaseTemplate

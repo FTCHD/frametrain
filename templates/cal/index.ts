@@ -72,6 +72,5 @@ export default {
             nftType: 'ERC721',
         },
     },
-    requiresValidation: true,
     events: [],
 } satisfies BaseTemplate

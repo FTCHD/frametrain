@@ -33,6 +33,5 @@ export default {
     handlers,
     cover,
     initialConfig: {},
-    requiresValidation: false,
     events: [],
 } satisfies BaseTemplate

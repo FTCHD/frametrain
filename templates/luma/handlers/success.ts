@@ -1,12 +1,12 @@
 'use server'
-import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import type { Config } from '..'
 import initial from './initial'
 
 export default async function success({
     config,
 }: {
-    body: FrameActionPayloadValidated
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params: any

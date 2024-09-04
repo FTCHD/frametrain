@@ -1,24 +1,23 @@
 'use server'
-import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
+import { runGatingChecks } from '@/lib/gating'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import ResultsView from '../views/Results'
-import { FrameError } from '@/sdk/error'
-import { runGatingChecks } from '@/lib/gating'
 
 export default async function vote({
     body,
     config,
     storage,
 }: {
-    body: FrameActionPayloadValidated
+    body: FramePayloadValidated
     config: Config
     storage: Storage
 }): Promise<BuildFrameData> {
-    const viewer = body.validatedData.interactor
+    const viewer = body.interactor
     const voter = viewer.fid.toString()
-    const buttonIndex = body.validatedData.tapped_button.index as number
-    const username = body.validatedData.interactor.username
+    const buttonIndex = body.tapped_button.index as number
+    const username = body.interactor.username
 
     const pastIndex =
         storage.votesForId?.[voter]?.option || (storage.votesForId?.[voter] as unknown as number)

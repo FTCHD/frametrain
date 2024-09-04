@@ -50,6 +50,5 @@ export default {
             background: '#000000',
         },
     },
-    requiresValidation: true,
     events: [],
 } satisfies BaseTemplate

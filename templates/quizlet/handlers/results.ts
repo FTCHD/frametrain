@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import ReviewAnswersView from '../views/Review'
@@ -10,12 +10,12 @@ export default async function results({
     config,
     storage,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
 }): Promise<BuildFrameData> {
-    const userId = body.untrustedData.fid.toString()
-    const choice = body.untrustedData.buttonIndex
+    const userId = body.interactor.fid.toString()
+    const choice = body.tapped_button.index
 
     if (choice === 1) {
         return initial({ config })

@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
@@ -13,7 +13,7 @@ export default async function duration({
     body,
     config,
 }: {
-    body: FrameActionPayloadValidated
+    body: FramePayloadValidated
     config: Config
 }): Promise<BuildFrameData> {
     const fontSet = new Set(['Roboto'])
@@ -35,22 +35,19 @@ export default async function duration({
         throw new FrameError('No events available to schedule.')
     }
 
-    if (
-        config.gatingOptions.follower &&
-        !body.validatedData.interactor.viewer_context.followed_by
-    ) {
+    if (config.gatingOptions.follower && !body.interactor.viewer_context.followed_by) {
         throw new FrameError('Only profiles followed by the creator can schedule a call.')
     }
 
-    if (config.gatingOptions.following && !body.validatedData.interactor.viewer_context.following) {
+    if (config.gatingOptions.following && !body.interactor.viewer_context.following) {
         throw new FrameError('Please follow the creator and try again.')
     }
 
-    if (config.gatingOptions.recasted && !body.validatedData.cast.viewer_context.recasted) {
+    if (config.gatingOptions.recasted && !body.cast.viewer_context.recasted) {
         throw new FrameError('Please recast this frame and try again.')
     }
 
-    if (config.gatingOptions.liked && !body.validatedData.cast.viewer_context.liked) {
+    if (config.gatingOptions.liked && !body.cast.viewer_context.liked) {
         throw new FrameError('Please like this frame and try again.')
     }
 
@@ -66,27 +63,25 @@ export default async function duration({
             const response = await fetch(url, options)
             const data = await response.json()
 
-            containsUserFID = data.result.some(
-                (item: any) => item.fid === body.validatedData.interactor.fid
-            )
+            containsUserFID = data.result.some((item: any) => item.fid === body.interactor.fid)
         } catch {
             throw new FrameError('Failed to fetch your engagement data')
         }
     }
 
     if (config.gatingOptions.nftGating) {
-        if (body.validatedData.interactor.verified_addresses.eth_addresses.length === 0) {
+        if (body.interactor.verified_addresses.eth_addresses.length === 0) {
             throw new FrameError('You do not have a wallet that holds the required NFT.')
         }
         if (config.nftOptions.nftType === 'ERC721') {
             nftGate = await holdsErc721(
-                body.validatedData.interactor.verified_addresses.eth_addresses,
+                body.interactor.verified_addresses.eth_addresses,
                 config.nftOptions.nftAddress,
                 config.nftOptions.nftChain
             )
         } else {
             nftGate = await holdsErc1155(
-                body.validatedData.interactor.verified_addresses.eth_addresses,
+                body.interactor.verified_addresses.eth_addresses,
                 config.nftOptions.nftAddress,
                 config.nftOptions.tokenId,
                 config.nftOptions.nftChain

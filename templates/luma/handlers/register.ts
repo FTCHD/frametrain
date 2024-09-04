@@ -1,6 +1,6 @@
 'use server'
 
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import type { Config, Storage } from '..'
 import SuccessView from '../views/Success'
@@ -11,16 +11,16 @@ export async function register({
     storage,
 }: {
     config: Config
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     storage: Storage
 }): Promise<BuildFrameData> {
     if (!config.event) throw new FrameError('No event found')
     let eventId = config.event.eventId
     let ticketTypeId = config.event.ticketTypeId
-    const email = body.validatedData.input?.text as string | undefined
+    const email = body.input?.text as string | undefined
 
     if (!email) throw new FrameError('Please enter your email to register.')
-    const fid = body.validatedData.interactor.fid as number
+    const fid = body.interactor.fid as number
     const registeredUsers = storage.registeredUsers ?? []
     const guest = registeredUsers.find((u) => u.fid === fid)
 
@@ -50,7 +50,7 @@ export async function register({
 
     let newStorage = storage
     const data = {
-        name: body.validatedData.interactor.display_name,
+        name: body.interactor.display_name,
         ticket_type_to_selection: { [ticketTypeId]: { count: 1, amount: 0 } },
         email,
         event_api_id: eventId,

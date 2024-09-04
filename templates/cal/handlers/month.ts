@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
@@ -12,7 +12,7 @@ export default async function month({
     body,
     params,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     params: any
 }): Promise<BuildFrameData> {
@@ -32,8 +32,8 @@ export default async function month({
         throw new FrameError('No events available to schedule.')
     }
 
-    const buttonIndex = body.untrustedData.buttonIndex
-    const inputText = body.untrustedData.inputText
+    const buttonIndex = body.tapped_button.index
+    const inputText = body.input?.text
     const event = config.events.find((event) => event.slug === params.eventSlug)!
     let month = params?.month === undefined ? new Date().getMonth() : Number(params?.month)
 

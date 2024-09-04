@@ -136,6 +136,5 @@ export default {
             labelColor: 'white',
         },
     },
-    requiresValidation: true,
     events: [],
 } satisfies BaseTemplate

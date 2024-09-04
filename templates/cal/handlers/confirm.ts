@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
@@ -15,7 +15,7 @@ export default async function confirm({
     config,
     params,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     params: any
     storage: Storage
@@ -32,7 +32,7 @@ export default async function confirm({
         fonts.push(...loadedFont)
     }
 
-    const buttonIndex = body.untrustedData.buttonIndex
+    const buttonIndex = body.tapped_button.index
 
     if (buttonIndex === 1) {
         return initial({ config })
@@ -67,7 +67,7 @@ export default async function confirm({
     const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots, config.timezone)
     const date = datesArray[params.date]
 
-    const email = body.untrustedData.inputText
+    const email = body.input?.text
     const eventTypeId = await getEventId(config.username!, params.duration)
 
     try {

@@ -25,6 +25,5 @@ export default {
     Inspector,
     handlers,
     initialConfig: {},
-    requiresValidation: false,
     events: [],
 } satisfies BaseTemplate

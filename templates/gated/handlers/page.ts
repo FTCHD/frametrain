@@ -1,9 +1,5 @@
 'use server'
-import type {
-    BuildFrameData,
-    FrameButtonMetadata,
-    FrameValidatedActionPayload,
-} from '@/lib/farcaster'
+import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
 import { runGatingChecks } from '@/lib/gating'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import TextView from '@/sdk/views/TextView'
@@ -13,15 +9,15 @@ export default async function page({
     body,
     config,
 }: {
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
     await runGatingChecks(body, config.gating)
-	
+
     const buttons: FrameButtonMetadata[] = []
-	
+
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
 

@@ -23,6 +23,5 @@ export default {
     initialConfig: {
         text: 'Default Text',
     },
-    requiresValidation: false,
     events: [],
 } satisfies BaseTemplate

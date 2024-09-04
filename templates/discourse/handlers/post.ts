@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
 import PostView from '../views/Post'
@@ -10,11 +10,11 @@ export default async function post({
     config,
     params,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     params: any
 }): Promise<BuildFrameData> {
-    const buttonIndex = body.untrustedData.buttonIndex
+    const buttonIndex = body.tapped_button.index
 
     if (buttonIndex === 1 && params?.currentPage) {
         return initial({ config })
@@ -32,7 +32,7 @@ export default async function post({
     } else {
         nextPage =
             params?.currentPage !== undefined
-                ? body.untrustedData.buttonIndex === 2
+                ? body.tapped_button.index === 2
                     ? Math.max(1, Number(params?.currentPage) - 1)
                     : Math.min(postsIds.length, Number(params?.currentPage) + 1)
                 : 1
