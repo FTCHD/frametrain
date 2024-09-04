@@ -18,11 +18,13 @@ export default function ComposeEditor({
     frame,
     template,
     fid,
+    fname,
     castState,
 }: {
     frame: InferSelectModel<typeof frameTable>
     template: (typeof templates)[keyof typeof templates]
     fid: string
+    fname: string
     castState: Record<string, any>
 }) {
     const refreshPreview = useRefreshPreview(frame.id)
@@ -97,6 +99,7 @@ export default function ComposeEditor({
                             storage: frame.storage!,
                             update: updateConfig,
                             fid: fid,
+                            fname: fname,
                         }}
                     >
                         <Inspector />
