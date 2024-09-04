@@ -1,12 +1,16 @@
 'use client'
-
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
-import { Label } from '@/components/shadcn/InputLabel'
-import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
-import { Switch } from '@/components/shadcn/Switch'
-import { Textarea } from '@/components/shadcn/Textarea'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import {
+    Button,
+    ColorPicker,
+    FontFamilyPicker,
+    FontStylePicker,
+    FontWeightPicker,
+    Input,
+    Label,
+    RadioGroup,
+    Switch,
+    Textarea,
+} from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useState } from 'react'
 import type { Config } from '../..'
@@ -43,7 +47,7 @@ export default function CoverScreen() {
                 <div className="flex flex-col gap-4 w-full">
                     <div className="flex flex-col gap-2 w-full">
                         <h2 className="text-lg font-semibold">Screen Type</h2>
-                        <RadioGroup
+                        <RadioGroup.Root
                             defaultValue={descriptionType}
                             className="flex flex-row"
                             onValueChange={(val) => {
@@ -52,14 +56,14 @@ export default function CoverScreen() {
                             }}
                         >
                             <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="text" id="text" />
+                                <RadioGroup.Item value="text" id="text" />
                                 <Label htmlFor="text">Text</Label>
                             </div>
                             <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="image" id="image" />
+                                <RadioGroup.Item value="image" id="image" />
                                 <Label htmlFor="image">Image</Label>
                             </div>
-                        </RadioGroup>
+                        </RadioGroup.Root>
                     </div>
                     <div className="flex flex-col gap-4 w-full mb-4">
                         {descriptionType === 'image' ? (

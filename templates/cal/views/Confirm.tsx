@@ -9,7 +9,7 @@ export default function CoverView(config: Config, date: any, time: any) {
             backgroundProp['backgroundImage'] = config.background
         }
     } else {
-        backgroundProp['backgroundColor'] = '#black'
+        backgroundProp['backgroundColor'] = 'black'
     }
     return (
         <div

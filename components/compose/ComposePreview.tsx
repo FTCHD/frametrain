@@ -1,28 +1,14 @@
 'use client'
+import BaseSpinner from '@/components/shadcn/BaseSpinner'
+import { Button } from '@/components/shadcn/Button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/Popover'
 import type { FrameMetadataWithImageObject } from '@/lib/debugger'
-import type { FrameButtonMetadata } from '@/lib/farcaster'
-import {
-    previewErrorAtom,
-    previewLoadingAtom,
-    previewParametersAtom,
-    previewStateAtom,
-} from '@/lib/store'
+import { previewErrorAtom, previewLoadingAtom, previewStateAtom } from '@/lib/store'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { useAtom, useAtomValue } from 'jotai'
-import { X } from 'lucide-react'
-import {
-    type ChangeEvent,
-    type PropsWithChildren,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react'
-import { Delete, ExternalLink, PlusCircle } from 'react-feather'
-import toast from 'react-hot-toast'
-import BaseSpinner from '../shadcn/BaseSpinner'
-import { Button } from '../shadcn/Button'
-import { Popover, PopoverContent, PopoverTrigger } from '../shadcn/Popover'
+import { useAtomValue } from 'jotai'
+import { XIcon } from 'lucide-react'
+import { type ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { FramePreviewButton } from '../FramePreviewButton'
 
 export function ComposePreview() {
     const preview = useAtomValue(previewStateAtom)
@@ -73,10 +59,10 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
     useEffect(() => {
         console.log(image)
     }, [image])
-	
-	useEffect(() => {
-    toggleEnabled(!loadingContainer)
-}, [toggleEnabled, loadingContainer])
+
+    useEffect(() => {
+        toggleEnabled(!loadingContainer)
+    }, [toggleEnabled, loadingContainer])
 
     return (
         <Popover open={isOpen}>
@@ -92,7 +78,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                         <BaseSpinner />
                     ) : isOpen ? (
                         <Button variant="secondary">
-                            <X className="text-stone-900 dark:text-white" size={28} />
+                            <XIcon className="text-stone-900 dark:text-white" size={28} />
                         </Button>
                     ) : (
                         <img
@@ -137,7 +123,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                         <div className="flex flex-row w-full h-full justify-center items-center gap-[10px]">
                             {buttons?.map((button, index) =>
                                 button ? (
-                                    <FrameButton
+                                    <FramePreviewButton
                                         key={button.label}
                                         buttonIndex={index + 1}
                                         button={button}
@@ -147,7 +133,7 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                                         params={params}
                                     >
                                         {button.label}
-                                    </FrameButton>
+                                    </FramePreviewButton>
                                 ) : undefined
                             )}
                         </div>
@@ -156,80 +142,4 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
             </PopoverContent>
         </Popover>
     )
-}
-
-function FrameButton({
-    children,
-    button,
-    buttonIndex,
-    inputText,
-    state,
-    handler,
-    params,
-}: PropsWithChildren<{
-    //! Changed from NonNullable<FrameMetadataWithImageObject['buttons']>[0]
-    button: FrameButtonMetadata
-    buttonIndex: number
-    inputText: string
-    state: any
-    handler: string | undefined
-    params: string | undefined
-}>) {
-    const { action, target } = button
-
-    const [, setPreviewData] = useAtom(previewParametersAtom)
-    const previewLoading = useAtomValue(previewLoadingAtom)
-
-    const actionCallback = useCallback(async () => {
-        const newData = {
-            handler: handler,
-            inputText: inputText,
-            buttonIndex: buttonIndex,
-            params: params,
-        }
-
-        setPreviewData(newData)
-    }, [buttonIndex, inputText, handler, params, setPreviewData])
-
-    const handleClick = useCallback(async () => {
-        switch (action) {
-            case 'link': {
-                window.open(target, '_blank')
-                break
-            }
-            case 'post': {
-                await actionCallback()
-                break
-            }
-            default: {
-                toast.error('Not implemented yet')
-                break
-            }
-        }
-    }, [action, target, actionCallback])
-
-    return (
-        <button
-            className="rounded-lg font-normal disabled:opacity-50 border border-[#4c3a4ec0] px-4 py-2 text-sm flex h-10 flex-row items-center justify-center  bg-[#ffffff1a] hover:bg-[#ffffff1a] w-full"
-            type="button"
-            onClick={handleClick}
-            disabled={previewLoading || button?.action === 'mint'}
-        >
-            <span className="items-center font-normal text-white line-clamp-1">{children}</span>
-            {buttonIcon({ action })}
-        </button>
-    )
-}
-
-const buttonIcon = ({ action }: { action?: string }) => {
-    switch (action) {
-        case 'link':
-            return <ExternalLink size={14} color="#9fa3af" className="ml-1" />
-        case 'post_redirect':
-            return <Delete size={14} color="#9fa3af" className="ml-1" />
-        case 'mint':
-            return <PlusCircle size={14} color="#9fa3af" className="ml-1" />
-        default:
-            return null
-    }
 }

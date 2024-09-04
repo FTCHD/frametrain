@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
@@ -14,22 +14,25 @@ export default async function confirm({
     body,
     config,
     params,
-    storage,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     params: any
     storage: Storage
 }): Promise<BuildFrameData> {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
-    const fonts = [...roboto]
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
 
     if (config?.fontFamily) {
-        const titleFont = await loadGoogleFontAllVariants(config.fontFamily)
-        fonts.push(...titleFont)
+        fontSet.add(config.fontFamily)
     }
 
-    const buttonIndex = body.untrustedData.buttonIndex
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
+    }
+
+    const buttonIndex = body.tapped_button.index
 
     if (buttonIndex === 1) {
         return initial({ config })
@@ -44,10 +47,10 @@ export default async function confirm({
                 eventTypeSlug: params.duration,
                 startTime: dates[0],
                 endTime: dates[1],
-                timeZone: 'UTC',
                 duration: null,
                 rescheduleUid: null,
                 orgSlug: null,
+                timeZone: config.timezone || 'Europe/London',
             },
             meta: {
                 values: {
@@ -61,10 +64,10 @@ export default async function confirm({
     const slots = await fetch(url)
     const slotsResponse = await slots.json()
 
-    const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots)
+    const [datesArray] = extractDatesAndSlots(slotsResponse.result.data.json.slots, config.timezone)
     const date = datesArray[params.date]
 
-    const email = body.untrustedData.inputText
+    const email = body.input?.text
     const eventTypeId = await getEventId(config.username!, params.duration)
 
     try {
@@ -73,7 +76,8 @@ export default async function confirm({
             email!,
             slotsResponse.result.data.json.slots[date][params.slot].time,
             eventTypeId,
-            config.username!
+            config.username!,
+            config.timezone || 'Europe/London'
         )
     } catch {
         throw new FrameError('Error booking event.')

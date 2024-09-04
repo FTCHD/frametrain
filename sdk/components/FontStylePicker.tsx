@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useMemo, useState } from 'react'
 import { getGoogleFonts } from '../fonts'
 import { Select } from './Select'

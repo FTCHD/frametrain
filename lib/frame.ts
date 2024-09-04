@@ -151,9 +151,27 @@ export async function publishFrameConfig(id: string) {
         notFound()
     }
 
+    const newDraftConfig = frame.draftConfig!
+
+    // if (newDraftConfig.gating) {
+    //     // disables advanced options that have no requirements set
+    //     // enabled this once revalidation works
+    //     const gating = frame.draftConfig!.gating as GatingType
+    //     for (const enabledOption of gating.enabled) {
+    //         if (
+    //             GATING_ADVANCED_OPTIONS.includes(enabledOption) &&
+    //             !gating.requirements?.[enabledOption as keyof GatingType['requirements']]
+    //         ) {
+    //             newDraftConfig.gating.enabled = newDraftConfig.gating.enabled.filter(
+    //                 (option: string) => option !== enabledOption
+    //             )
+    //         }
+    //     }
+    // }
+
     await client
         .update(frameTable)
-        .set({ config: frame.draftConfig })
+        .set({ config: newDraftConfig, draftConfig: newDraftConfig })
         .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
         .run()
 

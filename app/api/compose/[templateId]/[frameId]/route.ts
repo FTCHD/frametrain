@@ -10,8 +10,9 @@ export async function GET(
     const searchParams = request.nextUrl.searchParams
 
     const token = searchParams.get('t')!
-
     const castState = searchParams.get('s')!
+
+    const encodedCastState = encodeURIComponent(castState)
 
     cookies().set(process.env.AUTH_SESSION_COOKIE_NAME!, token, {
         httpOnly: true,
@@ -19,5 +20,7 @@ export async function GET(
         secure: true,
     })
 
-    redirect(process.env.NEXT_PUBLIC_HOST! + '/compose/' + params.frameId + '?s=' + castState)
+    redirect(
+        process.env.NEXT_PUBLIC_HOST! + '/compose/' + params.frameId + '?s=' + encodedCastState
+    )
 }

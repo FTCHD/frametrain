@@ -1,5 +1,5 @@
 {
-    "$schema": "https://biomejs.dev/schemas/1.6.4/schema.json",
+    "$schema": "https://biomejs.dev/schemas/1.7.3/schema.json",
     "organizeImports": {
         "enabled": true
     },
@@ -20,7 +20,8 @@
                 "all": true
             },
             "performance": {
-                "all": true
+                "all": true,
+                "noBarrelFile": "off"
             },
             "security": {
                 "all": true
@@ -34,7 +35,8 @@
                 "noDefaultExport": "off",
                 "useNamingConvention": "off",
                 "useCollapsedElseIf": "off",
-                "noNegationElse": "off"
+                "noNegationElse": "off",
+                "noNamespaceImport": "off"
             },
             "suspicious": {
                 "all": false,

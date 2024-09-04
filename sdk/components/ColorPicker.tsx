@@ -1,12 +1,11 @@
 'use client'
-
 import { BaseInput } from '@/components/shadcn/BaseInput'
 import { Button } from '@/components/shadcn/Button'
 import { Input } from '@/components/shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/Popover'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
 import { cn } from '@/lib/shadcn'
-import { Paintbrush } from 'lucide-react'
+import { PaintbrushIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 const solids = [
@@ -103,7 +102,7 @@ export function ColorPicker({
                                 style={{ background }}
                             />
                         ) : (
-                            <Paintbrush className="w-4 h-4" />
+                            <PaintbrushIcon className="w-4 h-4" />
                         )}
                         <div className="flex-1 truncate">
                             {background ? background : 'Pick a color'}

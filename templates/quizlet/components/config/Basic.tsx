@@ -1,7 +1,5 @@
 'use client'
-import { Input } from '@/components/shadcn/Input'
-import { ColorPicker } from '@/sdk/components'
-import { Select } from '@/sdk/components/Select'
+import { ColorPicker, Input, Select } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import type { Config } from '../..'
 import defaultConfig from '../..'
@@ -17,7 +15,7 @@ export default function BasicConfig() {
                 <h2 className="text-lg font-semibold">Allow quiz to be answered only once?</h2>
                 <Select
                     defaultValue={config.answerOnce ? 'yes' : 'no'}
-                    onChange={(v: 'yes' | 'no') =>
+                    onChange={(v) =>
                         updateConfig({
                             answerOnce: v === 'yes',
                         })

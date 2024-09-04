@@ -1,6 +1,5 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
+import { Button, Input } from '@/sdk/components'
 import { useFrameConfig, useFrameId } from '@/sdk/hooks'
 import { useRef } from 'react'
 import type { Config } from '.'

@@ -1,14 +1,17 @@
 'use client'
-
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
-import { Label } from '@/components/shadcn/InputLabel'
-import { RadioGroup, RadioGroupItem } from '@/components/shadcn/RadioGroup'
-import { Switch } from '@/components/shadcn/Switch'
-import { Textarea } from '@/components/shadcn/Textarea'
 import { cn } from '@/lib/shadcn'
-import { ColorPicker, FontFamilyPicker, FontStylePicker } from '@/sdk/components'
-import { Select } from '@/sdk/components/Select'
+import {
+    Button,
+    ColorPicker,
+    FontFamilyPicker,
+    FontStylePicker,
+    Input,
+    Label,
+    RadioGroup,
+    Select,
+    Switch,
+    Textarea,
+} from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useState } from 'react'
 import type { Config } from '../..'
@@ -126,7 +129,7 @@ export default function QnaForm({ qna, className, ...props }: Props) {
 
                 <Select
                     defaultValue={choicesType}
-                    onChange={(v: 'alpha' | 'numeric') => setChoicesType(v)}
+                    onChange={(v) => setChoicesType(v as 'alpha' | 'numeric')}
                 >
                     <option value="alpha">Alphabets</option>
                     <option value="numeric">Numbers</option>
@@ -137,7 +140,7 @@ export default function QnaForm({ qna, className, ...props }: Props) {
                     <h2 className="text-2xl tracking-tight font-semibold">
                         Select the right answer for this question:
                     </h2>
-                    <RadioGroup
+                    <RadioGroup.Root
                         defaultValue={qna.answer}
                         onValueChange={(answer) => {
                             updateConfig({
@@ -151,13 +154,15 @@ export default function QnaForm({ qna, className, ...props }: Props) {
                             length: qna.choices.length,
                         }).map((_, index) => (
                             <div key={index} className="flex items-center space-x-2">
-                                <RadioGroupItem value={choicesRepresentation[choicesType][index]} />
+                                <RadioGroup.Item
+                                    value={choicesRepresentation[choicesType][index]}
+                                />
                                 <Label htmlFor="answer">
                                     {choicesRepresentation[choicesType][index]}
                                 </Label>
                             </div>
                         ))}
-                    </RadioGroup>
+                    </RadioGroup.Root>
                 </div>
             )}
 

@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react'
 import NextImage from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { Plus } from 'react-feather'
+import { Plus as PlusIcon } from 'react-feather'
 import { Separator } from '../shadcn/Separator'
 
 export default function TemplateCard({
@@ -51,7 +51,7 @@ export default function TemplateCard({
                     className="object-cover h-64 rounded-t-md"
                 />
                 <div className="ease-in-out bg-[#0B0D0E] inline-flex absolute right-4 -bottom-8 justify-center items-center w-14 h-14 rounded-full bg-background group-hover:bg-red-600 group-hover:text-white transition duration-150">
-                    <Plus size={32} />
+                    <PlusIcon size={32} />
                 </div>
             </div>
 

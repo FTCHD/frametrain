@@ -13,7 +13,7 @@ export default {
     name: 'Starter',
     description: 'Copy this template to create your own',
     shortDescription: 'Appears as composer action description (max 20 characters)',
-    icon: 'number',
+    octicon: 'gear', // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
     creatorFid: '0',
     creatorName: 'FrameTrain',
     cover,
@@ -23,6 +23,5 @@ export default {
     initialConfig: {
         text: 'Default Text',
     },
-    requiresValidation: false,
     events: [],
 } satisfies BaseTemplate

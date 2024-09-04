@@ -1,6 +1,6 @@
 'use server'
 
-import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import ReviewAnswersView from '../views/Review'
@@ -11,12 +11,12 @@ export default async function review({
     storage,
     params,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
-    const student = body.untrustedData.fid.toString()
+    const student = body.interactor.fid.toString()
     const pastAnswers = storage.answers?.[student] ?? []
 
     const newStorage = storage

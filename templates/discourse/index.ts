@@ -1,8 +1,8 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.jpeg'
+import cover from './cover.avif'
 import handlers from './handlers'
-import icon from './icon.jpeg'
+import icon from './icon.avif'
 
 export interface Config extends BaseConfig {
     discourseLink: string
@@ -23,6 +23,5 @@ export default {
     handlers,
     initialConfig: {},
     cover,
-    requiresValidation: false,
     events: [],
 } satisfies BaseTemplate

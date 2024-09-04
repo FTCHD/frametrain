@@ -25,5 +25,6 @@ export default async function initial({ config }: { config: Config }): Promise<B
         fonts: roboto,
         component: CoverView(config),
         handler: 'input',
+        params: { from: 'initial' },
     }
 }

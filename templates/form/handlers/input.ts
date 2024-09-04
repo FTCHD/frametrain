@@ -1,12 +1,13 @@
 'use server'
-import type { BuildFrameData, FrameValidatedActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
+import { runGatingChecks } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
+import TextView from '@/sdk/views/TextView'
 import type { Config, Storage } from '..'
 import { UsersState, removeFidFromUserState, updateUserState } from '../state'
-import { getIndexForFid, validateField } from '../utils'
+import { getIndexForFid, loadFontsAndtextElements, validateField } from '../utils'
 import ConfirmOverwriteView from '../views/ConfirmOverwrite'
 import ConfirmSubmitView from '../views/ConfirmSubmit'
-import InputView from '../views/Input'
 import SuccessView from '../views/Success'
 import about from './about'
 import initial from './initial'
@@ -18,16 +19,21 @@ export default async function input({
     storage,
     params,
 }: {
-    body: FrameValidatedActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
-    params: any
+    params?: { from: string }
 }): Promise<BuildFrameData> {
-    const fid = body.validatedData.interactor.fid
-    const buttonIndex = body.validatedData.tapped_button.index
-    const textInput = body.validatedData?.input?.text || ''
+    const viewer = body.interactor
+    const fid = viewer.fid
+    const buttonIndex = body.tapped_button.index
+    const textInput = (body.validatedData?.input?.text || '') as string
 
     let newStorage = storage
+
+    if (config.enableGating) {
+        await runGatingChecks(body, config.gating)
+    }
 
     if (!UsersState[fid]) {
         updateUserState(fid, { pageType: 'init', inputValues: [] })
@@ -50,7 +56,7 @@ export default async function input({
                 if (index >= 0) {
                     updateUserState(fid, {
                         pageType: 'confirm_overwrite',
-                        inputValues: newStorage.data[index].inputValues,
+                        inputValues: newStorage.data[index].values,
                         inputFieldNumber: 0,
                         totalInputFieldNumber: config.fields.length,
                         isOldUser: true,
@@ -100,9 +106,11 @@ export default async function input({
             if (config.fields[UsersState[fid].inputFieldNumber].required == true) {
                 // CHECK IF THE INPUT IS A "REQUIRED" ONE
                 if (
-                    // biome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
-                    !(textInput.trim().length > 0) &&
-                    !UsersState[fid].inputValues[UsersState[fid].inputFieldNumber]
+                    params?.from !== 'initial' &&
+                    !(
+                        textInput.trim().length > 0 ||
+                        UsersState[fid].inputValues[UsersState[fid].inputFieldNumber]
+                    )
                 ) {
                     updateUserState(fid, { pageType: 'input' })
                     throw new FrameError('You cannot leave a required field blank.')
@@ -110,7 +118,10 @@ export default async function input({
             }
 
             const _inputs = UsersState[fid].inputValues
-            _inputs[UsersState[fid].inputFieldNumber] = textInput
+            _inputs[UsersState[fid].inputFieldNumber] = {
+                field: config.fields[UsersState[fid].inputFieldNumber].fieldName,
+                value: textInput.trim(),
+            }
             updateUserState(fid, { inputValues: _inputs })
 
             if (prevUserState.inputFieldNumber + 1 == UsersState[fid].totalInputFieldNumber) {
@@ -162,7 +173,7 @@ export default async function input({
             // IF BACK WAS PRESSED
             if (buttonIndex == 1) {
                 updateUserState(fid, { pageType: 'init' })
-                break
+                return initial({ config })
             }
 
             // IF CONTINUE WAS PRESSED
@@ -187,8 +198,12 @@ export default async function input({
             return initial({ config })
         case 'about':
             return about({ config })
-        case 'input':
+        case 'input': {
+            const field = config.fields[UsersState[fid].inputFieldNumber]
+            const { title, subtitle, bottomMessage, fonts } = await loadFontsAndtextElements(field)
+
             return {
+                fonts,
                 buttons: [
                     {
                         label: 'Reset',
@@ -202,9 +217,15 @@ export default async function input({
                 ],
                 inputText: 'Enter The Value',
                 storage: newStorage,
-                component: InputView(config, UsersState[fid]),
+                component: TextView({
+                    title,
+                    subtitle,
+                    bottomMessage,
+                    background: field.background,
+                }),
                 handler: 'input',
             }
+        }
         case 'confirm_submit':
             return {
                 buttons: [
@@ -235,7 +256,7 @@ export default async function input({
                     ...(newStorage.data || []),
                     {
                         fid,
-                        inputValues: UsersState[fid].inputValues,
+                        values: UsersState[fid].inputValues,
                         timestamp: new Date().getTime(),
                     },
                 ],
@@ -277,13 +298,17 @@ export default async function input({
     // RETURN INITIAL VIEW IF ANYTHING UNEXPECTED HAPPENS
     updateUserState(fid, { pageType: 'init', inputValues: [] })
 
+    const field = config.fields[UsersState[fid].inputFieldNumber]
+    const { title, subtitle, bottomMessage, fonts } = await loadFontsAndtextElements(field)
+
     return {
+        fonts,
         buttons: [
             {
                 label: '←',
             },
         ],
-        component: InputView(config, UsersState[fid]),
+        component: TextView({ title, subtitle, bottomMessage, background: field.background }),
         handler: 'initial',
     }
 }

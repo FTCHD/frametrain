@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData } from '@/lib/farcaster'
 import type { Config } from '..'
 import PageView from '../views/Page'
 
@@ -9,7 +9,7 @@ export default async function page({
     storage,
     params,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
     params: any

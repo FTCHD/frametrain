@@ -1,5 +1,5 @@
 'use client'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/Tabs'
+import { Tabs } from '@/sdk/components'
 import type {
     AspectRatio,
     BaseImagePaths,
@@ -63,17 +63,17 @@ const SlideDesigner = ({ figmaPAT, slideConfig, buttonTargets, onUpdate }: Slide
 
     return (
         <div className="w-full space-y-2">
-            <Tabs defaultValue="properties" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="properties">Properties</TabsTrigger>
-                    <TabsTrigger value="text" disabled={!slideConfig.figmaUrl}>
+            <Tabs.Root defaultValue="properties" className="w-full">
+                <Tabs.List className="grid w-full grid-cols-3">
+                    <Tabs.Trigger value="properties">Properties</Tabs.Trigger>
+                    <Tabs.Trigger value="text" disabled={!slideConfig.figmaUrl}>
                         Text Layers
-                    </TabsTrigger>
-                    <TabsTrigger value="buttons" disabled={!slideConfig.figmaUrl}>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="buttons" disabled={!slideConfig.figmaUrl}>
                         Buttons
-                    </TabsTrigger>
-                </TabsList>
-                <TabsContent value="properties">
+                    </Tabs.Trigger>
+                </Tabs.List>
+                <Tabs.Content value="properties">
                     <PropertiesTab
                         slideConfigId={slideConfig.id}
                         title={slideConfig.title}
@@ -88,8 +88,8 @@ const SlideDesigner = ({ figmaPAT, slideConfig, buttonTargets, onUpdate }: Slide
                         onUpdateFigma={updateFigma}
                         onUpdateAspectRatio={updateAspectRatio}
                     />
-                </TabsContent>
-                <TabsContent value="text">
+                </Tabs.Content>
+                <Tabs.Content value="text">
                     <div className="grid grid-cols-1 gap-2">
                         {Object.values(slideConfig.textLayers).map((textLayer) => (
                             <TextLayerDesigner
@@ -99,8 +99,8 @@ const SlideDesigner = ({ figmaPAT, slideConfig, buttonTargets, onUpdate }: Slide
                             />
                         ))}
                     </div>
-                </TabsContent>
-                <TabsContent value="buttons">
+                </Tabs.Content>
+                <Tabs.Content value="buttons">
                     <div className="grid grid-cols-[min-content_min-content_1fr_min-content_1fr] gap-4">
                         <div>
                             <p>#</p>
@@ -118,8 +118,8 @@ const SlideDesigner = ({ figmaPAT, slideConfig, buttonTargets, onUpdate }: Slide
                             />
                         ))}
                     </div>
-                </TabsContent>
-            </Tabs>
+                </Tabs.Content>
+            </Tabs.Root>
         </div>
     )
 }

@@ -12,7 +12,7 @@ function renderReviewItems(config: Config, userState: SessionUserStateType) {
                         <span>
                             {startIndex + index + 1}. {inputField.fieldName}
                         </span>
-                        <span>{userState.inputValues[startIndex + index]}</span>
+                        <span>{userState.inputValues[startIndex + index].value}</span>
                     </div>
                 ))}
             </div>

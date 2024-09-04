@@ -15,6 +15,16 @@ export function useFarcasterId() {
     return context.fid
 }
 
+export function useFarcasterName() {
+    const context = useContext(InspectorContext)
+
+    if (!context) {
+        throw new Error('useFarcasterName must be used within an InspectorProvider')
+    }
+
+    return context.fname
+}
+
 export function useFrameConfig<T>() {
     const context = useContext(InspectorContext)
 

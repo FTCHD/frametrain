@@ -14,21 +14,32 @@ export default async function initial({ config }: { config: Config }): Promise<B
 
     if (event) {
         buttons.push({
-            label: 'Join event',
+            label: 'View event',
             action: 'link',
             target: `https://lu.ma/${event.id}`,
         })
+
+        if (
+            event.endsAt &&
+            Date.now() < new Date(event.endsAt).getTime() &&
+            event.price.toLowerCase().includes('free')
+        ) {
+            buttons.push({ label: 'Register' })
+        }
     }
 
-    buttons.push({
-        label: 'Create your own',
-        action: 'link',
-        target: 'https://frametra.in',
-    })
-
     return {
-        buttons,
+        buttons: [
+            ...buttons,
+            {
+                label: 'Create your own',
+                action: 'link',
+                target: 'https://frametra.in',
+            },
+        ],
         fonts: font,
         component: event ? EventView({ event, ...rest }) : CoverView(config),
+        inputText: buttons.length === 2 ? 'Enter your email address' : undefined,
+        handler: buttons.length === 2 ? 'register' : undefined,
     }
 }

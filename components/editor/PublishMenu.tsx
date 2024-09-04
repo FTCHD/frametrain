@@ -5,7 +5,7 @@ import { publishFrameConfig, revertFrameConfig } from '@/lib/frame'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import type { InferSelectModel } from 'drizzle-orm'
-import { Copy, ImageUp, Undo2 } from 'lucide-react'
+import { CopyIcon, ImageUpIcon, Undo2Icon } from 'lucide-react'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { BaseInput } from '../shadcn/BaseInput'
@@ -66,7 +66,7 @@ export default function PublishMenu({
                                 toast.success('Copied to clipboard!')
                             }}
                         >
-                            <Copy />
+                            <CopyIcon />
                         </Button>
                     </div>
                     <div className="flex flex-col gap-0">
@@ -78,7 +78,7 @@ export default function PublishMenu({
                                 toast.success('Published!')
                             }}
                         >
-                            PUBLISH <ImageUp size={18} />
+                            PUBLISH <ImageUpIcon size={18} />
                         </Button>
 
                         <Button
@@ -89,7 +89,7 @@ export default function PublishMenu({
                                 toast.success('Reverted!')
                             }}
                         >
-                            <Undo2 size={12} />
+                            <Undo2Icon size={12} />
                             Revert to old version
                         </Button>
                     </div>

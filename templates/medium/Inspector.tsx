@@ -1,6 +1,5 @@
 'use client'
-import { Input } from '@/components/shadcn/Input'
-import { ColorPicker } from '@/sdk/components'
+import { ColorPicker, Input } from '@/sdk/components'
 import { useFrameConfig } from '@/sdk/hooks'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
