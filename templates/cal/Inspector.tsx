@@ -148,7 +148,7 @@ export default function Inspector() {
 
     return (
         <Configuration.Root>
-            <Configuration.Section title="Username">
+            <Configuration.Section title="Username" description="Your Cal.com username">
                 <Input
                     className="text-lg max-md:text-base"
                     placeholder="Your Cal.com username"
@@ -158,7 +158,7 @@ export default function Inspector() {
                     }}
                 />
             </Configuration.Section>
-            <Configuration.Section title="Events">
+            <Configuration.Section title="Events" description="Add your Cal.com event slug">
                 {events.length < 4 && (
                     <>
                         <div className="flex gap-2 items-center">
@@ -253,10 +253,10 @@ export default function Inspector() {
                 ))}
             </Configuration.Section>
 
-            <Configuration.Section title="Timezone">
-                <p className="text-sm text-muted-foreground">
-                    Choose your preferred timezone to display the event start time.
-                </p>
+            <Configuration.Section
+                title="Timezone"
+                description="Choose your preferred timezone to display the event start time."
+            >
                 <Select
                     disabled={disableFields}
                     defaultValue={config.timezone ?? 'Europe/London'}
@@ -275,7 +275,10 @@ export default function Inspector() {
                     ))}
                 </Select>
             </Configuration.Section>
-            <Configuration.Section title="Gating Options">
+            <Configuration.Section
+                title="Gating Options"
+                description="Enable/disable gating options for your frame"
+            >
                 <div className="flex flex-col gap-2 w-full md:w-auto max-md:gap-0">
                     <div className="flex flex-row justify-between items-center w-full">
                         <h2 className="text-lg font-semibold max-md:text-base">Karma Gating</h2>
@@ -503,7 +506,10 @@ export default function Inspector() {
                     </p>
                 </div>
             </Configuration.Section>
-            <Configuration.Section title="Customization">
+            <Configuration.Section
+                title="Customization"
+                description="Customize your frame's design"
+            >
                 <div className="flex flex-col gap-2 w-full max-md:gap-0">
                     <h2 className="text-lg font-semibold max-md:text-base">Font</h2>
                     <FontFamilyPicker
