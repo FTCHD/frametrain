@@ -95,7 +95,7 @@ export default function Inspector() {
         <Configuration.Root>
             <Configuration.Section title="Pool">
                 <div className="flex flex-col gap-2">
-                    <h2 className="text-lg font-semibold">Uniswap V3 Pool address</h2>
+                    <h2 className="text-lg font-semibold">Uniswap Pool address</h2>
                     <Input
                         className="py-2 text-lg"
                         defaultValue={config.pool ? `${config.pool.address}` : undefined}
