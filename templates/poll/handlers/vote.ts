@@ -1,5 +1,6 @@
 'use server'
-import type { BuildFrameData, FrameActionPayloadValidated } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
+import { runGatingChecks } from '@/lib/gating'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import ResultsView from '../views/Results'
@@ -9,21 +10,25 @@ export default async function vote({
     config,
     storage,
 }: {
-    body: FrameActionPayloadValidated
+    body: FramePayloadValidated
     config: Config
     storage: Storage
 }): Promise<BuildFrameData> {
-    const voter = body.validatedData.interactor.fid
-    const buttonIndex = body.validatedData.tapped_button.index
-    const username = body.validatedData.interactor.username
+    const viewer = body.interactor
+    const voter = viewer.fid.toString()
+    const buttonIndex = body.tapped_button.index as number
+    const username = body.interactor.username
 
     const pastIndex =
         storage.votesForId?.[voter]?.option || (storage.votesForId?.[voter] as unknown as number)
 
     let newStorage = storage
 
+    if (config.enableGating) {
+        await runGatingChecks(body, config.gating)
+    }
+
     if (buttonIndex !== pastIndex) {
-        // console.log('pastIndex', pastIndex)
         const revertPastVote = pastIndex
             ? {
                   [pastIndex]:
@@ -50,10 +55,6 @@ export default async function vote({
             totalVotes: (storage?.totalVotes ?? 0) + (revertPastVote ? 0 : 1),
         })
     }
-
-    // console.log(voter)
-    // console.log(storage)
-    // console.log(newStorage)
 
     const totalVotes = newStorage.totalVotes
 

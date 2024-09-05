@@ -1,19 +1,11 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
+import { Button, Input, Select } from '@/sdk/components'
 import { useFrameConfig, useFrameId } from '@/sdk/hooks'
-import { useEffect, useState } from 'react'
-import type { Config } from '.'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/Select'
 import { LoaderIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { createMeme, getMemes } from './utils'
+import type { Config } from '.'
+import { createMeme, getMemeTemplates } from './common'
 
 type Meme = {
     id: string
@@ -42,23 +34,26 @@ export default function Inspector() {
         }
 
         function fetchMemeTemplatesFromLocalStorage() {
-            const cachePeriod = getLocalStorage<number>('imgflip-cache-time')
-            const cachedMemes = getLocalStorage<Meme[]>('imgflip-memes')
+            const cacheLastUpdated = getLocalStorage<number>('memeLastUpdated')
+            const cachedMemeTemplates = getLocalStorage<Meme[]>('memeTemplates')
 
-            if (!(cachePeriod && cachedMemes) || Date.now() - cachePeriod > 1000 * 60 * 60 * 24) {
+            if (
+                !(cacheLastUpdated && cachedMemeTemplates) ||
+                Date.now() - cacheLastUpdated > 1000 * 60 * 60 * 24
+            ) {
                 return null
             }
-            return cachedMemes
+            return cachedMemeTemplates
         }
 
         async function fetchMemeTemplates() {
             try {
-                const cachedMemes = fetchMemeTemplatesFromLocalStorage()
-                if (cachedMemes) {
-                    setMemeTemplates(cachedMemes)
+                const cachedMemeTemplates = fetchMemeTemplatesFromLocalStorage()
+                if (cachedMemeTemplates) {
+                    setMemeTemplates(cachedMemeTemplates)
                     return
                 }
-                const result = await getMemes()
+                const result = await getMemeTemplates()
                 const memes = result.map((meme) => ({
                     id: meme.id,
                     name: meme.name,
@@ -66,8 +61,8 @@ export default function Inspector() {
                     positions: meme.box_count,
                 }))
                 setMemeTemplates(memes)
-                setLocalStorage('imgflip-cache-time', Date.now())
-                setLocalStorage('imgflip-memes', memes)
+                setLocalStorage('memeLastUpdated', Date.now())
+                setLocalStorage('memeTemplates', memes)
             } catch (e) {
                 const error = e as Error
                 toast.remove()
@@ -81,27 +76,22 @@ export default function Inspector() {
     return (
         <div className="w-full h-full space-y-4">
             <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold">Templates</h2>
+                <h2 className="text-lg font-semibold">Meme Templates</h2>
 
                 <Select
                     disabled={generating}
                     defaultValue={selectedMeme?.id}
-                    onValueChange={(e) => {
+                    onChange={(e) => {
                         const meme = memeTemplates.find((meme) => meme.id === e)
 
                         if (meme) setSelectedMeme(meme)
                     }}
                 >
-                    <SelectTrigger className="w-full h-12">
-                        <SelectValue placeholder="Select a meme template" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {memeTemplates.map((meme) => (
-                            <SelectItem key={meme.id} value={meme.id}>
-                                {meme.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
+                    {memeTemplates.map((meme) => (
+                        <option key={meme.id} value={meme.id}>
+                            {meme.name}
+                        </option>
+                    ))}
                 </Select>
             </div>
 
@@ -115,10 +105,10 @@ export default function Inspector() {
                             <img src={selectedMeme.url} width={200} height={200} alt="PDF Slide" />
                         </div>
                     </div>
-                    <div className="flex flex-col h-full">
+                    <div className="flex flex-col gap-2">
                         <h2 className="text-lg font-semibold">Captions</h2>
 
-                        <div className="flex flex-col gap-2 h-full">
+                        <div className="flex flex-col gap-2">
                             {Array.from({ length: selectedMeme?.positions || 1 }).map((_, i) => (
                                 <Input
                                     key={i}
@@ -181,15 +171,10 @@ export default function Inspector() {
                         <h3 className="text-base font-medium">Aspect Ratio</h3>
                         <Select
                             defaultValue={config.aspectRatio}
-                            onValueChange={(aspectRatio) => updateConfig({ aspectRatio })}
+                            onChange={(aspectRatio) => updateConfig({ aspectRatio })}
                         >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select aspect ratio" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="1:1">1:1 (Square)</SelectItem>
-                                <SelectItem value="1.91:1">1.91:1 (Widescreen)</SelectItem>
-                            </SelectContent>
+                            <option value="1:1">1:1 (Square)</option>
+                            <option value="1.91:1">1.91:1 (Widescreen)</option>
                         </Select>
                     </div>
 
@@ -200,7 +185,7 @@ export default function Inspector() {
                             updateConfig({
                                 memeUrl: undefined,
                                 template: undefined,
-                                aspectratio: undefined,
+                                aspectRatio: undefined,
                             })
                         }
                     >

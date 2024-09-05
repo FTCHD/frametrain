@@ -1,7 +1,8 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.webp'
+import cover from './cover.avif'
 import handlers from './handlers'
+import icon from './icon.avif'
 
 export interface Config extends BaseConfig {
     tweets: Record<string, any>[]
@@ -23,15 +24,16 @@ export interface Storage extends BaseStorage {}
 
 export default {
     name: 'Tweet',
-    description: 'Transform a tweet or multiple tweets into a Frame.',
-    shortDescription: 'Unroll on Farcaster',
-    icon: 'north-star',
+    description: 'From tweet or thread to Frame in seconds, with unlimited customization.',
+    shortDescription: 'Unroll, on Farcaster',
+    icon: icon,
+    octicon: 'north-star',
     creatorFid: '368382',
     creatorName: 'Chris',
     enabled: true,
     Inspector,
     handlers,
     cover,
-    requiresValidation: false,
+    initialConfig: {},
     events: [],
 } satisfies BaseTemplate

@@ -1,9 +1,15 @@
-
 import type { Slide } from '../'
 
 export default function CoverView(slide: Slide) {
     const title = slide?.title?.text
     const content = slide?.content?.text
+    const backgroundProp: Record<string, string> = {}
+
+    if (slide.background.value?.startsWith('#')) {
+        backgroundProp['backgroundColor'] = slide.background.value
+    } else {
+        backgroundProp['backgroundImage'] = slide.background.value
+    }
 
     return (
         <div
@@ -16,7 +22,7 @@ export default function CoverView(slide: Slide) {
                 alignItems: 'center',
                 textAlign: 'center',
                 color: '#1c1c1c',
-                backgroundColor: slide.background.value,
+                ...backgroundProp,
             }}
         >
             {slide.type === 'text' ? (

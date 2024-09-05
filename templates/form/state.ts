@@ -8,7 +8,10 @@ export interface SessionUserStateType {
         | 'confirm_overwrite'
         | 'about'
         | undefined
-    inputValues: string[] | []
+    inputValues: {
+        field: string
+        value: string
+    }[]
     inputFieldNumber: number
     totalInputFieldNumber: number
     isOldUser?: boolean

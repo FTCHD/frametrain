@@ -1,8 +1,8 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.jpg'
+import cover from './cover.avif'
 import handlers from './handlers'
-import icon from './icon.jpg'
+import icon from './icon.avif'
 
 export interface Config extends BaseConfig {
     fontFamily?: string
@@ -12,7 +12,7 @@ export interface Config extends BaseConfig {
     titleStyle?: string
     background?: string
     bodyColor?: string
-
+    timezone: string | undefined
     fid: number | undefined
     image: string | undefined
     name: string | undefined
@@ -45,10 +45,10 @@ export interface Storage extends BaseStorage {}
 
 export default {
     name: 'Cal',
-    description: 'Let people book calls with you straight from a Frame. Gating options included.',
+    description: 'Let people book calls with you straight from a Frame. Gating included.',
     shortDescription: 'Cal.com + Farcaster',
     icon: icon,
-    octicon: 'task',
+    octicon: 'tasklist',
     creatorFid: '389273',
     creatorName: 'LeoFrank',
     cover,
@@ -58,6 +58,7 @@ export default {
     initialConfig: {
         events: [],
         bio: [],
+        timezone: 'Europe/London',
         gatingOptions: {
             karmaGating: false,
             nftGating: false,
@@ -71,6 +72,5 @@ export default {
             nftType: 'ERC721',
         },
     },
-    requiresValidation: true,
     events: [],
 } satisfies BaseTemplate

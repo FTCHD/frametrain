@@ -106,22 +106,22 @@ export const {
         // newUser: null // If set, new users will be directed here on first sign in
     },
     debug: false,
-	cookies: {
-		sessionToken: {
-			name: process.env.AUTH_SESSION_COOKIE_NAME,
-			options: {
-				httpOnly: true,
-				sameSite: 'none',
-				secure: true,
-			},
-		},
-		csrfToken: {
-			name: process.env.AUTH_CSRF_COOKIE_NAME,
-			options: {
-				httpOnly: true,
-				sameSite: 'none',
-				secure: true,
-			},
-		}
-	}
+    cookies: {
+        sessionToken: {
+            name: process.env.AUTH_SESSION_COOKIE_NAME,
+            options: {
+                httpOnly: true,
+                sameSite: 'none',
+                secure: true,
+            },
+        },
+        csrfToken: {
+            name: process.env.AUTH_CSRF_COOKIE_NAME,
+            options: {
+                httpOnly: true,
+                sameSite: 'none',
+                secure: true,
+            },
+        },
+    },
 })

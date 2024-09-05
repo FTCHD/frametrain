@@ -1,12 +1,7 @@
 'use client'
-
-import { Input } from '@/components/shadcn/Input'
-import { Info, Save, X } from 'lucide-react'
-import { Button } from '@/components/shadcn/Button'
+import { Button, Input } from '@/sdk/components'
+import { InfoIcon, SaveIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
-
-const FIGMA_PAT_HELP =
-    'https://help.figma.com/hc/en-us/articles/8085703771159-Manage-personal-access-tokens'
 
 type FigmaTokenEditorProps = {
     figmaPAT: string
@@ -35,18 +30,26 @@ export default function FigmaTokenEditor({ figmaPAT, onChange, onCancel }: Figma
                     className="flex-1"
                     onChange={(e) => setNewFigmaPAT(e.target.value)}
                 />
-                <Button onClick={() => window.open(FIGMA_PAT_HELP, '_blank')} variant='link'>
-                    <Info className='mr-1' />
+                <Button
+                    onClick={() =>
+                        window.open(
+                            'https://help.figma.com/hc/en-us/articles/8085703771159-Manage-personal-access-tokens',
+                            '_blank'
+                        )
+                    }
+                    variant="link"
+                >
+                    <InfoIcon className="mr-1" />
                     Help
                 </Button>
             </div>
             <div className="flex items-center space-x-2">
                 <Button onClick={() => onChange(newFigmaPAT)}>
-                    <Save className='mr-1' />
+                    <SaveIcon className="mr-1" />
                     Save
                 </Button>
-                <Button onClick={() => onCancel()} variant='secondary'>
-                    <X className='mr-1' />
+                <Button onClick={() => onCancel()} variant="secondary">
+                    <XIcon className="mr-1" />
                     Cancel
                 </Button>
             </div>

@@ -1,10 +1,14 @@
 'use client'
-
-import { Button } from '@/components/shadcn/Button'
-import { Dialog, DialogContent } from '@/components/shadcn/Dialog'
-import { Input } from '@/components/shadcn/Input'
-import { Textarea } from '@/components/shadcn/Textarea'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
+import {
+    Button,
+    ColorPicker,
+    FontFamilyPicker,
+    FontStylePicker,
+    FontWeightPicker,
+    Input,
+    Modal,
+    Textarea,
+} from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { scrapeTwitterPost } from '@/sdk/scrape'
 import { LoaderIcon } from 'lucide-react'
@@ -324,8 +328,8 @@ export default function Inspector() {
                 </div>
             </div>
 
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent>
+            <Modal.Root open={open} onOpenChange={setOpen}>
+                <Modal.Content>
                     <h2 className="text-lg">{currentTweet.link}</h2>
                     <Textarea
                         onChange={(e) => {
@@ -348,8 +352,8 @@ export default function Inspector() {
                     >
                         Save
                     </Button>
-                </DialogContent>
-            </Dialog>
+                </Modal.Content>
+            </Modal.Root>
         </>
     )
 }

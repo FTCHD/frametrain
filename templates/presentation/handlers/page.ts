@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
@@ -11,11 +11,11 @@ export default async function page({
     config,
     params,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     params: any
 }): Promise<BuildFrameData> {
-    const buttonIndex = body?.untrustedData?.buttonIndex
+    const buttonIndex = body.tapped_button.index
 
     const currentPage: number = params?.page ? Number(params.page) : 0
 

@@ -6,12 +6,17 @@ import {
     useProfile,
 } from '@farcaster/auth-kit'
 import '@farcaster/auth-kit/styles.css'
+import BaseSpinner from '@/components/shadcn/BaseSpinner'
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/shadcn/Tooltip'
 import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
-import { LogOut } from 'react-feather'
-import BaseSpinner from '../shadcn/BaseSpinner'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../shadcn/Tooltip'
+import { LogOut as LogOutIcon } from 'react-feather'
 
 export default function AccountButton() {
     const sesh = useSession()
@@ -72,7 +77,7 @@ export default function AccountButton() {
                 <TooltipProvider delayDuration={0}>
                     <Tooltip>
                         <TooltipTrigger>
-                            <LogOut
+                            <LogOutIcon
                                 size={16}
                                 onClick={() => signOut()}
                                 className="cursor-pointer stroke-white/40"

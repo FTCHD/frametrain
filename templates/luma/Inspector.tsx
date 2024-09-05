@@ -1,8 +1,5 @@
 'use client'
-
-import { Input } from '@/components/shadcn/Input'
-import { ColorPicker } from '@/sdk/components'
-import { Select } from '@/sdk/components/Select'
+import { ColorPicker, Input, Select } from '@/sdk/components'
 import { useFrameConfig } from '@/sdk/hooks'
 import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
@@ -22,26 +19,32 @@ export default function Inspector() {
         }
     })
 
-    async function onChange(e: any) {
-        const initialData = await getLumaData(e.target.value)
-        const eventData = initialData?.event
-        const hostData = initialData?.hosts as HostData[] | null
+    async function onChange(e: { target: { value: string } }) {
+        if (e.target.value === '') {
+            updateConfig({
+                event: undefined,
+            })
+            return
+        }
+        const data = await getLumaData(e.target.value)
+
+        if (!data) return
+        const eventData = data.event
+        const hostData = data.hosts as HostData[] | null
 
         if (!(eventData && hostData)) {
             return
         }
-        const geo = eventData?.geo_address_info as {
-            obfuscated: boolean
-            city_state: string
-        } | null
+
+        const geo = eventData.geo_address_info
         let address = 'N/A'
 
-        if (eventData?.location_type === 'offline' && geo) {
+        if (eventData.location_type === 'offline' && geo) {
             address = `${capitalize(geo.city_state)} (OFFLINE)`
-        } else if (eventData?.location_type !== 'offline') {
+        } else if (eventData.location_type !== 'offline') {
             address = `${capitalize(eventData.location_type)} (ONLINE)`
         }
-        const ticketInfo = initialData?.ticket_info as TicketInfo | null
+        const ticketInfo = data?.ticket_info as TicketInfo | null
         const title = (eventData?.name ?? '') as string
         const coverUrl = (eventData?.cover_url ?? '') as string
 
@@ -54,9 +57,6 @@ export default function Inspector() {
             : null
 
         const endsAt = eventData?.end_at ? (eventData.end_at as string) : null
-
-        console.log(coverUrl)
-        console.log(generateImageUrl(coverUrl, 500))
 
         const event = {
             id: eventData.url,
@@ -71,6 +71,8 @@ export default function Inspector() {
             remainingSpots: ticketInfo?.spots_remaining ?? null,
             backgroundImage: generateImageUrl(coverUrl, 1000, 50),
             image: generateImageUrl(coverUrl, 500, 100),
+            eventId: data.api_id,
+            ticketTypeId: data.ticket_types[0].api_id,
         }
 
         updateConfig({
@@ -107,9 +109,11 @@ export default function Inspector() {
                         onChange={async (value) => {
                             if (!config.event) return
 
-                            const initialData = await getLumaData(config.event.id)
+                            const data = await getLumaData(config.event.id)
 
-                            const eventData = initialData?.event
+                            if (!data) return
+
+                            const eventData = data?.event
 
                             const startsAt = eventData?.start_at
                                 ? formatDate(

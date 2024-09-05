@@ -1,6 +1,6 @@
 'use client'
 
-import { Separator } from '@/components/shadcn/Separator'
+import { Separator } from '@/sdk/components'
 import { useState } from 'react'
 import ConfigItemWrapper from './components/ConfigItemWrapper'
 import NavBar from './components/Navbar'

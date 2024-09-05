@@ -1,10 +1,9 @@
 'use client'
-import { Input } from '@/components/shadcn/Input'
-import { ColorPicker, FontFamilyPicker } from '@/sdk/components'
+import { ColorPicker, FontFamilyPicker, Input } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
-import { LoaderPinwheel } from 'lucide-react'
+import { LoaderPinwheelIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import type { Config } from '.'
@@ -156,7 +155,7 @@ export default function Inspector() {
             />
 
             <div className="flex items-center justify-center h-5">
-                {loading && <LoaderPinwheel className="animate-spin" />}
+                {loading && <LoaderPinwheelIcon className="animate-spin" />}
             </div>
 
             <label htmlFor="source" className="mb-2 text-lg font-bold">
@@ -263,7 +262,7 @@ export default function Inspector() {
                     onChange={(e) => updateConfig({ buttonLink: e.target.value })}
                 />
                 <div className="flex items-center justify-center">
-                    {loading && <LoaderPinwheel className="animate-spin" />}
+                    {loading && <LoaderPinwheelIcon className="animate-spin" />}
                 </div>
             </div>
         </div>

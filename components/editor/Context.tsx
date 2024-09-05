@@ -8,6 +8,7 @@ export const InspectorContext = createContext<
           storage: BaseStorage
           update: (props: any) => void
           fid: string
+          fname: string
       }
     | undefined
 >(undefined)

@@ -1,10 +1,6 @@
 import { client } from '@/db/client'
 import { frameTable, interactionTable } from '@/db/schema'
-import type {
-    BuildFrameData,
-    FrameActionPayload,
-    FrameActionPayloadValidated,
-} from '@/lib/farcaster'
+import type { BuildFrameData, FramePayload } from '@/lib/farcaster'
 import { updateFrameStorage } from '@/lib/frame'
 import { buildFramePage, validatePayload, validatePayloadAirstack } from '@/lib/serve'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
@@ -47,30 +43,21 @@ export async function POST(
 
     const template = templates[frame.template]
 
-    let body: FrameActionPayload | FrameActionPayloadValidated =
-        (await request.json()) as FrameActionPayload
+    const payload = (await request.json()) as FramePayload
 
     const handlerFn = template.handlers[params.handler as keyof typeof template.handlers]
 
     if (!handlerFn) {
         notFound()
     }
-
-    if (template.requiresValidation) {
-        const validatedBody = await validatePayload(body)
-        if (!validatedBody.valid) {
-            throw new Error('PAYLOAD NOT VALID')
-        }
-        body = Object.assign({}, body, {
-            validatedData: validatedBody.action,
-        })
-    }
+	
+    const validatedPayload = await validatePayload(payload)
 
     let buildParameters = {} as BuildFrameData
 
     try {
         buildParameters = await handlerFn({
-            body: body,
+            body: validatedPayload,
             config: frame.config as BaseConfig,
             storage: frame.storage as BaseStorage,
             params: searchParams,
@@ -95,13 +82,23 @@ export async function POST(
         )
     }
 
+    if (buildParameters.transaction) {
+        waitUntil(processFrame(frame, buildParameters, payload))
+
+        return new Response(JSON.stringify(buildParameters.transaction), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+    }
+
     const renderedFrame = await buildFramePage({
         id: frame.id,
         linkedPage: frame.linkedPage || undefined,
         ...(buildParameters as BuildFrameData),
     })
 
-    waitUntil(processFrame(frame, buildParameters, body))
+    waitUntil(processFrame(frame, buildParameters, payload))
 
     return new Response(renderedFrame, {
         headers: {
@@ -111,24 +108,24 @@ export async function POST(
 }
 
 async function processFrame(
-    f: InferSelectModel<typeof frameTable>,
-    p: BuildFrameData,
-    b: FrameActionPayload
+    frame: InferSelectModel<typeof frameTable>,
+    parameters: BuildFrameData,
+    payload: FramePayload
 ) {
-    const storageData = p.storage as BaseStorage | undefined
+    const storageData = parameters.storage as BaseStorage | undefined
 
     if (storageData) {
-        await updateFrameStorage(f.id, storageData)
+        await updateFrameStorage(frame.id, storageData)
     }
 
-    if (f.webhooks) {
-        const webhookUrls = f.webhooks
+    if (frame.webhooks) {
+        const webhookUrls = frame.webhooks
 
         if (!webhookUrls) {
             return
         }
 
-        for (const webhook of p?.webhooks || []) {
+        for (const webhook of parameters?.webhooks || []) {
             if (!webhookUrls?.[webhook.event]) {
                 continue
             }
@@ -153,27 +150,24 @@ async function processFrame(
         }
     }
 
-    const airstackKey = f.config?.airstackKey || process.env.AIRSTACK_API_KEY
+    const airstackKey = frame.config?.airstackKey || process.env.AIRSTACK_API_KEY
 
-    const interactionData = await validatePayloadAirstack(b, airstackKey)
+    const airstackPayloadValidated = await validatePayloadAirstack(payload, airstackKey)
 
-    if (interactionData.valid) {
-        await client
-            .insert(interactionTable)
-            .values({
-                frame: f.id,
-                fid: interactionData.message.data.fid.toString(),
-                buttonIndex: interactionData.message.data.frameActionBody.buttonIndex.toString(),
-                inputText: interactionData.message.data.frameActionBody.inputText || undefined,
-                state: interactionData.message.data.frameActionBody.state || undefined,
-                transactionHash:
-                    interactionData.message.data.frameActionBody.transactionId || undefined,
-                castFid: interactionData.message.data.frameActionBody.castId.fid.toString(),
-                castHash: interactionData.message.data.frameActionBody.castId.hash,
-                createdAt: new Date(),
-            })
-            .run()
-    } else {
-        console.error('AIRSTACK_PAYLOAD_NOT_VALID')
-    }
+    await client
+        .insert(interactionTable)
+        .values({
+            frame: frame.id,
+            fid: airstackPayloadValidated.message.data.fid.toString(),
+            buttonIndex:
+                airstackPayloadValidated.message.data.frameActionBody.buttonIndex.toString(),
+            inputText: airstackPayloadValidated.message.data.frameActionBody.inputText || undefined,
+            state: airstackPayloadValidated.message.data.frameActionBody.state || undefined,
+            transactionHash:
+                airstackPayloadValidated.message.data.frameActionBody.transactionId || undefined,
+            castFid: airstackPayloadValidated.message.data.frameActionBody.castId.fid.toString(),
+            castHash: airstackPayloadValidated.message.data.frameActionBody.castId.hash,
+            createdAt: new Date(),
+        })
+        .run()
 }

@@ -1,7 +1,8 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.webp'
+import cover from './cover.avif'
 import handlers from './handlers'
+import icon from './icon.avif'
 
 export interface Config extends BaseConfig {
     gif: string
@@ -13,9 +14,10 @@ export interface Storage extends BaseStorage {}
 
 export default {
     name: 'GIF',
-    description: 'Create a GIF Frame from any local or Youtube video. Add a link too!',
+    description: 'Create a GIF Frame from any local or YouTube video.',
     shortDescription: 'Video to GIF',
-    icon: 'play',
+    icon: icon,
+    octicon: 'play',
     creatorFid: '416810',
     creatorName: 'alekcangp',
     cover,
@@ -23,6 +25,5 @@ export default {
     Inspector,
     handlers,
     initialConfig: {},
-    requiresValidation: false,
     events: [],
 } satisfies BaseTemplate

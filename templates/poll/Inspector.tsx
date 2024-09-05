@@ -1,20 +1,33 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
-import { ColorPicker } from '@/sdk/components'
-import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
-import { useRef } from 'react'
+import { Button, ColorPicker, GatingInspector, Input, Label, Switch } from '@/sdk/components'
+import { useFarcasterId, useFarcasterName, useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { useEffect, useRef } from 'react'
 import { X } from 'react-feather'
 import type { Config } from '.'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
     const uploadImage = useUploadImage()
+    const enabledGating = config.enableGating ?? false
+    const fid = useFarcasterId()
+    const username = useFarcasterName()
 
     const { options } = config
 
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
     const buttonLabelInputRef = useRef<HTMLInputElement>(null)
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    useEffect(() => {
+        if (!config?.owner) {
+            updateConfig({
+                owner: {
+                    username,
+                    fid,
+                },
+            })
+        }
+    }, [])
 
     return (
         <div className="flex flex-col gap-5 w-full h-full">
@@ -136,6 +149,37 @@ export default function Inspector() {
                     setBackground={(value) => updateConfig({ barColor: value })}
                 />
             </div>
+
+            <div className="flex flex-row items-center justify-between gap-2 ">
+                <Label className="font-md" htmlFor="gating">
+                    Enable Poll Gating?
+                </Label>
+                <Switch
+                    id="gating"
+                    checked={enabledGating}
+                    onCheckedChange={(enableGating) => {
+                        updateConfig({ enableGating })
+                    }}
+                />
+            </div>
+
+            {enabledGating && (
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg font-semibold">Poll Gating options</h2>
+                    <GatingInspector
+                        fid={fid}
+                        config={config.gating}
+                        onUpdate={(option) => {
+                            updateConfig({
+                                gating: {
+                                    ...config.gating,
+                                    ...option,
+                                },
+                            })
+                        }}
+                    />
+                </div>
+            )}
         </div>
     )
 }

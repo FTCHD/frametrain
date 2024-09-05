@@ -4,9 +4,9 @@ import { ImageResponse } from '@vercel/og'
 import sharp from 'sharp'
 import type {
     BuildFrameData,
-    FrameActionPayload,
     FrameButtonMetadata,
-    FrameValidatedActionPayload,
+    FramePayload,
+    FramePayloadValidated,
 } from './farcaster'
 
 export async function buildFramePage({
@@ -66,7 +66,9 @@ export async function buildFramePage({
         aspectRatio,
         inputText,
         refreshPeriod,
-        postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}/${handler}` + '?' + searchParams,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/f/${id}`,
+        handler: handler,
+        searchParams: searchParams,
     })
 
     const frame = `<html lang="en">
@@ -137,7 +139,9 @@ export async function buildPreviewFramePage({
         aspectRatio,
         inputText,
         refreshPeriod,
-        postUrl: `${process.env.NEXT_PUBLIC_HOST}/p/${id}/${handler}` + '?' + searchParams,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/p/${id}`,
+        handler: handler,
+        searchParams: searchParams,
     })
 
     const frame = `<html lang="en">
@@ -164,6 +168,8 @@ export async function buildFrame({
     postUrl,
     refreshPeriod,
     version = 'vNext',
+    handler,
+    searchParams,
 }: {
     buttons: FrameButtonMetadata[]
     image: string
@@ -172,6 +178,8 @@ export async function buildFrame({
     postUrl: string
     refreshPeriod?: number
     version?: string
+    handler?: string
+    searchParams?: string
 }) {
     // Regular expression to match the pattern YYYY-MM-DD
     if (!(version === 'vNext' || /^\d{4}-\d{2}-\d{2}$/.test(version))) {
@@ -183,7 +191,7 @@ export async function buildFrame({
         // 'og:image': image,
         'fc:frame:image': image,
         'fc:frame:image:aspect_ratio': aspectRatio,
-        'fc:frame:post_url': postUrl,
+        'fc:frame:post_url': postUrl + `/${handler}` + '?' + searchParams,
     }
 
     if (inputText) {
@@ -202,16 +210,26 @@ export async function buildFrame({
                 throw new Error('Button label is required and must be maximum of 256 bytes.')
             }
             metadata[`fc:frame:button:${index + 1}`] = button.label
+
             if (button.action) {
                 if (!['post', 'post_redirect', 'mint', 'link', 'tx'].includes(button.action)) {
                     throw new Error('Invalid button action.')
                 }
                 metadata[`fc:frame:button:${index + 1}:action`] = button.action
+
+                if (button.action === 'tx') {
+                    metadata[`fc:frame:button:${index + 1}:target`] =
+                        postUrl + `/${button.handler || handler}` + '?' + searchParams
+                    if (button.callback) {
+                        metadata[`fc:frame:button:${index + 1}:post_url`] =
+                            postUrl + `/${button.callback}` + '?' + searchParams
+                    }
+                }
+                if (button.action === 'link' || button.action === 'mint') {
+                    metadata[`fc:frame:button:${index + 1}:target`] = button.target
+                }
             } else {
                 metadata[`fc:frame:button:${index + 1}:action`] = 'post' // Default action
-            }
-            if (button.target) {
-                metadata[`fc:frame:button:${index + 1}:target`] = button.target
             }
         })
     }
@@ -226,9 +244,7 @@ export async function buildFrame({
     return metadata
 }
 
-export async function validatePayload(
-    body: FrameActionPayload
-): Promise<FrameValidatedActionPayload> {
+export async function validatePayload(body: FramePayload): Promise<FramePayloadValidated> {
     const options = {
         method: 'POST',
         headers: {
@@ -244,23 +260,25 @@ export async function validatePayload(
         }),
     }
 
-    const r = (await fetch('https://api.neynar.com/v2/farcaster/frame/validate', options)
+    const r = await fetch('https://api.neynar.com/v2/farcaster/frame/validate', options)
         .then((response) => response.json())
         .catch((err) => {
             console.error(err)
-            return {
-                isValid: false,
-                message: undefined,
-            }
-        })) as FrameValidatedActionPayload
+            throw new Error('PAYLOAD_COULD_NOT_BE_VALIDATED')
+        })
 
-    return r
+    if (!r.valid) {
+        throw new Error('PAYLOAD_NOT_VALID')
+    }
+
+    console.log(r.action)
+
+    return r.action
 }
-
 export async function validatePayloadAirstack(
-    body: FrameActionPayload,
+    body: FramePayload,
     airstackKey: string
-): Promise<FrameValidatedActionPayload | { valid: false; message: undefined }> {
+): Promise<any> {
     const options = {
         method: 'POST',
         headers: {
@@ -272,15 +290,12 @@ export async function validatePayloadAirstack(
         ),
     }
 
-    const r = (await fetch('https://hubs.airstack.xyz/v1/validateMessage', options)
+    const r = await fetch('https://hubs.airstack.xyz/v1/validateMessage', options)
         .then((response) => response.json())
         .catch((err) => {
             console.error(err)
-            return {
-                valid: false,
-                message: undefined,
-            }
-        })) as FrameValidatedActionPayload
+            throw new Error('AIRSTACK_PAYLOAD_COULD_NOT_BE_VALIDATED')
+        })
 
     return r
 }

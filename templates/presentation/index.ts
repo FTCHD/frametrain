@@ -1,7 +1,8 @@
 import type { BaseConfig, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
-import cover from './cover.jpeg'
+import cover from './cover.avif'
 import handlers from './handlers'
+import icon from './icon.avif'
 
 export type BackgroundType = 'color' | 'gradient' | 'image'
 export type CustomButtonType = 'navigate' | 'link' | 'mint'
@@ -77,9 +78,10 @@ export const PRESENTATION_DEFAULTS: Config = {
 
 export default {
     name: 'Presentation',
-    description: 'Turn your images and long texts into a slideshow.',
-    shortDescription: 'Remember Powerpoint?',
-    icon: 'versions',
+    description: 'Turn images and long texts into powerful slideshows.',
+    shortDescription: "'member PowerPoint?",
+    icon: icon,
+    octicon: 'versions',
     creatorFid: '661506',
     creatorName: 'oynozan',
     cover,
@@ -87,6 +89,5 @@ export default {
     enabled: true,
     Inspector,
     handlers,
-    requiresValidation: false,
     events: [],
 } satisfies BaseTemplate

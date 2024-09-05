@@ -1,8 +1,9 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import type { dimensionsForRatio } from '@/sdk/constants'
 import Inspector from './Inspector'
-import cover from './cover.webp'
+import cover from './cover.avif'
 import handlers from './handlers'
+import icon from './icon.avif'
 
 export type StyleConfig = {
     textColor: string
@@ -92,10 +93,10 @@ export interface Storage extends BaseStorage {
 
 export default {
     name: 'Quizlet',
-    description:
-        'Create your own multiple choice Quiz as a Farcaster Frame. Show a secret screen if answers are correct.',
-    shortDescription: 'Reward Your Fans!',
-    icon: 'gift',
+    description: 'Your own multiple choice Quiz as a Frame. Show a secret screen on success!',
+    shortDescription: 'Show hidden content',
+    icon: icon,
+    octicon: 'gift',
     creatorFid: '260812',
     creatorName: 'Steve',
     enabled: true,
@@ -135,6 +136,5 @@ export default {
             labelColor: 'white',
         },
     },
-    requiresValidation: true,
     events: [],
 } satisfies BaseTemplate

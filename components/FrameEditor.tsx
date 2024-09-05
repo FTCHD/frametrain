@@ -6,15 +6,14 @@ import { previewParametersAtom } from '@/lib/store'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
 import { useAtom } from 'jotai'
-import { Play, Wallpaper } from 'lucide-react'
+import { PlayIcon, WallpaperIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { type ChangeEvent, useEffect, useRef, useState } from 'react'
-import { ArrowLeft } from 'react-feather'
+import { ArrowLeft as ArrowLeftIcon } from 'react-feather'
 import { useDebouncedCallback } from 'use-debounce'
 import { useOnClickOutside, useWindowSize } from 'usehooks-ts'
 import { FramePreview } from './FramePreview'
 import { InspectorContext } from './editor/Context'
-import MockOptions from './editor/MockOptions'
 import PublishMenu from './editor/PublishMenu'
 import WebhookEventOptions from './editor/WebhookEventOptions'
 import BaseSpinner from './shadcn/BaseSpinner'
@@ -28,11 +27,13 @@ export default function FrameEditor({
     frame,
     template,
     fid,
+    fname,
     // isComposeClient,
 }: {
     frame: InferSelectModel<typeof frameTable>
     template: (typeof templates)[keyof typeof templates]
     fid: string
+    fname: string
     // isComposeClient: boolean
 }) {
     const refreshPreview = useRefreshPreview(frame.id)
@@ -96,7 +97,7 @@ export default function FrameEditor({
         await updateFrameName(frame.id, temporaryName)
         setUpdating(false)
     }
-	
+
     useEffect(() => {
         if (width < 760) {
             setPreviewOpen(false)
@@ -117,8 +118,8 @@ export default function FrameEditor({
             window.removeEventListener('keydown', handleEnter)
         }
     })
-	
-	useOnClickOutside(tempNameRef, async () => await updateName())
+
+    useOnClickOutside(tempNameRef, async () => await updateName())
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <>
     useEffect(() => {
@@ -133,7 +134,6 @@ export default function FrameEditor({
         [writeConfig]
     )
 
-    
     const { Inspector } = template as any
 
     return (
@@ -142,7 +142,7 @@ export default function FrameEditor({
                 <div className="flex items-center md:gap-4">
                     <NextLink style={{ textDecoration: 'none' }} href={'/'}>
                         <div className="p-2 hover:bg-[#636b74] rounded-md">
-                            <ArrowLeft />
+                            <ArrowLeftIcon />
                         </div>
                     </NextLink>
                     {editingName ? (
@@ -208,14 +208,14 @@ export default function FrameEditor({
                         }}
                         className="md:hidden"
                     >
-                        <Play className="w-4 h-4" />
+                        <PlayIcon className="w-4 h-4" />
                     </Toggle>
 
                     <Popover>
                         <PopoverTrigger asChild={true}>
                             <Button variant="outline">
                                 <span className="hidden md:block">Connect Page</span>
-                                <Wallpaper className="hidden w-4 h-4 max-md:inline" />
+                                <WallpaperIcon className="hidden w-4 h-4 max-md:inline" />
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-80 max-md:w-screen">
@@ -243,7 +243,7 @@ export default function FrameEditor({
                         <PopoverTrigger asChild={true}>
                             <Button variant="outline">
                                 <span className="hidden md:block">Earn Moxie</span>
-                                <Wallpaper className="hidden w-4 h-4 max-md:inline" />
+                                <WallpaperIcon className="hidden w-4 h-4 max-md:inline" />
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-80 max-md:w-screen">
@@ -271,7 +271,7 @@ export default function FrameEditor({
                         </PopoverContent>
                     </Popover>
 
-                    {template.requiresValidation && (
+                    {/*                  
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
                                 <TooltipTrigger asChild={true}>
@@ -291,8 +291,7 @@ export default function FrameEditor({
                                     </p>
                                 </TooltipContent>
                             </Tooltip>
-                        </TooltipProvider>
-                    )}
+                        </TooltipProvider> */}
 
                     <PublishMenu frame={frame} />
                 </div>
@@ -324,6 +323,7 @@ export default function FrameEditor({
                                     storage: frame.storage!,
                                     update: updateConfig,
                                     fid: fid,
+                                    fname: fname,
                                     // setLoading
                                 }}
                             >

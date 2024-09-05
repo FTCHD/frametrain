@@ -1,10 +1,6 @@
 import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
-import type {
-    BuildFrameData,
-    FrameActionPayload,
-    FrameActionPayloadValidated,
-} from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { updateFramePreview } from '@/lib/frame'
 import { buildPreviewFramePage } from '@/lib/serve'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
@@ -47,8 +43,7 @@ export async function POST(
 
     const template = templates[frame.template]
 
-    const body: FrameActionPayload | FrameActionPayloadValidated =
-        (await request.json()) as FrameActionPayload
+    const validatedPayload = (await request.json()) as FramePayloadValidated
 
     type ValidHandler = Omit<typeof template.handlers, 'initial'>
 
@@ -62,7 +57,7 @@ export async function POST(
 
     try {
         buildParameters = await handlerFn({
-            body: body,
+            body: validatedPayload,
             config: frame.draftConfig as BaseConfig,
             storage: frame.storage as BaseStorage,
             params: searchParams,

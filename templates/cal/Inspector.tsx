@@ -1,12 +1,19 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
-import { Input } from '@/components/shadcn/Input'
-import { Switch } from '@/components/shadcn/Switch'
-import { ColorPicker, FontFamilyPicker, FontStylePicker, FontWeightPicker } from '@/sdk/components'
-import { Select } from '@/sdk/components/Select'
+import {
+    Badge,
+    Button,
+    ColorPicker,
+    FontFamilyPicker,
+    FontStylePicker,
+    FontWeightPicker,
+    Input,
+    Select,
+    Switch,
+} from '@/sdk/components'
 import { useFarcasterId, useFrameConfig, useResetPreview, useUploadImage } from '@/sdk/hooks'
+import { Configuration } from '@/sdk/inspector'
 import { corsFetch } from '@/sdk/scrape'
-import { LoaderIcon, Trash } from 'lucide-react'
+import { LoaderIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -25,6 +32,16 @@ export default function Inspector() {
     const slugInputRef = useRef<HTMLInputElement>(null)
     const [loading, setLoading] = useState(false)
     const events = config.events || []
+    const eventSlugs = events.map((evt) => evt.slug)
+    const disableFields = config.events.length === 0
+
+    const timezones = Intl.supportedValuesOf('timeZone')
+    const timezoneOptions = timezones.map((tz) => {
+        return {
+            label: tz,
+            value: tz,
+        }
+    })
 
     const onChangeUsername = useDebouncedCallback(async (username: string) => {
         if (config.username === username) return
@@ -89,10 +106,49 @@ export default function Inspector() {
         })
     }
 
+    const fetchEventDetails = async (eventSlug: string) => {
+        if (eventSlugs.includes(eventSlug)) {
+            setLoading(false)
+            toast.error(`Event type ${eventSlug} already added`)
+            return
+        }
+
+        setLoading(true)
+
+        const text = await corsFetch(
+            `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        )
+        const data = JSON.parse(text as string)
+        const json = data[0].result.data.json
+        if (json === null) {
+            toast.error(`No event type found for: ${eventSlug}`)
+            setLoading(false)
+            return
+        }
+
+        const slug = data[0].result.data.json.slug as string
+        const duration = data[0].result.data.json.length as number
+        const newEvents = [
+            ...events,
+            {
+                slug: slug,
+                duration: duration,
+                formattedDuration: getDurationFormatted(duration),
+            },
+        ]
+        updateConfig({ events: newEvents })
+        setLoading(false)
+    }
+
     return (
-        <div className="flex flex-col gap-5 w-full h-full max-md:gap-3">
-            <div className="flex flex-col gap-2 max-md:gap-1">
-                <h2 className="text-2xl font-semibold max-md:text-lg">Username</h2>
+        <Configuration.Root>
+            <Configuration.Section title="Username">
                 <Input
                     className="text-lg max-md:text-base"
                     placeholder="Your Cal.com username"
@@ -101,74 +157,69 @@ export default function Inspector() {
                         onChangeUsername(e.target.value)
                     }}
                 />
-            </div>
-            <div className="flex flex-col gap-4 w-full max-md:gap-2">
-                <h2 className="text-2xl font-bold max-md:text-lg">Event Slugs</h2>
-
+            </Configuration.Section>
+            <Configuration.Section title="Events">
                 {events.length < 4 && (
-                    <div className="flex gap-2 items-center">
-                        <Input
-                            ref={slugInputRef}
-                            placeholder="Event ID/Slug (eg. 15min/30min/secret)"
-                        />
-                        <Button
-                            size={'lg'}
-                            variant={'secondary'}
-                            disabled={loading}
-                            onClick={async () => {
-                                if (!slugInputRef.current?.value) return
-
-                                setLoading(true)
-
-                                const eventSlug = slugInputRef.current.value.trim()
-
-                                if (!eventSlug.length) {
-                                    setLoading(false)
-                                    return
-                                }
-
-                                try {
-                                    const text = await corsFetch(
-                                        `https://cal.com/api/trpc/public/event?batch=1&input={"0":{"json":{"username":"${config.username}","eventSlug":"${eventSlug}","isTeamEvent":false,"org":null}}}`,
-                                        {
-                                            method: 'GET',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
-                                        }
-                                    )
-                                    const data = JSON.parse(text as string)
-                                    const json = data[0].result.data.json
-
-                                    if (json === null) {
-                                        throw new Error('error')
+                    <>
+                        <div className="flex gap-2 items-center">
+                            <Input
+                                disabled={!config.username || loading}
+                                ref={slugInputRef}
+                                placeholder="Event ID/Slug (eg. 15min/30min/secret)"
+                            />
+                            <Button
+                                size={'lg'}
+                                variant={'secondary'}
+                                disabled={!config.username || loading}
+                                onClick={async () => {
+                                    if (!slugInputRef.current?.value) return
+                                    setLoading(true)
+                                    const eventSlug = slugInputRef.current.value.trim()
+                                    if (!eventSlug.length) {
+                                        setLoading(false)
+                                        return
                                     }
 
-                                    const slug = data[0].result.data.json.slug as string
-                                    const duration = data[0].result.data.json.length as number
-
-                                    const newEvents = [
-                                        ...events,
-                                        {
-                                            slug: slug,
-                                            duration: duration,
-                                            formattedDuration: getDurationFormatted(duration),
-                                        },
-                                    ]
-
-                                    updateConfig({ events: newEvents })
-                                } catch {
-                                    toast.error(`No event type found for: ${eventSlug}`)
-                                } finally {
-                                    setLoading(false)
-
+                                    await fetchEventDetails(eventSlug)
                                     slugInputRef.current.value = ''
-                                }
-                            }}
-                        >
-                            {loading ? <LoaderIcon className="animate-spin" /> : 'ADD'}
-                        </Button>
-                    </div>
+                                }}
+                            >
+                                {loading ? <LoaderIcon className="animate-spin" /> : 'ADD'}
+                            </Button>
+                        </div>
+                        <div className="flex gap-2 mt-2">
+                            {['15min', '30min'].map((eventSlug) => (
+                                <Badge
+                                    key={eventSlug}
+                                    variant={
+                                        eventSlugs.includes(eventSlug) ? 'secondary' : 'outline'
+                                    }
+                                    className={`${
+                                        config.username && !eventSlugs.includes(eventSlug)
+                                            ? 'cursor-pointer'
+                                            : 'opacity-50'
+                                    }`}
+                                    role={
+                                        config.username && !eventSlugs.includes(eventSlug)
+                                            ? 'button'
+                                            : undefined
+                                    }
+                                    aria-label={`${eventSlug} event type`}
+                                    aria-disabled={
+                                        !config.username || eventSlugs.includes(eventSlug)
+                                    }
+                                    onClick={() => {
+                                        if (!config.username || eventSlugs.includes(eventSlug)) {
+                                            return
+                                        }
+                                        return fetchEventDetails(eventSlug)
+                                    }}
+                                >
+                                    {eventSlug}
+                                </Badge>
+                            ))}
+                        </div>
+                    </>
                 )}
 
                 {events.map((event, index) => (
@@ -195,20 +246,42 @@ export default function Inspector() {
                                     })
                                 }
                             >
-                                <Trash />
+                                <TrashIcon />
                             </Button>
                         </div>
                     </div>
                 ))}
-            </div>
+            </Configuration.Section>
 
-            <div className="flex flex-col gap-2">
-                <h2 className="text-2xl font-semibold max-md:text-lg">Gating Options</h2>
+            <Configuration.Section title="Timezone">
+                <p className="text-sm text-muted-foreground">
+                    Choose your preferred timezone to display the event start time.
+                </p>
+                <Select
+                    disabled={disableFields}
+                    defaultValue={config.timezone ?? 'Europe/London'}
+                    onChange={async (value) => {
+                        if (!config.events.length) return
+
+                        updateConfig({
+                            timezone: value,
+                        })
+                    }}
+                >
+                    {timezoneOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </Select>
+            </Configuration.Section>
+            <Configuration.Section title="Gating Options">
                 <div className="flex flex-col gap-2 w-full md:w-auto max-md:gap-0">
                     <div className="flex flex-row justify-between items-center w-full">
                         <h2 className="text-lg font-semibold max-md:text-base">Karma Gating</h2>
 
                         <Switch
+                            disabled={disableFields}
                             checked={config.gatingOptions.karmaGating}
                             onCheckedChange={(checked) => {
                                 updateConfig({
@@ -235,6 +308,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">NFT Gating</h2>
 
                         <Switch
+                            disabled={disableFields}
                             checked={config.gatingOptions.nftGating}
                             onCheckedChange={(checked) => {
                                 updateConfig({
@@ -256,6 +330,7 @@ export default function Inspector() {
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold max-md:text-base">Choose Chain</h2>
                             <Select
+                                disabled={disableFields}
                                 onChange={handleChainChange}
                                 defaultValue={config.nftOptions.nftChain}
                             >
@@ -275,6 +350,7 @@ export default function Inspector() {
                                 Choose NFT Type
                             </h2>
                             <Select
+                                disabled={disableFields}
                                 defaultValue={config.nftOptions.nftType}
                                 onChange={handleNftTypeChange}
                             >
@@ -286,6 +362,7 @@ export default function Inspector() {
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold max-md:text-base">NFT address</h2>
                             <Input
+                                disabled={disableFields}
                                 className="text-lg max-md:text-base"
                                 placeholder="Enter your NFT address"
                                 onChange={async (e) => {
@@ -310,6 +387,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">Recasted</h2>
 
                         <Switch
+                            disabled={disableFields}
                             checked={config.gatingOptions.recasted}
                             onCheckedChange={(checked) => {
                                 if (checked) {
@@ -339,6 +417,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">Liked</h2>
 
                         <Switch
+                            disabled={disableFields}
                             checked={config.gatingOptions.liked}
                             onCheckedChange={(checked) => {
                                 if (checked) {
@@ -368,6 +447,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">Follower</h2>
 
                         <Switch
+                            disabled={disableFields}
                             checked={config.gatingOptions.follower}
                             onCheckedChange={(checked) => {
                                 if (checked) {
@@ -397,6 +477,7 @@ export default function Inspector() {
                         <h2 className="text-lg font-semibold max-md:text-base">Following</h2>
 
                         <Switch
+                            disabled={disableFields}
                             checked={config.gatingOptions.following}
                             onCheckedChange={(checked) => {
                                 if (checked) {
@@ -421,9 +502,8 @@ export default function Inspector() {
                         Only allow users who follow you to book a call.
                     </p>
                 </div>
-            </div>
-            <div className="flex flex-col gap-2 max-md:gap-1">
-                <h2 className="text-2xl font-semibold max-md:text-lg">Customization</h2>
+            </Configuration.Section>
+            <Configuration.Section title="Customization">
                 <div className="flex flex-col gap-2 w-full max-md:gap-0">
                     <h2 className="text-lg font-semibold max-md:text-base">Font</h2>
                     <FontFamilyPicker
@@ -504,7 +584,7 @@ export default function Inspector() {
                         }}
                     />
                 </div>
-            </div>
-        </div>
+            </Configuration.Section>
+        </Configuration.Root>
     )
 }

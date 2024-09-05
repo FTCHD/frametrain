@@ -1,11 +1,11 @@
 'use client'
-import { Button } from '@/components/shadcn/Button'
+import { Drawer, DrawerClose, DrawerContent } from '@/components/shadcn/Drawer'
+import { Button } from '@/sdk/components'
 import { useFrameConfig } from '@/sdk/hooks'
-import { Trash, X } from 'lucide-react'
+import { TrashIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 import type { Config } from '../..'
 import QnaForm from './QnaForm'
-import { Drawer, DrawerClose, DrawerContent } from '@/components/shadcn/Drawer'
 
 export default function Questions() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -55,7 +55,7 @@ export default function Questions() {
                                 })
                             }
                         >
-                            <Trash />
+                            <TrashIcon />
                         </Button>
                     </div>
                 </div>
@@ -72,7 +72,7 @@ export default function Questions() {
                                 />
                             </div>
                             <DrawerClose className="absolute right-8 top-8 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-                                <X className="h-5 w-5" />
+                                <XIcon className="h-5 w-5" />
                                 <span className="sr-only">Close</span>
                             </DrawerClose>
                         </DrawerContent>

@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameActionPayload, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import type { Config, Storage } from '..'
 import initial from './initial'
 
@@ -8,7 +8,7 @@ export default async function success({
     config,
     storage,
 }: {
-    body: FrameActionPayload
+    body: FramePayloadValidated
     config: Config
     storage: Storage
 }): Promise<BuildFrameData> {
@@ -20,7 +20,7 @@ export default async function success({
         },
     ]
 
-    if (!config.success.image || body.untrustedData.buttonIndex === 1) {
+    if (!config.success.image || body.tapped_button.index === 1) {
         return initial({ config })
     }
 
