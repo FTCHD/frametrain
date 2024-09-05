@@ -8,7 +8,7 @@ import { useInView } from 'react-intersection-observer'
 interface SectionProps {
     title: string
     children: ReactNode
-    description?: ReactNode
+    description?: string
 }
 
 interface InspectorConfigAtomOptions {
@@ -41,12 +41,10 @@ function Section({ title, children, description }: SectionProps): ReactElement {
         <div ref={inViewRef} className="flex flex-col gap-2">
             <h2 className="text-2xl font-semibold max-md:text-lg">{title}</h2>
             <div className="flex flex-col gap-2 w-full">
-                {description && typeof description === 'string' ? (
+                {description && (
                     <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
                         {description}
                     </p>
-                ) : (
-                    description
                 )}
                 {children}
             </div>
