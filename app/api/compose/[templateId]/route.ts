@@ -45,13 +45,13 @@ export async function POST(
 
     const body = await request.json()
 
-    const validatedData = await validatePayload(body)
+    const validatedPayload = await validatePayload(body)
 
     const templateId = params.templateId
 
-    const serializedState = validatedData.action.state.serialized
+    const serializedState = validatedPayload.state.serialized
 
-    const { fid, username, pfp_url } = validatedData.action.interactor
+    const { fid, username, pfp_url } = validatedPayload.interactor
 
     const args: InferInsertModel<typeof frameTable> = {
         owner: fid.toString(),
