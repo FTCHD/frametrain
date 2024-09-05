@@ -7,6 +7,7 @@ import { capitalize, formatAmount } from './utils/alphanum'
 import { formatDate } from './utils/dates'
 import { generateImageUrl, getLumaData } from './utils/luma'
 import type { HostData, TicketInfo } from './utils/types'
+import { Configuration } from '@/sdk/inspector'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -83,77 +84,72 @@ export default function Inspector() {
     const debouncedOnChange = useDebouncedCallback(onChange, 500)
 
     return (
-        <div className="h-full w-full flex flex-col gap-5">
-            <div className="flex flex-col w-full gap-4">
-                <h1 className="text-2xl font-bold">Lu.ma</h1>
-                <div className="flex flex-col gap-2">
-                    <h2 className="text-lg font-semibold">Event</h2>
-                    <p className="text-sm text-muted-foreground">
-                        You can use the event ID or the full URL.
-                    </p>
-                    <Input
-                        className="py-2 text-lg "
-                        defaultValue={config.event?.id}
-                        onChange={debouncedOnChange}
-                        placeholder="mpls6.18 or https://lu.ma/mpls6.18"
-                    />
-                </div>
+        <Configuration.Root>
+            <Configuration.Section title="Lu.ma Event">
+                <p className="text-sm text-muted-foreground">
+                    You can use the event ID or the full URL.
+                </p>
+                <Input
+                    className="py-2 text-lg "
+                    defaultValue={config.event?.id}
+                    onChange={debouncedOnChange}
+                    placeholder="mpls6.18 or https://lu.ma/mpls6.18"
+                />
+            </Configuration.Section>
+            <Configuration.Section
+                title="Timezone"
+                description="Choose your preferred timezone to display the event start time."
+            >
+                <Select
+                    defaultValue={config.event?.timezone ?? 'Europe/London'}
+                    onChange={async (value) => {
+                        if (!config.event) return
 
-                <div className="flex flex-col gap-2">
-                    <h2 className="text-lg font-semibold">Timezone</h2>
-                    <p className="text-sm text-muted-foreground">
-                        Choose your preferred timezone to display the event start time.
-                    </p>
-                    <Select
-                        defaultValue={config.event?.timezone ?? 'Europe/London'}
-                        onChange={async (value) => {
-                            if (!config.event) return
+                        const data = await getLumaData(config.event.id)
 
-                            const data = await getLumaData(config.event.id)
+                        if (!data) return
 
-                            if (!data) return
+                        const eventData = data?.event
 
-                            const eventData = data?.event
+                        const startsAt = eventData?.start_at
+                            ? formatDate(
+                                  config.event?.timezone ?? 'Europe/London',
+                                  eventData.start_at as string
+                              )
+                            : null
 
-                            const startsAt = eventData?.start_at
-                                ? formatDate(
-                                      config.event?.timezone ?? 'Europe/London',
-                                      eventData.start_at as string
-                                  )
-                                : null
-
-                            updateConfig({
-                                event: {
-                                    ...config.event,
-                                    timezone: value,
-                                    startsAt,
-                                },
-                            })
-                        }}
-                    >
-                        {timezoneOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </Select>
-                </div>
-                <div className="flex flex-col gap-2">
-                    <h2 className="text-lg font-semibold">Custom Message</h2>
-                    <p className="text-sm text-muted-foreground">
-                        If you want to display your own message, enter it here.
-                    </p>
-                    <Input
-                        className="py-2 text-lg"
-                        defaultValue={config.customMessage}
-                        onChange={async (e) => {
-                            updateConfig({
-                                customMessage: e.target.value === '' ? undefined : e.target.value,
-                            })
-                        }}
-                        placeholder="Don't forget to bring your laptop!"
-                    />
-                </div>
+                        updateConfig({
+                            event: {
+                                ...config.event,
+                                timezone: value,
+                                startsAt,
+                            },
+                        })
+                    }}
+                >
+                    {timezoneOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </Select>
+            </Configuration.Section>
+            <Configuration.Section
+                title="Custom Message"
+                description="If you want to display your own message, enter it here."
+            >
+                <Input
+                    className="py-2 text-lg"
+                    defaultValue={config.customMessage}
+                    onChange={async (e) => {
+                        updateConfig({
+                            customMessage: e.target.value === '' ? undefined : e.target.value,
+                        })
+                    }}
+                    placeholder="Don't forget to bring your laptop!"
+                />
+            </Configuration.Section>
+            <Configuration.Section title="Colors" description="Customize the colors of your event.">
                 <div className="flex flex-col gap-2">
                     <h2 className="text-lg font-semibold">Message Color</h2>
                     <ColorPicker
@@ -199,7 +195,7 @@ export default function Inspector() {
                         setBackground={(value) => updateConfig({ priceBackgroundColor: value })}
                     />
                 </div>
-            </div>
-        </div>
+            </Configuration.Section>
+        </Configuration.Root>
     )
 }
