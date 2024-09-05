@@ -80,10 +80,7 @@ function Root({ children }: RootProps): ReactElement {
 
     return (
         <div className="flex flex-col gap-10 h-full w-full">
-            <div
-                className="flex flex-row gap-2 overflow-scroll"
-                id="inspector-config-sidebar-scroller"
-            >
+            <div className="flex flex-row gap-2 overflow-scroll">
                 {validChildren.map((child) => {
                     const sectionId = `${child.props.id}`
                     return (
@@ -105,10 +102,7 @@ function Root({ children }: RootProps): ReactElement {
                     )
                 })}
             </div>
-            <div
-                id="inspector-config-scroller"
-                className="overflow-y-scroll flex flex-col mb-10 gap-10"
-            >
+            <div className="overflow-y-scroll flex flex-col gap-5 max-md:gap-3">
                 {validChildren}
             </div>
         </div>
