@@ -1,20 +1,56 @@
 'use client'
 
 import { cn } from '@/lib/shadcn'
-import React, { type ReactNode, type ReactElement, useState } from 'react'
-import Scrollama from './Scrollama'
+import { atom, useAtom } from 'jotai'
+import React, { type ReactElement, type ReactNode } from 'react'
+import { useInView } from 'react-intersection-observer'
 
 interface SectionProps {
     title: string
     children: ReactNode
+    description?: ReactNode
 }
 
-function Section({ title, children }: SectionProps): ReactElement {
+interface InspectorConfigAtomOptions {
+    sectionId: string
+    clicked: boolean
+}
+
+const inspectorConfigAtom = atom<InspectorConfigAtomOptions>({
+    sectionId: '',
+    clicked: false,
+})
+
+function Section({ title, children, description }: SectionProps): ReactElement {
+    const [config, setConfig] = useAtom(inspectorConfigAtom)
+    const { ref: inViewRef } = useInView({
+        rootMargin: '-10% 0px -60% 0px',
+        onChange(inView) {
+            const sectionId = title.toLowerCase().replace(/\s+/g, '-')
+            if (inView && config.sectionId === sectionId && config.clicked) return
+            if (inView) {
+                setConfig({
+                    sectionId: `section-${sectionId}`,
+                    clicked: false,
+                })
+            }
+        },
+    })
+
     return (
-        <>
+        <div ref={inViewRef} className="flex flex-col gap-2">
             <h2 className="text-2xl font-semibold max-md:text-lg">{title}</h2>
-            <div className="flex flex-col gap-2">{children}</div>
-        </>
+            <div className="flex flex-col gap-2 w-full">
+                {description && typeof description === 'string' ? (
+                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
+                        {description}
+                    </p>
+                ) : (
+                    description
+                )}
+                {children}
+            </div>
+        </div>
     )
 }
 
@@ -23,54 +59,18 @@ interface RootProps {
 }
 
 function Root({ children }: RootProps): ReactElement {
-    const [currentSection, setCurrentSection] = useState<{
-        sectionId: string
-        title: string
-    } | null>(null)
+    const [config, setConfig] = useAtom(inspectorConfigAtom)
 
     // This callback fires when a Step hits the offset threshold. It receives the
     // data prop of the step, which in this demo stores the index of the step.
-    const onStepEnter = ({
-        data,
-    }: {
-        data: {
-            sectionId: string
-            title: string
-            idx: number
-        }
-        direction: 'up' | 'down'
-    }) => {
-        setCurrentSection({
-            sectionId: data.sectionId,
-            title: data.title,
-        })
-    }
 
-    const onStepExit = ({
-        data,
-        direction,
-    }: {
-        data: {
-            sectionId: string
-            title: string
-            idx: number
-        }
-        direction: 'up' | 'down'
-    }) => {
-        if (data.idx === 0 && direction === 'up') {
-            setCurrentSection(null)
-        }
-    }
-
-    const validChildren = React.Children.map(children, (child, idx) => {
+    const validChildren = React.Children.map(children, (child) => {
         if (React.isValidElement(child) && child.type === Section) {
             const sectionId = `section-${child.props.title.toLowerCase().replace(/\s+/g, '-')}`
             return (
-                <Scrollama.Step data={{ sectionId, title: child.props.title, idx }} key={sectionId}>
-                    <div id={sectionId} className="flex flex-col gap-2">
-                        {child}
-                    </div>
-                </Scrollama.Step>
+                <div id={sectionId} className="flex flex-col gap-2">
+                    {child}
+                </div>
             )
         }
         throw new Error(
@@ -79,35 +79,37 @@ function Root({ children }: RootProps): ReactElement {
     })
 
     return (
-        <div className="flex flex-col gap-4 h-full w-full">
-            <div className="flex flex-row gap-2 overflow-scroll">
+        <div className="flex flex-col gap-10 h-full w-full">
+            <div
+                className="flex flex-row gap-2 overflow-scroll"
+                id="inspector-config-sidebar-scroller"
+            >
                 {validChildren.map((child) => {
-                    const sectionId = `${child.props.data.sectionId}`
+                    const sectionId = `${child.props.id}`
                     return (
                         <a
                             key={sectionId}
                             href={`#${sectionId}`}
                             className={cn(
                                 'w-full sticky top-0 z-10 border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90] text-[#ffffff90]',
-                                currentSection?.sectionId === sectionId && 'text-white bg-border'
+                                config?.sectionId === sectionId && 'text-white bg-border'
                             )}
                             onClick={() => {
-                                if (currentSection?.sectionId === sectionId) return
-                                setCurrentSection({
-                                    sectionId,
-                                    title: child.props.data.title,
-                                })
+                                if (config?.sectionId === sectionId) return
+
+                                setConfig({ sectionId, clicked: true })
                             }}
                         >
-                            {child.props.data.title}
+                            {child.props.children.props.title}
                         </a>
                     )
                 })}
             </div>
-            <div className="overflow-y-scroll flex flex-col gap-5 max-md:gap-3">
-                <Scrollama.Root offset={0.3} onStepEnter={onStepEnter} onStepExit={onStepExit}>
-                    {validChildren}
-                </Scrollama.Root>
+            <div
+                id="inspector-config-scroller"
+                className="overflow-y-scroll flex flex-col mb-10 gap-10"
+            >
+                {validChildren}
             </div>
         </div>
     )
