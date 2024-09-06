@@ -4,7 +4,7 @@ import { Button } from '@/sdk/components'
 import { useFrameConfig } from '@/sdk/hooks'
 import { TrashIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
-import type { Config } from '../..'
+import type { Config } from '../'
 import QnaForm from './QnaForm'
 
 export default function Questions() {
@@ -13,7 +13,7 @@ export default function Questions() {
     const [currentQna, setCurrentQna] = useState<Config['qna'][number] | null>(null)
 
     return (
-        <div className="flex flex-col gap-4 w-full">
+        <>
             {config.qna.length === 0 && (
                 <div className="flex flex-row gap-2 w-full">
                     <h1 className="text-2xl font-semibold">
@@ -79,6 +79,6 @@ export default function Questions() {
                     </Drawer>
                 </>
             )}
-        </div>
+        </>
     )
 }

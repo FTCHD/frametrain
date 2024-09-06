@@ -11,13 +11,10 @@ type FigmaTokenEditorProps = {
 
 export default function FigmaTokenEditor({ figmaPAT, onChange, onCancel }: FigmaTokenEditorProps) {
     const [newFigmaPAT, setNewFigmaPAT] = useState('')
-    
+
     return (
         <div className="flex flex-col gap-2">
             <h2 className="text-lg font-semibold">Figma Personal Access Token (PAT)</h2>
-            <p className="text-sm text-muted-foreground">
-                A token is required to display your Figma designs.
-            </p>
             <div className="flex items-center space-x-2">
                 <Input
                     id="token"

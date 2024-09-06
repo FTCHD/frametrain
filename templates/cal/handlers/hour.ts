@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
@@ -31,6 +31,7 @@ export default async function hour({
 
     const buttonIndex = body.tapped_button.index
     const inputText = body.input?.text
+    const date = params?.date === undefined ? 0 : Number(params.date)
     const month = params?.month === undefined ? new Date().getMonth() : Number(params?.month)
     const dates = getCurrentAndFutureDate(month)
 
@@ -84,7 +85,7 @@ export default async function hour({
                 ],
                 fonts: fonts,
                 inputText: 'Hour slot as 11:00 PM or 23:00',
-                component: PageView(config, slotsArray[params.date], slot, month),
+                component: PageView(config, slotsArray[params.date], slot, month, date),
                 handler: 'hour',
                 params: {
                     durationFixed: 'fixed',
@@ -214,7 +215,7 @@ export default async function hour({
                 ],
                 fonts: fonts,
                 inputText: 'Hour slot as 11:00 PM or 23:00',
-                component: PageView(config, slotsArray[params.date], slot, month),
+                component: PageView(config, slotsArray[params.date], slot, month, date),
                 handler: 'hour',
                 params: {
                     durationFixed: 'fixed',
@@ -242,7 +243,7 @@ export default async function hour({
         ],
         fonts: fonts,
         inputText: 'Hour slot as 11:00 PM or 23:00',
-        component: PageView(config, [], 0, month),
+        component: PageView(config, [], 0, month, date),
         handler: 'hour',
         params: {
             durationFixed: 'fixed',

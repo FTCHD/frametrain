@@ -36,7 +36,7 @@ export default async function date({
                 break
             }
 
-            date = Number.parseInt(params.date)
+            date = params?.date === undefined ? 0 : Number(params?.date)
 
             const url = `https://cal.com/api/trpc/public/slots.getSchedule?input=${encodeURIComponent(
                 JSON.stringify({
@@ -79,6 +79,7 @@ export default async function date({
                     throw new Error('Day not found')
                 }
             }
+            const dateOfTheMonth = Number(datesArray[date].split('-')[2])
 
             return {
                 buttons: [
@@ -93,7 +94,7 @@ export default async function date({
                     },
                 ],
                 fonts,
-                component: NextView(config, slotsArray[date], 0, month),
+                component: NextView(config, slotsArray[date], 0, month, dateOfTheMonth),
                 handler: 'hour',
                 inputText: 'Enter hour as 11:00 PM or 23:00',
                 params: {

@@ -1,6 +1,7 @@
 'use client'
 import { ColorPicker, FontFamilyPicker, Input } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { Configuration } from '@/sdk/inspector'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
 import { LoaderPinwheelIcon } from 'lucide-react'
@@ -90,12 +91,15 @@ export default function Inspector() {
     }
 
     useEffect(() => {
+        if (!videoRef.current) return
+
         if (source == 'file') {
             videoRef.current.src = file ? URL.createObjectURL(file) : ''
         }
     }, [file, source])
 
     useEffect(() => {
+        if (!videoRef.current) return
         if (source == 'link') {
             videoRef.current.src = link
         }
@@ -113,6 +117,7 @@ export default function Inspector() {
         info()
     }, [config.youtubeUrl])
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         if (
             ((source == 'link' && link) || (source == 'file' && file)) &&
@@ -123,16 +128,9 @@ export default function Inspector() {
             config.fontSize
         )
             transcode()
-    }, [
-        config.timeStart,
-        config.gifDuration,
-        config.gifCaption,
-        config.captionY,
-        config.fontSize,
-        config.fontStyle,
-        config.fontColor,
-    ])
+    }, [config.timeStart, config.gifDuration, config.gifCaption, config.captionY, config.fontSize])
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         updateConfig({
             gifUrl: config?.gifUrl || 'https://iili.io/d9WJ44I.gif',
@@ -145,18 +143,131 @@ export default function Inspector() {
     }, [])
 
     return (
-        <div className="w-full h-full space-y-4">
-            {/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
-            <video
-                className="border-solid border-2 rounded-lg border-gray-500"
-                ref={videoRef}
-                width="100%"
-                controls={true}
-            />
+        <Configuration.Root>
+            <Configuration.Section title="Preview">
+                {/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
+                <video
+                    className="border-solid border-2 rounded-lg border-gray-500"
+                    ref={videoRef}
+                    width="100%"
+                    controls={true}
+                />
 
-            <div className="flex items-center justify-center h-5">
-                {loading && <LoaderPinwheelIcon className="animate-spin" />}
-            </div>
+                <div className="flex items-center justify-center h-5">
+                    {loading && <LoaderPinwheelIcon className="animate-spin" />}
+                </div>
+            </Configuration.Section>
+            <Configuration.Section title="Video">
+                <label htmlFor="source" className="mb-2 text-lg font-bold">
+                    Video source
+                </label>
+                <select
+                    id="source"
+                    className="h-12 border border-gray-500 text-lg rounded-lg w-full py-2.5 px-4 focus:outline-none"
+                    value={source}
+                    onChange={(e) => setSource(e.target.value)}
+                >
+                    <option value="file">File</option>
+                    <option value="link">YouTube</option>
+                </select>
+
+                <div className={`space-y-2 ${source == 'file' ? 'visible' : 'hidden'}`}>
+                    <label
+                        htmlFor="uploadFile"
+                        className="flex cursor-pointer items-center justify-center rounded-md  py-2.5 px-2 text-lg font-medium bg-border  text-primary hover:bg-secondary-border"
+                    >
+                        Upload a video file
+                        <Input
+                            id="uploadFile"
+                            accept="video/mp4"
+                            type="file"
+                            onChange={(e) => {
+                                setFile(e.target.files?.[0])
+                            }}
+                            className="sr-only"
+                        />
+                    </label>
+                    <p className="text-sm text-muted-foreground">{file?.name}</p>
+                </div>
+
+                <div className="flex text-lg flex-col gap-2 ">
+                    <div className={`space-y-2 ${source == 'link' ? 'visible' : 'hidden'}`}>
+                        <h2 className="font-bold">YouTube video URL</h2>
+                        <Input
+                            className="bg-red-800"
+                            placeholder="https://www.youtube.com/watch?v=..."
+                            defaultValue={config.youtubeUrl}
+                            onChange={(e) => {
+                                updateConfig({ youtubeUrl: e.target.value })
+                            }}
+                        />
+                        <p className="text-sm text-muted-foreground">
+                            The recommended video duration is less 15 min.
+                        </p>
+                    </div>
+
+                    <h2 className="font-bold">Start Time</h2>
+                    <Input
+                        placeholder="Seconds or mm:ss"
+                        defaultValue={config.timeStart}
+                        onChange={(e) => updateConfig({ timeStart: e.target.value })}
+                    />
+                    <h2 className="font-bold">Duration</h2>
+                    <Input
+                        placeholder="GIF duration in seconds"
+                        defaultValue={config.gifDuration}
+                        onChange={(e) => updateConfig({ gifDuration: e.target.value })}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                        The recommended gif's duration is less 10 sec.
+                    </p>
+                    <h2 className="font-bold">Caption</h2>
+                    <Input
+                        placeholder="Text on a GIF"
+                        defaultValue={config.gifCaption}
+                        onChange={(e) => updateConfig({ gifCaption: e.target.value })}
+                    />
+                    <h2 className="font-bold">Caption Positioning</h2>
+                    <Input
+                        placeholder="Bottom indent of the caption in pixel values"
+                        defaultValue={config.captionY}
+                        onChange={(e) => updateConfig({ captionY: e.target.value })}
+                    />
+                </div>
+            </Configuration.Section>
+            <Configuration.Section title="Customization">
+                <h2 className="font-bold">Font Size</h2>
+                <Input
+                    placeholder="Font size in pixel values"
+                    defaultValue={config.fontSize}
+                    onChange={(e) => updateConfig({ fontSize: e.target.value })}
+                />
+                <h2 className="font-bold">Font Color</h2>
+                <ColorPicker
+                    className="w-full"
+                    background={config.fontColor || 'white'}
+                    setBackground={(value: string) => updateConfig({ fontColor: value })}
+                />
+                <h2 className="font-bold">Font Style</h2>
+                <FontFamilyPicker
+                    defaultValue={config.fontStyle}
+                    onSelect={(font: string) => updateConfig({ fontStyle: font })}
+                />
+                <h2 className="font-bold">Button Label</h2>
+                <Input
+                    defaultValue={config.buttonLabel}
+                    onChange={(e) => updateConfig({ buttonLabel: e.target.value })}
+                />
+                <h2 className="font-bold">Button Link</h2>
+                <Input
+                    placeholder="https://..."
+                    defaultValue={config.buttonLink}
+                    onChange={(e) => updateConfig({ buttonLink: e.target.value })}
+                />
+                <div className="flex items-center justify-center">
+                    {loading && <LoaderPinwheelIcon className="animate-spin" />}
+                </div>
+            </Configuration.Section>
 
             <label htmlFor="source" className="mb-2 text-lg font-bold">
                 Video source
@@ -265,6 +376,6 @@ export default function Inspector() {
                     {loading && <LoaderPinwheelIcon className="animate-spin" />}
                 </div>
             </div>
-        </div>
+        </Configuration.Root>
     )
 }

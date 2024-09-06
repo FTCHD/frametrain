@@ -1,6 +1,7 @@
 'use client'
 import { ColorPicker, FontFamilyPicker, Input } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { Configuration } from '@/sdk/inspector'
 import { useEffect, useRef } from 'react'
 import type { Config } from '.'
 
@@ -18,9 +19,8 @@ export default function Inspector() {
     }, [config.rssUrl])
 
     return (
-        <div className=" h-full flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold">RSS Feed URL</h2>
+        <Configuration.Root>
+            <Configuration.Section title="RSS Feed URL">
                 <Input
                     className="py-2 text-lg"
                     type="url"
@@ -37,73 +37,75 @@ export default function Inspector() {
                         updateConfig({ rssUrl })
                     }}
                 />
-            </div>
+            </Configuration.Section>
 
-            <div className="flex flex-col gap-2 w-full">
-                <h2 className="text-lg font-semibold">Font Family</h2>
-                <FontFamilyPicker
-                    defaultValue={config.fontFamily}
-                    onSelect={(fontFamily) => {
-                        updateConfig({
-                            fontFamily,
-                        })
-                    }}
-                />
-            </div>
+            <Configuration.Section title="Configuration">
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg font-semibold">Font Family</h2>
+                    <FontFamilyPicker
+                        defaultValue={config.fontFamily}
+                        onSelect={(fontFamily) => {
+                            updateConfig({
+                                fontFamily,
+                            })
+                        }}
+                    />
+                </div>
 
-            <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold">Title & Description Color</h2>
-                <ColorPicker
-                    className="w-full"
-                    background={config.primaryColor || '#ffffff'}
-                    setBackground={(value) => updateConfig({ primaryColor: value })}
-                />
-            </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg font-semibold">Title & Description Color</h2>
+                    <ColorPicker
+                        className="w-full"
+                        background={config.primaryColor || '#ffffff'}
+                        setBackground={(value) => updateConfig({ primaryColor: value })}
+                    />
+                </div>
 
-            <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold">Date & Pagination Color</h2>
-                <ColorPicker
-                    className="w-full"
-                    background={config.secondaryColor || '#ffe83f'}
-                    setBackground={(value) => updateConfig({ secondaryColor: value })}
-                />
-            </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg font-semibold">Date & Pagination Color</h2>
+                    <ColorPicker
+                        className="w-full"
+                        background={config.secondaryColor || '#ffe83f'}
+                        setBackground={(value) => updateConfig({ secondaryColor: value })}
+                    />
+                </div>
 
-            <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold">Cover Background</h2>
-                <ColorPicker
-                    className="w-full"
-                    enabledPickers={['solid', 'gradient', 'image']}
-                    background={config.coverBackground || '#000000'}
-                    setBackground={(coverBackground) => updateConfig({ coverBackground })}
-                    uploadBackground={async (base64String, contentType) => {
-                        const { filePath } = await uploadImage({
-                            base64String: base64String,
-                            contentType: contentType,
-                        })
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg font-semibold">Cover Background</h2>
+                    <ColorPicker
+                        className="w-full"
+                        enabledPickers={['solid', 'gradient', 'image']}
+                        background={config.coverBackground || '#000000'}
+                        setBackground={(coverBackground) => updateConfig({ coverBackground })}
+                        uploadBackground={async (base64String, contentType) => {
+                            const { filePath } = await uploadImage({
+                                base64String: base64String,
+                                contentType: contentType,
+                            })
 
-                        return filePath
-                    }}
-                />
-            </div>
+                            return filePath
+                        }}
+                    />
+                </div>
 
-            <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold">Post Background</h2>
-                <ColorPicker
-                    className="w-full"
-                    enabledPickers={['solid', 'gradient', 'image']}
-                    background={config.pageBackground || '#000000'}
-                    setBackground={(pageBackground) => updateConfig({ pageBackground })}
-                    uploadBackground={async (base64String, contentType) => {
-                        const { filePath } = await uploadImage({
-                            base64String: base64String,
-                            contentType: contentType,
-                        })
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-lg font-semibold">Post Background</h2>
+                    <ColorPicker
+                        className="w-full"
+                        enabledPickers={['solid', 'gradient', 'image']}
+                        background={config.pageBackground || '#000000'}
+                        setBackground={(pageBackground) => updateConfig({ pageBackground })}
+                        uploadBackground={async (base64String, contentType) => {
+                            const { filePath } = await uploadImage({
+                                base64String: base64String,
+                                contentType: contentType,
+                            })
 
-                        return filePath
-                    }}
-                />
-            </div>
-        </div>
+                            return filePath
+                        }}
+                    />
+                </div>
+            </Configuration.Section>
+        </Configuration.Root>
     )
 }

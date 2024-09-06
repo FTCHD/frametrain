@@ -2,6 +2,7 @@
 import { AlertDialog, Button, Checkbox, Label } from '@/sdk/components'
 import { dimensionsForRatio } from '@/sdk/constants'
 import { useFrameConfig, useFramePreview } from '@/sdk/hooks'
+import { Configuration } from '@/sdk/inspector'
 import {
     ArrowBigLeftDashIcon,
     ArrowBigRightDashIcon,
@@ -167,24 +168,25 @@ export default function Inspector() {
     const canDelete = config.slides?.length != 1 // must always be one slide visible
 
     return (
-        <div className="w-full h-full space-y-4 pl-2 pr-2">
-            {editingFigmaPAT && (
-                <FigmaTokenEditor
-                    figmaPAT={config.figmaPAT}
-                    onChange={updateFigmaPAT}
-                    onCancel={() => setEditingFigmaPAT(false)}
-                />
-            )}
+        <Configuration.Root>
+            <Configuration.Section title="PAT">
+                {editingFigmaPAT ? (
+                    <FigmaTokenEditor
+                        figmaPAT={config.figmaPAT}
+                        onChange={updateFigmaPAT}
+                        onCancel={() => setEditingFigmaPAT(false)}
+                    />
+                ) : (
+                    <Button onClick={() => setEditingFigmaPAT(true)} variant={'secondary'}>
+                        <KeySquareIcon className="mr-1" />
+                        Figma PAT
+                    </Button>
+                )}
+            </Configuration.Section>
 
-            {!editingFigmaPAT && (
-                <>
+            {!editingFigmaPAT ? (
+                <Configuration.Section title="Figma Designs">
                     <div className="w-full flex items-center justify-between">
-                        <div className="flex flex-row items-center justify-end gap-2">
-                            <Button onClick={() => setEditingFigmaPAT(true)} variant={'secondary'}>
-                                <KeySquareIcon className="mr-1" />
-                                Figma PAT
-                            </Button>
-                        </div>
                         <div className="flex flex-row items-center justify-end gap-2">
                             <Button onClick={() => swapSlide('left')} disabled={!canMoveLeft}>
                                 <ArrowBigLeftDashIcon /> Move left
@@ -299,9 +301,9 @@ export default function Inspector() {
                             onUpdate={(updatedSlideConfig) => updateSlide(updatedSlideConfig)}
                         />
                     )}
-                </>
-            )}
-        </div>
+                </Configuration.Section>
+            ) : undefined}
+        </Configuration.Root>
     )
 }
 

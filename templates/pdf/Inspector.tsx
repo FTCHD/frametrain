@@ -1,6 +1,7 @@
 'use client'
 import { Button, ColorPicker, Input, Select } from '@/sdk/components'
 import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
+import { Configuration } from '@/sdk/inspector'
 import { LoaderIcon } from 'lucide-react'
 import type { PDFPageProxy } from 'pdfjs-dist/types/web/interfaces'
 import { useEffect, useState } from 'react'
@@ -10,7 +11,7 @@ import getPdfDocument, { createPDFPage, renderPDFToCanvas } from './utils'
 export default function Inspector() {
     const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
-	const uploadImage = useUploadImage()
+    const uploadImage = useUploadImage()
 
     const [file, setFile] = useState<File>()
 
@@ -72,9 +73,8 @@ export default function Inspector() {
     }, [file, frameId, updateConfig, uploadingSlides, uploadImage])
 
     return (
-        <div className=" h-full flex flex-col gap-10">
-            <div className="w-full h-full flex flex-col gap-5">
-                <h1 className="text-2xl font-bold">Cover</h1>
+        <Configuration.Root>
+            <Configuration.Section title="Cover">
                 <div className="flex flex-col gap-2">
                     <h2 className="text-lg font-semibold">Title</h2>
                     <Input
@@ -118,31 +118,34 @@ export default function Inspector() {
                         setBackground={(value) => updateConfig({ textColor: value })}
                     />
                 </div>
-            </div>
-            <div className="flex flex-col gap-5">
-                <h2 className="text-2xl font-bold">File & Content</h2>
+            </Configuration.Section>
+            <Configuration.Section title="File & Content">
                 {!config?.slideUrls?.length ? (
-                    <label
-                        htmlFor="uploadFile"
-                        className="flex cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
-                    >
-                        Upload a file
-                        <Input
-                            id="uploadFile"
-                            accept="application/pdf"
-                            type="file"
-                            disabled={uploadingSlides}
-                            onChange={(e) => {
-                                if (e.target.files?.[0]) {
-                                    setFile(e.target.files?.[0])
-                                }
-                            }}
-                            className="sr-only"
-                        />
-                    </label>
-                ) : null}
-                {config?.slideUrls?.length ? (
+                    <div className="flex flex-row justify-between items-center">
+                        <label
+                            htmlFor="uploadFile"
+                            className="flex cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
+                        >
+                            Upload a file
+                            <Input
+                                id="uploadFile"
+                                accept="application/pdf"
+                                type="file"
+                                disabled={uploadingSlides}
+                                onChange={(e) => {
+                                    if (e.target.files?.[0]) {
+                                        setFile(e.target.files?.[0])
+                                    }
+                                }}
+                                className="sr-only"
+                            />
+                        </label>
+
+                        {uploadingSlides && <LoaderIcon className="animate-spin" />}
+                    </div>
+                ) : (
                     <div className="flex flex-row space-x-4 w-full">
+                        {uploadingSlides && <LoaderIcon className="animate-spin" />}
                         <label
                             htmlFor="uploadFile"
                             className="flex w-full cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border text-primary hover:bg-secondary-border"
@@ -170,27 +173,26 @@ export default function Inspector() {
                             Remove
                         </Button>
                     </div>
-                ) : null}
-            </div>
-            <div className="flex flex-col">
-                <div className="flex flex-row justify-between items-center">
-                    <h2 className="text-lg font-semibold">Slides</h2>
-                    {uploadingSlides && <LoaderIcon className="animate-spin" />}
-                </div>
+                )}
+            </Configuration.Section>
+            <Configuration.Section title="Slides">
                 <div className="flex flex-row flex-wrap gap-4">
-                    {config?.slideUrls?.map((slideUrl) => (
-                        <img
-                            key={slideUrl}
-                            src={process.env.NEXT_PUBLIC_CDN_HOST + slideUrl}
-                            width={200}
-                            height={200}
-                            alt="PDF Slide"
-                        />
-                    ))}
+                    {config?.slideUrls?.length ? (
+                        config?.slideUrls?.map((slideUrl) => (
+                            <img
+                                key={slideUrl}
+                                src={process.env.NEXT_PUBLIC_CDN_HOST + slideUrl}
+                                width={200}
+                                height={200}
+                                alt="PDF Slide"
+                            />
+                        ))
+                    ) : (
+                        <h1 className="text-lg">No slides uploaded</h1>
+                    )}
                 </div>
-            </div>
-            <div className="flex flex-col gap-5">
-                <h2 className="text-lg font-semibold">Aspect Ratio</h2>
+            </Configuration.Section>
+            <Configuration.Section title="Aspect Ratio">
                 <Select
                     defaultValue={config.aspectRatio}
                     onChange={(value) => updateConfig({ aspectRatio: value })}
@@ -198,7 +200,7 @@ export default function Inspector() {
                     <option value={'1/1'}>Square</option>
                     <option value={'1.91/1'}>Wide</option>
                 </Select>
-            </div>
-        </div>
+            </Configuration.Section>
+        </Configuration.Root>
     )
 }
