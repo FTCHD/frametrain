@@ -77,21 +77,22 @@ export default function Inspector() {
     return (
         <Configuration.Root>
             <Configuration.Section title="Meme Templates" description="Select a meme template">
-                <Select
-                    disabled={generating}
-                    defaultValue={selectedMeme?.id}
-                    onChange={(e) => {
-                        const meme = memeTemplates.find((meme) => meme.id === e)
+               <Select
+                        disabled={generating}
+                        defaultValue={selectedMeme?.id}
+                        placeholder="Select meme template"
+                        onChange={(e) => {
+                            const meme = memeTemplates.find((meme) => meme.id === e)
 
-                        if (meme) setSelectedMeme(meme)
-                    }}
-                >
-                    {memeTemplates.map((meme) => (
-                        <option key={meme.id} value={meme.id}>
-                            {meme.name}
-                        </option>
-                    ))}
-                </Select>
+                            if (meme) setSelectedMeme(meme)
+                        }}
+                    >
+                        {memeTemplates.map((meme) => (
+                            <option key={meme.id} value={meme.id}>
+                                {meme.name}
+                            </option>
+                        ))}
+                    </Select>
             </Configuration.Section>
 
             <Configuration.Section title="Thumbnail" description="Preview your meme template">
@@ -185,12 +186,12 @@ export default function Inspector() {
 
                         <Button
                             variant="destructive"
-                            className="w-full "
+                            className="w-full"
                             onClick={() =>
                                 updateConfig({
                                     memeUrl: undefined,
                                     template: undefined,
-                                    aspectRatio: undefined,
+                                     aspectRatio: '1:1',
                                 })
                             }
                         >
