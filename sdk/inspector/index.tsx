@@ -86,7 +86,7 @@ function Root({ children }: RootProps): ReactElement {
                             key={sectionId}
                             href={`#${sectionId}`}
                             className={cn(
-                                'w-full sticky top-0 z-10 border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90] text-[#ffffff90]',
+                                'whitespace-nowrap w-full sticky top-0 z-10 border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90] text-[#ffffff90]',
                                 config?.sectionId === sectionId && 'text-white bg-border'
                             )}
                             onClick={() => {
