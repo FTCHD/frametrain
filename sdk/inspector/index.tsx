@@ -53,17 +53,19 @@ function Section({ title, children, description }: SectionProps): ReactElement {
 }
 
 interface RootProps {
-    children: ReactElement<SectionProps> | ReactElement<SectionProps>[]
+    children: ReactNode
 }
 
-function Root({ children }: RootProps): ReactElement {
+function Root(props: RootProps): ReactElement {
     const [config, setConfig] = useAtom(inspectorConfigAtom)
 
     // This callback fires when a Step hits the offset threshold. It receives the
     // data prop of the step, which in this demo stores the index of the step.
 
+    const children = props.children as ReactElement<SectionProps> | ReactElement<SectionProps>[]
+
     const validChildren = React.Children.map(children, (child) => {
-        if (React.isValidElement(child) && child.type === Section) {
+        if (child !== null && React.isValidElement(child) && child.type === Section) {
             const sectionId = `section-${child.props.title.toLowerCase().replace(/\s+/g, '-')}`
             return (
                 <div id={sectionId} className="flex flex-col gap-2">
@@ -71,10 +73,8 @@ function Root({ children }: RootProps): ReactElement {
                 </div>
             )
         }
-        throw new Error(
-            'Configuration.Root only accepts Configuration.Section components as direct children'
-        )
-    })
+        return null
+    }).filter((child) => child !== null)
 
     return (
         <div className="flex flex-col gap-10 h-full w-full">
