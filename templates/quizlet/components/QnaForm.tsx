@@ -14,8 +14,8 @@ import {
 } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { useState } from 'react'
-import type { Config } from '../..'
-import { choicesRepresentation } from '../../utils'
+import type { Config } from '..'
+import { choicesRepresentation } from '../utils'
 
 type QnaFormProps = {
     qna: Config['qna'][number]

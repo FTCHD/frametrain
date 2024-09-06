@@ -15,14 +15,14 @@ import {
 } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { TrashIcon } from 'lucide-react'
-import Image from 'next/image'
 import type { AnchorHTMLAttributes, FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import type { Config, PoolToken } from '.'
-import { coingeckoImageLoader, formatSymbol } from './common/shared'
+import { formatSymbol } from './common/shared'
 import { getPoolData } from './common/uniswap'
 import { supportedChains } from './common/viem'
+import { Configuration } from '@/sdk/inspector'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -85,25 +85,17 @@ export default function Inspector() {
                 style={{ marginLeft: isLast ? -36 / 3 : 0 }}
             >
                 <Avatar.Root style={{ width: 36, height: 36 }}>
-                    <Avatar.Image src={token.logo} asChild={true}>
-                        <Image
-                            loader={coingeckoImageLoader}
-                            alt="avatar"
-                            src={token.logo}
-                            width={36}
-                            height={36}
-                        />
-                    </Avatar.Image>
+                    <Avatar.Image src={token.logo} />
                 </Avatar.Root>
             </div>
         )
     }
 
     return (
-        <div className=" h-full flex flex-col gap-10">
-            <div className="w-full h-full flex flex-col gap-5">
+        <Configuration.Root>
+            <Configuration.Section title="Pool">
                 <div className="flex flex-col gap-2">
-                    <h2 className="text-lg font-semibold">Uniswap V3 Pool address</h2>
+                    <h2 className="text-lg font-semibold">Uniswap Pool address</h2>
                     <Input
                         className="py-2 text-lg"
                         defaultValue={config.pool ? `${config.pool.address}` : undefined}
@@ -138,9 +130,7 @@ export default function Inspector() {
 
                                 toast.success(`Pool found on ${pool.chain}`)
                             } catch {
-                                toast.error(
-                                    `Pool not found for ${poolAddress} on any supported chain`
-                                )
+                                toast.error('Pool not found on any supported chain')
                             }
                         }}
                     />
@@ -149,9 +139,10 @@ export default function Inspector() {
                         Only the following networks are supported: {supportedChains}
                     </p>
                 </div>
-
+            </Configuration.Section>
+            <Configuration.Section title="Tokens and amounts">
                 {config.pool ? (
-                    <div className="flex flex-col gap-4">
+                    <>
                         <div className="flex flex-col gap-2">
                             <h2 className="text-xl font-semibold">
                                 Tokens on ({config.pool.network.name})
@@ -209,7 +200,6 @@ export default function Inspector() {
                                 The choosen token will be used as the primary token for the swap
                             </p>
                         </div>
-
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row items-center justify-between">
                                 <div className="flex flex-row items-center justify-between gap-2 ">
@@ -320,7 +310,14 @@ export default function Inspector() {
                                 </div>
                             ) : null}
                         </div>
-
+                    </>
+                ) : (
+                    <h1>Pool address required</h1>
+                )}
+            </Configuration.Section>
+            <Configuration.Section title="Cover">
+                {config.pool ? (
+                    <>
                         <div className="flex flex-col w-full">
                             <h2 className="text-lg">Cover Custom Message</h2>
                             <Input
@@ -529,6 +526,14 @@ export default function Inspector() {
                                 />
                             </div>
                         </div>
+                    </>
+                ) : (
+                    <h1>Pool address required</h1>
+                )}
+            </Configuration.Section>
+            <Configuration.Section title="Success Slide Type">
+                {config.pool ? (
+                    <>
                         <div className="flex flex-col gap-2 w-full">
                             <h2 className="text-lg font-semibold">Success Slide Type</h2>
                             <RadioGroup.Root
@@ -1084,9 +1089,11 @@ export default function Inspector() {
                                 </div>
                             )}
                         </div>
-                    </div>
-                ) : null}
-            </div>
-        </div>
+                    </>
+                ) : (
+                    <h1>Pool address required</h1>
+                )}
+            </Configuration.Section>
+        </Configuration.Root>
     )
 }

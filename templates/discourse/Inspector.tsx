@@ -1,6 +1,7 @@
 'use client'
 import { ColorPicker, FontFamilyPicker, Input } from '@/sdk/components'
 import { useFrameConfig } from '@/sdk/hooks'
+import { Configuration } from '@/sdk/inspector'
 import { corsFetch } from '@/sdk/scrape'
 import { useEffect, useRef } from 'react'
 import { toast } from 'react-hot-toast'
@@ -50,15 +51,15 @@ export default function Inspector() {
     }
 
     return (
-        <div className=" h-full flex flex-col gap-10">
-            <div className="w-full h-full flex flex-col gap-5">
-                <div className="flex flex-col gap-2">
-                    <h2 className="text-lg font-semibold">Discourse Thread</h2>
-                    <Input className="py-2 text-lg" ref={inputRef} onChange={handleInputChange} />
-                    <p className="text-sm text-muted-foreground">
-                        https://ethereum-magicians.org/t/eip-77...
-                    </p>
-                </div>
+        <Configuration.Root>
+            <Configuration.Section title="Discourse Thread URL">
+                <Input className="py-2 text-lg" ref={inputRef} onChange={handleInputChange} />
+                <p className="text-sm text-muted-foreground">
+                    https://ethereum-magicians.org/t/eip-77...
+                </p>
+            </Configuration.Section>
+
+            <Configuration.Section title="Customization">
                 <div className="flex flex-col gap-2">
                     <h2 className="text-lg font-semibold">Background Color</h2>
                     <ColorPicker
@@ -102,7 +103,7 @@ export default function Inspector() {
                         setBackground={(value) => updateConfig({ highlightColor: value })}
                     />
                 </div>
-            </div>
-        </div>
+            </Configuration.Section>
+        </Configuration.Root>
     )
 }

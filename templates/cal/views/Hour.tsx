@@ -1,11 +1,12 @@
 import type { Config } from '..'
-import { formatDateMonth, getTimezoneOffset } from '../utils/date'
+import { formatDateMonth } from '../utils/date'
 
 export default function CoverView(
     config: Config,
     slots: string[],
     slotParam: number,
-    month: number
+    month: number,
+    date: number
 ) {
     const backgroundProp: Record<string, string> = {}
     if (config.background) {
@@ -106,7 +107,7 @@ export default function CoverView(
                         fontSize: 28,
                     }}
                 >
-                    {formatDateMonth(slotParam, month, config.timezone)}
+                    {formatDateMonth(date, month, config.timezone)}
                 </div>
             </div>
 

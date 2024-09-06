@@ -1,11 +1,11 @@
 'use client'
 import { Button, Input } from '@/sdk/components'
-import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { useFrameConfig } from '@/sdk/hooks'
+import { Configuration } from '@/sdk/inspector'
 import { useRef } from 'react'
 import type { Config } from '.'
 
 export default function Inspector() {
-    const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
 
     const { text } = config
@@ -13,41 +13,43 @@ export default function Inspector() {
     const displayLabelInputRef = useRef<HTMLInputElement>(null)
 
     return (
-        <div className="w-full h-full space-y-4">
-            <p>{JSON.stringify(config)}</p>
-            <h2 className="text-lg font-semibold">Starter Template</h2>
+        <Configuration.Root>
+            <Configuration.Section title="Cover">
+                <p>{JSON.stringify(config)}</p>
+                <h2 className="text-lg font-semibold">Starter Template</h2>
 
-            <h3 className="text-lg font-semibold">Text</h3>
+                <h3 className="text-lg font-semibold">Text</h3>
 
-            <p>{text}</p>
+                <p>{text}</p>
 
-            <div className="flex flex-col gap-2 ">
-                <Input
-                    className="text-lg"
-                    placeholder="Input something"
-                    ref={displayLabelInputRef}
-                />
+                <div className="flex flex-col gap-2 ">
+                    <Input
+                        className="text-lg"
+                        placeholder="Input something"
+                        ref={displayLabelInputRef}
+                    />
+                    <Button
+                        onClick={() => {
+                            if (!displayLabelInputRef.current?.value) return
+
+                            updateConfig({ text: displayLabelInputRef.current.value })
+
+                            displayLabelInputRef.current.value = ''
+                        }}
+                        className="w-full bg-border hover:bg-secondary-border text-primary"
+                    >
+                        Set Text
+                    </Button>
+                </div>
+
                 <Button
-                    onClick={() => {
-                        if (!displayLabelInputRef.current?.value) return
-
-                        updateConfig({ text: displayLabelInputRef.current.value })
-
-                        displayLabelInputRef.current.value = ''
-                    }}
-                    className="w-full bg-border hover:bg-secondary-border text-primary"
+                    variant="destructive"
+                    className="w-full "
+                    onClick={() => updateConfig({ text: '' })}
                 >
-                    Set Text
+                    Delete
                 </Button>
-            </div>
-
-            <Button
-                variant="destructive"
-                className="w-full "
-                onClick={() => updateConfig({ text: '' })}
-            >
-                Delete
-            </Button>
-        </div>
+            </Configuration.Section>
+        </Configuration.Root>
     )
 }

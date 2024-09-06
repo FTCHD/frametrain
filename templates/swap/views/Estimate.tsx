@@ -73,7 +73,7 @@ export default function EstimateView(props?: Config) {
                 }}
             >
                 <div tw="flex items-center" style={{ gap: 10 }}>
-                    <div style={{ display: 'flex', gap: -30 }}>
+                    <div style={{ display: 'flex', gap: -36 / 2 }}>
                         {assets.map((asset, i) => (
                             <img
                                 key={i}

@@ -1,7 +1,12 @@
 'use server'
 import { erc20Abi, getContract } from 'viem'
-import { UNI_V3_POOL_ABI } from './abis'
 import { chains, chainsByChainId, getClient } from './viem'
+import { parseAbi } from 'abitype'
+
+const uniswapAbi = parseAbi([
+    'function token0() view returns (address)',
+    'function token1() view returns (address)',
+])
 
 export const getPoolClient = async (address: `0x${string}`) => {
     for (const chain of chains) {
@@ -9,14 +14,14 @@ export const getPoolClient = async (address: `0x${string}`) => {
         const contract = getContract({
             client,
             address,
-            abi: UNI_V3_POOL_ABI,
+            abi: uniswapAbi,
         })
 
         try {
-            await contract.read.slot0()
+            await contract.read.token0()
             return client
         } catch {
-            console.error(`Failed to fetch slot0 for ${address} on ${chain}`)
+            console.error(`Failed to fetch token0 for ${address} on ${chain}`)
         }
     }
 
@@ -78,7 +83,7 @@ export async function getPoolData(address: `0x${string}`) {
     const pool = getContract({
         client,
         address,
-        abi: UNI_V3_POOL_ABI,
+        abi: uniswapAbi,
     })
 
     const [address0, address1] = await Promise.all([pool.read.token0(), pool.read.token1()])

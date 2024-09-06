@@ -1,6 +1,7 @@
 'use client'
 import { Button, Input, Select } from '@/sdk/components'
 import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { Configuration } from '@/sdk/inspector'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -74,40 +75,39 @@ export default function Inspector() {
     }, [frameId])
 
     return (
-        <div className="w-full h-full space-y-4">
-            <div className="flex flex-col gap-2">
-                <h2 className="text-lg font-semibold">Meme Templates</h2>
+        <Configuration.Root>
+            <Configuration.Section title="Meme Templates" description="Select a meme template">
+               <Select
+                        disabled={generating}
+                        defaultValue={selectedMeme?.id}
+                        placeholder="Select meme template"
+                        onChange={(e) => {
+                            const meme = memeTemplates.find((meme) => meme.id === e)
 
-                <Select
-                    disabled={generating}
-                    defaultValue={selectedMeme?.id}
-                    onChange={(e) => {
-                        const meme = memeTemplates.find((meme) => meme.id === e)
+                            if (meme) setSelectedMeme(meme)
+                        }}
+                    >
+                        {memeTemplates.map((meme) => (
+                            <option key={meme.id} value={meme.id}>
+                                {meme.name}
+                            </option>
+                        ))}
+                    </Select>
+            </Configuration.Section>
 
-                        if (meme) setSelectedMeme(meme)
-                    }}
-                >
-                    {memeTemplates.map((meme) => (
-                        <option key={meme.id} value={meme.id}>
-                            {meme.name}
-                        </option>
-                    ))}
-                </Select>
-            </div>
-
-            {selectedMeme ? (
-                <div className="flex flex-col gap-4 h-full">
-                    <div className="flex flex-col">
-                        <div className="flex flex-row justify-between items-center">
-                            <h2 className="text-lg font-semibold">Thumbnail</h2>
-                        </div>
-                        <div className="flex flex-row flex-wrap gap-4">
-                            <img src={selectedMeme.url} width={200} height={200} alt="PDF Slide" />
-                        </div>
+            <Configuration.Section title="Thumbnail" description="Preview your meme template">
+                {selectedMeme ? (
+                    <div className="flex flex-row flex-wrap gap-4">
+                        <img src={selectedMeme.url} width={200} height={200} alt="PDF Slide" />
                     </div>
-                    <div className="flex flex-col gap-2">
-                        <h2 className="text-lg font-semibold">Captions</h2>
+                ) : (
+                    <h3 className="text-lg font-semibold">No meme selected</h3>
+                )}
+            </Configuration.Section>
 
+            <Configuration.Section title="Captions" description="Add your meme captions">
+                {selectedMeme ? (
+                    <>
                         <div className="flex flex-col gap-2">
                             {Array.from({ length: selectedMeme?.positions || 1 }).map((_, i) => (
                                 <Input
@@ -161,38 +161,47 @@ export default function Inspector() {
                         >
                             {generating ? <LoaderIcon className="animate-spin" /> : 'Create'}
                         </Button>
-                    </div>
-                </div>
-            ) : null}
+                    </>
+                ) : (
+                    <h3 className="text-lg font-semibold">No meme selected</h3>
+                )}
+            </Configuration.Section>
 
-            {config.memeUrl ? (
-                <div className="flex flex-col gap-2">
-                    <div className="flex flex-col gap-4">
-                        <h3 className="text-base font-medium">Aspect Ratio</h3>
-                        <Select
-                            defaultValue={config.aspectRatio}
-                            onChange={(aspectRatio) => updateConfig({ aspectRatio })}
+            <Configuration.Section
+                title="Aspect Ratio"
+                description="Change the aspect ratio of your meme"
+            >
+                {config.memeUrl ? (
+                    <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-base font-medium">Aspect Ratio</h3>
+                            <Select
+                                defaultValue={config.aspectRatio}
+                                onChange={(aspectRatio) => updateConfig({ aspectRatio })}
+                            >
+                                <option value="1:1">1:1 (Square)</option>
+                                <option value="1.91:1">1.91:1 (Widescreen)</option>
+                            </Select>
+                        </div>
+
+                        <Button
+                            variant="destructive"
+                            className="w-full"
+                            onClick={() =>
+                                updateConfig({
+                                    memeUrl: undefined,
+                                    template: undefined,
+                                     aspectRatio: '1:1',
+                                })
+                            }
                         >
-                            <option value="1:1">1:1 (Square)</option>
-                            <option value="1.91:1">1.91:1 (Widescreen)</option>
-                        </Select>
+                            Reset Meme
+                        </Button>
                     </div>
-
-                    <Button
-                        variant="destructive"
-                        className="w-full "
-                        onClick={() =>
-                            updateConfig({
-                                memeUrl: undefined,
-                                template: undefined,
-                                aspectRatio: undefined,
-                            })
-                        }
-                    >
-                        Reset Meme
-                    </Button>
-                </div>
-            ) : null}
-        </div>
+                ) : (
+                    <h3 className="text-lg font-semibold">No meme generated</h3>
+                )}
+            </Configuration.Section>
+        </Configuration.Root>
     )
 }
