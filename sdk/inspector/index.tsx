@@ -65,7 +65,7 @@ function Root(props: RootProps): ReactElement {
     const children = props.children as ReactElement<SectionProps> | ReactElement<SectionProps>[]
 
     const validChildren = React.Children.map(children, (child) => {
-        if (child !== null && React.isValidElement(child) && child.type === Section) {
+        if (child && React.isValidElement(child) && child.type === Section) {
             const sectionId = `section-${child.props.title.toLowerCase().replace(/\s+/g, '-')}`
             return (
                 <div id={sectionId} className="flex flex-col gap-2">
@@ -73,33 +73,40 @@ function Root(props: RootProps): ReactElement {
                 </div>
             )
         }
-        return null
-    }).filter((child) => child !== null)
+        if (!child) {
+            return
+        }
+        throw new Error(
+            'Configuration.Root only accepts Configuration.Section components as direct children'
+        )
+    })
 
     return (
         <div className="flex flex-col gap-10 h-full w-full">
-            <div className="flex flex-row gap-2 overflow-scroll">
-                {validChildren.map((child) => {
-                    const sectionId = `${child.props.id}`
-                    return (
-                        <a
-                            key={sectionId}
-                            href={`#${sectionId}`}
-                            className={cn(
-                                'whitespace-nowrap w-full sticky top-0 z-10 border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90] text-[#ffffff90]',
-                                config?.sectionId === sectionId && 'text-white bg-border'
-                            )}
-                            onClick={() => {
-                                if (config?.sectionId === sectionId) return
+            {validChildren.length > 1 && (
+                <div className="hidden gap-2 overflow-scroll md:flex">
+                    {validChildren.map((child) => {
+                        const sectionId = `${child.props.id}`
+                        return (
+                            <a
+                                key={sectionId}
+                                href={`#${sectionId}`}
+                                className={cn(
+                                    'whitespace-nowrap w-full sticky top-0 z-10 border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90] text-[#ffffff90]',
+                                    config?.sectionId === sectionId && 'text-white bg-border'
+                                )}
+                                onClick={() => {
+                                    if (config?.sectionId === sectionId) return
 
-                                setConfig({ sectionId, clicked: true })
-                            }}
-                        >
-                            {child.props.children.props.title}
-                        </a>
-                    )
-                })}
-            </div>
+                                    setConfig({ sectionId, clicked: true })
+                                }}
+                            >
+                                {child.props.children.props.title}
+                            </a>
+                        )
+                    })}
+                </div>
+            )}
             <div className="overflow-y-scroll flex flex-col gap-5 max-md:gap-3">
                 {validChildren}
             </div>
