@@ -153,6 +153,8 @@ async function processFrame(
     const airstackKey = frame.config?.airstackKey || process.env.AIRSTACK_API_KEY
 
     const airstackPayloadValidated = await validatePayloadAirstack(payload, airstackKey)
+	
+	console.log(JSON.stringify(airstackPayloadValidated, null, 2))
 
     await client
         .insert(interactionTable)
