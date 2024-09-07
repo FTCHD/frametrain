@@ -50,6 +50,7 @@ const ButtonDesigner = ({ config, targets, onChange }: ButtonDesignerProps) => {
                         setTarget(newValue)
                         onChange({ ...config, target: newValue })
                     }}
+                    placeholder="Select a target"
                 >
                     <option key="URL" value="URL">
                         URL

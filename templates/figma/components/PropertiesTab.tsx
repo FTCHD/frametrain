@@ -241,6 +241,7 @@ export const PropertiesTab = ({
                     <Select
                         defaultValue={aspectRatio}
                         onChange={(value) => onUpdateAspectRatio(value as AspectRatio)}
+                        placeholder="Select aspect ratio"
                     >
                         <option value="1:1">1:1 (Square)</option>
                         <option value="1.91:1">1.91:1 (Widescreen)</option>
