@@ -6,6 +6,9 @@ import { notFound } from 'next/navigation'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
+	
+	return Response.json({ message: 'disabled' }, { status: 200 })
+	
     try {
         const frames = await client.select().from(frameTable).all()
 
@@ -60,7 +63,14 @@ function collectFilePaths(configs: any[]): string[] {
             for (const key in obj) {
                 if (obj.hasOwnProperty(key)) {
                     const value = obj[key]
-                    if (typeof value === 'string' && value.includes('frames/')) {
+                    if (
+                        typeof value === 'string' &&
+                        (value.includes('.gif') ||
+                            value.includes('.webp') ||
+                            value.includes('.jpg') ||
+                            value.includes('.jpeg') ||
+                            value.includes('.png'))
+                    ) {
                         urls.push(value.replace(baseUrl, ''))
                     } else if (typeof value === 'object' && value !== null) {
                         traverse(value)
