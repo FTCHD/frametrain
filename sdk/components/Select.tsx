@@ -24,9 +24,9 @@ const Select = forwardRef<
                 // backgroundPosition: 'right .7em top 50%, 0 0',
                 // backgroundSize: '.65em auto, 100%',
             }}
-            defaultValue={props.defaultValue}
+            defaultValue={props.defaultValue || ''}
         >
-            <option selected={!props?.defaultValue} disabled={true} value="">
+            <option disabled={true} value="">
                 {placeholder}
             </option>
             {children}

@@ -46,6 +46,9 @@ The FrameTrain Frames SDK includes many useful **Functions**, **Hooks**, and **U
 ### APIs 
 - Neynar Frame Validation
 - Neynar User Info
+- Gating
+- Webhooks
+- Transactions
 - Loading Google Fonts
 - Uploading Images
 - Running Code on the Server
@@ -53,6 +56,7 @@ The FrameTrain Frames SDK includes many useful **Functions**, **Hooks**, and **U
 - Scraping
 
 ### Hooks
+- **`useFarcasterName`**
 - **`useFarcasterId`**
 - **`useFrameId`**
 - **`useFrameConfig`**
@@ -70,3 +74,13 @@ The project currently needs help with:
 - Bug Fixes & More. If you see something that sucks, and you know how to do it better, open a PR and let’s see that confidence. It would be really appreciated actually.
 
 For a good experience, please install the [Biome](https://biomejs.dev) extension. This repository uses Biome, not ESLint.
+
+# Acknowledgements
+
+FrameTrain either uses, has used, or got inspired by the following libraries:
+- [Frog](https://github.com/wevm/frog) by [@wevm](https://github.com/wevm) and [@dalechyn](https://github.com/dalechyn)
+- [Frames.js](https://github.com/framesjs/frames.js) by [@davidfurlong](https://github.com/davidfurlong) and [@stephancill](https://github.com/stephancill)
+- [Onchainkit](https://github.com/coinbase/onchainkit) by [@coinbase](https://github.com/coinbase)
+
+We are very grateful for their contributions to the Frames ecosystem!
+

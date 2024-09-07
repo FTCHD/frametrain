@@ -1,11 +1,9 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
-import { FrameError } from '@/sdk/error'
-import { loadGoogleFont } from '@/sdk/fonts'
+import type { ReactElement } from 'react'
 import type { FramePressConfig, SlideConfig } from '../Config'
 import { FigmaView, NoFigmaView } from '../views/FigmaView'
 import FontConfig from './FontConfig'
-import type { ReactElement } from 'react'
 
 export default async function buildFigmaFrame(
     config: FramePressConfig,

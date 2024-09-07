@@ -60,7 +60,7 @@ function collectFilePaths(configs: any[]): string[] {
             for (const key in obj) {
                 if (obj.hasOwnProperty(key)) {
                     const value = obj[key]
-                    if (typeof value === 'string' && value.startsWith(baseUrl)) {
+                    if (typeof value === 'string' && value.includes('frames/')) {
                         urls.push(value.replace(baseUrl, ''))
                     } else if (typeof value === 'object' && value !== null) {
                         traverse(value)
