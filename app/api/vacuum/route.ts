@@ -6,9 +6,8 @@ import { notFound } from 'next/navigation'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-	
-	return Response.json({ message: 'disabled' }, { status: 200 })
-	
+    // return Response.json({ message: 'disabled' }, { status: 200 })
+    const deleteFiles = false
     try {
         const frames = await client.select().from(frameTable).all()
 
@@ -40,13 +39,24 @@ export async function GET() {
         }
 
         const filesToDelete = files.filter((file) => !filesFound.includes(file))
+        if (deleteFiles) {
+            await deleteFilesFromR2(s3, filesToDelete)
+        }
 
-        await deleteFilesFromR2(s3, filesToDelete)
-
+        // NOTE: This(data, length obj) is for debugging purposes only. Will revert back when everything is working
         return Response.json({
-            files: files.length,
-            filesToDelete: filesToDelete.length,
-            filesFound: filesFound.length,
+            files: {
+                data: files,
+                length: files.length,
+            },
+            filesToDelete: {
+                data: filesToDelete,
+                length: filesToDelete.length,
+            },
+            filesFound: {
+                data: filesFound,
+                length: filesFound.length,
+            },
         })
     } catch (e) {
         const error = e as Error
@@ -57,7 +67,7 @@ export async function GET() {
 function collectFilePaths(configs: any[]): string[] {
     const baseUrl = `${process.env.NEXT_PUBLIC_CDN_HOST}/`
 
-    const urls: string[] = []
+    const urlSet = new Set<string>()
     function traverse(obj: any) {
         if (typeof obj === 'object' && obj !== null) {
             for (const key in obj) {
@@ -71,7 +81,14 @@ function collectFilePaths(configs: any[]): string[] {
                             value.includes('.jpeg') ||
                             value.includes('.png'))
                     ) {
-                        urls.push(value.replace(baseUrl, ''))
+                        // check if value is a url and is baseurl
+
+                        if (value.includes('frames/')) {
+                            console.log(`key:${key}, value:${value}`)
+                            const path = value.replace(baseUrl, '').replace('/frames/', 'frames/')
+
+                            urlSet.add(path)
+                        }
                     } else if (typeof value === 'object' && value !== null) {
                         traverse(value)
                     }
@@ -84,7 +101,7 @@ function collectFilePaths(configs: any[]): string[] {
         traverse(config)
     }
 
-    return urls
+    return Array.from(urlSet)
 }
 
 async function deleteFilesFromR2(s3: S3, files: string[]) {
