@@ -2,23 +2,17 @@ import { type ComponentPropsWithoutRef, forwardRef } from 'react'
 
 const Select = forwardRef<
     HTMLSelectElement,
-    Omit<ComponentPropsWithoutRef<'select'>, 'onChange'> & { onChange?: (value: string) => void }
->(({ className, children, ...props }, ref) => {
+    Omit<ComponentPropsWithoutRef<'select'>, 'onChange'> & {
+        onChange?: (value: string) => void
+    } & {
+        placeholder?: string
+    }
+>(({ className, children, placeholder, ...props }, ref) => {
     return (
         <select
             {...props}
             ref={ref}
-            onChange={
-                props.onChange
-                    ? (e) => {
-                          const { onChange } = props
-                          if (!onChange) return
-                          const font = e.currentTarget.value
-                          if (!font) return
-                          onChange(font)
-                      }
-                    : undefined
-            }
+            onChange={props.onChange ? (e) => props.onChange!(e.currentTarget.value) : undefined}
             className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
             style={{
                 MozAppearance: 'none',
@@ -30,8 +24,11 @@ const Select = forwardRef<
                 // backgroundPosition: 'right .7em top 50%, 0 0',
                 // backgroundSize: '.65em auto, 100%',
             }}
-            defaultValue={props.defaultValue}
+            defaultValue={props.defaultValue || ''}
         >
+            <option disabled={true} value="">
+                {placeholder}
+            </option>
             {children}
         </select>
     )
