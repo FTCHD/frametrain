@@ -25,7 +25,8 @@ export async function GET(req: NextRequest) {
             },
         })
         const objects = await s3.listObjects({ Bucket: `${process.env.S3_BUCKET}` })
-        const files = (objects.Contents ?? []).map((object) => object.Key) as string[]
+        let files = (objects.Contents ?? []).map((object) => object.Key) as string[]
+        files = files.map((file) => file.replace('frames/', ''))
         const filesFound: string[] = []
 
         console.log(`Found ${files.length} files in R2 and ${frames.length} frames in the database`)
@@ -106,7 +107,7 @@ async function deleteFilesFromR2(s3: S3, files: string[]) {
     const deleteParams = {
         Bucket: `${process.env.S3_BUCKET}`,
         Delete: {
-            Objects: files.map((file) => ({ Key: file })),
+            Objects: files.map((file) => ({ Key: `frames/${file}` })),
         },
     }
     await s3.deleteObjects(deleteParams)
