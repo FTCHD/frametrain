@@ -2,12 +2,13 @@ import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
 import { S3 } from '@aws-sdk/client-s3'
 import { notFound } from 'next/navigation'
+import type { NextRequest } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
-    // return Response.json({ message: 'disabled' }, { status: 200 })
-    const deleteFiles = false
+export async function GET(req: NextRequest) {
+    const deleteFiles = req.nextUrl.searchParams.get('delete') === 'true'
+
     try {
         const frames = await client.select().from(frameTable).all()
 
@@ -38,12 +39,17 @@ export async function GET() {
             filesFound.push(...paths)
         }
 
-        const filesToDelete = files.filter((file) => !filesFound.includes(file))
+        const filesToDelete = files.filter((file) => !filesFound.find((f) => f.includes(file)))
+
         if (deleteFiles) {
             await deleteFilesFromR2(s3, filesToDelete)
+            return Response.json({
+                files: files.length,
+                filesToDelete: filesToDelete.length,
+                filesFound: filesFound.length,
+            })
         }
 
-        // NOTE: This(data, length obj) is for debugging purposes only. Will revert back when everything is working
         return Response.json({
             files: {
                 data: files,
@@ -65,8 +71,6 @@ export async function GET() {
 }
 
 function collectFilePaths(configs: any[]): string[] {
-    const baseUrl = `${process.env.NEXT_PUBLIC_CDN_HOST}/`
-
     const urlSet = new Set<string>()
     function traverse(obj: any) {
         if (typeof obj === 'object' && obj !== null) {
@@ -81,14 +85,7 @@ function collectFilePaths(configs: any[]): string[] {
                             value.includes('.jpeg') ||
                             value.includes('.png'))
                     ) {
-                        // check if value is a url and is baseurl
-
-                        if (value.includes('frames/')) {
-                            console.log(`key:${key}, value:${value}`)
-                            const path = value.replace(baseUrl, '').replace('/frames/', 'frames/')
-
-                            urlSet.add(path)
-                        }
+                        urlSet.add(value)
                     } else if (typeof value === 'object' && value !== null) {
                         traverse(value)
                     }
