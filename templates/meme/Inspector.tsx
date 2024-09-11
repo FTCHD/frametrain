@@ -3,8 +3,6 @@ import { Button, Input, Select } from '@/sdk/components'
 import { useFrameConfig } from '@/sdk/hooks'
 import { Configuration } from '@/sdk/inspector'
 import { LoaderIcon } from 'lucide-react'
-import ms from 'ms'
-import { unstable_cache } from 'next/cache'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import type { Config } from '.'
@@ -25,28 +23,22 @@ export default function Inspector() {
     const [captions, setCaptions] = useState<string[]>([])
 
     useEffect(() => {
-        const fetchMemeTemplates = unstable_cache(
-            async () => {
-                try {
-                    const result = await getMemeTemplates()
-                    const memes = result.map((meme) => ({
-                        id: meme.id,
-                        name: meme.name,
-                        url: meme.url,
-                        positions: meme.box_count,
-                    }))
-                    setMemeTemplates(memes)
-                } catch (e) {
-                    const error = e as Error
-                    toast.remove()
-                    toast.error(error.message)
-                }
-            },
-            [],
-            {
-                revalidate: ms('7d') / 1000,
+        const fetchMemeTemplates = async () => {
+            try {
+                const result = await getMemeTemplates()
+                const memes = result.map((meme) => ({
+                    id: meme.id,
+                    name: meme.name,
+                    url: meme.url,
+                    positions: meme.box_count,
+                }))
+                setMemeTemplates(memes)
+            } catch (e) {
+                const error = e as Error
+                toast.remove()
+                toast.error(error.message)
             }
-        )
+        }
 
         fetchMemeTemplates()
     }, [])
