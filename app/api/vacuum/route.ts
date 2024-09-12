@@ -2,13 +2,10 @@ import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
 import { S3 } from '@aws-sdk/client-s3'
 import { notFound } from 'next/navigation'
-import type { NextRequest } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(req: NextRequest) {
-    const deleteFiles = req.nextUrl.searchParams.get('delete') === 'true'
-
+export async function GET() {
     try {
         const frames = await client.select().from(frameTable).all()
 
@@ -44,28 +41,12 @@ export async function GET(req: NextRequest) {
 
         const filesToDelete = files.filter((file) => !filesFound.find((f) => f.includes(file)))
 
-        if (deleteFiles) {
-            await deleteFilesFromR2(s3, filesToDelete)
-            return Response.json({
-                files: files.length,
-                filesToDelete: filesToDelete.length,
-                filesFound: filesFound.length,
-            })
-        }
+        await deleteFilesFromR2(s3, filesToDelete)
 
         return Response.json({
-            files: {
-                data: files,
-                length: files.length,
-            },
-            filesToDelete: {
-                data: filesToDelete,
-                length: filesToDelete.length,
-            },
-            filesFound: {
-                data: filesFound,
-                length: filesFound.length,
-            },
+            files: files.length,
+            filesToDelete: filesToDelete.length,
+            filesFound: filesFound.length,
         })
     } catch (e) {
         const error = e as Error
