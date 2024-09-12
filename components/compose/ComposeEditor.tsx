@@ -10,7 +10,6 @@ import { BadgeInfoIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { InspectorContext } from '../editor/Context'
-import BaseSpinner from '../shadcn/BaseSpinner'
 import { Button } from '../shadcn/Button'
 import { ComposePreview } from './ComposePreview'
 
@@ -86,12 +85,12 @@ export default function ComposeEditor({
         <div className="flex flex-col items-center w-full h-full">
             <ComposePreview />
 
-            <div className="w-full p-4 dark:bg-[#201629] bg-white flex flex-col gap-4">
-                <div className="w-full text-base font-medium p-4 border border-[#4c3a4e70] rounded-xl  bg-stone-100 dark:bg-[#0c0c0c]">
-                    <BadgeInfoIcon className="w-5 h-5 inline-block mr-2" /> {template.description}
+            <div className="w-full h-full p-4 dark:bg-[#201629] bg-white flex flex-col items-center gap-2">
+                <div className="w-full text-sm font-medium p-3 border border-[#4c3a4e70] rounded-xl bg-stone-100 dark:bg-[#0c0c0c]">
+                    <BadgeInfoIcon className="inline-block mr-1 w-4 h-4" /> {template.description}
                 </div>
 
-                <div className="flex flex-col w-full p-3 px-4  bg-stone-100 dark:bg-[#0c0c0c] rounded-xl ">
+                <div className="flex flex-col h-full w-full  bg-stone-100 dark:bg-[#0c0c0c] rounded-xl">
                     <InspectorContext.Provider
                         value={{
                             frameId: frame.id,
@@ -105,9 +104,7 @@ export default function ComposeEditor({
                         <Inspector />
                     </InspectorContext.Provider>
                 </div>
-            </div>
 
-            <div className="flex flex-row justify-center items-center w-full p-2 pb-5 dark:bg-[#201629] bg-white">
                 <Button
                     className="w-[50%] rounded-lg font-semibold border border-transparent bg-[#7c65c1] hover:bg-[#6944ba] active:border-[#ffffff4d] dark:text-white"
                     variant={'default'}
@@ -139,12 +136,6 @@ export default function ComposeEditor({
                 >
                     ADD TO CAST
                 </Button>
-
-                {updating && (
-                    <div className="fixed right-6 bottom-6 z-20 p-3 rounded-full bg-secondary">
-                        <BaseSpinner />
-                    </div>
-                )}
             </div>
         </div>
     )

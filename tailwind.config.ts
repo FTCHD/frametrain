@@ -3,10 +3,12 @@ import type { Config } from 'tailwindcss'
 const config = {
     darkMode: 'selector',
     content: [
-        './components/**/*.{ts,tsx,js, jsx,mdx}',
-        './sdk/components/**/*.{ts,tsx,js, jsx,mdx}',
-        './app/**/*.{ts,tsx,js, jsx,mdx}',
-        './templates/**/*.{ts,tsx,js, jsx,mdx}',
+        './components/**/*.{ts,tsx,js,jsx,mdx}',
+        './sdk/components/**/*.{ts,tsx,js,jsx,mdx}',
+        './sdk/inspector/**/*.{ts,tsx,js,jsx,mdx}',
+        './sdk/views/**/*.{ts,tsx,js,jsx,mdx}',
+        './app/**/*.{ts,tsx,js,jsx,mdx}',
+        './templates/**/*.{ts,tsx,js,jsx,mdx}',
     ],
     prefix: '',
     theme: {

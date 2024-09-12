@@ -82,9 +82,9 @@ function Root(props: RootProps): ReactElement {
     })
 
     return (
-        <div className="flex flex-col gap-10 h-full w-full">
+        <div className="flex flex-col gap-2 w-full h-full">
             {validChildren.length > 1 && (
-                <div className="flex gap-2 overflow-scroll">
+                <div className="flex overflow-scroll gap-2 pt-3 pl-4 h-20 max-md:h-14">
                     {validChildren.map((child) => {
                         const sectionId = `${child.props.id}`
                         return (
@@ -92,7 +92,7 @@ function Root(props: RootProps): ReactElement {
                                 key={sectionId}
                                 href={`#${sectionId}`}
                                 className={cn(
-                                    'whitespace-nowrap w-full sticky top-0 z-10 border border-[#ffffff30] rounded-xl p-2 px-3 hover:border-[#ffffff90] text-[#ffffff90]',
+                                    'whitespace-nowrap h-full border border-[#ffffff30] rounded-xl p-2 px-4 hover:border-[#ffffff90] text-[#ffffff90]',
                                     config?.sectionId === sectionId && 'text-white bg-border'
                                 )}
                                 onClick={() => {
@@ -107,7 +107,7 @@ function Root(props: RootProps): ReactElement {
                     })}
                 </div>
             )}
-            <div className="overflow-y-scroll flex flex-col gap-5 max-md:gap-3">
+            <div className="flex px-4 overflow-y-scroll max-h-[calc(100vh-200px)] flex-col gap-5 max-md:gap-3">
                 {validChildren}
             </div>
         </div>

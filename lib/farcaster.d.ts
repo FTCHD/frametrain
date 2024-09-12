@@ -34,7 +34,7 @@ export type FarcasterUserInfo = NeynarUser
 export type FarcasterChannel = NeynarChannel
 
 export interface BuildFrameData {
-    buttons: FrameButtonMetadata[]
+    buttons?: FrameButtonMetadata[]
     aspectRatio?: '1.91:1' | '1:1' | undefined
     inputText?: string
     refreshPeriod?: number
