@@ -27,6 +27,8 @@ export async function GET(req: NextRequest) {
         const objects = await s3.listObjects({ Bucket: `${process.env.S3_BUCKET}` })
         let files = (objects.Contents ?? []).map((object) => object.Key) as string[]
         files = files.map((file) => file.replace('frames/', ''))
+        // exclude preview images
+        files = files.filter((file) => !file.endsWith('preview.png'))
         const filesFound: string[] = []
 
         console.log(`Found ${files.length} files in R2 and ${frames.length} frames in the database`)
