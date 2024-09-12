@@ -84,7 +84,7 @@ function Root(props: RootProps): ReactElement {
     return (
         <div className="flex flex-col gap-10 h-full w-full">
             {validChildren.length > 1 && (
-                <div className="hidden gap-2 overflow-scroll md:flex">
+                <div className="flex gap-2 overflow-scroll">
                     {validChildren.map((child) => {
                         const sectionId = `${child.props.id}`
                         return (
