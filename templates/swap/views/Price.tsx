@@ -1,5 +1,5 @@
 import type { Config } from '..'
-import { formatSymbol } from '../common/shared'
+import { formatSymbol } from '../common/format'
 
 type PriceViewProps = Pick<NonNullable<Config['pool']>, 'token0' | 'token1' | 'network'> & {
     amount: number

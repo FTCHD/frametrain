@@ -2,11 +2,10 @@
 import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { getGlide } from '@/sdk/glide'
 import BasicView from '@/sdk/views/BasicView'
 import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
 import type { Config } from '..'
-import { getClient } from '../common/onchain'
-import { getGlideConfig } from '../common/shared'
 import RefreshView from '../views/Refresh'
 import initial from './initial'
 
@@ -29,7 +28,7 @@ export default async function status({
     }
 
     if (!body.transaction && body.tapped_button) {
-        return initial({ config, body, storage: undefined })
+        return initial({ config })
     }
 
     if (!(body.transaction?.hash || params.transactionId)) {
@@ -64,17 +63,16 @@ export default async function status({
         body.transaction ? body.transaction.hash : params.transactionId
     ) as `0x${string}`
 
-    const client = getClient(config.token.chain)
-    const glideConfig = getGlideConfig(client.chain)
-
+    const glide = getGlide(config.token.chain)
+	
     try {
         // Get the status of the payment transaction
-        await updatePaymentTransaction(glideConfig, {
+        await updatePaymentTransaction(glide, {
             sessionId: params.sessionId,
             hash: txHash,
         })
         // Wait for the session to complete. It can take a few seconds
-        await waitForSession(glideConfig, params.sessionId)
+        await waitForSession(glide, params.sessionId)
 
         const buildData: Record<string, any> = {
             fonts,
@@ -83,9 +81,9 @@ export default async function status({
                     label: 'Donate again',
                 },
                 {
-                    label: `View on ${client.chain.blockExplorers?.default.name}`,
+                    label: `View on ${glide.chains[0].blockExplorers?.default.name}`,
                     action: 'link',
-                    target: `https://${client.chain.blockExplorers?.default.url}/tx/${txHash}`,
+                    target: `https://${glide.chains[0].blockExplorers?.default.url}/tx/${txHash}`,
                 },
                 {
                     label: 'Create Your Own',
@@ -124,9 +122,9 @@ export default async function status({
                     label: 'Donate again',
                 },
                 {
-                    label: `View on ${client.chain.blockExplorers?.default.name}`,
+                    label: `View on ${glide.chains[0].blockExplorers?.default.name}`,
                     action: 'link',
-                    target: `https://${client.chain.blockExplorers?.default.url}/tx/${txHash}`,
+                    target: `https://${glide.chains[0].blockExplorers?.default.url}/tx/${txHash}`,
                 },
                 {
                     label: 'Create Your Own',

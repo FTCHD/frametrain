@@ -1,5 +1,5 @@
 import type { Config as BaseConfig } from '..'
-import { formatSymbol } from '../common/shared'
+import { formatSymbol } from '../common/format'
 
 type Token = {
     logo: string

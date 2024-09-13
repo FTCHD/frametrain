@@ -12,8 +12,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/shadcn/Table'
-import { getViemClient } from '@/lib/gating'
 import { Select } from '@/sdk/components/Select'
+import { getViem } from '@/sdk/viem'
 import { Trash2Icon } from 'lucide-react'
 import NextLink from 'next/link'
 import { type ReactNode, useMemo, useState } from 'react'
@@ -88,7 +88,7 @@ const ErcGating = ({
 
                     try {
                         const token = getContract({
-                            client: getViemClient(network),
+                            client: getViem(network),
                             address: getAddress(address),
                             abi: erc20Abi,
                         })
@@ -125,15 +125,15 @@ const ErcGating = ({
                         Network
                     </Label>
                     <Select id="network" required={true}>
-                        <option value="ETH">Mainnet</option>
-                        <option value="BASE">Base</option>
-                        <option value="OP">Optimism</option>
-                        <option value="ZORA">Zora</option>
-                        <option value="BLAST">Blast</option>
-                        <option value="POLYGON">Polygon</option>
-                        <option value="FANTOM">Fantom</option>
-                        <option value="ARBITRUM">Arbitrum</option>
-                        <option value="BNB">BNB</option>
+                        <option value="mainnet">Mainnet</option>
+                        <option value="base">Base</option>
+                        <option value="optimism">Optimism</option>
+                        <option value="zora">Zora</option>
+                        <option value="blast">Blast</option>
+                        <option value="polygon">Polygon</option>
+                        <option value="fantom">Fantom</option>
+                        <option value="arbitrum">Arbitrum</option>
+                        <option value="bnb">BNB</option>
                     </Select>
                 </div>
                 <div className="flex flex-row items-center w-full gap-2">

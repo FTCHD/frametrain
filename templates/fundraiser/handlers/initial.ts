@@ -1,17 +1,14 @@
 'use server'
-
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import BasicView from '@/sdk/views/BasicView'
 import type { Config } from '..'
-import { formatSymbol } from '../common/shared'
+import { formatSymbol } from '../common'
 
 export default async function initial({
     config,
 }: {
-    body: undefined
     config: Config
-    storage: undefined
 }): Promise<BuildFrameData> {
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []

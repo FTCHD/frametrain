@@ -1,7 +1,7 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
+import type { ChainKey } from '@/sdk/viem'
 import type { BasicViewProps } from '@/sdk/views/BasicView'
 import Inspector from './Inspector'
-import type { ChainKey } from './common/onchain'
 import cover from './cover.avif'
 import handlers from './handlers'
 import icon from './icon.avif'

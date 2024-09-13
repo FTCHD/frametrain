@@ -2,19 +2,9 @@ import { GATING_ADVANCED_OPTIONS, type GATING_ALL_OPTIONS } from '@/sdk/componen
 import type { GatingRequirementsType, GatingType } from '@/sdk/components/gating/types'
 import { FrameError } from '@/sdk/error'
 import { getFarcasterUserChannels } from '@/sdk/neynar'
-import {
-    http,
-    createPublicClient,
-    erc20Abi,
-    erc721Abi,
-    formatUnits,
-    getAddress,
-    getContract,
-    parseAbi,
-} from 'viem'
-import type { Chain } from 'viem'
-import { arbitrum, base, blast, bsc, fantom, mainnet, optimism, polygon, zora } from 'viem/chains'
-import type { FrameValidatedActionPayload } from './farcaster'
+import { type ChainKey, getViem } from '@/sdk/viem'
+import { erc20Abi, erc721Abi, formatUnits, getAddress, getContract, parseAbi } from 'viem'
+import type { FramePayloadValidated } from './farcaster'
 
 const ERC1155_ABI = parseAbi([
     'function name() public view returns (string)',
@@ -22,31 +12,6 @@ const ERC1155_ABI = parseAbi([
     'function balanceOf(address _owner, uint256 _id) public view returns (uint256)',
 ])
 
-export function getViemClient(network: string) {
-    const networkToChainMap: Record<string, Chain> = {
-        'ETH': mainnet,
-        'BASE': base,
-        'OP': optimism,
-        'ZORA': zora,
-        'BLAST': blast,
-        'POLYGON': polygon,
-        'FANTOM': fantom,
-        'ARBITRUM': arbitrum,
-        'BNB': bsc,
-    }
-
-    const chain = networkToChainMap[network]
-
-    if (!chain) {
-        throw new FrameError('Unsupported chain')
-    }
-
-    return createPublicClient({
-        chain,
-        transport: http(),
-        batch: { multicall: { wait: 10, batchSize: 1000 } },
-    })
-}
 
 async function checkOpenRankScore(fid: number, owner: number, score: number) {
     const url = `https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=${score}&limit=1000&lite=true`
@@ -81,13 +46,13 @@ async function checkOpenRankScore(fid: number, owner: number, score: number) {
 
 async function checkOwnsErc20(
     addresses: string[],
-    chain: string,
+    chain: ChainKey,
     contract: string,
     symbol: string,
     minAmount = 1
 ) {
     const token = getContract({
-        client: getViemClient(chain),
+        client: getViem(chain),
         address: getAddress(contract),
         abi: erc20Abi,
     })
@@ -109,13 +74,13 @@ async function checkOwnsErc20(
 
 async function checkOwnsErc721(
     addresses: string[],
-    chain: string,
+    chain: ChainKey,
     contract: string,
     symbol: string,
     minAmount = 1
 ) {
     const token = getContract({
-        client: getViemClient(chain),
+        client: getViem(chain),
         address: getAddress(contract),
         abi: erc721Abi,
     })
@@ -135,14 +100,14 @@ async function checkOwnsErc721(
 
 async function checkOwnsErc1155(
     addresses: string[],
-    chain: string,
+    chain: ChainKey,
     contract: string,
     symbol: string,
     tokenId: number,
     minAmount = 1
 ) {
     const token = getContract({
-        client: getViemClient(chain),
+        client: getViem(chain),
         address: getAddress(contract),
         abi: ERC1155_ABI,
     })
@@ -292,7 +257,7 @@ const keyToValidator: Record<
 }
 
 export async function runGatingChecks(
-    body: FrameValidatedActionPayload,
+    body: FramePayloadValidated,
     config: GatingType | undefined
 ): Promise<void> {
     if (!config) {
