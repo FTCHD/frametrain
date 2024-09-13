@@ -1,6 +1,6 @@
 'use client'
 import { Button, Input, Select } from '@/sdk/components'
-import { useFrameConfig, useFrameId } from '@/sdk/hooks'
+import { useFrameConfig } from '@/sdk/hooks'
 import { Configuration } from '@/sdk/inspector'
 import { LoaderIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -16,7 +16,6 @@ type Meme = {
 }
 
 export default function Inspector() {
-    const frameId = useFrameId()
     const [config, updateConfig] = useFrameConfig<Config>()
     const [memeTemplates, setMemeTemplates] = useState<Meme[]>([])
     const [selectedMeme, setSelectedMeme] = useState<Meme | undefined>(undefined)
@@ -24,36 +23,8 @@ export default function Inspector() {
     const [captions, setCaptions] = useState<string[]>([])
 
     useEffect(() => {
-        function setLocalStorage(key: string, item: any) {
-            localStorage.setItem(`${frameId}-${key}`, JSON.stringify(item))
-        }
-
-        function getLocalStorage<T>(key: string) {
-            const item = localStorage.getItem(`${frameId}-${key}`)
-            if (!item) return null
-            return JSON.parse(item) as T
-        }
-
-        function fetchMemeTemplatesFromLocalStorage() {
-            const cacheLastUpdated = getLocalStorage<number>('memeLastUpdated')
-            const cachedMemeTemplates = getLocalStorage<Meme[]>('memeTemplates')
-
-            if (
-                !(cacheLastUpdated && cachedMemeTemplates) ||
-                Date.now() - cacheLastUpdated > 1000 * 60 * 60 * 24
-            ) {
-                return null
-            }
-            return cachedMemeTemplates
-        }
-
-        async function fetchMemeTemplates() {
+        const fetchMemeTemplates = async () => {
             try {
-                const cachedMemeTemplates = fetchMemeTemplatesFromLocalStorage()
-                if (cachedMemeTemplates) {
-                    setMemeTemplates(cachedMemeTemplates)
-                    return
-                }
                 const result = await getMemeTemplates()
                 const memes = result.map((meme) => ({
                     id: meme.id,
@@ -62,8 +33,6 @@ export default function Inspector() {
                     positions: meme.box_count,
                 }))
                 setMemeTemplates(memes)
-                setLocalStorage('memeLastUpdated', Date.now())
-                setLocalStorage('memeTemplates', memes)
             } catch (e) {
                 const error = e as Error
                 toast.remove()
@@ -72,27 +41,27 @@ export default function Inspector() {
         }
 
         fetchMemeTemplates()
-    }, [frameId])
+    }, [])
 
     return (
         <Configuration.Root>
             <Configuration.Section title="Meme Templates" description="Select a meme template">
-               <Select
-                        disabled={generating}
-                        defaultValue={selectedMeme?.id}
-                        placeholder="Select meme template"
-                        onChange={(e) => {
-                            const meme = memeTemplates.find((meme) => meme.id === e)
+                <Select
+                    disabled={generating}
+                    defaultValue={selectedMeme?.id}
+                    placeholder="Select meme template"
+                    onChange={(e) => {
+                        const meme = memeTemplates.find((meme) => meme.id === e)
 
-                            if (meme) setSelectedMeme(meme)
-                        }}
-                    >
-                        {memeTemplates.map((meme) => (
-                            <option key={meme.id} value={meme.id}>
-                                {meme.name}
-                            </option>
-                        ))}
-                    </Select>
+                        if (meme) setSelectedMeme(meme)
+                    }}
+                >
+                    {memeTemplates.map((meme) => (
+                        <option key={meme.id} value={meme.id}>
+                            {meme.name}
+                        </option>
+                    ))}
+                </Select>
             </Configuration.Section>
 
             <Configuration.Section title="Thumbnail" description="Preview your meme template">
@@ -191,7 +160,7 @@ export default function Inspector() {
                                 updateConfig({
                                     memeUrl: undefined,
                                     template: undefined,
-                                     aspectRatio: '1:1',
+                                    aspectRatio: '1:1',
                                 })
                             }
                         >

@@ -6,9 +6,6 @@ import { notFound } from 'next/navigation'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-	
-	return Response.json({ message: 'disabled' }, { status: 200 })
-	
     try {
         const frames = await client.select().from(frameTable).all()
 
@@ -25,7 +22,10 @@ export async function GET() {
             },
         })
         const objects = await s3.listObjects({ Bucket: `${process.env.S3_BUCKET}` })
-        const files = (objects.Contents ?? []).map((object) => object.Key) as string[]
+        let files = (objects.Contents ?? []).map((object) => object.Key) as string[]
+        files = files.map((file) => file.replace('frames/', ''))
+        // exclude preview images
+        files = files.filter((file) => !file.endsWith('preview.png'))
         const filesFound: string[] = []
 
         console.log(`Found ${files.length} files in R2 and ${frames.length} frames in the database`)
@@ -39,7 +39,7 @@ export async function GET() {
             filesFound.push(...paths)
         }
 
-        const filesToDelete = files.filter((file) => !filesFound.includes(file))
+        const filesToDelete = files.filter((file) => !filesFound.find((f) => f.includes(file)))
 
         await deleteFilesFromR2(s3, filesToDelete)
 
@@ -55,9 +55,7 @@ export async function GET() {
 }
 
 function collectFilePaths(configs: any[]): string[] {
-    const baseUrl = `${process.env.NEXT_PUBLIC_CDN_HOST}/`
-
-    const urls: string[] = []
+    const urlSet = new Set<string>()
     function traverse(obj: any) {
         if (typeof obj === 'object' && obj !== null) {
             for (const key in obj) {
@@ -71,7 +69,7 @@ function collectFilePaths(configs: any[]): string[] {
                             value.includes('.jpeg') ||
                             value.includes('.png'))
                     ) {
-                        urls.push(value.replace(baseUrl, ''))
+                        urlSet.add(value)
                     } else if (typeof value === 'object' && value !== null) {
                         traverse(value)
                     }
@@ -84,7 +82,7 @@ function collectFilePaths(configs: any[]): string[] {
         traverse(config)
     }
 
-    return urls
+    return Array.from(urlSet)
 }
 
 async function deleteFilesFromR2(s3: S3, files: string[]) {
@@ -92,7 +90,7 @@ async function deleteFilesFromR2(s3: S3, files: string[]) {
     const deleteParams = {
         Bucket: `${process.env.S3_BUCKET}`,
         Delete: {
-            Objects: files.map((file) => ({ Key: file })),
+            Objects: files.map((file) => ({ Key: `frames/${file}` })),
         },
     }
     await s3.deleteObjects(deleteParams)

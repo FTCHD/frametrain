@@ -1,6 +1,7 @@
 'use server'
 
 import ms from 'ms'
+import { unstable_cache } from 'next/cache'
 
 type MemeTemplate = {
     id: string
@@ -12,35 +13,39 @@ type MemeTemplate = {
     captions: number
 }
 
-export async function getMemeTemplates() {
-    try {
-        const response = await fetch('https://api.imgflip.com/get_memes', {
-            next: { revalidate: ms('1h') },
-        })
-        const data = (await response.json()) as
-            | {
-                  success: true
-                  data: {
-                      memes: MemeTemplate[]
+export const getMemeTemplates = unstable_cache(
+    async () => {
+        try {
+            const response = await fetch('https://api.imgflip.com/get_memes')
+            const data = (await response.json()) as
+                | {
+                      success: true
+                      data: {
+                          memes: MemeTemplate[]
+                      }
                   }
-              }
-            | {
-                  success: false
-                  error_message: string
-              }
+                | {
+                      success: false
+                      error_message: string
+                  }
 
-        if (!data.success) {
-            throw new Error(data.error_message)
-        }
+            if (!data.success) {
+                throw new Error(data.error_message)
+            }
 
-        return data.data.memes
-    } catch {
-        throw {
-            success: false,
-            message: 'An error occurred while fetching meme templates',
+            return data.data.memes
+        } catch {
+            throw {
+                success: false,
+                message: 'An error occurred while fetching meme templates',
+            }
         }
+    },
+    [],
+    {
+        revalidate: ms('7d') / 1000,
     }
-}
+)
 
 export async function createMeme(captions: string[], id: string) {
     const url = new URL('https://api.imgflip.com/caption_image')
