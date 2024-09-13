@@ -12,5 +12,5 @@ export default async function more({
     config: Config
     storage: undefined
 }): Promise<BuildFrameData> {
-    return initial({ config, body, storage })
+    return initial({ config, storage })
 }

@@ -14,15 +14,15 @@ import {
     ToggleGroup,
 } from '@/sdk/components'
 import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { Configuration } from '@/sdk/inspector'
 import { TrashIcon } from 'lucide-react'
 import type { AnchorHTMLAttributes, FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import type { Config, PoolToken } from '.'
-import { formatSymbol } from './common/shared'
+import { formatSymbol } from './common/format'
 import { getPoolData } from './common/uniswap'
 import { supportedChains } from './common/viem'
-import { Configuration } from '@/sdk/inspector'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
