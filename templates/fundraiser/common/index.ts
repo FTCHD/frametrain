@@ -1,6 +1,15 @@
 import { type ChainKey, getViem } from '@/sdk/viem'
 import { type Hex, erc20Abi } from 'viem'
 
+export function formatSymbol(amount: string | number, symbol: string) {
+    const regex = /(USDT|USDC|DAI)/
+    if (regex.test(symbol)) {
+        return `$${amount}`
+    }
+
+    return `${amount} ${symbol}`
+}
+
 export async function getAddressFromEns(name: string) {
     const client = getViem('mainnet')
 
