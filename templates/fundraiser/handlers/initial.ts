@@ -9,9 +9,7 @@ import { formatSymbol } from '../common/shared'
 export default async function initial({
     config,
 }: {
-    body: undefined
     config: Config
-    storage: undefined
 }): Promise<BuildFrameData> {
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
