@@ -500,7 +500,7 @@ export default function Inspector() {
                 ) : null}
             </Configuration.Section>
             <Configuration.Section
-                title="ProgressBar"
+                title="Progress Bar"
                 description="Configure the progress bar color."
             >
                 <h2 className="text-lg font-semibold">Progress bar Color</h2>
