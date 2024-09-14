@@ -16,6 +16,7 @@ import { FramePreview } from './FramePreview'
 import { InspectorContext } from './editor/Context'
 import PublishMenu from './editor/PublishMenu'
 import WebhookEventOptions from './editor/WebhookEventOptions'
+import { ScrollSectionProvider } from './editor/useScrollSection'
 import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
@@ -314,7 +315,9 @@ export default function FrameEditor({
                                 // setLoading
                             }}
                         >
-                            <Inspector />
+                            <ScrollSectionProvider>
+                                <Inspector />
+                            </ScrollSectionProvider>
                         </InspectorContext.Provider>
                     </div>
                 </div>

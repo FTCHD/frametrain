@@ -10,6 +10,7 @@ import { BadgeInfoIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { InspectorContext } from '../editor/Context'
+import { ScrollSectionProvider } from '../editor/useScrollSection'
 import { Button } from '../shadcn/Button'
 import { ComposePreview } from './ComposePreview'
 
@@ -86,7 +87,7 @@ export default function ComposeEditor({
             <ComposePreview />
 
             <div className="w-full h-full p-4 dark:bg-[#201629] bg-white flex flex-col items-center gap-2">
-                <div className="w-full text-sm font-medium p-3 border border-[#4c3a4e70] rounded-xl bg-stone-100 dark:bg-[#0c0c0c]">
+                <div className="w-full text-xs font-medium p-2 border border-[#4c3a4e70] rounded-xl bg-stone-100 dark:bg-[#0c0c0c]">
                     <BadgeInfoIcon className="inline-block mr-1 w-4 h-4" /> {template.description}
                 </div>
 
@@ -101,12 +102,14 @@ export default function ComposeEditor({
                             fname: fname,
                         }}
                     >
-                        <Inspector />
+                        <ScrollSectionProvider>
+                            <Inspector />
+                        </ScrollSectionProvider>
                     </InspectorContext.Provider>
                 </div>
 
                 <Button
-                    className="w-[50%] rounded-lg font-semibold border border-transparent bg-[#7c65c1] hover:bg-[#6944ba] active:border-[#ffffff4d] dark:text-white"
+                    className="w-[55%] rounded-lg font-semibold border border-transparent bg-[#7c65c1] hover:bg-[#6944ba] active:border-[#ffffff4d] dark:text-white"
                     variant={'default'}
                     onClick={async () => {
                         await publishConfig()
