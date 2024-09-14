@@ -10,6 +10,7 @@ import { BadgeInfoIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { InspectorContext } from '../editor/Context'
+import { ScrollSectionProvider } from '../editor/useScrollSection'
 import { Button } from '../shadcn/Button'
 import { ComposePreview } from './ComposePreview'
 
@@ -101,7 +102,9 @@ export default function ComposeEditor({
                             fname: fname,
                         }}
                     >
-                        <Inspector />
+                        <ScrollSectionProvider>
+                            <Inspector />
+                        </ScrollSectionProvider>
                     </InspectorContext.Provider>
                 </div>
 
