@@ -3,7 +3,7 @@
 import { useScrollSection, useScrollSectionContext } from '@/components/editor/useScrollSection'
 import { cn } from '@/lib/shadcn'
 import {} from 'jotai'
-import React, { type ReactElement, type ReactNode } from 'react'
+import React, { useEffect, useMemo, useRef, type ReactElement, type ReactNode } from 'react'
 
 interface SectionProps {
     title: string
@@ -16,48 +16,81 @@ function Section({ title, children, description }: SectionProps): ReactElement {
 	
     return (
         <div className="flex flex-col gap-2" ref={ref}>
-            <h2 className="text-2xl font-semibold max-md:text-lg">{title}</h2>
-            <div className="flex flex-col gap-2 w-full">
+            <div className="flex flex-col gap-1 w-full">
+                <h2 className="text-xl font-semibold max-md:text-base">{title}</h2>
                 {description && (
                     <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
                         {description}
                     </p>
                 )}
-                {children}
             </div>
+            {children}
         </div>
     )
 }
 
-interface RootProps {
+function Root(props: {
     children: ReactNode
-}
-
-function Root(props: RootProps): ReactElement {
-	const { currentSection } = useScrollSectionContext()
+}): ReactElement {
+    const { currentSection } = useScrollSectionContext()
+    const sectionsContainerRef = useRef<HTMLDivElement>(null)
 
     const children = props.children as ReactElement<SectionProps> | ReactElement<SectionProps>[]
 
-    const validChildren = React.Children.map(children, (child) => {
-        if (child && React.isValidElement(child) && child.type === Section) {
-            return (
-                <div id={child.props.title} className="flex flex-col gap-2">
-                    {child}
-                </div>
+    const validChildren = useMemo(() => {
+        return React.Children.map(children, (child) => {
+            if (child && React.isValidElement(child) && child.type === Section) {
+                return (
+                    <div id={child.props.title} className="flex flex-col gap-2">
+                        {child}
+                    </div>
+                )
+            }
+            if (!child) {
+                return
+            }
+            throw new Error(
+                'Configuration.Root only accepts Configuration.Section components as direct children'
             )
+        })
+    }, [children])
+
+    useEffect(() => {
+        if (sectionsContainerRef.current && currentSection) {
+            const container = sectionsContainerRef.current
+            const activeElement = container.querySelector(`a[href="#${currentSection}"]`)
+
+            if (activeElement) {
+                const containerRect = container.getBoundingClientRect()
+                const activeElementRect = activeElement.getBoundingClientRect()
+
+                const isFullyVisible =
+                    activeElementRect.left >= containerRect.left &&
+                    activeElementRect.right <= containerRect.right
+
+                if (!isFullyVisible) {
+                    const scrollLeft =
+                        activeElementRect.left -
+                        containerRect.left +
+                        container.scrollLeft -
+                        (containerRect.width - activeElementRect.width) / 2
+                    container.scrollTo({
+                        left: scrollLeft,
+                        behavior: 'smooth',
+                    })
+                }
+            }
         }
-        if (!child) {
-            return
-        }
-        throw new Error(
-            'Configuration.Root only accepts Configuration.Section components as direct children'
-        )
-    })
+    }, [currentSection])
 
     return (
         <div className="flex flex-col gap-2 w-full h-full">
             {validChildren.length > 1 && (
-                <div className="flex overflow-scroll gap-2 pt-3 pl-4 h-20 max-md:h-14">
+                <div
+                    id="sections"
+                    ref={sectionsContainerRef}
+                    className={'flex overflow-scroll gap-2 p-4 pb-0'}
+                >
                     {validChildren.map((child) => {
                         const sectionId = child.props.id
                         return (
@@ -65,7 +98,9 @@ function Root(props: RootProps): ReactElement {
                                 key={sectionId}
                                 href={`#${sectionId}`}
                                 className={cn(
-                                    'whitespace-nowrap h-full border border-[#ffffff30] rounded-xl p-2 px-4 hover:border-[#ffffff90] text-[#ffffff90]',
+                                    'border border-[#ffffff30] rounded-xl p-2 px-4 text-slate-300',
+                                    'max-md:text-xs max-md:p-1 max-md:px-2',
+                                    'hover:border-[#ffffff90]',
                                     currentSection === sectionId && 'text-white bg-border'
                                 )}
                             >
@@ -75,7 +110,7 @@ function Root(props: RootProps): ReactElement {
                     })}
                 </div>
             )}
-            <div className="flex px-4 overflow-y-scroll max-h-[calc(100vh-200px)] flex-col gap-5 max-md:gap-3">
+            <div className="flex px-4 pb-0 overflow-y-scroll max-h-[calc(100vh-180px)] flex-col gap-5 max-md:gap-3 max-md:pb-14">
                 {validChildren}
             </div>
         </div>
