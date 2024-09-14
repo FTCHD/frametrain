@@ -1,10 +1,9 @@
 'use server'
 import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
+import { getGlide } from '@/sdk/glide'
 import { getSessionById } from '@paywithglide/glide-js'
 import type { Config } from '..'
-import { getClient } from '../common/onchain'
-import { getGlideConfig } from '../common/shared'
 
 export default async function txData({
     config,
@@ -25,11 +24,9 @@ export default async function txData({
         throw new FrameError('Fundraise token not found.')
     }
 
-    const client = getClient(config.token.chain)
+    const glide = getGlide(config.token.chain)
 
-    const glideConfig = getGlideConfig(client.chain)
-
-    const session = await getSessionById(glideConfig, params.sessionId)
+    const session = await getSessionById(glide, params.sessionId)
 
     if (session.paymentStatus === 'paid') {
         throw new FrameError('Payment already made')
@@ -40,7 +37,6 @@ export default async function txData({
     }
 
     return {
-        buttons: [],
         transaction: {
             chainId: session.unsignedTransaction.chainId,
             method: 'eth_sendTransaction',

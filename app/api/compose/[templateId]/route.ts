@@ -5,16 +5,10 @@ import templates from '@/templates'
 import type { InferInsertModel } from 'drizzle-orm'
 import { encode } from 'next-auth/jwt'
 
-const SUPPORTED_TEMPLATES = ['cal', 'discourse', 'luma', 'poll', 'medium']
-
 export async function GET(
     request: Request,
     { params }: { params: { templateId: keyof typeof templates } }
 ) {
-    if (!SUPPORTED_TEMPLATES.includes(params.templateId)) {
-        throw new Error('This template is not yet supported')
-    }
-
     const template = templates[params.templateId]
 
     if (!template?.shortDescription) {
@@ -39,10 +33,6 @@ export async function POST(
     request: Request,
     { params }: { params: { templateId: keyof typeof templates } }
 ) {
-    	if (!SUPPORTED_TEMPLATES.includes(params.templateId)) {
-        throw new Error('This template is not yet supported')
-    }
-
     const body = await request.json()
 
     const validatedPayload = await validatePayload(body)

@@ -12,12 +12,12 @@ import {
 import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { Configuration } from '@/sdk/inspector'
 import { getFarcasterProfiles } from '@/sdk/neynar'
+import { type ChainKey, supportedChains } from '@/sdk/viem'
 import { TrashIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import type { Config } from '.'
-import { type ChainKey, getTokenSymbol, supportedChains } from './common/onchain'
-import { formatSymbol } from './common/shared'
+import { formatSymbol, getTokenSymbol } from './common'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -500,7 +500,7 @@ export default function Inspector() {
                 ) : null}
             </Configuration.Section>
             <Configuration.Section
-                title="ProgressBar"
+                title="Progress Bar"
                 description="Configure the progress bar color."
             >
                 <h2 className="text-lg font-semibold">Progress bar Color</h2>

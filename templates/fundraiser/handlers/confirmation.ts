@@ -2,10 +2,10 @@
 import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import { getGlide } from '@/sdk/glide'
 import { chains, createSession, currencies } from '@paywithglide/glide-js'
 import type { Config } from '..'
-import { getAddressFromEns, getClient } from '../common/onchain'
-import { formatSymbol, getGlideConfig } from '../common/shared'
+import { formatSymbol, getAddressFromEns } from '../common'
 import ConfirmationView from '../views/Confirmation'
 import about from './about'
 
@@ -48,8 +48,7 @@ export default async function confirmation({
     const amounts = config.enablePredefinedAmounts ? config.amounts : []
     const lastButtonIndex = amounts.length + 2
     const isCustomAmount = buttonIndex === lastButtonIndex
-    const tokenClient = getClient(config.token.chain)
-    const glideConfig = getGlideConfig(tokenClient.chain)
+    const glide = getGlide(config.token.chain)
 
     let amount = 0
     let address = config.address as `0x${string}`
@@ -72,12 +71,10 @@ export default async function confirmation({
         amount = config.amounts[buttonIndex - 2]
     }
 
-    const chain = Object.keys(chains).find(
-        (chain) => (chains as any)[chain].id === tokenClient.chain.id
-    )
+    const chain = Object.keys(chains).find((chain) => (chains as any)[chain].id === glide.chains[0].id)
 
     if (!chain) {
-        throw new FrameError('Chain not found for the given client chain ID.')
+        throw new FrameError('Chain not found for the given chain ID.')
     }
 
     try {
@@ -89,9 +86,9 @@ export default async function confirmation({
             (chains as any)[chain]
         )
 
-        const session = await createSession(glideConfig, {
+        const session = await createSession(glide, {
             paymentAmount: amount,
-            chainId: tokenClient.chain.id,
+            chainId: glide.chains[0].id,
             paymentCurrency: paymentCurrencyOnChain,
             address,
         })
@@ -121,8 +118,7 @@ export default async function confirmation({
             params: { sessionId: session.sessionId },
         }
     } catch (e) {
-        const error = e as Error
-        console.error('Error creating session', error)
+        console.error('Error creating session', e)
         throw new FrameError('Failed to create a donation session. Please try again')
     }
 }

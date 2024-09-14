@@ -1,5 +1,7 @@
+import type { ChainKey } from '@/sdk/viem'
+
 export type GatingErcType = {
-    network: string
+    network: ChainKey
     address: string
     symbol: string
     balance: number

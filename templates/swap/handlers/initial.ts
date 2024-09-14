@@ -1,11 +1,10 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
-import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import ms from 'ms'
 import type { Config, Storage } from '..'
 import { fetchCoverPrice } from '../common/0x'
-import { formatSymbol } from '../common/shared'
+import { formatSymbol } from '../common/format'
 import EstimateView from '../views/Estimate'
 
 export default async function initial({
@@ -13,10 +12,7 @@ export default async function initial({
     storage,
 }: {
     config: Config
-
-    body?: undefined
     storage?: Storage
-    params?: any
 }): Promise<BuildFrameData> {
     const buttons: FrameButtonMetadata[] = []
     // try {

@@ -16,7 +16,7 @@ import { FramePreview } from './FramePreview'
 import { InspectorContext } from './editor/Context'
 import PublishMenu from './editor/PublishMenu'
 import WebhookEventOptions from './editor/WebhookEventOptions'
-import BaseSpinner from './shadcn/BaseSpinner'
+import { ScrollSectionProvider } from './editor/useScrollSection'
 import { Button } from './shadcn/Button'
 import { Input } from './shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
@@ -180,7 +180,7 @@ export default function FrameEditor({
 
                 {/* TODO: consolidate this, like putting a return after postMessage to not trigger toast */}
 
-                <div className="flex z-10 flex-row items-center gap-3">
+                <div className="flex z-10 flex-row gap-3 items-center">
                     {template.events.length ? (
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
@@ -303,33 +303,22 @@ export default function FrameEditor({
                     </div>
                 )}
                 <div className="p-4 pb-0 w-full h-full md:w-2/5 md:p-6">
-                    <div className="h-full w-full flex flex-col gap-3 bg-[#0c0c0c] md:border-[#4c3a4e80] md:border-2 md:rounded-xl md:p-4">
-                        <div className="flex flex-row gap-2 justify-between items-center">
-                            <h1 className="mb-4 text-4xl font-bold">Configuration</h1>
-                            {updating && <BaseSpinner />}
-                        </div>
-
-                        <div
-                            className={`overflow-y-scroll ${
-                                previewOpen
-                                    ? 'max-h-[calc(100dvh-360px)]'
-                                    : 'max-h-[calc(100dvh-150px)]'
-                            } md:max-h-[calc(100dvh-240px)]`}
+                    <div className="h-full w-full flex flex-col gap-3 bg-[#0c0c0c] md:border-[#4c3a4e80] md:border-2 md:rounded-xl pb-2">
+                        <InspectorContext.Provider
+                            value={{
+                                frameId: frame.id,
+                                config: temporaryConfig as typeof template.initialConfig,
+                                storage: frame.storage!,
+                                update: updateConfig,
+                                fid: fid,
+                                fname: fname,
+                                // setLoading
+                            }}
                         >
-                            <InspectorContext.Provider
-                                value={{
-                                    frameId: frame.id,
-                                    config: temporaryConfig as typeof template.initialConfig,
-                                    storage: frame.storage!,
-                                    update: updateConfig,
-                                    fid: fid,
-                                    fname: fname,
-                                    // setLoading
-                                }}
-                            >
+                            <ScrollSectionProvider>
                                 <Inspector />
-                            </InspectorContext.Provider>
-                        </div>
+                            </ScrollSectionProvider>
+                        </InspectorContext.Provider>
                     </div>
                 </div>
             </div>

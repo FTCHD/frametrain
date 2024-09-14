@@ -1,9 +1,9 @@
 'use client'
 
+import { useScrollSection, useScrollSectionContext } from '@/components/editor/useScrollSection'
 import { cn } from '@/lib/shadcn'
-import { atom, useAtom } from 'jotai'
-import React, { type ReactElement, type ReactNode } from 'react'
-import { useInView } from 'react-intersection-observer'
+import {} from 'jotai'
+import React, { useEffect, useMemo, useRef, type ReactElement, type ReactNode } from 'react'
 
 interface SectionProps {
     title: string
@@ -11,95 +11,98 @@ interface SectionProps {
     description?: string
 }
 
-interface InspectorConfigAtomOptions {
-    sectionId: string
-    clicked: boolean
-}
-
-const inspectorConfigAtom = atom<InspectorConfigAtomOptions>({
-    sectionId: '',
-    clicked: false,
-})
-
 function Section({ title, children, description }: SectionProps): ReactElement {
-    const [config, setConfig] = useAtom(inspectorConfigAtom)
-    const { ref: inViewRef } = useInView({
-        rootMargin: '-10% 0px -60% 0px',
-        onChange(inView) {
-            const sectionId = title.toLowerCase().replace(/\s+/g, '-')
-            if (inView && config.sectionId === sectionId && config.clicked) return
-            if (inView) {
-                setConfig({
-                    sectionId: `section-${sectionId}`,
-                    clicked: false,
-                })
-            }
-        },
-    })
-
+	const { ref } = useScrollSection(title)
+	
     return (
-        <div ref={inViewRef} className="flex flex-col gap-2">
-            <h2 className="text-2xl font-semibold max-md:text-lg">{title}</h2>
-            <div className="flex flex-col gap-2 w-full">
+        <div className="flex flex-col gap-2" ref={ref}>
+            <div className="flex flex-col gap-1 w-full">
+                <h2 className="text-xl font-semibold max-md:text-base">{title}</h2>
                 {description && (
                     <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
                         {description}
                     </p>
                 )}
-                {children}
             </div>
+            {children}
         </div>
     )
 }
 
-interface RootProps {
+function Root(props: {
     children: ReactNode
-}
-
-function Root(props: RootProps): ReactElement {
-    const [config, setConfig] = useAtom(inspectorConfigAtom)
-
-    // This callback fires when a Step hits the offset threshold. It receives the
-    // data prop of the step, which in this demo stores the index of the step.
+}): ReactElement {
+    const { currentSection } = useScrollSectionContext()
+    const sectionsContainerRef = useRef<HTMLDivElement>(null)
 
     const children = props.children as ReactElement<SectionProps> | ReactElement<SectionProps>[]
 
-    const validChildren = React.Children.map(children, (child) => {
-        if (child && React.isValidElement(child) && child.type === Section) {
-            const sectionId = `section-${child.props.title.toLowerCase().replace(/\s+/g, '-')}`
-            return (
-                <div id={sectionId} className="flex flex-col gap-2">
-                    {child}
-                </div>
+    const validChildren = useMemo(() => {
+        return React.Children.map(children, (child) => {
+            if (child && React.isValidElement(child) && child.type === Section) {
+                return (
+                    <div id={child.props.title} className="flex flex-col gap-2">
+                        {child}
+                    </div>
+                )
+            }
+            if (!child) {
+                return
+            }
+            throw new Error(
+                'Configuration.Root only accepts Configuration.Section components as direct children'
             )
+        })
+    }, [children])
+
+    useEffect(() => {
+        if (sectionsContainerRef.current && currentSection) {
+            const container = sectionsContainerRef.current
+            const activeElement = container.querySelector(`a[href="#${currentSection}"]`)
+
+            if (activeElement) {
+                const containerRect = container.getBoundingClientRect()
+                const activeElementRect = activeElement.getBoundingClientRect()
+
+                const isFullyVisible =
+                    activeElementRect.left >= containerRect.left &&
+                    activeElementRect.right <= containerRect.right
+
+                if (!isFullyVisible) {
+                    const scrollLeft =
+                        activeElementRect.left -
+                        containerRect.left +
+                        container.scrollLeft -
+                        (containerRect.width - activeElementRect.width) / 2
+                    container.scrollTo({
+                        left: scrollLeft,
+                        behavior: 'smooth',
+                    })
+                }
+            }
         }
-        if (!child) {
-            return
-        }
-        throw new Error(
-            'Configuration.Root only accepts Configuration.Section components as direct children'
-        )
-    })
+    }, [currentSection])
 
     return (
-        <div className="flex flex-col gap-10 h-full w-full">
+        <div className="flex flex-col gap-2 w-full h-full">
             {validChildren.length > 1 && (
-                <div className="hidden gap-2 overflow-scroll md:flex">
+                <div
+                    id="sections"
+                    ref={sectionsContainerRef}
+                    className={'flex overflow-scroll gap-2 p-4 pb-0'}
+                >
                     {validChildren.map((child) => {
-                        const sectionId = `${child.props.id}`
+                        const sectionId = child.props.id
                         return (
                             <a
                                 key={sectionId}
                                 href={`#${sectionId}`}
                                 className={cn(
-                                    'whitespace-nowrap w-full sticky top-0 z-10 border border-[#ffffff30] rounded-xl p-2 px-3 hover:border-[#ffffff90] text-[#ffffff90]',
-                                    config?.sectionId === sectionId && 'text-white bg-border'
+                                    'border border-[#ffffff30] rounded-xl p-2 px-4 text-slate-300',
+                                    'max-md:text-xs max-md:p-1 max-md:px-2',
+                                    'hover:border-[#ffffff90]',
+                                    currentSection === sectionId && 'text-white bg-border'
                                 )}
-                                onClick={() => {
-                                    if (config?.sectionId === sectionId) return
-
-                                    setConfig({ sectionId, clicked: true })
-                                }}
                             >
                                 {child.props.children.props.title}
                             </a>
@@ -107,7 +110,7 @@ function Root(props: RootProps): ReactElement {
                     })}
                 </div>
             )}
-            <div className="overflow-y-scroll flex flex-col gap-5 max-md:gap-3">
+            <div className="flex px-4 pb-0 overflow-y-scroll max-h-[calc(100vh-180px)] flex-col gap-5 max-md:gap-3 max-md:pb-14">
                 {validChildren}
             </div>
         </div>
