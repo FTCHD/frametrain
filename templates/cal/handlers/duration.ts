@@ -1,11 +1,11 @@
 'use server'
 import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
+import { runGatingChecks } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
 import { getCurrentAndFutureDate } from '../utils/date'
 import { extractDatesAndSlots } from '../utils/date'
-import { holdsErc721, holdsErc1155 } from '../utils/nft'
 import DateView from '../views/Day'
 import PageView from '../views/Duration'
 
@@ -23,78 +23,17 @@ export default async function duration({
         fontSet.add(config.fontFamily)
     }
 
-    for (const font of fontSet) {
-        const loadedFont = await loadGoogleFontAllVariants(font)
-        fonts.push(...loadedFont)
-    }
-
-    let containsUserFID = true
-    let nftGate = true
-
     if ((config.events || []).length === 0) {
         throw new FrameError('No events available to schedule.')
     }
 
-    if (config.gatingOptions.follower && !body.interactor.viewer_context.followed_by) {
-        throw new FrameError('Only profiles followed by the creator can schedule a call.')
+    if (config.enableGating) {
+        await runGatingChecks(body, config.gating)
     }
 
-    if (config.gatingOptions.following && !body.interactor.viewer_context.following) {
-        throw new FrameError('Please follow the creator and try again.')
-    }
-
-    if (config.gatingOptions.recasted && !body.cast.viewer_context.recasted) {
-        throw new FrameError('Please recast this frame and try again.')
-    }
-
-    if (config.gatingOptions.liked && !body.cast.viewer_context.liked) {
-        throw new FrameError('Please like this frame and try again.')
-    }
-
-    if (config.gatingOptions.karmaGating) {
-        const url = 'https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=1&limit=1000'
-        const options = {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: `["${config.fid}"]`,
-        }
-
-        try {
-            const response = await fetch(url, options)
-            const data = await response.json()
-
-            containsUserFID = data.result.some((item: any) => item.fid === body.interactor.fid)
-        } catch {
-            throw new FrameError('Failed to fetch your engagement data')
-        }
-    }
-
-    if (config.gatingOptions.nftGating) {
-        if (body.interactor.verified_addresses.eth_addresses.length === 0) {
-            throw new FrameError('You do not have a wallet that holds the required NFT.')
-        }
-        if (config.nftOptions.nftType === 'ERC721') {
-            nftGate = await holdsErc721(
-                body.interactor.verified_addresses.eth_addresses,
-                config.nftOptions.nftAddress,
-                config.nftOptions.nftChain
-            )
-        } else {
-            nftGate = await holdsErc1155(
-                body.interactor.verified_addresses.eth_addresses,
-                config.nftOptions.nftAddress,
-                config.nftOptions.tokenId,
-                config.nftOptions.nftChain
-            )
-        }
-    }
-
-    if (!containsUserFID) {
-        throw new FrameError('Only people within 2nd degree of connection can schedule a call.')
-    }
-
-    if (!nftGate) {
-        throw new FrameError(`You need to hold ${config.nftOptions.nftName} to schedule a call.`)
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
     }
 
     if (config.events.length === 1) {

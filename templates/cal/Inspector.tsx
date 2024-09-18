@@ -6,7 +6,9 @@ import {
     FontFamilyPicker,
     FontStylePicker,
     FontWeightPicker,
+    GatingInspector,
     Input,
+    Label,
     Select,
     Switch,
 } from '@/sdk/components'
@@ -14,14 +16,12 @@ import { useFarcasterId, useFrameConfig, useResetPreview, useUploadImage } from 
 import { Configuration } from '@/sdk/inspector'
 import { corsFetch } from '@/sdk/scrape'
 import { LoaderIcon, TrashIcon } from 'lucide-react'
-import Link from 'next/link'
 import { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
 import type { Config } from '.'
 import { fetchProfileData } from './utils/cal'
 import { getDurationFormatted } from './utils/date'
-import { getName } from './utils/nft'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -34,6 +34,7 @@ export default function Inspector() {
     const events = config.events || []
     const eventSlugs = events.map((evt) => evt.slug)
     const disableFields = config.events.length === 0
+    const enabledGating = config.enableGating ?? false
 
     const timezones = Intl.supportedValuesOf('timeZone')
     const timezoneOptions = timezones.map((tz) => {
@@ -70,41 +71,6 @@ export default function Inspector() {
             })
         } catch {}
     }, 1000)
-
-    const handleNFT = async (nftAddress: string) => {
-        const nftName = await getName(nftAddress, config.nftOptions.nftChain)
-        updateConfig({
-            nftOptions: {
-                ...config.nftOptions,
-                nftAddress: nftAddress,
-                nftName: nftName,
-            },
-        })
-    }
-    const handleChainChange = (value: any) => {
-        updateConfig({
-            nftOptions: {
-                ...config.nftOptions,
-                nftChain: value,
-            },
-        })
-    }
-    const handleNftTypeChange = (value: any) => {
-        updateConfig({
-            nftOptions: {
-                ...config.nftOptions,
-                nftType: value,
-            },
-        })
-    }
-    const handleTokenIdChange = async (e: any) => {
-        updateConfig({
-            nftOptions: {
-                ...config.nftOptions,
-                tokenId: e.target.value,
-            },
-        })
-    }
 
     const fetchEventDetails = async (eventSlug: string) => {
         if (eventSlugs.includes(eventSlug)) {
@@ -275,236 +241,37 @@ export default function Inspector() {
                     ))}
                 </Select>
             </Configuration.Section>
-            <Configuration.Section
-                title="Gating Options"
-                description="Enable/disable gating options for your frame"
-            >
-                <div className="flex flex-col gap-2 w-full md:w-auto max-md:gap-0">
-                    <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-md:text-base">Karma Gating</h2>
+            <Configuration.Section title="Cal Gating">
+                <div className="flex flex-row items-center justify-between gap-2 ">
+                    <Label className="font-md" htmlFor="gating">
+                        Enable Cal Gating?
+                    </Label>
+                    <Switch
+                        id="gating"
+                        checked={enabledGating}
+                        onCheckedChange={(enableGating) => {
+                            updateConfig({ enableGating })
+                        }}
+                    />
+                </div>
 
-                        <Switch
-                            disabled={disableFields}
-                            checked={config.gatingOptions.karmaGating}
-                            onCheckedChange={(checked) => {
+                {enabledGating && (
+                    <div className="flex flex-col gap-2 w-full">
+                        <h2 className="text-lg font-semibold">Poll Gating options</h2>
+                        <GatingInspector
+                            fid={fid}
+                            config={config.gating}
+                            onUpdate={(option) => {
                                 updateConfig({
-                                    gatingOptions: {
-                                        ...config.gatingOptions,
-                                        karmaGating: checked,
+                                    gating: {
+                                        ...config.gating,
+                                        ...option,
                                     },
                                 })
                             }}
                         />
                     </div>
-
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
-                        Only allow Farcaster users within your second-degree to book a call. To
-                        learn more check out{' '}
-                        <Link className="underline" href="https://openrank.com/" target="_blank">
-                            OpenRank
-                        </Link>
-                        .
-                    </p>
-                </div>
-                <div className="flex flex-col gap-2 w-full md:w-auto max-md:gap-0">
-                    <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-md:text-base">NFT Gating</h2>
-
-                        <Switch
-                            disabled={disableFields}
-                            checked={config.gatingOptions.nftGating}
-                            onCheckedChange={(checked) => {
-                                updateConfig({
-                                    gatingOptions: {
-                                        ...config.gatingOptions,
-                                        nftGating: checked,
-                                    },
-                                })
-                            }}
-                        />
-                    </div>
-
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
-                        Only allow users users holding a specific NFT to book a call.
-                    </p>
-                </div>
-                {config.gatingOptions.nftGating && (
-                    <>
-                        <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg font-semibold max-md:text-base">Choose Chain</h2>
-                            <Select
-                                disabled={disableFields}
-                                onChange={handleChainChange}
-                                defaultValue={config.nftOptions.nftChain}
-                            >
-                                <option value="ETH">ETH</option>
-                                <option value="BASE">BASE</option>
-                                <option value="OP">OP</option>
-                                <option value="ZORA">ZORA</option>
-                                <option value="BLAST">BLAST</option>
-                                <option value="POLYGON">POLYGON</option>
-                                <option value="FANTOM">FANTOM</option>
-                                <option value="ARBITRUM">ARBITRUM</option>
-                                <option value="BNB">BNB</option>
-                            </Select>
-                        </div>
-                        <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg font-semibold max-md:text-base">
-                                Choose NFT Type
-                            </h2>
-                            <Select
-                                disabled={disableFields}
-                                defaultValue={config.nftOptions.nftType}
-                                onChange={handleNftTypeChange}
-                            >
-                                <option value="ERC721">ERC721</option>
-                                <option value="ERC1155">ERC1155</option>
-                            </Select>
-                        </div>
-
-                        <div className="flex flex-col gap-2 w-full">
-                            <h2 className="text-lg font-semibold max-md:text-base">NFT address</h2>
-                            <Input
-                                disabled={disableFields}
-                                className="text-lg max-md:text-base"
-                                placeholder="Enter your NFT address"
-                                onChange={async (e) => {
-                                    await handleNFT(e.target.value)
-                                }}
-                            />
-                        </div>
-                        {config.nftOptions.nftType === 'ERC1155' && (
-                            <div className="flex flex-col gap-2 w-full">
-                                <h2 className="text-lg font-semibold max-md:text-base">Token ID</h2>
-                                <Input
-                                    className="text-lg max-md:text-base"
-                                    placeholder="Enter your NFT token ID"
-                                    onChange={handleTokenIdChange}
-                                />
-                            </div>
-                        )}
-                    </>
                 )}
-                <div className="flex flex-col gap-2 w-full max-md:gap-0">
-                    <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-md:text-base">Recasted</h2>
-
-                        <Switch
-                            disabled={disableFields}
-                            checked={config.gatingOptions.recasted}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    updateConfig({
-                                        gatingOptions: {
-                                            ...config.gatingOptions,
-                                            recasted: true,
-                                        },
-                                    })
-                                } else {
-                                    updateConfig({
-                                        gatingOptions: {
-                                            ...config.gatingOptions,
-                                            recasted: false,
-                                        },
-                                    })
-                                }
-                            }}
-                        />
-                    </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
-                        Only allow users who recasted this cast to book a call.
-                    </p>
-                </div>
-                <div className="flex flex-col gap-2 w-full max-md:gap-0">
-                    <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-md:text-base">Liked</h2>
-
-                        <Switch
-                            disabled={disableFields}
-                            checked={config.gatingOptions.liked}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    updateConfig({
-                                        gatingOptions: {
-                                            ...config.gatingOptions,
-                                            liked: true,
-                                        },
-                                    })
-                                } else {
-                                    updateConfig({
-                                        gatingOptions: {
-                                            ...config.gatingOptions,
-                                            liked: false,
-                                        },
-                                    })
-                                }
-                            }}
-                        />
-                    </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
-                        Only allow users who liked this cast to book a call.
-                    </p>
-                </div>
-                <div className="flex flex-col gap-2 w-full max-md:gap-0">
-                    <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-md:text-base">Follower</h2>
-
-                        <Switch
-                            disabled={disableFields}
-                            checked={config.gatingOptions.follower}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    updateConfig({
-                                        gatingOptions: {
-                                            ...config.gatingOptions,
-                                            follower: true,
-                                        },
-                                    })
-                                } else {
-                                    updateConfig({
-                                        gatingOptions: {
-                                            ...config.gatingOptions,
-                                            follower: false,
-                                        },
-                                    })
-                                }
-                            }}
-                        />
-                    </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
-                        Only allow users who you follow to book a call.
-                    </p>
-                </div>
-                <div className="flex flex-col gap-2 w-full max-md:gap-0">
-                    <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-lg font-semibold max-md:text-base">Following</h2>
-
-                        <Switch
-                            disabled={disableFields}
-                            checked={config.gatingOptions.following}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    updateConfig({
-                                        gatingOptions: {
-                                            ...config.gatingOptions,
-                                            following: true,
-                                        },
-                                    })
-                                } else {
-                                    updateConfig({
-                                        gatingOptions: {
-                                            ...config.gatingOptions,
-                                            following: false,
-                                        },
-                                    })
-                                }
-                            }}
-                        />
-                    </div>
-                    <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
-                        Only allow users who follow you to book a call.
-                    </p>
-                </div>
             </Configuration.Section>
             <Configuration.Section
                 title="Customization"

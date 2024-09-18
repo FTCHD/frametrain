@@ -1,4 +1,5 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
+import type { GatingType } from '@/sdk/components/gating/types'
 import Inspector from './Inspector'
 import cover from './cover.avif'
 import handlers from './handlers'
@@ -23,15 +24,8 @@ export interface Config extends BaseConfig {
         duration: string
         formattedDuration: string
     }[]
-
-    gatingOptions: {
-        karmaGating: boolean
-        nftGating: boolean
-        recasted: boolean
-        liked: boolean
-        follower: boolean
-        following: boolean
-    }
+    gating: GatingType | undefined
+    enableGating: boolean | undefined
     nftOptions: {
         nftAddress: string
         nftName: string
@@ -59,13 +53,19 @@ export default {
         events: [],
         bio: [],
         timezone: 'Europe/London',
-        gatingOptions: {
-            karmaGating: false,
-            nftGating: false,
-            recasted: false,
-            liked: false,
-            follower: false,
-            following: false,
+        enableGating: false,
+        gating: {
+            enabled: [],
+            requirements: {
+                channels: [],
+                maxFid: 0,
+                minFid: 0,
+                exactFids: [],
+                score: 0,
+                erc20: null,
+                erc721: null,
+                erc1155: null,
+            },
         },
         nftOptions: {
             nftChain: 'ETH',
