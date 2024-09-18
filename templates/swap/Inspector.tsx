@@ -21,8 +21,7 @@ import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import type { Config, PoolToken } from '.'
 import { formatSymbol } from './common/format'
-import { getPoolData } from './common/uniswap'
-import { supportedChains } from './common/viem'
+import { getPoolData, uniswapChains } from './common/uniswap'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -136,7 +135,8 @@ export default function Inspector() {
                     />
 
                     <p className="text-sm text-muted-foreground">
-                        Only the following networks are supported: {supportedChains}
+                        Only the following networks are supported:{' '}
+                        {uniswapChains.map((c) => c.label).join(', ')}
                     </p>
                 </div>
             </Configuration.Section>
