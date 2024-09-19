@@ -12,6 +12,95 @@ const ERC1155_ABI = parseAbi([
     'function balanceOf(address _owner, uint256 _id) public view returns (uint256)',
 ])
 
+async function getMoxieUserVestingAddresses(beneficiary: string[]) {
+    if (beneficiary.length === 0) {
+        return []
+    }
+
+    try {
+        const GET_VESTING_ADDRESSES = `query UserVestingAddresses($beneficiaryAddresses: [Bytes!]) {
+    tokenLockWallets(where: { beneficiary_in: $beneficiary }) {
+      address:id
+    }
+  }`
+
+        const variables = {
+            beneficiary,
+        }
+        const response = await fetch(
+            'https://api.studio.thegraph.com/query/23537/moxie_vesting_mainnet/version/latest',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: GET_VESTING_ADDRESSES, variables }),
+            }
+        )
+
+        const json = (await response.json()) as {
+            data: { tokenLockWallets: { address: string }[] }
+        }
+
+        if (!json.data?.tokenLockWallets) {
+            return []
+        }
+        const vestingAddresses = json.data.tokenLockWallets.map((wallet) => wallet.address)
+        return vestingAddresses
+    } catch {
+        return []
+    }
+}
+async function checkMoxieFanToken(userAddresses: string[], tokenSymbol: string, minAmount = 1) {
+    if (userAddresses.length === 0) {
+        return
+    }
+
+    try {
+        const GET_BALANCES = `query GetBalances($userAddresses: [ID!], $fanTokenAddress: String) {
+    users(where: { id_in: $userAddresses }) {
+      portfolio(where: { subjectToken: $fanTokenAddress }) {
+        balance
+     }
+    }
+  }`
+
+        const [symbol, fanTokenAddress] = tokenSymbol.split(',')
+
+        const variables = {
+            userAddresses,
+            fanTokenAddress,
+        }
+        const response = await fetch(
+            'https://api.studio.thegraph.com/query/23537/moxie_protocol_stats_mainnet/version/latest',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: GET_BALANCES, variables }),
+            }
+        )
+
+        const json = (await response.json()) as {
+            data: { users: { portfolio: { balance: string }[] }[] }
+        }
+
+        const isPositive = json.data.users.some((user) =>
+            user.portfolio.some((folio) => Number(folio.balance) >= minAmount * 10 ** 18)
+        )
+        if (isPositive) {
+            return
+        }
+        throw new Error(`FT_ERROR:You must have at least ${minAmount} of ${symbol} fanToken`)
+    } catch (e) {
+        const error = e as Error
+        const message = error.message.startsWith('FT_ERROR:')
+            ? error.message.replace('FT_ERROR:', '')
+            : 'Failed to fetch Moxie FanToken data'
+        throw new FrameError(message)
+    }
+}
 
 async function checkOpenRankScore(fid: number, owner: number, score: number) {
     const url = `https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=${score}&limit=1000&lite=true`
@@ -254,6 +343,19 @@ const keyToValidator: Record<
             requirements['score']!.owner,
             requirements['score']!.score
         ),
+    moxie: async (requirements, body) => {
+        const userAddresses = body.validatedData.interactor.verified_addresses.eth_addresses
+        for (const token of requirements['moxie']!) {
+            // NOTE(copied from moxie dev docs): Moxie protocol users have Moxie token currently vesting in their vesting contract. A huge portion of them use these to bid on auctions and buy/sell fan tokens on the Moxie protocol.
+            // Therefore, it is important that you include the user's vesting addresses in the query to get all the fan tokens owned by a certain user.
+            const userVestingAddresses = await getMoxieUserVestingAddresses(userAddresses)
+            await checkMoxieFanToken(
+                [...userAddresses, ...userVestingAddresses],
+                `${token.symbol},${token.address}`,
+                token.balance
+            )
+        }
+    },
 }
 
 export async function runGatingChecks(

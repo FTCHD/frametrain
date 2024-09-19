@@ -17,6 +17,7 @@ export type GatingRequirementsType = {
     erc20?: GatingErcType[] | undefined
     erc721?: GatingErcType[] | undefined
     erc1155?: GatingErcType[] | undefined
+    moxie?: { symbol: string; balance: number; address: string }[] | undefined
 }
 
 export type GatingType = {
