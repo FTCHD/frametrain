@@ -72,6 +72,30 @@ export async function getFrame(id: string) {
     return frame
 }
 
+export async function duplicateFrame(id: string) {
+    const sesh = await auth()
+
+    if (!sesh?.user) {
+        notFound()
+    }
+
+    const frame = await getFrame(id)
+
+    const args: InferInsertModel<typeof frameTable> = {
+        owner: sesh.user.id!,
+        name: `${frame.name} Copy`,
+        description: frame.name,
+        config: templates[frame.template].initialConfig,
+        draftConfig: frame.draftConfig,
+        storage: {},
+        template: frame.template,
+    }
+
+    await client.insert(frameTable).values(args).run()
+
+    revalidatePath('/')
+}
+
 export async function createFrame({
     name,
     description,
