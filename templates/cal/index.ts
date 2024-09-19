@@ -26,13 +26,6 @@ export interface Config extends BaseConfig {
     }[]
     gating: GatingType | undefined
     enableGating: boolean | undefined
-    nftOptions: {
-        nftAddress: string
-        nftName: string
-        nftType: string
-        nftChain: string
-        tokenId: string
-    }
 }
 
 export interface Storage extends BaseStorage {}
@@ -57,19 +50,15 @@ export default {
         gating: {
             enabled: [],
             requirements: {
-                channels: [],
                 maxFid: 0,
                 minFid: 0,
-                exactFids: [],
                 score: 0,
+                channels: [],
+                exactFids: [],
                 erc20: null,
                 erc721: null,
                 erc1155: null,
             },
-        },
-        nftOptions: {
-            nftChain: 'ETH',
-            nftType: 'ERC721',
         },
     },
     events: [],
