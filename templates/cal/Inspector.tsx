@@ -241,10 +241,10 @@ export default function Inspector() {
                     ))}
                 </Select>
             </Configuration.Section>
-            <Configuration.Section title="Cal Gating">
+            <Configuration.Section title="Gating">
                 <div className="flex flex-row items-center justify-between gap-2 ">
                     <Label className="font-md" htmlFor="gating">
-                        Enable Cal Gating?
+                        Enable Gating?
                     </Label>
                     <Switch
                         id="gating"
