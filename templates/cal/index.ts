@@ -58,6 +58,7 @@ export default {
                 erc20: null,
                 erc721: null,
                 erc1155: null,
+                moxie: null,
             },
         },
     },
