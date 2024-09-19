@@ -1,16 +1,13 @@
 'use server'
-import { getViem, supportedChains } from '@/sdk/viem'
+import { getViem } from '@/sdk/viem'
 import { parseAbi } from 'abitype'
 import { erc20Abi, getContract } from 'viem'
+import { uniswapChains } from './format'
 
 const uniswapAbi = parseAbi([
     'function token0() view returns (address)',
     'function token1() view returns (address)',
 ])
-
-export const uniswapChains = supportedChains.filter((chain) =>
-    ['mainnet', 'optimism', 'arbitrum', 'base', 'polygon'].includes(chain.key)
-)
 
 export const getPoolClient = async (address: `0x${string}`) => {
     for (const chain of uniswapChains) {

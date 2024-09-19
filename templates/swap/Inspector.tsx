@@ -20,8 +20,8 @@ import type { AnchorHTMLAttributes, FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import type { Config, PoolToken } from '.'
-import { formatSymbol } from './common/format'
-import { getPoolData, uniswapChains } from './common/uniswap'
+import { formatSymbol, uniswapChains } from './common/format'
+import { getPoolData } from './common/uniswap'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
