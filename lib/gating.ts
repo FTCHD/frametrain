@@ -231,61 +231,49 @@ async function checkFid(fid: number, minFid: number, maxFid: number) {
     }
 }
 
-async function checkLiked(body: {
-    validatedData: { cast: { viewer_context: { liked: boolean } } }
-}) {
-    if (!body.validatedData.cast.viewer_context.liked) {
+async function checkLiked(body: FramePayloadValidated) {
+    if (!body.cast.viewer_context?.liked) {
         throw new FrameError('You must like this frame.')
     }
 }
 
-async function checkRecasted(body: {
-    validatedData: { cast: { viewer_context: { recasted: boolean } } }
-}) {
-    if (!body.validatedData.cast.viewer_context.recasted) {
+async function checkRecasted(body: FramePayloadValidated) {
+    if (!body.cast.viewer_context?.recasted) {
         throw new FrameError('You must recast this frame.')
     }
 }
 
-async function checkFollowingMe(body: {
-    validatedData: { interactor: { viewer_context: { following: boolean } } }
-}) {
-    if (!body.validatedData.interactor.viewer_context.following) {
+async function checkFollowingMe(body: FramePayloadValidated) {
+    if (!body.interactor.viewer_context?.following) {
         throw new FrameError('You must follow the creator.')
     }
 }
 
-async function checkFollowedByMe(body: {
-    validatedData: { interactor: { viewer_context: { followed_by: boolean } } }
-}) {
-    if (!body.validatedData.interactor.viewer_context.followed_by) {
+async function checkFollowedByMe(body: FramePayloadValidated) {
+    if (!body.interactor.viewer_context?.followed_by) {
         throw new FrameError('You must be followed by the creator.')
     }
 }
 
-async function checkEthWallet(body: {
-    validatedData: { interactor: { verified_addresses: { eth_addresses: string[] } } }
-}) {
-    if (!body.validatedData.interactor.verified_addresses.eth_addresses.length) {
+async function checkEthWallet(body: FramePayloadValidated) {
+    if (!body.interactor.verified_addresses.eth_addresses.length) {
         throw new FrameError('You must have an Ethereum wallet.')
     }
 }
 
-async function checkSolWallet(body: {
-    validatedData: { interactor: { verified_addresses: { sol_addresses: string[] } } }
-}) {
-    if (!body.validatedData.interactor.verified_addresses.sol_addresses.length) {
+async function checkSolWallet(body: FramePayloadValidated) {
+    if (!body.interactor.verified_addresses.sol_addresses.length) {
         throw new FrameError('You must have a Solana wallet.')
     }
 }
 
 const keyToValidator: Record<
     (typeof GATING_ALL_OPTIONS)[number],
-    (requirements: GatingRequirementsType, body: any) => Promise<void>
+    (requirements: GatingRequirementsType, body: FramePayloadValidated) => Promise<void>
 > = {
     channels: async (requirements, body) => {
         for (const channel of requirements['channels']!) {
-            await checkChannelMembership(body.validatedData.interactor.fid, channel)
+            await checkChannelMembership(body.interactor.fid, channel)
         }
     },
     followedByMe: async (_requirements, body) => await checkFollowedByMe(body),
@@ -295,18 +283,18 @@ const keyToValidator: Record<
     eth: async (_requirements, body) => await checkEthWallet(body),
     sol: async (_requirements, body) => await checkSolWallet(body),
     minFid: async (requirements, body) =>
-        await checkFid(body.validatedData.interactor.fid, requirements['minFid']!, 0),
+        await checkFid(body.interactor.fid, requirements['minFid']!, 0),
     maxFid: async (requirements, body) =>
-        await checkFid(body.validatedData.interactor.fid, 0, requirements['maxFid']!),
+        await checkFid(body.interactor.fid, 0, requirements['maxFid']!),
     exactFids: async (requirements, body) => {
         for (const fid of requirements['exactFids']!) {
-            await checkFid(body.validatedData.interactor.fid, fid, fid)
+            await checkFid(body.interactor.fid, fid, fid)
         }
     },
     erc20: async (requirements, body) => {
         for (const token of requirements['erc20']!) {
             await checkOwnsErc20(
-                body.validatedData.interactor.verified_addresses.eth_addresses,
+                body.interactor.verified_addresses.eth_addresses,
                 token.network,
                 token.address,
                 token.symbol,
@@ -317,7 +305,7 @@ const keyToValidator: Record<
     erc721: async (requirements, body) => {
         for (const token of requirements['erc721']!) {
             await checkOwnsErc721(
-                body.validatedData.interactor.verified_addresses.eth_addresses,
+                body.interactor.verified_addresses.eth_addresses,
                 token.network,
                 token.address,
                 token.symbol,
@@ -328,7 +316,7 @@ const keyToValidator: Record<
     erc1155: async (requirements, body) => {
         for (const token of requirements['erc1155']!) {
             await checkOwnsErc1155(
-                body.validatedData.interactor.verified_addresses.eth_addresses,
+                body.interactor.verified_addresses.eth_addresses,
                 token.network,
                 token.address,
                 token.symbol,
@@ -339,12 +327,12 @@ const keyToValidator: Record<
     },
     score: async (requirements, body) =>
         await checkOpenRankScore(
-            body.validatedData.interactor,
+            body.interactor.fid,
             requirements['score']!.owner,
             requirements['score']!.score
         ),
     moxie: async (requirements, body) => {
-        const userAddresses = body.validatedData.interactor.verified_addresses.eth_addresses
+        const userAddresses = body.interactor.verified_addresses.eth_addresses
         for (const token of requirements['moxie']!) {
             // NOTE(copied from moxie dev docs): Moxie protocol users have Moxie token currently vesting in their vesting contract. A huge portion of them use these to bid on auctions and buy/sell fan tokens on the Moxie protocol.
             // Therefore, it is important that you include the user's vesting addresses in the query to get all the fan tokens owned by a certain user.

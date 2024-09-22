@@ -27,7 +27,7 @@ export default async function input({
     const viewer = body.interactor
     const fid = viewer.fid
     const buttonIndex = body.tapped_button.index
-    const textInput = (body.validatedData?.input?.text || '') as string
+    const textInput = (body?.input?.text || '') as string
 
     let newStorage = storage
 
