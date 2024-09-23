@@ -59,5 +59,5 @@ export default {
             },
         },
     },
-    events: [],
+    events: ['vote'],
 } satisfies BaseTemplate

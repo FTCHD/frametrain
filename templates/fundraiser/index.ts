@@ -64,5 +64,5 @@ export default {
             bottomMessage: { text: 'You can customize this message.' },
         },
     },
-    events: [],
+    events: ['fundraiser.success', 'fundraiser.failed'],
 } satisfies BaseTemplate

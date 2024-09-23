@@ -10,20 +10,22 @@ import initial from './initial'
 export default async function success({
     body,
     config,
+    storage,
+    params,
 }: {
     body: FramePayloadValidated
     config: Config
     storage: Storage
     params:
         | {
-              buyAmount: string
+              ts: string
           }
         | undefined
 }): Promise<BuildFrameData> {
     const transactionId = body.transaction?.hash
     const buttonIndex = body.tapped_button?.index || 1
 
-    if (!config.pool) {
+    if (!(params && config.pool)) {
         return initial({ config })
     }
 
@@ -73,6 +75,33 @@ export default async function success({
             },
         ],
         handler: 'more',
+    }
+    const ts = Number(params.ts)
+    const latestSwapData = storage.swapData[body.interactor.fid].find((tsData) => tsData.ts === ts)
+    const token0 = config.pool.primary === 'token0' ? config.pool.token0 : config.pool.token1
+    const token1 = config.pool.primary === 'token0' ? config.pool.token1 : config.pool.token0
+
+    if (latestSwapData) {
+        buildData['webhooks'] = {
+            event: 'swap.success',
+            data: {
+                fid: body.interactor.fid,
+                pool: {
+                    address: config.pool.address,
+                    chain: { id: config.pool.network.id, name: config.pool.network.name },
+                    pair: `${token0.symbol}/${token1.symbol}`,
+                },
+                sell_token_symbol: token0.symbol,
+                sell_token_address: token0.address,
+                sell_token_decimals: token0.decimals,
+                buy_token_symbol: token1.symbol,
+                buy_token_address: token1.address,
+                buy_token_decimals: token1.decimals,
+                buy_amount: latestSwapData.amount[0],
+                sell_amount: latestSwapData.amount[1],
+                transaction_id: transactionId,
+            },
+        }
     }
 
     if (config.success?.image) {

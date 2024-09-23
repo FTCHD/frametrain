@@ -1,4 +1,4 @@
-export default function RefreshView() {
+export default function RefreshView(failed = false) {
     return (
         <div
             style={{
@@ -23,12 +23,14 @@ export default function RefreshView() {
                     flexGrow: 1,
                     padding: 32,
                     textAlign: 'center',
-                    color: 'rgb(32,32,32)',
+                    color: failed ? 'red' : 'rgb(32,32,32)',
                     fontWeight: 600,
                     fontSize: 24,
                 }}
             >
-                Waiting for payment confirmation..
+                {failed
+                    ? 'Sorry, we could not get the transaction data for your donation.'
+                    : 'Waiting for payment confirmation..'}
             </div>
         </div>
     )

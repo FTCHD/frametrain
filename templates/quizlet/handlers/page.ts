@@ -14,12 +14,16 @@ export default async function page({
     config: Config
     storage: Storage
 }): Promise<BuildFrameData> {
-    const user = body.interactor.fid.toString()
+    const fid = body.interactor.fid.toString()
     const qna = config.qna[0]
     const fonts = await loadGoogleFontAllVariants(qna.design?.qnaFont ?? 'Roboto')
     const buttons: FrameButtonMetadata[] = []
-    const pastAnswers = storage.answers?.[user] ?? []
+    const pastAnswers = storage.answers?.[fid] ?? []
     const scores = { yes: 0, no: 0 }
+    const quizId = `${fid}:${body.cast.hash}_${crypto.randomUUID().replaceAll('-', '')}`
+    const quizIds = storage.ids || []
+    quizIds.push(quizId)
+    storage.ids = quizIds
 
     if (config.answerOnce) {
         scores.yes = pastAnswers.reduce((acc, past) => {
@@ -52,6 +56,19 @@ export default async function page({
         }
     }
 
+    const webhooks: NonNullable<BuildFrameData['webhooks']> = []
+
+    webhooks.push({
+        event: 'quiz.initialize',
+        data: {
+            id: quizId,
+            fid,
+            total_questions: config.qna.length,
+            previously_participated: pastAnswers.length > 0,
+            cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
+        },
+    })
+
     return {
         buttons,
         fonts,
@@ -59,6 +76,8 @@ export default async function page({
             ? ResultsView(config.qna.length, scores, config)
             : QuestionView({ qna, total: config.qna.length }),
         handler: config.answerOnce ? 'results' : 'answer',
-        params: config.answerOnce ? { currentPage: 1 } : undefined,
+        params: !config.answerOnce ? { quizId } : undefined,
+        webhooks,
+        storage,
     }
 }

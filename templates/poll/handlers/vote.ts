@@ -95,5 +95,18 @@ export default async function vote({
             colors
         ),
         handler: 'results',
+        webhooks: [
+            {
+                event: 'vote',
+                data: {
+                    voter,
+                    question: config.question,
+                    votedAt: new Date(newStorage.votesForId?.[voter]?.timestamp).getTime(),
+                    answer: config.options[buttonIndex].displayLabel,
+                    totalVotes: newStorage.totalVotes,
+                },
+            },
+        ],
     }
 }
+Date.now()

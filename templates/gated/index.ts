@@ -22,7 +22,9 @@ export interface Config extends BaseConfig {
     }
 }
 
-export interface Storage extends BaseStorage {}
+export interface Storage extends BaseStorage {
+    users?: number[]
+}
 
 export default {
     name: 'Gated',
@@ -65,5 +67,5 @@ export default {
             },
         },
     },
-    events: [],
+    events: ['gated.success'],
 } satisfies BaseTemplate

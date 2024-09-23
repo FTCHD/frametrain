@@ -89,6 +89,8 @@ export interface Storage extends BaseStorage {
             answer: string
         }[]
     }
+    id?: string
+    ids?: string[]
 }
 
 export default {
@@ -136,5 +138,5 @@ export default {
             labelColor: 'white',
         },
     },
-    events: [],
+    events: ['quiz.initialize', 'quiz.qna', 'quiz.results'],
 } satisfies BaseTemplate

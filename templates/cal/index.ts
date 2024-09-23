@@ -62,5 +62,5 @@ export default {
             },
         },
     },
-    events: [],
+    events: ['calbooking.success', 'calbooking.failed'],
 } satisfies BaseTemplate
