@@ -34,9 +34,9 @@ export default async function confirm({
 
     const buttonIndex = body.tapped_button.index
 
-    const month = Number.parseInt(params.month)
-    const slot = Number.parseInt(params.slot)
-    const date = Number.parseInt(params.date)
+    const month = Number.parseInt(params.month, 10)
+    const slot = Number.parseInt(params.slot, 10)
+    const date = Number.parseInt(params.date, 10)
     const eventTypeSlug = params.duration as string
     const event = config.events.find((evt) => evt.slug === eventTypeSlug)
     const timezone = config.timezone || 'Europe/London'
@@ -77,9 +77,15 @@ export default async function confirm({
     )
     const dateSection = datesArray[params.date]
 
-    const email = body.input?.text
+    const email = body.input?.text || 'N/A'
     const eventTypeId = await getEventId(config.username!, eventTypeSlug)
     const webhooks: NonNullable<BuildFrameData['webhooks']> = []
+    const baseWebhookData = {
+        id: eventTypeId,
+        user_fid: body.interactor.fid,
+        user_email: email,
+        slug: eventTypeSlug,
+    }
 
     try {
         await bookCall(
@@ -93,11 +99,8 @@ export default async function confirm({
         webhooks.push({
             event: 'calbooking.success',
             data: {
-                id: eventTypeId,
-                user_fid: body.interactor.fid,
-                user_email: email || 'N/A',
+                ...baseWebhookData,
                 host: config.username,
-                slug: eventTypeSlug,
                 date: formatDateMonth(date, month, timezone),
                 duration: event.formattedDuration,
                 hour_slot: slotsArray[date][slot],
@@ -106,16 +109,12 @@ export default async function confirm({
                 cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
             },
         })
-    } catch (e) {
-        const error = e as Error
+    } catch {
         webhooks.push({
             event: 'calbooking.failed',
             data: {
-                id: eventTypeId,
-                user_fid: body.interactor.fid,
-                user_email: email || 'N/A',
-                slug: eventTypeSlug,
-                reason: error.message,
+                ...baseWebhookData,
+                reason: 'An error occurred during booking.',
             },
         })
         throw new FrameError('Error booking event.')

@@ -40,6 +40,10 @@ export default async function status({
         throw new FrameError('Session Id is missing')
     }
 
+    if (isNaN(Number(params.amount))) {
+        throw new FrameError('Invalid amount provided.')
+    }
+
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
 
@@ -140,6 +144,7 @@ export default async function status({
             },
             fonts,
         }
+        const MAX_RETRIES = 3
 
         if (paid) {
             buttons.push(
@@ -162,10 +167,10 @@ export default async function status({
                 label: 'Refresh',
             })
 
-            buildData['params'].retries = retries + 1
+            buildData['params'].retries = Math.min(retries + 1, MAX_RETRIES)
         }
 
-        if (retries >= 3) {
+        if (MAX_RETRIES) {
             buttons.length = 0
             buildData['handler'] = 'success'
             buildData['webhooks'] = [

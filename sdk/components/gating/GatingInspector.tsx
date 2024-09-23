@@ -454,7 +454,7 @@ export function GatingInspector({
                                     <TableRow>
                                         <TableHead>Symbol</TableHead>
                                         <TableHead>Address</TableHead>
-                                        <TableHead>Min Balance</TableHead>\{' '}
+                                        <TableHead>Min Balance</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -499,9 +499,13 @@ export function GatingInspector({
                             onSubmit={async (e) => {
                                 e.preventDefault()
                                 const symbol = e.currentTarget.symbol.value
-                                const balance = e.currentTarget.balance.value || 1
+                                const balance = Number(e.currentTarget.balance.value) || 1
                                 let address: string | undefined
-                                if (config?.requirements?.moxie?.find((c) => c.symbol === symbol)) {
+                                if (
+                                    config?.requirements?.moxie?.find(
+                                        (c) => c.symbol === symbol.toLowerCase()
+                                    )
+                                ) {
                                     toast.error(`${symbol} has already been added!`)
                                     return
                                 }

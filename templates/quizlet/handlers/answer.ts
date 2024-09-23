@@ -30,7 +30,7 @@ export default async function answer({
     const nextQna = config.qna[nextPage]
     const choiceType = isNaN(Number.parseInt(qna.answer)) ? 'alpha' : 'numeric'
     const userAnswer = choicesRepresentation[choiceType][choice]
-    const quizIdsFromStorage = storage.ids || []
+    const quizIdsFromStorage = storage.quizIds || []
     const quizId = `${params?.quizId}`
     const currentQuizId = quizIdsFromStorage.find((id) => id === quizId)
         ? quizId

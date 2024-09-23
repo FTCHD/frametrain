@@ -22,8 +22,7 @@ export default async function page({
     const scores = { yes: 0, no: 0 }
     const quizId = `${fid}:${body.cast.hash}_${crypto.randomUUID().replaceAll('-', '')}`
     const quizIds = storage.ids || []
-    quizIds.push(quizId)
-    storage.ids = quizIds
+    let newStorage = storage
 
     if (config.answerOnce) {
         scores.yes = pastAnswers.reduce((acc, past) => {
@@ -55,6 +54,10 @@ export default async function page({
             buttons.push({ label })
         }
     }
+    newStorage = {
+        ...storage,
+        quizIds: [...quizIds, quizId],
+    }
 
     const webhooks: NonNullable<BuildFrameData['webhooks']> = []
 
@@ -78,6 +81,6 @@ export default async function page({
         handler: config.answerOnce ? 'results' : 'answer',
         params: !config.answerOnce ? { quizId } : undefined,
         webhooks,
-        storage,
+        storage: newStorage,
     }
 }
