@@ -106,22 +106,25 @@ export default async function status({
 
         const amountInTokenCopy = `amount_in_${config.token.symbol.toLowerCase()}`
 
-        buildData['webhooks'] = {
-            event: 'fundraiser.success',
-            data: {
-                fid: body.interactor.fid,
-                transaction_id: txHash,
-                transaction_chain: glide.chains[0].name,
-                transaction_url: txUrl,
-                [`${amountInTokenCopy}`]: Number(params.amount),
-                [`${amountInTokenCopy}_formatted`]: formatSymbol(
-                    params.amount,
-                    config.token.symbol
-                ),
-                token_symbol: config.token.symbol,
-                token_decimals: glide.chains[0].nativeCurrency.decimals,
+        buildData['webhooks'] = [
+            {
+                event: 'fundraiser.success',
+                data: {
+                    fid: body.interactor.fid,
+                    transaction_id: txHash,
+                    transaction_chain: glide.chains[0].name,
+                    transaction_url: txUrl,
+                    [`${amountInTokenCopy}`]: Number(params.amount),
+                    [`${amountInTokenCopy}_formatted`]: formatSymbol(
+                        params.amount,
+                        config.token.symbol
+                    ),
+                    token_symbol: config.token.symbol,
+                    token_decimals: glide.chains[0].nativeCurrency.decimals,
+                    cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
+                },
             },
-        }
+        ]
 
         return buildData as BuildFrameData
     } catch (e) {
@@ -165,19 +168,23 @@ export default async function status({
         if (retries >= 3) {
             buttons.length = 0
             buildData['handler'] = 'success'
-            buildData['webhooks'] = {
-                event: 'fundraiser.failed',
-                data: {
-                    fid: body.interactor.fid,
-                    transaction_id: txHash,
-                    transaction_chain: glide.chains[0].name,
-                    transaction_url: txUrl,
-                    amount: Number(params.amount),
-                    amount_formatted: formatSymbol(params.amount, config.token.symbol),
-                    token_symbol: config.token.symbol,
+            buildData['webhooks'] = [
+                {
+                    event: 'fundraiser.failed',
+                    data: {
+                        fid: body.interactor.fid,
+                        transaction_id: txHash,
+                        transaction_chain: glide.chains[0].name,
+                        transaction_url: txUrl,
+                        amount: Number(params.amount),
+                        amount_formatted: formatSymbol(params.amount, config.token.symbol),
+                        token_symbol: config.token.symbol,
+                        cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
+                    },
                 },
-            }
+            ]
             buildData['component'] = RefreshView(true)
+
             buttons.push(
                 {
                     label: 'Donate again',

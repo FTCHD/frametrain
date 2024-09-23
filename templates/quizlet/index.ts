@@ -89,7 +89,6 @@ export interface Storage extends BaseStorage {
             answer: string
         }[]
     }
-    id?: string
     ids?: string[]
 }
 

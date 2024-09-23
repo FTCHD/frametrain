@@ -104,6 +104,7 @@ export default async function vote({
                     votedAt: new Date(newStorage.votesForId?.[voter]?.timestamp).getTime(),
                     answer: config.options[buttonIndex].displayLabel,
                     totalVotes: newStorage.totalVotes,
+                    cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
                 },
             },
         ],

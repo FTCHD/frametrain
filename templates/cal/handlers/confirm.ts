@@ -103,6 +103,7 @@ export default async function confirm({
                 hour_slot: slotsArray[date][slot],
                 booked_at: Date.now(),
                 timezone,
+                cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
             },
         })
     } catch (e) {
