@@ -1,3 +1,4 @@
+import beehiiv from './beehiiv'
 import cal from './cal'
 import contract from './contract'
 import discourse from './discourse'
@@ -14,6 +15,7 @@ import poll from './poll'
 import presentation from './presentation'
 import quizlet from './quizlet'
 import rss from './rss'
+import substack from './substack'
 import swap from './swap'
 import twitter from './twitter'
 
@@ -36,4 +38,6 @@ export default {
     fundraiser,
     gated,
     contract,
+    substack,
+    beehiiv,
 }
