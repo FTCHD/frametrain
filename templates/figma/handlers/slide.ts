@@ -4,7 +4,6 @@ import type { FramePressConfig } from '../Config'
 import buildFigmaFrame from '../utils/FigmaFrameBuilder'
 
 export default async function click({
-    body,
     config,
     params,
 }: {

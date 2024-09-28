@@ -16,13 +16,14 @@ export default async function review({
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
-    const student = body.interactor.fid.toString()
-    const pastAnswers = storage.answers?.[student] ?? []
+    const fid = body.interactor.fid.toString()
+    const pastAnswers = storage.answers?.[fid] ?? []
 
     const newStorage = storage
     const currentPage = params?.currentPage === undefined ? 0 : Number.parseInt(params?.currentPage)
     const nextPage = currentPage > 0 ? currentPage + 1 : 1
     const lastPage = currentPage === config.qna.length
+    const quizId = `${params?.quizId}`
 
     const buttons: FrameButtonMetadata[] = []
 
@@ -40,7 +41,25 @@ export default async function review({
     }, 0)
 
     const showImage = correctAnswers === config.qna.length
+    const webhooks: NonNullable<BuildFrameData['webhooks']> = []
+
     if (lastPage) {
+        webhooks.push({
+            event: 'quiz.results',
+            data: {
+                id: quizId,
+                fid,
+                total_questions: config.qna.length,
+                first_qna: { question: config.qna[0].question, answer: config.qna[0].answer },
+                last_qna: {
+                    question: config.qna[config.qna.length - 1].question,
+                    answer: config.qna[config.qna.length - 1].answer,
+                },
+                correct_answers: correctAnswers,
+                wrong_answers: config.qna.length - correctAnswers,
+                cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
+            },
+        })
         buttons.push({
             label: '← Home',
         })
@@ -70,5 +89,6 @@ export default async function review({
         component: ReviewAnswersView({ total: qnas.length, qna, userAnswer }),
         handler: lastPage ? 'success' : 'review',
         params: !lastPage ? { currentPage: nextPage } : undefined,
+        webhooks,
     }
 }

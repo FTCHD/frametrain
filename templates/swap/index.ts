@@ -41,6 +41,12 @@ export interface Config extends BaseConfig {
 
 export interface Storage extends BaseStorage {
     livePriceData: Record<string, { price: number; lastUpdated: number }>
+    swapData: {
+        [fid: number]: {
+            amount: number[] // [buyAmount, sellAmount]
+            ts: number
+        }[]
+    }
 }
 
 export default {
@@ -66,5 +72,5 @@ export default {
             bottomMessage: { text: 'We appreciate your support.' },
         },
     },
-    events: [],
+    events: ['swap.success'],
 } satisfies BaseTemplate

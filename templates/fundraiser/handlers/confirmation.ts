@@ -71,7 +71,9 @@ export default async function confirmation({
         amount = config.amounts[buttonIndex - 2]
     }
 
-    const chain = Object.keys(chains).find((chain) => (chains as any)[chain].id === glide.chains[0].id)
+    const chain = Object.keys(chains).find(
+        (chain) => (chains as any)[chain].id === glide.chains[0].id
+    )
 
     if (!chain) {
         throw new FrameError('Chain not found for the given chain ID.')
@@ -115,7 +117,7 @@ export default async function confirmation({
                 amount: formatSymbol(amount, config.token.symbol),
             }),
             handler: 'status',
-            params: { sessionId: session.sessionId },
+            params: { sessionId: session.sessionId, amount },
         }
     } catch (e) {
         console.error('Error creating session', e)

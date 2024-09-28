@@ -6,6 +6,7 @@ import { getGlide } from '@/sdk/glide'
 import BasicView from '@/sdk/views/BasicView'
 import { updatePaymentTransaction, waitForSession } from '@paywithglide/glide-js'
 import type { Config } from '..'
+import { formatSymbol } from '../common'
 import RefreshView from '../views/Refresh'
 import initial from './initial'
 
@@ -17,7 +18,7 @@ export default async function status({
     body: FramePayloadValidated
     config: Config
     storage: Storage
-    params: { transactionId?: string; sessionId?: string }
+    params: { transactionId?: string; sessionId?: string; retries?: string; amount: string }
 }): Promise<BuildFrameData> {
     if (!config.address) {
         throw new FrameError('Fundraiser address not found.')
@@ -37,6 +38,10 @@ export default async function status({
 
     if (!params.sessionId) {
         throw new FrameError('Session Id is missing')
+    }
+
+    if (isNaN(Number(params.amount))) {
+        throw new FrameError('Invalid amount provided.')
     }
 
     const fontSet = new Set(['Roboto'])
@@ -64,7 +69,10 @@ export default async function status({
     ) as `0x${string}`
 
     const glide = getGlide(config.token.chain)
-	
+    const retries =
+        params.retries === undefined || isNaN(Number.parseInt(params.retries)) ? 0 : +params.retries
+    const txUrl = `https://${glide.chains[0].blockExplorers?.default.url}/tx/${txHash}`
+
     try {
         // Get the status of the payment transaction
         await updatePaymentTransaction(glide, {
@@ -83,7 +91,7 @@ export default async function status({
                 {
                     label: `View on ${glide.chains[0].blockExplorers?.default.name}`,
                     action: 'link',
-                    target: `https://${glide.chains[0].blockExplorers?.default.url}/tx/${txHash}`,
+                    target: txUrl,
                 },
                 {
                     label: 'Create Your Own',
@@ -100,6 +108,28 @@ export default async function status({
             buildData['component'] = BasicView(config.success)
         }
 
+        const amountInTokenCopy = `amount_in_${config.token.symbol.toLowerCase()}`
+
+        buildData['webhooks'] = [
+            {
+                event: 'fundraiser.success',
+                data: {
+                    fid: body.interactor.fid,
+                    transaction_id: txHash,
+                    transaction_chain: glide.chains[0].name,
+                    transaction_url: txUrl,
+                    [`${amountInTokenCopy}`]: Number(params.amount),
+                    [`${amountInTokenCopy}_formatted`]: formatSymbol(
+                        params.amount,
+                        config.token.symbol
+                    ),
+                    token_symbol: config.token.symbol,
+                    token_decimals: glide.chains[0].nativeCurrency.decimals,
+                    cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
+                },
+            },
+        ]
+
         return buildData as BuildFrameData
     } catch (e) {
         const buttons: FrameButtonMetadata[] = []
@@ -111,10 +141,10 @@ export default async function status({
             params: {
                 transactionId: txHash,
                 sessionId: params.sessionId,
-                isFresh: false,
             },
             fonts,
         }
+        const MAX_RETRIES = 3
 
         if (paid) {
             buttons.push(
@@ -136,13 +166,54 @@ export default async function status({
             buttons.push({
                 label: 'Refresh',
             })
+
+            buildData['params'].retries = Math.min(retries + 1, MAX_RETRIES)
         }
 
-        if (config.success?.image) {
-            buildData['image'] = paid ? config.success?.image : undefined
+        if (MAX_RETRIES) {
+            buttons.length = 0
+            buildData['handler'] = 'success'
+            buildData['webhooks'] = [
+                {
+                    event: 'fundraiser.failed',
+                    data: {
+                        fid: body.interactor.fid,
+                        transaction_id: txHash,
+                        transaction_chain: glide.chains[0].name,
+                        transaction_url: txUrl,
+                        amount: Number(params.amount),
+                        amount_formatted: formatSymbol(params.amount, config.token.symbol),
+                        token_symbol: config.token.symbol,
+                        cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
+                    },
+                },
+            ]
+            buildData['component'] = RefreshView(true)
+
+            buttons.push(
+                {
+                    label: 'Donate again',
+                },
+                {
+                    label: `View on ${glide.chains[0].blockExplorers?.default.name}`,
+                    action: 'link',
+                    target: txUrl,
+                },
+                {
+                    label: 'Create Your Own',
+                    action: 'link',
+                    target: 'https://www.frametra.in',
+                }
+            )
         } else {
-            buildData['component'] = paid ? BasicView(config.success) : RefreshView()
+            if (config.success?.image) {
+                buildData['image'] = paid ? config.success?.image : undefined
+            } else {
+                buildData['component'] = paid ? BasicView(config.success) : RefreshView()
+            }
         }
+
+        buildData['buttons'] = buttons
 
         return buildData as BuildFrameData
     }

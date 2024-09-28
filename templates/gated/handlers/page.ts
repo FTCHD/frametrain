@@ -3,11 +3,12 @@ import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from 
 import { runGatingChecks } from '@/lib/gating'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import BasicView from '@/sdk/views/BasicView'
-import type { Config } from '..'
+import type { Config, Storage } from '..'
 
 export default async function page({
     body,
     config,
+    storage,
 }: {
     body: FramePayloadValidated
     config: Config
@@ -17,6 +18,8 @@ export default async function page({
     await runGatingChecks(body, config.gating)
 
     const buttons: FrameButtonMetadata[] = []
+    const webhooks: NonNullable<BuildFrameData['webhooks']> = []
+    const users = storage.users || []
 
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
@@ -54,9 +57,22 @@ export default async function page({
         })
     }
 
+    if (!users.find((user) => user === body.interactor.fid)) {
+        webhooks.push({
+            event: 'gated.success',
+            data: {
+                fid: body.interactor.fid,
+                cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
+            },
+        })
+        storage.users = users.concat([body.interactor.fid])
+    }
+
     const buildData: Record<string, unknown> = {
         buttons,
         fonts,
+        webhooks,
+        storage,
     }
 
     if (config.success.image) {

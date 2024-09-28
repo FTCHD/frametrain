@@ -184,6 +184,24 @@ export function GatingInspector({
     fid: string
     disabledOptions?: typeof GATING_ALL_OPTIONS
 }) {
+    // the frame preview's page breaks when an option has been enabled no requirements
+    // eg: existing frames built on cal template
+    if (config?.enabled && !config?.requirements) {
+        config = {
+            ...config,
+            requirements: {
+                maxFid: 0,
+                minFid: 0,
+                score: undefined,
+                channels: [],
+                exactFids: [],
+                erc20: undefined,
+                erc721: undefined,
+                erc1155: undefined,
+                moxie: undefined,
+            },
+        }
+    }
     const [enabledOptions, setEnabledOptions] = useState<
         Record<(typeof GATING_ALL_OPTIONS)[number], boolean>
     >({
@@ -201,6 +219,7 @@ export function GatingInspector({
         erc721: Boolean(config?.enabled.includes('erc721')),
         erc1155: Boolean(config?.enabled.includes('erc1155')),
         erc20: Boolean(config?.enabled.includes('erc20')),
+        moxie: Boolean(config?.enabled.includes('moxie')),
     })
 
     const options = useMemo<
@@ -421,6 +440,160 @@ export function GatingInspector({
                                 OpenRank
                             </NextLink>
                         </p>
+                    </div>
+                ),
+            },
+            {
+                key: 'moxie',
+                label: 'Must hold Moxie FanToken(s)',
+                children: (
+                    <div className="flex flex-col gap-2">
+                        {Boolean(config?.requirements?.moxie?.length) && (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Symbol</TableHead>
+                                        <TableHead>Address</TableHead>
+                                        <TableHead>Min Balance</TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {config?.requirements?.moxie?.map((group) => (
+                                        <TableRow key={group.symbol}>
+                                            <TableCell className="font-medium">
+                                                {group.symbol}
+                                            </TableCell>
+                                            <TableCell className="font-medium">
+                                                {group.address}
+                                            </TableCell>
+                                            <TableCell>{group.balance}</TableCell>
+                                            <TableCell className="flex flex-row justify-end gap-2">
+                                                <Button
+                                                    variant="destructive"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        alert(group.symbol)
+                                                        onUpdate({
+                                                            requirements: {
+                                                                ...(config.requirements || {}),
+                                                                moxie: config.requirements.moxie?.filter(
+                                                                    (c) =>
+                                                                        c.symbol.toLowerCase() !==
+                                                                        group.symbol.toLowerCase()
+                                                                ),
+                                                            },
+                                                        })
+                                                    }}
+                                                >
+                                                    <Trash2Icon />
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        )}
+                        <form
+                            className="flex flex-col gap-2"
+                            onSubmit={async (e) => {
+                                e.preventDefault()
+                                const symbol = e.currentTarget.symbol.value
+                                const balance = Number(e.currentTarget.balance.value) || 1
+                                let address: string | undefined
+                                if (
+                                    config?.requirements?.moxie?.find(
+                                        (c) => c.symbol === symbol.toLowerCase()
+                                    )
+                                ) {
+                                    toast.error(`${symbol} has already been added!`)
+                                    return
+                                }
+
+                                try {
+                                    const GET_SYMBOL = `query TokenAddressFromSymbol($fanTokenSymbol: String!) {
+                                        subjectTokens(where: { symbol: $fanTokenSymbol }) {
+                                          address:id
+                                        }
+                                      }`
+                                    const response = await fetch(
+                                        'https://api.studio.thegraph.com/query/23537/moxie_protocol_stats_mainnet/version/latest',
+                                        {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify({
+                                                query: GET_SYMBOL,
+                                                variables: { fanTokenSymbol: symbol },
+                                            }),
+                                        }
+                                    )
+                                    const json = (await response.json()) as {
+                                        data: { subjectTokens: { address: string }[] }
+                                    }
+                                    const tokenAddress = json.data?.subjectTokens?.[0]?.address
+                                    if (!tokenAddress) {
+                                        toast.error(`${symbol} is an invalid fan token symbol!`)
+
+                                        return
+                                    }
+
+                                    address = tokenAddress
+                                } catch {
+                                    toast.error(
+                                        'Could not fetch fan token data, are you sure this is a valid symbol?'
+                                    )
+                                    return
+                                }
+                                onUpdate({
+                                    requirements: {
+                                        ...(config?.requirements || {}),
+                                        moxie: [
+                                            ...(config?.requirements.moxie || []),
+                                            {
+                                                address,
+                                                symbol,
+                                                balance,
+                                            },
+                                        ],
+                                    },
+                                })
+
+                                e.currentTarget.reset()
+                            }}
+                        >
+                            <div className="flex flex-row items-center w-full gap-2">
+                                <Label
+                                    htmlFor="address"
+                                    className="text-sm font-medium leading-none w-20"
+                                >
+                                    Symbol
+                                </Label>
+                                <BaseInput
+                                    id="symbol"
+                                    type="text"
+                                    placeholder="cid:warpcast"
+                                    required={true}
+                                />
+                            </div>
+                            <div className="flex flex-row items-center w-full gap-2">
+                                <Label
+                                    htmlFor="balance"
+                                    className="text-sm font-medium leading-none"
+                                >
+                                    Min Balance
+                                </Label>
+                                <BaseInput
+                                    id="balance"
+                                    type="number"
+                                    placeholder="300 for 300 /warpcast fan token"
+                                />
+                            </div>
+                            <Button type="submit" className="w-full" size={'lg'}>
+                                Add
+                            </Button>
+                        </form>
                     </div>
                 ),
             },

@@ -61,6 +61,7 @@ export default async function initial({
 
                 newStorage = {
                     ...storage,
+                    swapData: storage?.swapData || [],
                     livePriceData: {
                         ...storage?.livePriceData,
                         [token0.symbol.toLowerCase()]: {
@@ -81,6 +82,7 @@ export default async function initial({
 
             newStorage = {
                 ...storage,
+                swapData: storage?.swapData || [],
                 livePriceData: {
                     ...storage?.livePriceData,
                     [token0.symbol.toLowerCase()]: {

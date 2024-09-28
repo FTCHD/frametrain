@@ -22,7 +22,9 @@ export interface Config extends BaseConfig {
     }
 }
 
-export interface Storage extends BaseStorage {}
+export interface Storage extends BaseStorage {
+    users?: number[]
+}
 
 export default {
     name: 'Gated',
@@ -53,16 +55,17 @@ export default {
         gating: {
             enabled: [],
             requirements: {
-                channels: [],
                 maxFid: 0,
                 minFid: 0,
-                exactFids: [],
                 score: 0,
+                channels: [],
+                exactFids: [],
                 erc20: null,
                 erc721: null,
                 erc1155: null,
+                moxie: null,
             },
         },
     },
-    events: [],
+    events: ['gated.success'],
 } satisfies BaseTemplate
