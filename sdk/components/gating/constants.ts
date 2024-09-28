@@ -16,6 +16,7 @@ export const GATING_ADVANCED_OPTIONS = [
     'erc20',
     'erc721',
     'erc1155',
+    'moxie',
     // 'followedBy',
     // 'following',
 ]

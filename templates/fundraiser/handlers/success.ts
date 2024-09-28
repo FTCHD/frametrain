@@ -4,9 +4,7 @@ import type { Config } from '..'
 import initial from './initial'
 
 export default async function success({
-    body,
     config,
-    storage,
 }: {
     body: FramePayloadValidated
     config: Config

@@ -30,8 +30,15 @@ export default async function answer({
     const nextQna = config.qna[nextPage]
     const choiceType = isNaN(Number.parseInt(qna.answer)) ? 'alpha' : 'numeric'
     const userAnswer = choicesRepresentation[choiceType][choice]
+    const quizIdsFromStorage = storage.quizIds || []
+    const quizId = `${params?.quizId}`
+    const currentQuizId = quizIdsFromStorage.find((id) => id === quizId)
+        ? quizId
+        : `${student}:${body.cast.hash}_${crypto.randomUUID().replaceAll('-', '')}`
+    const quizIds = new Set([...quizIdsFromStorage, currentQuizId])
 
     const buttons: FrameButtonMetadata[] = []
+    const webhooks: NonNullable<BuildFrameData['webhooks']> = []
 
     // if the user has already answered this question, find the previous answers and
     // if the user has answered it more than once, keep the latest answer and remove the previous ones
@@ -48,6 +55,7 @@ export default async function answer({
         }
         newStorage = {
             ...storage,
+            quizIds: [...quizIds],
             answers: {
                 ...(storage.answers ?? {}),
                 [student]: updatedAnswers,
@@ -56,6 +64,7 @@ export default async function answer({
     } else {
         pastAnswers.push({ questionIndex: qna.index, answer: userAnswer })
         newStorage = Object.assign(storage, {
+            quizIds: [...quizIds],
             answers: {
                 ...(storage.answers ?? {}),
                 [student]: pastAnswers,
@@ -88,6 +97,20 @@ export default async function answer({
         )
     }
 
+    webhooks.push({
+        event: 'quiz.qna',
+        data: {
+            id: quizId,
+            fid: student,
+            total_questions: config.qna.length,
+            question_number: nextPage - 1,
+            question: qna.question,
+            answer: qna.answer,
+            user_answer: userAnswer,
+            cast_url: `https://warpcast.com/~/conversations/${body.cast.hash}`,
+        },
+    })
+
     const updatedAnswers = newStorage.answers[student]
 
     const correctAnswers = updatedAnswers.reduce((acc, past) => {
@@ -118,6 +141,7 @@ export default async function answer({
               )
             : QuestionView({ qna: nextQna, total: qnaCount }),
         handler: lastPage ? 'results' : 'answer',
-        params: lastPage ? undefined : { currentPage: nextPage },
+        params: lastPage ? { quizId: currentQuizId } : { currentPage: nextPage },
+        webhooks,
     }
 }

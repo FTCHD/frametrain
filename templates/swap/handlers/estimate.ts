@@ -93,5 +93,9 @@ export default async function estimate({
         ],
         component: PriceView({ token0, token1, network: config.pool.network, amount, estimates }),
         handler: 'success',
+        params: {
+            buyAmount: amount,
+            ts: Date.now(),
+        },
     }
 }

@@ -9,10 +9,12 @@ export default async function results({
     body,
     config,
     storage,
+    params,
 }: {
     body: FramePayloadValidated
     config: Config
     storage: Storage
+    params?: any
 }): Promise<BuildFrameData> {
     const userId = body.interactor.fid.toString()
     const choice = body.tapped_button.index
@@ -33,6 +35,6 @@ export default async function results({
         fonts: roboto,
         component: ReviewAnswersView({ qna, total: qnas.length, userAnswer }),
         handler: 'review',
-        params: { currentPage: 1 },
+        params: { currentPage: 1, quizId: params?.quizId },
     }
 }

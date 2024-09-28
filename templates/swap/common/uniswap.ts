@@ -1,7 +1,8 @@
 'use server'
-import { erc20Abi, getContract } from 'viem'
-import { chains, chainsByChainId, getClient } from './viem'
+import { getViem } from '@/sdk/viem'
 import { parseAbi } from 'abitype'
+import { erc20Abi, getContract } from 'viem'
+import { uniswapChains } from './format'
 
 const uniswapAbi = parseAbi([
     'function token0() view returns (address)',
@@ -9,8 +10,8 @@ const uniswapAbi = parseAbi([
 ])
 
 export const getPoolClient = async (address: `0x${string}`) => {
-    for (const chain of chains) {
-        const client = getClient(chain)
+    for (const chain of uniswapChains) {
+        const client = getViem(chain.key)
         const contract = getContract({
             client,
             address,
@@ -31,7 +32,7 @@ export const getPoolClient = async (address: `0x${string}`) => {
 async function getTokenData({
     address,
     client,
-}: { address: `0x${string}`; client: ReturnType<typeof getClient> }) {
+}: { address: `0x${string}`; client: ReturnType<typeof getViem> }) {
     try {
         const token = getContract({
             client,
@@ -58,7 +59,12 @@ async function getTokenData({
 }
 
 async function getTokenLogo(network: number, address: string) {
-    const url = `https://api.geckoterminal.com/api/v2/networks/${chainsByChainId[network]}/tokens/${address}`
+    const chain = uniswapChains.find((c) => c.id === network)
+    if (!chain) {
+        throw new Error('Invalid network')
+    }
+    const name = chain.key === 'mainnet' ? 'eth' : chain.key
+    const url = `https://api.geckoterminal.com/api/v2/networks/${name}/tokens/${address}`
 
     const response = await fetch(url)
     const data = (await response.json()) as {
@@ -98,7 +104,7 @@ export async function getPoolData(address: `0x${string}`) {
     const network = {
         id: client.chain.id,
         name: client.chain.name,
-        explorerUrl: client.chain.blockExplorers.default.url,
+        explorerUrl: client.chain.blockExplorers!.default.url,
     }
 
     return {
