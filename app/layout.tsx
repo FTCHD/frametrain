@@ -4,7 +4,6 @@ import { SessionProvider } from 'next-auth/react'
 import type React from 'react'
 import './global.css'
 import ContextProvider from '@/context'
-import { headers } from "next/headers"; // added
 
 export const metadata: Metadata = {
     title: {
@@ -42,7 +41,6 @@ export const metadata: Metadata = {
 }
 
 export default function Layout(props: { children: React.ReactNode }) {
-    const cookies = headers().get('cookie')
     return (
         <SessionProvider>
             <html lang="en">
@@ -55,7 +53,7 @@ export default function Layout(props: { children: React.ReactNode }) {
                         backgroundColor: '#17101f',
                     }}
                 >
-                    <ContextProvider cookies={cookies}>
+                    <ContextProvider>
                         {props.children}
                     </ContextProvider>
                 </body>
