@@ -2,6 +2,7 @@ import beehiiv from './beehiiv'
 import cal from './cal'
 import contract from './contract'
 import discourse from './discourse'
+import ecommerce from './ecommerce'
 import figma from './figma'
 import form from './form'
 import fundraiser from './fundraiser'
@@ -31,6 +32,7 @@ export default {
     medium,
     quizlet,
     luma,
+    ecommerce,
     presentation,
     meme,
     rss,
