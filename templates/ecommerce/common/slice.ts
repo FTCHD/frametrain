@@ -1,7 +1,7 @@
 // 'use server'
 
 import { corsFetch } from '@/sdk/scrape'
-import { type ProductCart, getProduct, payProductsConfig } from '@slicekit/core'
+import { type ProductCart, getProduct, getStoreProducts, payProductsConfig } from '@slicekit/core'
 import { http, createConfig } from '@wagmi/core'
 import { base } from '@wagmi/core/chains'
 import { formatUnits } from 'viem'
@@ -32,15 +32,17 @@ export async function getSliceStoreInfo(slicerId: number) {
 export async function getSliceProductPaymentPayload(
     slicerId: number,
     productId: number,
-    account: `0x${string}`
+    account: `0x${string}`,
+    quantity = 1
 ) {
-    const product = await getProduct(sliceConfig, { slicerId, productId })
+    const storeProduct = await getProduct(sliceConfig, { slicerId, productId })
 
-    if (!product) {
+    if (!storeProduct) {
         throw new Error('Product not found')
     }
+    const product = (Array.isArray(storeProduct) ? storeProduct[0] : storeProduct) as ProductCart
 
-    const cart = Array.isArray(product) ? product : [product]
+    const cart = Array.from({ length: quantity }, () => product)
 
     const data = await payProductsConfig(sliceConfig, {
         cart,
@@ -48,6 +50,35 @@ export async function getSliceProductPaymentPayload(
     })
 
     return data
+}
+
+export async function getSliceProducts(slicerId: number) {
+    const storeProducts = await getStoreProducts(sliceConfig, { slicerId })
+
+    const products = storeProducts.cartProducts.map((product) => {
+        return {
+            id: `${slicerId.toString()}-${product.productId.toString()}`,
+            title: product.name,
+            description: product.shortDescription!,
+            handle: product.productId.toString(),
+            variantId: product.externalVariantId
+                ? product.externalVariantId.toString()
+                : product.productId.toString(),
+            variantFormattedPrice:
+                product.price === '0'
+                    ? 'FREE'
+                    : `${formatUnits(BigInt(product.price), product.currency.decimals || 18)} ${
+                          product.currency.symbol || 'ETH'
+                      }`,
+            alt: product.name,
+            image: product.images[0] || 'https://slice.so/product_default.png',
+            maxPerBuyer: product.maxUnitsPerBuyer,
+            isInfinite: product.isInfinite,
+            remainingUnits: product.availableUnits,
+        }
+    })
+
+    return products
 }
 
 export async function getSliceProduct(slicerId: number, productId: number) {
