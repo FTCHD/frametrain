@@ -1,6 +1,6 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from "@/lib/types";
 import Inspector from "./Inspector";
-import cover from "./cover.jpeg";
+import cover from "./cover.png";
 import handlers from "./handlers";
 import { BasicViewProps } from "@/sdk/views/BasicView";
 import { GatingType } from "@/sdk/components/gating/types";
