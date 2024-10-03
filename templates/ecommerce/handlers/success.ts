@@ -3,7 +3,7 @@ import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import BasicView from '@/sdk/views/BasicView'
-import type { Config } from '..'
+import type { Config, Storage } from '..'
 import initial from './initial'
 
 export default async function product({
@@ -15,7 +15,11 @@ export default async function product({
     body: FramePayloadValidated
     config: Config
     storage: Storage
-    params: any
+    params: {
+        productId: string
+        quantity: string
+        variant?: string
+    }
 }): Promise<BuildFrameData> {
     const transactionId = body.transaction?.hash
     const fontSet = new Set(['Roboto'])
@@ -28,6 +32,13 @@ export default async function product({
     if (!transactionId) {
         throw new FrameError('Transaction hash missing')
     }
+
+    storage.purchases.push({
+        ...params,
+        tx: transactionId,
+        timestamp: Date.now(),
+        fid: body.interactor.fid,
+    })
 
     if (config.success.title?.fontFamily) {
         fontSet.add(config.success.title.fontFamily)

@@ -22,10 +22,19 @@ export default async function confirm({
         | {
               action: ParamsActionType
               productId: string
+              variant?: string
           }
         | undefined
 }): Promise<BuildFrameData> {
     await runGatingChecks(body, config.gating)
+
+    if (!config.storeInfo) {
+        throw new FrameError('Store not available')
+    }
+
+    if (!params) {
+        throw new FrameError('Missing params')
+    }
 
     const buttons: FrameButtonMetadata[] = [{ label: '→' }]
     const fid = body.interactor.fid //.toString()
@@ -35,19 +44,11 @@ export default async function confirm({
     let quantity = 1
     let nextAction: ParamsActionType = 'email'
     let newStorage = storage
-    let variant: string | undefined = undefined
+    let variant = params.variant
     const userShippingInfo = storage.shippingInfo?.[fid]
 
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
-
-    if (!config.storeInfo) {
-        throw new FrameError('Store not available')
-    }
-
-    if (!params) {
-        throw new FrameError('Missing params')
-    }
 
     let currentAction = params.action
     const productId = Number(params.productId)
@@ -301,6 +302,8 @@ export default async function confirm({
         params: {
             action: nextAction,
             productId,
+            quantity,
+            variant,
         },
     }
 }

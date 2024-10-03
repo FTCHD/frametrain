@@ -6,7 +6,6 @@ import cover from './cover.jpeg'
 import handlers from './handlers'
 
 export interface Config extends BaseConfig {
-    storeAddress: string | null
     storeInfo: {
         id: number
         name: string
@@ -53,6 +52,14 @@ export interface Storage extends BaseStorage {
             notes: string | null
         }
     }
+    purchases: {
+        productId: string
+        fid: number
+        tx: string
+        timestamp: number
+        quantity: string
+        variant?: string
+    }[]
 }
 
 export default {
@@ -67,7 +74,6 @@ export default {
     Inspector,
     handlers,
     initialConfig: {
-        storeAddress: null,
         storeInfo: null,
         productTitle: null,
         productDescription: null,

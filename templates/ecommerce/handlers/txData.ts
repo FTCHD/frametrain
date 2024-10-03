@@ -8,7 +8,6 @@ import initial from './initial'
 export default async function txData({
     body,
     config,
-    storage,
     params,
 }: {
     body: FramePayloadValidated
@@ -16,6 +15,7 @@ export default async function txData({
     storage: Storage
     params: {
         productId: string
+        quantity: string
     }
 }): Promise<BuildFrameData> {
     if (!(body.address && params && config.storeAddress && config.storeInfo)) {
@@ -25,7 +25,8 @@ export default async function txData({
     const payload = await getSliceProductPaymentPayload(
         config.storeInfo.id,
         Number(params.productId),
-        body.address as `0x${string}`
+        body.address as `0x${string}`,
+        Number(params?.quantity) || 1
     )
     const data = encodeFunctionData(payload)
 
