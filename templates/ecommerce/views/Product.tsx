@@ -78,7 +78,9 @@ export default function ProductView(
                 >
                     {product.title}{' '}
                     {extra
-                        ? `(x${extra.quantity} ${extra.variant ? `- ${extra.variant}` : ''})`
+                        ? `(x${extra.quantity} ${
+                              extra.variant ? `- ${extra.variant} ${product.variantType}` : ''
+                          })`
                         : ''}
                 </div>
                 <div

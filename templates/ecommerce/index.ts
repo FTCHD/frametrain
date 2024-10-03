@@ -40,7 +40,7 @@ export interface Config extends BaseConfig {
 
 export interface Storage extends BaseStorage {
     shippingInfo: {
-        [key: string]: {
+        [fid: string]: {
             address: string
             city: string
             state: string
@@ -51,7 +51,7 @@ export interface Storage extends BaseStorage {
             name: string
             email: string
             notes: string | null
-        } | null
+        }
     }
 }
 

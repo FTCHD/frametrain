@@ -1,5 +1,6 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
+import { runGatingChecks } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
@@ -24,7 +25,10 @@ export default async function confirm({
           }
         | undefined
 }): Promise<BuildFrameData> {
+    await runGatingChecks(body, config.gating)
+
     const buttons: FrameButtonMetadata[] = [{ label: '→' }]
+    const fid = body.interactor.fid //.toString()
     const buttonIndex = body.tapped_button?.index || 1
     const textInput = body?.input?.text
     let inputText: string | undefined = undefined
@@ -32,12 +36,10 @@ export default async function confirm({
     let nextAction: ParamsActionType = 'email'
     let newStorage = storage
     let variant: string | undefined = undefined
-    const userShippingInfo = storage.shippingInfo[body.interactor.fid]
+    const userShippingInfo = storage.shippingInfo?.[fid]
 
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
-
-    console.log({ config, params, userShippingInfo, textInput })
 
     if (!config.storeInfo) {
         throw new FrameError('Store not available')
@@ -47,32 +49,18 @@ export default async function confirm({
         throw new FrameError('Missing params')
     }
 
-    const currentAction = params.action
+    let currentAction = params.action
     const productId = Number(params.productId)
     const productFromArray = config.storeInfo.products.find((product) => product.id === productId)
 
     if (!productFromArray) {
         throw new FrameError('Product not found')
     }
-    console.log('confirm after productFromArray', {
-        currentAction,
-        productFromArray,
-        quantity,
-        buttonIndex,
-        userShippingInfo,
-    })
 
-    try {
-        const product = await getSliceProduct(config.storeInfo.id, productId)
+    const product = await getSliceProduct(config.storeInfo.id, productId)
 
-        console.log('confirm after product', {
-            currentAction,
-            product,
-            quantity,
-            buttonIndex,
-            userShippingInfo,
-        })
-
+    let loop = true
+    while (loop) {
         switch (currentAction) {
             case 'quantity': {
                 if (textInput) {
@@ -103,6 +91,10 @@ export default async function confirm({
 
                 if (!userShippingInfo?.email) {
                     inputText = 'Your email'
+                    loop = false
+                } else {
+                    currentAction = 'country'
+                    inputText = 'Country, state, city'
                 }
                 break
             }
@@ -110,7 +102,7 @@ export default async function confirm({
             case 'email': {
                 if (userShippingInfo?.email) {
                     inputText = 'Country, state, city'
-                    nextAction = 'country'
+                    currentAction = 'country'
                     break
                 }
 
@@ -124,17 +116,19 @@ export default async function confirm({
                     ...storage,
                     shippingInfo: {
                         ...storage.shippingInfo,
-                        [body.interactor.fid]: {
+                        [fid]: {
                             ...userShippingInfo,
-                            email: textInput,
+                            email: textInput.trim(),
                         },
                     },
                 }
 
-                if (!(product.isDigital || userShippingInfo)) {
-                    nextAction = 'country'
+                if (!product.isDigital) {
+                    inputText = 'Country, state, city'
+                    currentAction = 'country'
                 } else {
                     nextAction = 'end'
+                    loop = false
                 }
 
                 break
@@ -146,7 +140,7 @@ export default async function confirm({
 
                 if (hasCountryInfo) {
                     inputText = 'Your address - zip code'
-                    nextAction = 'address'
+                    currentAction = 'address'
                     break
                 }
 
@@ -167,17 +161,18 @@ export default async function confirm({
                     ...storage,
                     shippingInfo: {
                         ...storage.shippingInfo,
-                        [body.interactor.fid]: {
+                        [fid]: {
                             ...userShippingInfo,
-                            country,
-                            state,
-                            city,
+                            country: country.trim(),
+                            state: state.trim(),
+                            city: city.trim(),
                         },
                     },
                 }
 
                 nextAction = 'address'
                 inputText = 'Address - Zip code'
+                loop = false
                 break
             }
 
@@ -185,8 +180,8 @@ export default async function confirm({
                 const hasAddressInfo = userShippingInfo?.address && userShippingInfo?.zip
 
                 if (hasAddressInfo) {
-                    inputText = '(prefix) phonenumber'
-                    nextAction = 'phone'
+                    inputText = '+prefix phonenumber'
+                    currentAction = 'phone'
                     break
                 }
 
@@ -205,24 +200,33 @@ export default async function confirm({
                     ...storage,
                     shippingInfo: {
                         ...storage.shippingInfo,
-                        [body.interactor.fid]: {
+                        [fid]: {
                             ...userShippingInfo,
-                            address,
-                            zip,
+                            address: address.trim(),
+                            zip: zip.trim(),
                         },
                     },
                 }
 
                 nextAction = 'phone'
-                inputText = '(prefix) phonenumber'
+                inputText = '+prefix phonenumber'
+                loop = false
                 break
             }
 
             case 'phone': {
+                inputText = undefined
                 const hasPhoneInfo = userShippingInfo?.phoneNumber && userShippingInfo?.phonePrefix
 
                 if (hasPhoneInfo) {
                     nextAction = 'end'
+                    loop = false
+                    buttons.length = 0
+                    buttons.push({
+                        label: 'Buy',
+                        action: 'tx',
+                        handler: 'txData',
+                    })
                     break
                 }
 
@@ -233,7 +237,9 @@ export default async function confirm({
                 const phoneSplit = textInput.split(' ')
 
                 if (phoneSplit.length !== 2 || !/^\+[1-9][0-9]{0,3} [0-9]{6,10}$/.test(textInput)) {
-                    throw new FrameError('Phone number required in the format: +1 123456789')
+                    throw new FrameError(
+                        'Invalid phone number. It should be in the format: +1 123456789'
+                    )
                 }
 
                 const [phonePrefix, phoneNumber] = phoneSplit
@@ -242,60 +248,59 @@ export default async function confirm({
                     ...storage,
                     shippingInfo: {
                         ...storage.shippingInfo,
-                        [body.interactor.fid]: {
+                        [fid]: {
                             ...userShippingInfo,
-                            phonePrefix,
-                            phoneNumber,
+                            phonePrefix: phonePrefix.trim(),
+                            phoneNumber: phoneNumber.trim(),
                         },
                     },
                 }
                 nextAction = 'end'
+                loop = false
 
-                break
-            }
-
-            default: {
                 buttons.length = 0
                 buttons.push({
                     label: 'Buy',
                     action: 'tx',
                     handler: 'txData',
                 })
+
                 break
             }
-        }
-        if (config.productTitle?.fontFamily) {
-            fontSet.add(config.productTitle.fontFamily)
-        }
 
-        if (config.productDescription?.fontFamily) {
-            fontSet.add(config.productDescription.fontFamily)
+            // default: {
+            //     break
+            // }
         }
+    }
 
-        if (config.productInfo?.fontFamily) {
-            fontSet.add(config.productInfo.fontFamily)
-        }
+    if (config.productTitle?.fontFamily) {
+        fontSet.add(config.productTitle.fontFamily)
+    }
 
-        for (const font of fontSet) {
-            const loadedFont = await loadGoogleFontAllVariants(font)
-            fonts.push(...loadedFont)
-        }
+    if (config.productDescription?.fontFamily) {
+        fontSet.add(config.productDescription.fontFamily)
+    }
 
-        return {
-            storage: newStorage,
-            fonts,
-            buttons,
-            inputText,
-            component: ProductView(config, product, { quantity, variant }),
-            handler: nextAction === 'end' ? 'status' : 'product',
-            params: {
-                action: nextAction,
-                productId,
-            },
-        }
-    } catch (e) {
-        const error = e as Error
-        console.error('confirm >> error', error)
-        throw new FrameError(error.message)
+    if (config.productInfo?.fontFamily) {
+        fontSet.add(config.productInfo.fontFamily)
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
+    }
+
+    return {
+        storage: newStorage,
+        fonts,
+        buttons,
+        inputText,
+        component: ProductView(config, product, { quantity, variant }),
+        handler: nextAction === 'end' ? 'success' : 'confirm',
+        params: {
+            action: nextAction,
+            productId,
+        },
     }
 }

@@ -1,12 +1,12 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
+import { runGatingChecks } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config } from '..'
 import { getSliceProduct } from '../common/slice'
 import ProductView from '../views/Product'
 import initial from './initial'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import { runGatingChecks } from '@/lib/gating'
 
 export default async function product({
     body,
