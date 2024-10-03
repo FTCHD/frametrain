@@ -25,6 +25,10 @@ export default async function product({
 }): Promise<BuildFrameData> {
     await runGatingChecks(body, config.gating)
 
+    if (!config.storeInfo) {
+        throw new FrameError('Store not available')
+    }
+
     const buttonIndex = body.tapped_button?.index || 1
     const isFromNavigation = params?.navigation === 'true'
     let nextIndex =
@@ -38,17 +42,9 @@ export default async function product({
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
 
-    if (!config.storeInfo) {
-        throw new FrameError('Store not available')
-    }
-
     if (body.tapped_button.index === 1 && nextIndex < 1) {
         return initial({ config })
     }
-
-    // if (!body.address) {
-    //     throw new FrameError('Please connect your wallet first')
-    // }
 
     if (config.productTitle?.fontFamily) {
         fontSet.add(config.productTitle.fontFamily)
@@ -67,7 +63,6 @@ export default async function product({
     const productFromArray = config.storeInfo.products[nextIndex - 1]
 
     const product = await getSliceProduct(config.storeInfo.id, productFromArray.id)
-    console.log('product handler >> getSliceProduct', product)
 
     for (const font of fontSet) {
         const loadedFont = await loadGoogleFontAllVariants(font)

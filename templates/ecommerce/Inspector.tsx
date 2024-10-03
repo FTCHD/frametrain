@@ -3,22 +3,20 @@ import { BaseInput } from '@/components/shadcn/BaseInput'
 import {
     BasicViewInspector,
     Button,
-    ColorPicker,
     GatingInspector,
     Input,
     Label,
     RadioGroup,
     Switch,
 } from '@/sdk/components'
+import { BasicViewStyleConfig } from '@/sdk/components/BasicViewInspector'
 import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { Configuration } from '@/sdk/inspector'
 import { corsFetch } from '@/sdk/scrape'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
-import { isAddress } from 'viem'
 import type { Config } from '.'
-import { BasicViewStyleConfig } from '@/sdk/components/BasicViewInspector'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -251,29 +249,6 @@ export default function Inspector() {
                     with products before you can continue
                 </p>
                 <div className="flex flex-row items-center w-full gap-2">
-                    <Label htmlFor="tokenId" className="text-sm font-medium leading-none w-20">
-                        Store address
-                    </Label>
-                    <BaseInput
-                        id="address"
-                        type="text"
-                        placeholder="0x8....."
-                        defaultValue={config.storeAddress || ''}
-                        onChange={(e) => {
-                            const storeAddress = e.target.value
-                            if (storeAddress === '') {
-                                updateConfig({ store: null })
-                                return
-                            }
-                            if (!isAddress(storeAddress)) {
-                                toast.error('Invalid store address')
-                                return
-                            }
-                            updateConfig({ storeAddress, storeInfo: null })
-                        }}
-                    />
-                </div>
-                <div className="flex flex-row items-center w-full gap-2">
                     <Label htmlFor="address" className="text-sm font-medium leading-none w-20">
                         Store Slice ID
                     </Label>
@@ -282,7 +257,6 @@ export default function Inspector() {
                         type="number"
                         placeholder="1"
                         defaultValue={config.storeInfo?.id}
-                        disabled={!config.storeAddress}
                         onChange={(e) => {
                             onChangeSlicerId(e.target.value)
                         }}
