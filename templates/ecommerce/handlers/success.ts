@@ -1,5 +1,5 @@
 'use server'
-import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
+import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import BasicView from '@/sdk/views/BasicView'
@@ -18,25 +18,15 @@ export default async function product({
     params: any
 }): Promise<BuildFrameData> {
     const transactionId = body.transaction?.hash
-    const buttonIndex = body.tapped_button?.index || 1
     const fontSet = new Set(['Roboto'])
     const fonts: any[] = []
 
-    const buttons: FrameButtonMetadata[] = []
-
-    if (
-        !(params && config.storeAddress && config.storeInfo) ||
-        (!transactionId && buttonIndex === 1)
-    ) {
+    if (!(params && config.storeAddress && config.storeInfo)) {
         return initial({ config })
     }
 
     if (!transactionId) {
         throw new FrameError('Transaction hash missing')
-    }
-
-    if (config.storeInfo?.products.length) {
-        buttons.push({ label: 'Products' })
     }
 
     if (config.success.title?.fontFamily) {
@@ -51,14 +41,30 @@ export default async function product({
         fontSet.add(config.success.bottomMessage.fontFamily)
     }
 
-    for (const font of fontSet) {
-        const loadedFont = await loadGoogleFontAllVariants(font)
-        fonts.push(...loadedFont)
+    if (!config.success.image) {
+        for (const font of fontSet) {
+            const loadedFont = await loadGoogleFontAllVariants(font)
+            fonts.push(...loadedFont)
+        }
     }
 
     return {
         storage,
-        buttons,
+        buttons: [
+            {
+                label: 'Buy again',
+            },
+            {
+                label: 'View Transaction',
+                action: 'link',
+                target: `https://basescan.org/tx/${transactionId}`,
+            },
+            {
+                label: 'Create Your Own',
+                action: 'link',
+                target: 'https://frametra.in',
+            },
+        ],
         fonts,
         image: config.success.image,
         component: config.success.image ? undefined : BasicView(config.success),

@@ -32,10 +32,10 @@ export interface Config extends BaseConfig {
     }
     gating: GatingType | undefined
     enableGating: boolean | null
-    productTitle: BasicViewStyle | null
-    productDescription: BasicViewStyle | null
-    productInfo: BasicViewStyle | null
-    productBackground: string | null
+    productTitle: BasicViewStyle | undefined
+    productDescription: BasicViewStyle | undefined
+    productInfo: BasicViewStyle | undefined
+    productBackground: string | undefined
 }
 
 export interface Storage extends BaseStorage {
@@ -51,7 +51,7 @@ export interface Storage extends BaseStorage {
             name: string
             email: string
             notes: string | null
-        }
+        } | null
     }
 }
 

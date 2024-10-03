@@ -3,6 +3,7 @@ import { BaseInput } from '@/components/shadcn/BaseInput'
 import {
     BasicViewInspector,
     Button,
+    ColorPicker,
     GatingInspector,
     Input,
     Label,
@@ -17,6 +18,7 @@ import toast from 'react-hot-toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { isAddress } from 'viem'
 import type { Config } from '.'
+import { BasicViewStyleConfig } from '@/sdk/components/BasicViewInspector'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -33,7 +35,14 @@ export default function Inspector() {
     )
 
     const onChangeSlicerId = useDebouncedCallback(async (value: string) => {
-        if (value === '' || Number(value) === config.storeInfo?.id) {
+        if (Number(value) === config.storeInfo?.id) {
+            return
+        }
+
+        if (value === '') {
+            updateConfig({
+                storeInfo: null,
+            })
             return
         }
 
@@ -92,7 +101,7 @@ export default function Inspector() {
                     name: store.data.name,
                     image: store.data.image || 'https://slice.so/slicer_default.png',
                     products: store.data.products.map((p) => ({
-                        id: p.id,
+                        id: p.productId,
                         name: p.name,
                         description: p.description,
                         shortDescription: p.shortDescription,
@@ -249,7 +258,7 @@ export default function Inspector() {
                         id="address"
                         type="text"
                         placeholder="0x8....."
-                        defaultValue={config.store?.storeAddress}
+                        defaultValue={config.storeAddress || ''}
                         onChange={(e) => {
                             const storeAddress = e.target.value
                             if (storeAddress === '') {
@@ -272,7 +281,7 @@ export default function Inspector() {
                         id="slicerId"
                         type="number"
                         placeholder="1"
-                        defaultValue={config.store?.id}
+                        defaultValue={config.storeInfo?.id}
                         disabled={!config.storeAddress}
                         onChange={(e) => {
                             onChangeSlicerId(e.target.value)
@@ -281,14 +290,39 @@ export default function Inspector() {
                 </div>
             </Configuration.Section>
             <Configuration.Section title="Product">
-                <p>{JSON.stringify(config)}</p>
-                <h2 className="text-lg font-semibold">Starter Template</h2>
-
-                <h3 className="text-lg font-semibold">Text</h3>
-
-                <div className="flex flex-col gap-2 ">
-                    <Input className="text-lg" placeholder="Input something" />
-                </div>
+                <BasicViewStyleConfig
+                    name="Product title"
+                    config={config.productTitle}
+                    updateConfig={(productTitle) => {
+                        updateConfig({
+                            productTitle,
+                        })
+                    }}
+                    background={config.productBackground}
+                    setBackground={(productBackground) => {
+                        updateConfig({
+                            productBackground,
+                        })
+                    }}
+                />
+                <BasicViewStyleConfig
+                    name="Product description"
+                    config={config.productDescription}
+                    updateConfig={(productDescription) => {
+                        updateConfig({
+                            productDescription,
+                        })
+                    }}
+                />
+                <BasicViewStyleConfig
+                    name="Product details"
+                    config={config.productInfo}
+                    updateConfig={(productInfo) => {
+                        updateConfig({
+                            productInfo,
+                        })
+                    }}
+                />
             </Configuration.Section>
             <Configuration.Section title="Success">
                 <div className="flex flex-col gap-2 w-full">

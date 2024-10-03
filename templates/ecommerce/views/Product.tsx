@@ -1,9 +1,11 @@
+import type { BasicViewStyle } from '@/sdk/views/BasicView'
 import type { Config } from '..'
 import type { getSliceProduct } from '../common/slice'
 
 export default function ProductView(
     config: Config,
-    product: Awaited<ReturnType<typeof getSliceProduct>>
+    product: Awaited<ReturnType<typeof getSliceProduct>>,
+    extra?: { quantity: number; variant?: string }
 ) {
     const backgroundProp: Record<string, string> = {}
     if (config.productBackground) {
@@ -15,6 +17,18 @@ export default function ProductView(
     } else {
         backgroundProp['backgroundColor'] = 'black'
     }
+
+    const alignmentToFlex = (alignment: BasicViewStyle['position']): string => {
+        switch (alignment) {
+            case 'left':
+                return 'flex-start'
+            case 'right':
+                return 'flex-end'
+            default:
+                return 'center'
+        }
+    }
+
     return (
         <div
             style={{
@@ -23,10 +37,6 @@ export default function ProductView(
                 display: 'flex',
                 flexDirection: 'column',
                 textAlign: 'center',
-                fontFamily: config.fontFamily || 'Roboto',
-                justifyContent: 'space-between',
-                fontSize: '50px',
-                color: config.primaryColor || 'white',
                 padding: 50,
                 gap: 40,
                 ...backgroundProp,
@@ -42,7 +52,6 @@ export default function ProductView(
                     style={{
                         width: 250,
                         height: 250,
-                        // border: '5px solid ',
                         borderColor: config.productTitle?.color || 'white',
                         objectFit: 'cover',
                         borderRadius: '.75rem',
@@ -58,24 +67,29 @@ export default function ProductView(
             >
                 <div
                     style={{
-                        fontSize: '100px',
-                        fontWeight: config.titleWeight || 'bold',
-                        fontFamily: config.fontFamily || 'Roboto',
-                        color: config.primaryColor || 'white',
-                        fontStyle: config.titleStyle || 'normal',
+                        fontSize: `${config.productTitle?.fontSize || 100}px`,
+                        fontWeight: config.productTitle?.fontWeight || 'bold',
+                        fontFamily: config.productTitle?.fontFamily || 'Roboto',
+                        color: config.productTitle?.color || 'white',
+                        fontStyle: config.productTitle?.fontStyle || 'normal',
                         display: 'flex',
+                        justifyContent: alignmentToFlex(config.productTitle?.position),
                     }}
                 >
-                    {product.title}
+                    {product.title}{' '}
+                    {extra
+                        ? `(x${extra.quantity} ${extra.variant ? `- ${extra.variant}` : ''})`
+                        : ''}
                 </div>
                 <div
                     style={{
-                        fontSize: '40px',
-                        fontWeight: config.titleWeight || 'normal',
-                        fontFamily: config.fontFamily || 'Roboto',
-                        color: config.secondaryColor || 'grey',
-                        fontStyle: config.titleStyle || 'normal',
+                        fontSize: `${config.productDescription?.fontSize || 40}px`,
+                        fontWeight: config.productDescription?.fontWeight || 'normal',
+                        fontFamily: config.productDescription?.fontFamily || 'Roboto',
+                        color: config.productDescription?.color || 'grey',
+                        fontStyle: config.productDescription?.fontStyle || 'normal',
                         display: 'flex',
+                        justifyContent: alignmentToFlex(config.productDescription?.position),
                     }}
                 >
                     {product.description}
@@ -86,23 +100,36 @@ export default function ProductView(
                 style={{
                     display: 'flex',
                     justifyContent: 'space-between',
+                    fontSize: config.productInfo?.fontSize || 28,
+                    fontWeight: config.productInfo?.fontWeight || 'normal',
+                    fontFamily: config.productInfo?.fontFamily || 'Roboto',
+                    color: config.productInfo?.color || 'white',
+                    fontStyle: config.productInfo?.fontStyle || 'normal',
                 }}
             >
                 <div
                     style={{
                         display: 'flex',
                         alignSelf: 'center',
-                        fontSize: 28,
+                        textAlign: 'center',
                     }}
                 >
-                    {product.handle}
+                    Stock: {product.isInfinite ? 'Unlimited' : product.remainingUnits}
                 </div>
 
                 <div
                     style={{
-                        color: config.productInfo?.color || 'white',
                         display: 'flex',
-                        fontSize: config.productInfo?.fontSize || 28,
+                        textAlign: 'center',
+                    }}
+                >
+                    Limit: {product.isInfinite ? 'Unlimited' : product.maxPerBuyer}
+                </div>
+
+                <div
+                    style={{
+                        display: 'flex',
+                        textAlign: 'center',
                     }}
                 >
                     {product.variantFormattedPrice}

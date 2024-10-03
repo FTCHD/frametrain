@@ -51,6 +51,7 @@ export async function getSliceProductPaymentPayload(
 }
 
 export async function getSliceProduct(slicerId: number, productId: number) {
+    console.log(`Fetching product ${productId} from slicer ${slicerId}`)
     const products = await getProduct(sliceConfig, { slicerId, productId })
     const product = (Array.isArray(products) ? products[0] : products) as ProductCart
 
@@ -73,6 +74,9 @@ export async function getSliceProduct(slicerId: number, productId: number) {
         maxPerBuyer: product.maxUnitsPerBuyer,
         isInfinite: product.isInfinite,
         remainingUnits: product.availableUnits,
+        isDigital: !(product.isOnsite && product.isDelivery),
+        isOnsite: product.isOnsite,
+        isDelivery: product.isDelivery,
         variantType: product.externalProduct?.providerVariantName,
         variants:
             product.externalProduct?.providerVariants
