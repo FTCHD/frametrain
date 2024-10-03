@@ -2,7 +2,7 @@ import beehiiv from './beehiiv'
 import cal from './cal'
 import contract from './contract'
 import discourse from './discourse'
-import eightball from './eightball'
+import podcast from './podcast'
 import figma from './figma'
 import form from './form'
 import fundraiser from './fundraiser'
@@ -19,6 +19,7 @@ import rss from './rss'
 import substack from './substack'
 import swap from './swap'
 import twitter from './twitter'
+
 
 export default {
     pdf,
@@ -41,5 +42,5 @@ export default {
     contract,
     substack,
     beehiiv,
-    eightball,
+    podcast,    
 }
