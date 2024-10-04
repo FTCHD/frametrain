@@ -107,9 +107,9 @@ export interface Storage extends BaseStorage {
 
 const config: BaseTemplate = {
   name: "Airdrop",
-  description: "This lets you airdrop",
-  shortDescription: "It doesn't matter. It lets you airdrop that's all. ",
-  octicon: "alert", // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
+  description: "Create an airdrop for farcasters users to claim in a frame",
+  shortDescription: "Create an airdrop specifically for Farcaster users, allowing them to seamlessly claim tokens or assets within a dedicated frame interface.",
+  octicon: "megaphone",
   creatorFid: "213144",
   creatorName: "Complexlity",
   cover,
