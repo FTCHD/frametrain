@@ -48,14 +48,14 @@ export default {
         products: [],
         enableGating: false,
         cover: {
-            title: { text: 'Amazon Whishlist Frame' },
-            subtitle: { text: 'Welcome to the Amazon Whishlist Frame!' },
-            customMessage: { text: 'Check out my wishlist😉' },
+            title: { text: 'Amazon Wishlist Frame' },
+            subtitle: { text: 'Welcome to the Amazon Wishlist Frame!' },
+            bottomMessage: { text: 'Check out my wishlist😉' },
         },
         success: {
-            title: { text: 'Thank you for checking out my amazon whishlist!' },
+            title: { text: 'Thank you for checking out my amazon wishlist!' },
             subtitle: { text: `I hope my wishlist wasn't too overwhelming!` },
-            customMessage: { text: `Don't forget to help me with my wishlist!` },
+            bottomMessage: { text: `Don't forget to help me with my wishlist!` },
         },
         gating: {
             enabled: [],
