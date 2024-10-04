@@ -59,7 +59,7 @@ export default async function Page({
                     <Table.Row>
                         <Table.Head className="w-[100px]">Name</Table.Head>
                         <Table.Head>Description</Table.Head>
-                        <Table.Head>Stock</Table.Head>
+                        <Table.Head>Available Quantity</Table.Head>
                         <Table.Head className="text-right">Max limit Per Buyer</Table.Head>
                     </Table.Row>
                 </Table.Header>
