@@ -10,13 +10,15 @@ export type LinkButton = {
   label: string;
   target: string;
 };
-export interface AirdropConfig extends BaseConfig {
+export interface Config extends BaseConfig {
   tokenAddress: string;
+
+  chain: keyof typeof airdropChains;
   walletAddress: string;
   generalAmount: number;
   whitelist: {
     address: string;
-    amount?: number;
+    amount: number;
   }[];
   blacklist: string[];
   cooldown: number;
@@ -27,6 +29,7 @@ export interface AirdropConfig extends BaseConfig {
     };
     color: string;
   };
+  creatorId: number | null;
   claimed: {
     text: string;
     links: Array<{
@@ -44,19 +47,21 @@ export interface AirdropConfig extends BaseConfig {
   enableGating: boolean | undefined;
 }
 
-const defaultConfig: AirdropConfig = {
+const defaultConfig: Config = {
   tokenAddress: "",
+  chain: "base",
   walletAddress: "",
   generalAmount: 0,
   whitelist: [],
   blacklist: [],
   cooldown: -1,
+  creatorId: null,
   cover: {
     title: {
-      text: "My Contract",
+      text: "Airdropper",
     },
     subtitle: {
-      text: "Use the arrow buttons to navigate through all contract functions.",
+      text: "You're here to receive your free tokens",
     },
     customMessage: {
       text: "Custom Message",
@@ -81,7 +86,24 @@ const defaultConfig: AirdropConfig = {
   },
   enableGating: false,
 };
-export interface Storage extends BaseStorage {}
+
+export const airdropChains = {
+  ethereum: 1,
+  optimism: 10,
+  polygon: 137,
+  base: 8453,
+  arbitrum: 42161,
+};
+
+export interface Storage extends BaseStorage {
+  users: Record<
+    string,
+    {
+      claimed: boolean;
+      lastUsage: number;
+    }
+  >;
+}
 
 const config: BaseTemplate = {
   name: "Airdrop",

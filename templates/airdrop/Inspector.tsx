@@ -6,20 +6,29 @@ import {
   Input,
   Label,
   RadioGroup,
+  Select,
   Switch,
   Textarea,
 } from "@/sdk/components";
 import { useFarcasterId, useFrameConfig, useUploadImage } from "@/sdk/hooks";
 import { Configuration } from "@/sdk/inspector";
-import { useRef, useState } from "react";
-import type { AirdropConfig, LinkButton } from ".";
+import { useEffect, useRef, useState } from "react";
+import type { Config, LinkButton } from ".";
 import { isAddress } from "viem";
+import toast from "react-hot-toast";
+import { airdropChains } from ".";
 
 interface WhiteList {
   address: string;
-  amount: string;
+  amount: number;
 }
 export default function Inspector() {
+  const userFid = useFarcasterId();
+  const [config, updateConfig] = useFrameConfig<Config>();
+  useEffect(() => {
+    if (!userFid || config) return;
+    updateConfig({ creatorId: userFid });
+  }, [userFid, config]);
   return (
     <Configuration.Root>
       <Configuration.Section title="General">
@@ -85,7 +94,7 @@ export default function Inspector() {
 
 function GatingSection() {
   const fid = useFarcasterId();
-  const [config, updateConfig] = useFrameConfig<AirdropConfig>();
+  const [config, updateConfig] = useFrameConfig<Config>();
   const enabledGating = config.enableGating ?? false;
   return (
     <div>
@@ -123,7 +132,7 @@ function GatingSection() {
   );
 }
 function CoverSection() {
-  const [config, updateConfig] = useFrameConfig<AirdropConfig>();
+  const [config, updateConfig] = useFrameConfig<Config>();
   const [coverType, setCoverType] = useState<"text" | "image">(
     config?.cover && "image" in config.cover ? "image" : "text"
   );
@@ -250,7 +259,7 @@ function CoverSection() {
 }
 
 function BlackListSection() {
-  const [_, updateConfig] = useFrameConfig<AirdropConfig>();
+  const [_, updateConfig] = useFrameConfig<Config>();
   const [addresses, setAddresses] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(true);
   const [inputValue, setInputValue] = useState("");
@@ -302,49 +311,133 @@ function BlackListSection() {
 }
 
 function GeneralSection() {
+  const [config, updateConfig] = useFrameConfig<Config>();
+  const [localConfig, setLocalConfig] = useState(config);
   return (
     <>
       <h2 className="text-lg font-semibold">Token Contract Address</h2>
       <Input
         className="text-lg flex-1 h-10"
         placeholder="0x...."
+        value={localConfig.tokenAddress}
+        onChange={(e) => {
+          setLocalConfig({
+            ...localConfig,
+            tokenAddress: e.target.value,
+          });
+        }}
         onBlur={(e) => {
-          console.log("Contract address updated");
+          if (!isAddress(e.target.value)) {
+            toast.error("Invalid Contract address");
+            return;
+          }
+          updateConfig({
+            tokenAddress: e.target.value,
+          });
         }}
       />
+      <h2 className="text-lg font-semibold">Chain</h2>
+      <Select
+        defaultValue={config.chain}
+        onChange={async (value) => {
+          setLocalConfig({
+            ...localConfig,
+            chain: value as keyof typeof airdropChains,
+          });
+        }}
+      >
+        {Object.keys(airdropChains).map((option) => (
+          <option key={option} value={option}>
+            {option[0].toUpperCase() + option.slice(1)}
+          </option>
+        ))}
+      </Select>
+
       <h2>Airdropper Address</h2>
       <Input
         className="text-lg flex-1 h-10"
         placeholder="Your address with the tokens"
+        value={localConfig.walletAddress}
+        onChange={(e) =>
+          setLocalConfig({ ...localConfig, walletAddress: e.target.value })
+        }
         onBlur={(e) => {
-          console.log("Airdropper address updated");
+          if (!isAddress(e.target.value)) {
+            toast.error("Invalid wallet address");
+            return;
+          }
+          updateConfig({
+            walletAddress: e.target.value,
+          });
         }}
       />
       <h2>Amount Per User</h2>
       <Input
         className="text-lg flex-1 h-10"
         placeholder="Amount"
+        value={localConfig.generalAmount}
+        onChange={(e) =>
+          setLocalConfig({
+            ...localConfig,
+            generalAmount: Number(e.target.value),
+          })
+        }
         onBlur={(e) => {
-          console.log("Amount Update Successfully");
+          if (isNaN(Number(e.target.value))) {
+            toast.error("Invalid amount");
+          }
+          updateConfig({
+            generalAmount: Number(e.target.value),
+          });
+        }}
+      />
+      <h2>Cooldown Time (in seconds)</h2>
+      <Input
+        className="text-lg flex-1 h-10"
+        placeholder="Amount"
+        value={localConfig.cooldown}
+        onChange={(e) =>
+          setLocalConfig({ ...localConfig, cooldown: Number(e.target.value) })
+        }
+        onBlur={(e) => {
+          let value = e.target.value;
+          if (isNaN(Number(value)) || Number(value) < -1) {
+            value = "-1";
+          }
+          updateConfig({
+            generalAmount: Number(value),
+          });
         }}
       />
     </>
   );
 }
 function WhiteListSection() {
-  const [pairs, setPairs] = useState<WhiteList[]>([
-    { address: "", amount: "" },
-  ]);
-  const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const addPair = () => {
-    setPairs([...pairs, { address: "", amount: "" }]);
+  const [mainConfig, updateMainConfig] = useFrameConfig<Config>();
+  const [config, updateLocalConfig] = useState(mainConfig);
+  const updateConfig = (item: Partial<typeof config>) => {
+    updateLocalConfig({ ...config, ...item });
+  };
+  const whitelist = config.whitelist;
+  const setLocalWhitelist = (pairs: WhiteList[]) => {
+    updateConfig({ whitelist: pairs });
+  };
+  const setMainWhitelist = (pairs: WhiteList[]) => {
+    updateMainConfig({ whitelist: pairs });
   };
 
-  const removePair = (index: number) => {
-    const newPairs = pairs.filter((_, i) => i !== index);
-    setPairs(newPairs);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const addWhitelistItem = () => {
+    const amount = config.generalAmount || 1;
+    setLocalWhitelist([...whitelist, { address: "", amount }]);
+    setMainWhitelist([...whitelist, { address: "", amount }]);
+  };
+
+  const removeWhitelistItem = (index: number) => {
+    const newItem = whitelist.filter((_, i) => i !== index);
+    setLocalWhitelist(newItem);
+    setMainWhitelist(newItem);
   };
 
   const handleInputChange = (
@@ -352,9 +445,20 @@ function WhiteListSection() {
     field: "address" | "amount",
     value: string
   ) => {
-    const newPairs = [...pairs];
-    newPairs[index][field] = value;
-    setPairs(newPairs);
+    const newItem = [...whitelist];
+    //@ts-expect-error: indexing into objects
+    newItem[index][field] = value;
+    setLocalWhitelist(newItem);
+  };
+  const handleInputBlur = (
+    index: number,
+    field: "address" | "amount",
+    value: string | number
+  ) => {
+    const newItem = [...whitelist];
+    //@ts-expect-error: indexing into objects
+    newItem[index][field] = value;
+    setMainWhitelist(newItem);
   };
 
   const handleCsvUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -370,14 +474,14 @@ function WhiteListSection() {
       for (let i = 0; i < lines.length; i++) {
         let [address, amount] = lines[i].split(",").map((item) => item.trim());
         if (isAddress(address) && amount) {
-          if (isNaN(Number(amount))) amount = "";
-          newPairs.push({ address, amount });
+          if (isNaN(Number(amount)))
+            amount = config.generalAmount.toString() || "1";
+          newPairs.push({ address, amount: Number(amount) });
         } else if (lines[i].trim() !== "") {
           continue;
         }
       }
-      setPairs([...pairs, ...newPairs]);
-      setError(null);
+      setMainWhitelist([...whitelist, ...newPairs]);
     };
 
     reader.readAsText(file);
@@ -385,7 +489,7 @@ function WhiteListSection() {
 
   return (
     <div className="flex flex-col gap-4">
-      {pairs.map((pair, index) => (
+      {whitelist.map((pair, index) => (
         <div key={index} className="flex flex-col space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <div>
@@ -396,6 +500,14 @@ function WhiteListSection() {
                 onChange={(e) =>
                   handleInputChange(index, "address", e.target.value)
                 }
+                onBlur={(e) => {
+                  const address = e.target.value;
+                  if (!isAddress(address)) {
+                    toast("Invalid adresss");
+                    return;
+                  }
+                  handleInputBlur(index, "address", address);
+                }}
                 placeholder="Enter address"
               />
             </div>
@@ -407,16 +519,25 @@ function WhiteListSection() {
                 onChange={(e) =>
                   handleInputChange(index, "amount", e.target.value)
                 }
+                onBlur={(e) => {
+                  let amount = Number(e.target.value);
+                  if (isNaN(amount) || !amount)
+                    amount = mainConfig.generalAmount || 1;
+                  handleInputBlur(index, "amount", amount);
+                }}
                 placeholder="Enter amount (optional)"
               />
             </div>
           </div>
-          <Button variant="destructive" onClick={() => removePair(index)}>
+          <Button
+            variant="destructive"
+            onClick={() => removeWhitelistItem(index)}
+          >
             Remove
           </Button>
         </div>
       ))}
-      <Button onClick={addPair}>Add New Pair</Button>
+      <Button onClick={addWhitelistItem}>Add New Pair</Button>
       <div>
         <input
           type="file"
@@ -429,7 +550,6 @@ function WhiteListSection() {
           Upload CSV
         </Button>
       </div>
-      {error && <span>{error}</span>}
       {/* <div className="flex flex-col gap-2 w-full">
           <h2 className="text-lg font-semibold">Whitelist Type</h2>
           <RadioGroup.Root
@@ -519,16 +639,34 @@ function WhiteListSection() {
 }
 
 function ButtonsSection() {
-  const [buttons, setButtons] = useState<LinkButton[]>([]);
-  const [config, updateConfig] = useFrameConfig<AirdropConfig>();
+  const [mainConfig, updateMainConfig] = useFrameConfig<Config>();
+  const [config, updateLocalConfig] = useState(mainConfig);
+  const buttons = config.buttons;
+
+  const updateConfig = (item: Partial<typeof config>) => {
+    updateLocalConfig({ ...config, ...item });
+  };
 
   const addButton = () => {
-    setButtons([...buttons, { type: "link", label: "", target: "" }]);
+    const buttonsIndex = buttons.length + 2;
+    const newButton: LinkButton = {
+      type: "link",
+      label: "button " + buttonsIndex,
+      target: "https://frametra.in/frame/uo49holavp64zan5eu6zgxab",
+    };
+    updateConfig({
+      //@ts-expect-error: link button should work
+      buttons: [...buttons, newButton],
+    });
+    updateMainConfig({ buttons: [...buttons, newButton] });
   };
 
   const removeButton = (index: number) => {
-    const newButtons = buttons.filter((_, i) => i !== index);
-    setButtons(newButtons);
+    const newButtons = buttons.filter(
+      (_, i) => i !== index
+    ) as Config["buttons"];
+    updateConfig({ buttons: newButtons });
+    updateMainConfig({ buttons: newButtons });
   };
 
   const handleInputChange = (
@@ -536,10 +674,18 @@ function ButtonsSection() {
     field: "target" | "label",
     value: string
   ) => {
-    const newButtons = [...buttons];
+    const newButtons = [...buttons] as Config["buttons"];
     newButtons[index][field] = value;
-    setButtons(newButtons);
     updateConfig({ buttons: newButtons });
+  };
+  const handleInputBlur = (
+    index: number,
+    field: "target" | "label",
+    value: string
+  ) => {
+    const newButtons = [...buttons] as Config["buttons"];
+    newButtons[index][field] = value;
+    updateMainConfig({ buttons: newButtons });
   };
 
   return (
@@ -555,6 +701,9 @@ function ButtonsSection() {
                 onChange={(e) =>
                   handleInputChange(index, "target", e.target.value)
                 }
+                onBlur={(e) => {
+                  handleInputBlur(index, "target", e.target.value);
+                }}
                 placeholder="External URL"
               />
             </div>
@@ -566,6 +715,9 @@ function ButtonsSection() {
                 onChange={(e) =>
                   handleInputChange(index, "label", e.target.value)
                 }
+                onBlur={(e) => {
+                  handleInputBlur(index, "label", e.target.value);
+                }}
                 placeholder="Label"
               />
             </div>

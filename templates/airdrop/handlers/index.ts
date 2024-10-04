@@ -1,7 +1,10 @@
-import initial from './initial'
-import page from './page'
-
+import initial from "./initial";
+import claim from "./claim";
+import approve from "./approve";
+import tx from "./tx";
 export default {
-    initial,
-    page,
-}
+  initial,
+  claim,
+  approve,
+  tx,
+};
