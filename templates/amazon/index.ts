@@ -4,7 +4,7 @@ import type { BasicViewProps, BasicViewStyle } from '@/sdk/views/BasicView'
 import Inspector from './Inspector'
 import cover from './cover.png'
 import handlers from './handlers'
-import icon from './icon.png'
+import icon from './icon.jpg'
 
 export interface Config extends BaseConfig {
     products: {
