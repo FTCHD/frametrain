@@ -4,19 +4,22 @@ import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import type { Config, Storage } from '..'
 import PageView from '../views/Page'
 
-
 function checkAndResetExpiration(config: Config, storage: Storage) {
-    if (config.mode === 'Continuous' && storage.currentAd.expiryTime && Date.now() > storage.currentAd.expiryTime) {
+    if (
+        config.mode === 'Continuous' &&
+        storage.currentAd.expiryTime &&
+        Date.now() > storage.currentAd.expiryTime
+    ) {
         storage.currentAd = {
             visitLink: config.visitLink,
             winner: undefined,
             expiryTime: undefined,
-        };
-        storage.highestBid = 0;
-        storage.bids = [];
-        return true;
+        }
+        storage.highestBid = 0
+        storage.bids = []
+        return true
     }
-    return false;
+    return false
 }
 
 export default async function page({
@@ -30,15 +33,12 @@ export default async function page({
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
-    const expired = checkAndResetExpiration(config, storage);
+    const expired = checkAndResetExpiration(config, storage)
     const isOwner = body.fid.toString() === config.owner
     const isWinner = body.fid.toString() === storage.currentAd.winner
-    const isBidder = storage.bids.some(bid => bid.bidder === body.fid.toString())
+    const isBidder = storage.bids.some((bid) => bid.bidder === body.fid.toString())
 
-    const buttons = [
-        { label: '←' },
-        { label: 'Buy Space' },
-    ]
+    const buttons = [{ label: '←' }, { label: 'Buy Space' }]
 
     if (isOwner || isWinner || isBidder) {
         buttons.push({ label: 'Manage' })
@@ -46,7 +46,6 @@ export default async function page({
 
     const pageComponent = PageView(config, storage, body.fid.toString())
 
-    
     if (typeof pageComponent !== 'object' || pageComponent === null) {
         throw new Error('PageView deve retornar um objeto válido')
     }

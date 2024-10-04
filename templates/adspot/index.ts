@@ -14,9 +14,10 @@ export interface Config extends BaseConfig {
         textColor: string
     }
     visitLink: string
-    deadline?: number 
-    expiry?: number 
+    deadline?: number
+    expiry?: number
     owner: string
+    currency: string
 }
 
 export interface Storage extends BaseStorage {
@@ -52,11 +53,12 @@ export default {
             title: 'Rent This Ad Space',
             subtitle: 'Click for more info',
             backgroundColor: '#000000',
-            textColor: '#FFFFFF'
+            textColor: '#FFFFFF',
         },
         visitLink: '',
         expiry: 24,
-        owner: ''
+        owner: '',
+        currency: 'ETH',
     },
     events: ['bid', 'adChanged', 'adExpired'],
 } satisfies BaseTemplate

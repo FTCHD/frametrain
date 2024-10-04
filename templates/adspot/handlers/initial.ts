@@ -4,6 +4,7 @@ import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import CoverView from '../views/Cover'
 
+
 export default async function initial({
     body,
     config,
@@ -19,8 +20,12 @@ export default async function initial({
 
     return {
         buttons: [
-            { label: 'Visit', action: 'link', target: storage.currentAd.visitLink || config.visitLink },
-            { label: 'ℹ️', action: 'post' }
+            {
+                label: 'Visit',
+                action: 'link',
+                target: storage.currentAd.visitLink || config.visitLink,
+            },
+            { label: 'ℹ️', action: 'post' },
         ],
         fonts: roboto,
         component: CoverView(config, storage),

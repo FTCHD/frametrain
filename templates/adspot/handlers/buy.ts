@@ -2,7 +2,6 @@
 import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import type { Config, Storage } from '..'
 import PageView from '../views/Page'
-import { renderToString } from 'react-dom/server'
 
 export default async function buy({
     body,
@@ -18,8 +17,12 @@ export default async function buy({
     if (body.buttonIndex === 1) {
         return {
             buttons: [
-                { label: 'Visit', action: 'link', target: storage.currentAd.visitLink || config.visitLink },
-                { label: 'ℹ️', action: 'post' }
+                {
+                    label: 'Visit',
+                    action: 'link',
+                    target: storage.currentAd.visitLink || config.visitLink,
+                },
+                { label: 'ℹ️', action: 'post' },
             ],
             component: PageView(config, storage, body.fid.toString()),
             handler: 'page',
@@ -44,7 +47,7 @@ export default async function buy({
         if (config.mode === 'Continuous') {
             storage.currentAd = {
                 winner: body.fid.toString(),
-                expiryTime: Date.now() + (config.expiry * 60 * 60 * 1000),
+                expiryTime: Date.now() + config.expiry * 60 * 60 * 1000,
                 visitLink: storage.currentAd.visitLink,
             }
         }
@@ -52,12 +55,17 @@ export default async function buy({
         const successComponent = {
             type: 'div',
             props: {
-                style: { fontFamily: 'Roboto', fontSize: '24px', textAlign: 'center', padding: '20px' },
+                style: {
+                    fontFamily: 'Roboto',
+                    fontSize: '24px',
+                    textAlign: 'center',
+                    padding: '20px',
+                },
                 children: [
                     { type: 'h1', props: { children: 'Bid Successful!' } },
-                    { type: 'p', props: { children: `Your bid of ${bidAmount} has been placed.` } }
-                ]
-            }
+                    { type: 'p', props: { children: `Your bid of ${bidAmount} has been placed.` } },
+                ],
+            },
         }
 
         return {

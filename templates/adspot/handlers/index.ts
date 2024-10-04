@@ -1,7 +1,4 @@
-import initial from './initial'
-import page from './page'
-import buy from './buy'
-import manage from './manage'
+import { initial, page, buy, manage } from './handlers'
 
 export default {
     initial,
