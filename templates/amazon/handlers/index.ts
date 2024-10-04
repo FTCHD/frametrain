@@ -1,7 +1,9 @@
 import initial from './initial'
-import page from './page'
+import product from './product'
+import success from './success'
 
 export default {
     initial,
-    page,
+    product,
+    success,
 }

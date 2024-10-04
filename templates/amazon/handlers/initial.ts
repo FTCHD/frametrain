@@ -1,27 +1,46 @@
 'use server'
-import type { BuildFrameData } from '@/lib/farcaster'
+import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, Storage } from '..'
-import CoverView from '../views/Cover'
+import BasicView from '@/sdk/views/BasicView'
+import type { Config } from '..'
 
 export default async function initial({
-    body,
     config,
-    storage,
-    params,
 }: {
     // GET requests don't have a body.
-    body: undefined
     config: Config
-    storage: Storage
-    params: any
 }): Promise<BuildFrameData> {
-    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const fontSet = new Set(['Roboto'])
+    const fonts: any[] = []
+
+    const buttons: FrameButtonMetadata[] = []
+
+    if (config.products.length) {
+        buttons.push({ label: 'My Wishlist 😁' })
+    }
+
+    if (config.cover.title?.fontFamily) {
+        fontSet.add(config.cover.title.fontFamily)
+    }
+
+    if (config.cover.subtitle?.fontFamily) {
+        fontSet.add(config.cover.subtitle.fontFamily)
+    }
+
+    if (config.cover.bottomMessage?.fontFamily) {
+        fontSet.add(config.cover.bottomMessage.fontFamily)
+    }
+
+    for (const font of fontSet) {
+        const loadedFont = await loadGoogleFontAllVariants(font)
+        fonts.push(...loadedFont)
+    }
 
     return {
-        buttons: [{ label: 'VIEW' }],
-        fonts: roboto,
-        component: CoverView(config),
-        handler: 'page',
+        buttons,
+        fonts,
+        image: config.cover.image,
+        component: config.cover.image ? undefined : BasicView(config.cover),
+        handler: 'product',
     }
 }
