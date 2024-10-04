@@ -21,7 +21,7 @@ export default async function initial({
   const buttons = config.buttons;
 
   return {
-    buttons: [{ label: config.chain }, ...buttons],
+    buttons: [{ label: "Claim" }, ...buttons],
     fonts: roboto,
     component: config.cover.image ? undefined : BasicView(cover),
     handler: "claim",

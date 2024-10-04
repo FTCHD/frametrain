@@ -4,7 +4,7 @@ import { FrameError } from "@/sdk/error";
 import type { Config } from "..";
 import ApprovedView from "../views/Approved";
 
-export default async function page({
+export default async function approve({
   body,
   config,
   storage,

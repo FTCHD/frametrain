@@ -49,42 +49,6 @@ export default function Inspector() {
       <Configuration.Section title="Buttons">
         <ButtonsSection />
       </Configuration.Section>
-      {/* <Configuration.Section title="Claimed">
-        <p>{JSON.stringify(config)}</p>
-        <h2 className="text-lg font-semibold">Starter Template</h2>
-
-        <h3 className="text-lg font-semibold">Text</h3>
-
-        <p>{text}</p>
-
-        <div className="flex flex-col gap-2 ">
-          <Input
-            className="text-lg"
-            placeholder="Input something"
-            ref={displayLabelInputRef}
-          />
-          <Button
-            onClick={() => {
-              if (!displayLabelInputRef.current?.value) return;
-
-              updateConfig({ text: displayLabelInputRef.current.value });
-
-              displayLabelInputRef.current.value = "";
-            }}
-            className="w-full bg-border hover:bg-secondary-border text-primary"
-          >
-            Set Text
-          </Button>
-        </div>
-
-        <Button
-          variant="destructive"
-          className="w-full "
-          onClick={() => updateConfig({ text: "" })}
-        >
-          Delete
-        </Button>
-      </Configuration.Section> */}
       <Configuration.Section title="Gating">
         <GatingSection />
       </Configuration.Section>
@@ -259,8 +223,8 @@ function CoverSection() {
 }
 
 function BlackListSection() {
-  const [_, updateConfig] = useFrameConfig<Config>();
-  const [addresses, setAddresses] = useState<string[]>([]);
+  const [config, updateConfig] = useFrameConfig<Config>();
+  const [addresses, setAddresses] = useState<string[]>(config.blacklist);
   const [isEditing, setIsEditing] = useState(true);
   const [inputValue, setInputValue] = useState("");
 
@@ -321,16 +285,6 @@ function GeneralSection() {
         placeholder="0x...."
         value={localConfig.tokenAddress}
         onChange={(e) => {
-          setLocalConfig({
-            ...localConfig,
-            tokenAddress: e.target.value,
-          });
-        }}
-        onBlur={(e) => {
-          if (!isAddress(e.target.value)) {
-            toast.error("Invalid Contract address");
-            return;
-          }
           updateConfig({
             tokenAddress: e.target.value,
           });
@@ -340,8 +294,7 @@ function GeneralSection() {
       <Select
         defaultValue={config.chain}
         onChange={async (value) => {
-          setLocalConfig({
-            ...localConfig,
+          updateConfig({
             chain: value as keyof typeof airdropChains,
           });
         }}
@@ -359,32 +312,19 @@ function GeneralSection() {
         placeholder="Your address with the tokens"
         value={localConfig.walletAddress}
         onChange={(e) =>
-          setLocalConfig({ ...localConfig, walletAddress: e.target.value })
-        }
-        onBlur={(e) => {
-          if (!isAddress(e.target.value)) {
-            toast.error("Invalid wallet address");
-            return;
-          }
           updateConfig({
             walletAddress: e.target.value,
-          });
-        }}
+          })
+        }
       />
       <h2>Amount Per User</h2>
       <Input
         className="text-lg flex-1 h-10"
         placeholder="Amount"
         value={localConfig.generalAmount}
-        onChange={(e) =>
-          setLocalConfig({
-            ...localConfig,
-            generalAmount: Number(e.target.value),
-          })
-        }
-        onBlur={(e) => {
+        onChange={(e) => {
           if (isNaN(Number(e.target.value))) {
-            toast.error("Invalid amount");
+            return;
           }
           updateConfig({
             generalAmount: Number(e.target.value),
@@ -396,10 +336,7 @@ function GeneralSection() {
         className="text-lg flex-1 h-10"
         placeholder="Amount"
         value={localConfig.cooldown}
-        onChange={(e) =>
-          setLocalConfig({ ...localConfig, cooldown: Number(e.target.value) })
-        }
-        onBlur={(e) => {
+        onChange={(e) => {
           let value = e.target.value;
           if (isNaN(Number(value)) || Number(value) < -1) {
             value = "-1";
@@ -429,9 +366,10 @@ function WhiteListSection() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addWhitelistItem = () => {
-    const amount = config.generalAmount || 1;
-    setLocalWhitelist([...whitelist, { address: "", amount }]);
-    setMainWhitelist([...whitelist, { address: "", amount }]);
+    const amount = config.generalAmount;
+    const newItem = [...whitelist, { address: "", amount }];
+    setLocalWhitelist(newItem);
+    setMainWhitelist(newItem);
   };
 
   const removeWhitelistItem = (index: number) => {
@@ -473,27 +411,30 @@ function WhiteListSection() {
 
       for (let i = 0; i < lines.length; i++) {
         let [address, amount] = lines[i].split(",").map((item) => item.trim());
+
         if (isAddress(address) && amount) {
-          if (isNaN(Number(amount)))
-            amount = config.generalAmount.toString() || "1";
+          if (isNaN(Number(amount))) amount = config.generalAmount.toString();
           newPairs.push({ address, amount: Number(amount) });
         } else if (lines[i].trim() !== "") {
           continue;
         }
       }
-      setMainWhitelist([...whitelist, ...newPairs]);
+      const newItem = [...whitelist, ...newPairs];
+      setLocalWhitelist(newItem);
+      setMainWhitelist(newItem);
     };
 
     reader.readAsText(file);
+    event.target.value = "";
   };
 
   return (
     <div className="flex flex-col gap-4">
       {whitelist.map((pair, index) => (
         <div key={index} className="flex flex-col space-y-2">
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              {/* <Label htmlFor={`address-${index}`}>Address</Label> */}
+          <div className="flex  gap-2">
+            <div className=" w-full">
+              <Label htmlFor={`address-${index}`}>Address</Label>
               <Input
                 id={`address-${index}`}
                 value={pair.address}
@@ -512,7 +453,7 @@ function WhiteListSection() {
               />
             </div>
             <div>
-              {/* <Label htmlFor={`amount-${index}`}>Amount</Label> */}
+              <Label htmlFor={`amount-${index}`}>Amount</Label>
               <Input
                 id={`amount-${index}`}
                 value={pair.amount}
@@ -522,7 +463,7 @@ function WhiteListSection() {
                 onBlur={(e) => {
                   let amount = Number(e.target.value);
                   if (isNaN(amount) || !amount)
-                    amount = mainConfig.generalAmount || 1;
+                    amount = mainConfig.generalAmount;
                   handleInputBlur(index, "amount", amount);
                 }}
                 placeholder="Enter amount (optional)"
@@ -650,7 +591,7 @@ function ButtonsSection() {
   const addButton = () => {
     const buttonsIndex = buttons.length + 2;
     const newButton: LinkButton = {
-      type: "link",
+      action: "link",
       label: "button " + buttonsIndex,
       target: "https://frametra.in/frame/uo49holavp64zan5eu6zgxab",
     };

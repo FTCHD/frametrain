@@ -6,7 +6,7 @@ import { BasicViewProps } from "@/sdk/views/BasicView";
 import { GatingType } from "@/sdk/components/gating/types";
 
 export type LinkButton = {
-  type: "link";
+  action: "link";
   label: string;
   target: string;
 };
@@ -108,7 +108,8 @@ export interface Storage extends BaseStorage {
 const config: BaseTemplate = {
   name: "Airdrop",
   description: "Create an airdrop for farcasters users to claim in a frame",
-  shortDescription: "Create an airdrop specifically for Farcaster users, allowing them to seamlessly claim tokens or assets within a dedicated frame interface.",
+  shortDescription:
+    "Create an airdrop specifically for Farcaster users, allowing them to seamlessly claim tokens or assets within a dedicated frame interface.",
   octicon: "megaphone",
   creatorFid: "213144",
   creatorName: "Complexlity",
