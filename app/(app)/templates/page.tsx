@@ -1,4 +1,3 @@
-
 import AccountButton from '@/components/foundation/AccountButton'
 import TemplateCard from '@/components/home/TemplateCard'
 import { getTemplates } from '@/lib/template'
@@ -37,8 +36,8 @@ export const metadata: Metadata = {
 }
 
 export default async function TemplateList() {
-	const templates = await getTemplates()
-	
+    const templates = await getTemplates()
+
     return (
         <div className="flex flex-col p-5 w-full h-full gap-5">
             <section className="flex flex-row justify-between items-center px-4 py-2">

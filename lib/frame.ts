@@ -8,322 +8,130 @@ import { revalidatePath } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { uploadPreview } from './storage'
 
-export async function getFrameList() {
+type Frame = InferInsertModel<typeof frameTable>
+type FrameId = Frame['id']
+type UserId = Frame['owner']
+
+const ensureAuth = async (): Promise<UserId> => {
     const sesh = await auth()
+    if (!sesh?.user) notFound()
+    return sesh.user.id!
+}
 
-    if (!sesh?.user) {
-        notFound()
-    }
+const getFrameQuery = (userId: UserId, frameId?: FrameId) => {
+    let query = client.select().from(frameTable).where(eq(frameTable.owner, userId))
+    if (frameId) query = query.where(eq(frameTable.id, frameId))
+    return query
+}
 
-    const frames = await client
+export async function getFrameList(limit?: number) {
+    const userId = await ensureAuth()
+    const query = client
         .select({
             ...getTableColumns(frameTable),
             interactionCount: count(interactionTable.id),
         })
         .from(frameTable)
-        .where(eq(frameTable.owner, sesh.user.id!))
-        .leftJoin(interactionTable, eq(frameTable.id, interactionTable.frame))
-        .groupBy(frameTable.id)
-        .orderBy(desc(frameTable.updatedAt))
-        .all()
-
-    return frames
-}
-
-export async function getRecentFrameList() {
-    const sesh = await auth()
-
-    if (!sesh?.user) {
-        notFound()
-    }
-
-    const frames = await client
-        .select({
-            ...getTableColumns(frameTable),
-            interactionCount: count(interactionTable.id),
-        })
-        .from(frameTable)
-        .where(eq(frameTable.owner, sesh.user.id!))
-        .limit(8)
+        .where(eq(frameTable.owner, userId))
         .leftJoin(interactionTable, eq(frameTable.id, interactionTable.frame))
         .groupBy(frameTable.id)
         .orderBy(desc(frameTable.updatedAt))
 
-    return frames
+    if (limit) query.limit(limit)
+
+    return query.all()
 }
 
-export async function getFrame(id: string) {
-    const sesh = await auth()
+export const getRecentFrameList = () => getFrameList(8)
 
-    if (!sesh?.user) {
-        notFound()
-    }
-
-    const frame = await client
-        .select()
-        .from(frameTable)
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
-        .get()
-
-    if (!frame) {
-        notFound()
-    }
-
+export async function getFrame(id: FrameId) {
+    const userId = await ensureAuth()
+    const frame = await getFrameQuery(userId, id).get()
+    if (!frame) notFound()
     return frame
 }
 
-export async function duplicateFrame(id: string) {
-    const sesh = await auth()
-
-    if (!sesh?.user) {
-        notFound()
-    }
-
+export async function duplicateFrame(id: FrameId) {
+    const userId = await ensureAuth()
     const frame = await getFrame(id)
-
-    const args: InferInsertModel<typeof frameTable> = {
-        owner: sesh.user.id!,
+    const newFrame: Frame = {
+        ...frame,
+        owner: userId,
         name: `${frame.name} Copy`,
         description: frame.name,
         config: templates[frame.template].initialConfig,
         draftConfig: frame.draftConfig,
         storage: {},
-        template: frame.template,
     }
-
-    await client.insert(frameTable).values(args).run()
-
+    await client.insert(frameTable).values(newFrame).run()
     revalidatePath('/')
 }
 
-export async function createFrame({
-    name,
-    description,
-    template,
-}: {
-    name: string
-    description?: string
-    template: keyof typeof templates
-}) {
-    const sesh = await auth()
-
-    if (!sesh?.user) {
-        notFound()
-    }
-
-    const args: InferInsertModel<typeof frameTable> = {
-        owner: sesh.user.id!,
-        name,
-        description,
-        config: templates[template].initialConfig,
-        draftConfig: templates[template].initialConfig,
+export async function createFrame(frameData: Pick<Frame, 'name' | 'description' | 'template'>) {
+    const userId = await ensureAuth()
+    const newFrame: Frame = {
+        owner: userId,
+        config: templates[frameData.template].initialConfig,
+        draftConfig: templates[frameData.template].initialConfig,
         storage: {},
-        template: template,
+        ...frameData,
     }
-
-    const frame = await client.insert(frameTable).values(args).returning().get()
-
-    return frame
+    return client.insert(frameTable).values(newFrame).returning().get()
 }
 
-export async function updateFrameName(id: string, name: string) {
-    const sesh = await auth()
-
-    if (!sesh?.user) {
-        notFound()
-    }
-
+async function updateFrame(id: FrameId, updates: Partial<Frame>) {
+    const userId = await ensureAuth()
     await client
         .update(frameTable)
-        .set({ name })
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .set(updates)
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, userId)))
         .run()
-
     revalidatePath(`/frame/${id}`)
 }
 
-export async function updateFrameConfig(id: string, config: any) {
-    const sesh = await auth()
+export const updateFrameName = (id: FrameId, name: string) => updateFrame(id, { name })
+export const updateFrameConfig = (id: FrameId, config: any) =>
+    updateFrame(id, { draftConfig: config })
 
-    if (!sesh?.user) {
-        notFound()
-    }
-
-    await client
-        .update(frameTable)
-        .set({ draftConfig: config })
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
-        .run()
-
-    revalidatePath(`/frame/${id}`)
-}
-
-export async function publishFrameConfig(id: string) {
-    const sesh = await auth()
-
-    if (!sesh?.user) {
-        notFound()
-    }
-
-    const frame = await client
-        .select()
-        .from(frameTable)
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
-        .get()
-
-    if (!frame) {
-        notFound()
-    }
-
+export async function publishFrameConfig(id: FrameId) {
+    const frame = await getFrame(id)
     const newDraftConfig = frame.draftConfig!
-
-    // if (newDraftConfig.gating) {
-    //     // disables advanced options that have no requirements set
-    //     // enabled this once revalidation works
-    //     const gating = frame.draftConfig!.gating as GatingType
-    //     for (const enabledOption of gating.enabled) {
-    //         if (
-    //             GATING_ADVANCED_OPTIONS.includes(enabledOption) &&
-    //             !gating.requirements?.[enabledOption as keyof GatingType['requirements']]
-    //         ) {
-    //             newDraftConfig.gating.enabled = newDraftConfig.gating.enabled.filter(
-    //                 (option: string) => option !== enabledOption
-    //             )
-    //         }
-    //     }
-    // }
-
-    await client
-        .update(frameTable)
-        .set({ config: newDraftConfig, draftConfig: newDraftConfig })
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
-        .run()
-
-    // revalidatePath(`/frame/${id}`)
+    await updateFrame(id, { config: newDraftConfig, draftConfig: newDraftConfig })
 }
 
-export async function updateFrameLinkedPage(id: string, url?: string) {
-    const sesh = await auth()
+export const updateFrameLinkedPage = (id: FrameId, url?: string) =>
+    updateFrame(id, { linkedPage: url })
 
-    if (!sesh?.user) {
-        notFound()
-    }
-
-    const frame = await client
-        .select()
-        .from(frameTable)
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
-        .get()
-
-    if (!frame) {
-        notFound()
-    }
-
-    await client
-        .update(frameTable)
-        .set({ linkedPage: url })
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
-        .run()
-
-    revalidatePath(`/frame/${id}`)
-}
-
-export async function updateFrameWebhooks(id: string, webhook: { event: string; url?: string }) {
-    const sesh = await auth()
-
-    if (!sesh?.user) {
-        notFound()
-    }
-
-    const frame = await client
-        .select()
-        .from(frameTable)
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
-        .get()
-
-    if (!frame) {
-        notFound()
-    }
-
-    const webhooks = Object.assign({}, frame.webhooks)
-
+export async function updateFrameWebhooks(id: FrameId, webhook: { event: string; url?: string }) {
+    const frame = await getFrame(id)
+    const webhooks = { ...frame.webhooks }
     if (webhook.url) {
         webhooks[webhook.event] = webhook.url
     } else {
         delete webhooks[webhook.event]
     }
-
-    await client
-        .update(frameTable)
-        .set({
-            webhooks,
-        })
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
-        .run()
-
-    revalidatePath(`/frame/${id}`)
+    await updateFrame(id, { webhooks })
 }
 
-export async function revertFrameConfig(id: string) {
-    const sesh = await auth()
-
-    if (!sesh?.user) {
-        notFound()
-    }
-
-    const frame = await client
-        .select()
-        .from(frameTable)
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
-        .get()
-
-    if (!frame) {
-        notFound()
-    }
-
-    await client
-        .update(frameTable)
-        .set({ draftConfig: frame.config })
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
-        .run()
-
-    // revalidatePath(`/frame/${id}`)
+export async function revertFrameConfig(id: FrameId) {
+    const frame = await getFrame(id)
+    await updateFrame(id, { draftConfig: frame.config })
 }
 
-export async function updateFrameStorage(id: string, storage: any) {
-    await client.update(frameTable).set({ storage }).where(eq(frameTable.id, id)).run()
+export const updateFrameStorage = (id: FrameId, storage: any) => updateFrame(id, { storage })
+export const updateFrameCalls = (id: FrameId, calls: number) =>
+    updateFrame(id, { currentMonthCalls: calls })
+
+export async function updateFramePreview(id: FrameId, preview: string) {
+    const previewImage = preview.split('data:image/png;base64,')[1].split('"')[0]
+    await uploadPreview({ frameId: id, base64String: previewImage })
 }
 
-export async function updateFrameCalls(id: string, calls: number) {
-    await client
-        .update(frameTable)
-        .set({ currentMonthCalls: calls })
-        .where(eq(frameTable.id, id))
-        .run()
-}
-
-export async function updateFramePreview(id: string, preview: string) {
-    // extract whats after "property="og:image" content="data:image/png;base64," from preview
-    let previewImage = preview.split('data:image/png;base64,')[1]
-    previewImage = previewImage.split('"')[0]
-
-    await uploadPreview({
-        frameId: id,
-        base64String: previewImage,
-    })
-}
-
-export async function deleteFrame(id: string) {
-    const sesh = await auth()
-
-    if (!sesh?.user) {
-        notFound()
-    }
-
+export async function deleteFrame(id: FrameId) {
+    const userId = await ensureAuth()
     await client
         .delete(frameTable)
-        .where(and(eq(frameTable.id, id), eq(frameTable.owner, sesh.user.id!)))
+        .where(and(eq(frameTable.id, id), eq(frameTable.owner, userId)))
         .run()
-
     revalidatePath('/')
 }
