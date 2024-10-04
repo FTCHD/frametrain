@@ -17,6 +17,7 @@ export interface Config extends BaseConfig {
     deadline?: number 
     expiry?: number 
     owner: string
+    currency: string
 }
 
 export interface Storage extends BaseStorage {
@@ -56,7 +57,8 @@ export default {
         },
         visitLink: '',
         expiry: 24,
-        owner: ''
+        owner: '',
+        currency: 'ETH',
     },
     events: ['bid', 'adChanged', 'adExpired'],
 } satisfies BaseTemplate

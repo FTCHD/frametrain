@@ -10,6 +10,23 @@ export default function Inspector() {
     const fid = useFarcasterId()
     const uploadImage = useUploadImage()
 
+    const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            const reader = new FileReader()
+            reader.onload = async (event) => {
+                const base64String = event.target?.result as string
+                const { filePath } = await uploadImage({
+                    base64String: base64String.split(',')[1],
+                    contentType: file.type,
+                })
+                updateConfig({ cover: { ...config.cover, image: filePath } })
+            }
+            reader.readAsDataURL(file)
+        }
+    }
+
+
     return (
         <Configuration.Root>
             <Configuration.Section title="Operational Mode">
