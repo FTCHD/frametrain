@@ -62,7 +62,6 @@ export default async function txData({
   return {
     buttons: [],
     transaction: {
-      // Approve transaction goes here
       chainId: `eip155:${chainId}`,
       method: "eth_sendTransaction",
       params: {

@@ -1,9 +1,8 @@
 "use server";
 import type { BuildFrameData, FramePayloadValidated } from "@/lib/farcaster";
+import { FrameError } from "@/sdk/error";
 import type { Config } from "..";
 import ApprovedView from "../views/Approved";
-import BasicView from "@/sdk/views/BasicView";
-import { FrameError } from "@/sdk/error";
 
 export default async function page({
   body,
