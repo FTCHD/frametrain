@@ -4,7 +4,8 @@ import { useFarcasterId, useFrameConfig, useResetPreview, useUploadImage } from 
 import { Configuration } from '@/sdk/inspector'
 import { TrashIcon, UploadIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
-import type { Config, NFT } from '.'
+import type { Config } from '.'
+import type { NFT } from './types'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -34,22 +35,22 @@ export default function Inspector() {
         updateConfig({ nfts: updatedNFTs })
     }
 
-    const handleImageUpload = async (index: number, file: File) => {
-        try {
-            const reader = new FileReader()
-            reader.onloadend = async () => {
+    const uploadImageFile = (file: File, onSuccess: (filePath: string) => void) => {
+        const reader = new FileReader()
+        reader.onloadend = async () => {
+            try {
                 const base64String = reader.result as string
                 const { filePath } = await uploadImage({
                     base64String: base64String.split(',')[1],
                     contentType: file.type,
                 })
-                updateNFT(index, 'imageUrl', filePath)
+                onSuccess(filePath)
+            } catch (error) {
+                console.error('Error uploading image:', error)
+                toast.error('Failed to upload image')
             }
-            reader.readAsDataURL(file)
-        } catch (error) {
-            console.error('Error uploading image:', error)
-            toast.error('Failed to upload image')
         }
+        reader.readAsDataURL(file)
     }
 
     return (
@@ -77,14 +78,12 @@ export default function Inspector() {
                             type="file"
                             accept="image/*"
                             className="hidden"
-                            onChange={async (e) => {
+                            onChange={(e) => {
                                 const file = e.target.files?.[0]
                                 if (file) {
-                                    const { filePath } = await uploadImage({
-                                        base64String: await file.text(),
-                                        contentType: file.type,
+                                    uploadImageFile(file, (filePath) => {
+                                        updateConfig({ coverImage: filePath })
                                     })
-                                    updateConfig({ coverImage: filePath })
                                 }
                             }}
                         />
@@ -208,14 +207,12 @@ export default function Inspector() {
                             type="file"
                             accept="image/*"
                             className="hidden"
-                            onChange={async (e) => {
+                            onChange={(e) => {
                                 const file = e.target.files?.[0]
                                 if (file) {
-                                    const { filePath } = await uploadImage({
-                                        base64String: await file.text(),
-                                        contentType: file.type,
+                                    uploadImageFile(file, (filePath) => {
+                                        updateConfig({ successBackground: filePath })
                                     })
-                                    updateConfig({ successBackground: filePath })
                                 }
                             }}
                         />
