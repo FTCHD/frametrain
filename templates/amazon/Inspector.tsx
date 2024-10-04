@@ -60,7 +60,6 @@ export default function Inspector() {
     return (
         <Configuration.Root>
             <Configuration.Section title="Cover">
-                <p>{JSON.stringify(config)}</p>
                 <div className="flex flex-col gap-2 w-full">
                     <h2 className="text-lg font-semibold">Cover Type</h2>
                     <RadioGroup.Root
