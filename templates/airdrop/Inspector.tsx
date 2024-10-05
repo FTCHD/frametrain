@@ -17,6 +17,7 @@ import type { Config, LinkButton } from ".";
 import { isAddress } from "viem";
 import toast from "react-hot-toast";
 import { airdropChains } from ".";
+import { X } from "lucide-react";
 
 interface WhiteList {
   address: string;
@@ -224,52 +225,126 @@ function CoverSection() {
 
 function BlackListSection() {
   const [config, updateConfig] = useFrameConfig<Config>();
-  const [addresses, setAddresses] = useState<string[]>(config.blacklist);
-  const [isEditing, setIsEditing] = useState(true);
-  const [inputValue, setInputValue] = useState("");
+  const [newAddress, setNewAddress] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSave = () => {
-    const addressList = inputValue.split(",").map((addr) => addr.trim());
-    const validAddresses = addressList.filter((addr) =>
-      isAddress(addr)
-    ) as string[];
-
-    setAddresses(validAddresses);
-    updateConfig({ blacklist: validAddresses });
-    setIsEditing(false);
+  const addBlacklistItem = () => {
+    if (!isAddress(newAddress)) {
+      toast("Invalid address");
+      return;
+    }
+    if (config.blacklist.includes(newAddress)) {
+      toast("Address already in blacklist");
+      return;
+    }
+    updateConfig({
+      blacklist: [...config.blacklist, newAddress],
+    });
+    setNewAddress("");
   };
 
-  const handleEdit = () => {
-    setInputValue(addresses.join(", "));
-    setIsEditing(true);
+  const removeBlacklistItem = (address: string) => {
+    const newBlacklist = config.blacklist.filter((item) => item !== address);
+    updateConfig({ blacklist: newBlacklist });
+  };
+
+  const handleCsvUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      const lines = content.split("\n");
+      const newAddresses = lines
+        .map((line) => line.trim())
+        .filter(
+          (address) => isAddress(address) && !config.blacklist.includes(address)
+        );
+
+      if (newAddresses.length > 0) {
+        updateConfig({
+          blacklist: [...config.blacklist, ...newAddresses],
+        });
+        toast(`Added ${newAddresses.length} new addresses to blacklist`);
+      } else {
+        toast("No new valid addresses found in CSV");
+      }
+    };
+
+    reader.readAsText(file);
+    event.target.value = "";
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      {isEditing ? (
-        <Textarea
-          className="placeholder:italic"
-          placeholder="Comma separated addresses.."
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-      ) : (
-        <div className="p-2 border rounded bg-gray-50">
-          {addresses.length > 0 ? addresses.join(", ") : "No valid addresses."}
-        </div>
-      )}
-
-      <div className="flex gap-2">
-        {isEditing ? (
-          <Button variant="primary" onClick={handleSave}>
-            Save
-          </Button>
-        ) : (
-          <Button variant="secondary" onClick={handleEdit}>
-            Edit
-          </Button>
-        )}
+    <div className="space-y-4">
+      <div className="max-h-60 overflow-y-auto space-y-2">
+        {config.blacklist.map((address, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between bg-secondary p-2 rounded"
+          >
+            <span className="text-sm font-mono">{address}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => removeBlacklistItem(address)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
       </div>
+      <div className="flex gap-2 flex-col">
+        <Label htmlFor="new-blacklist-address">New Blacklist Address</Label>
+        <div className="flex-grow flex w-full gap-2 items-center">
+          <Input
+            id="new-blacklist-address"
+            value={newAddress}
+            onChange={(e) => setNewAddress(e.target.value)}
+            placeholder="Enter address"
+          />
+          <Button onClick={addBlacklistItem} className="self-center">
+            Add
+          </Button>
+        </div>
+      </div>
+      <div className="text-center mx-auto w-full">OR</div>
+      <div>
+        <input
+          type="file"
+          accept=".csv"
+          onChange={handleCsvUpload}
+          ref={fileInputRef}
+          className="hidden"
+        />
+        <Button
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full"
+        >
+          Upload CSV
+        </Button>
+      </div>
+      <div className="text-center mx-auto w-full">OR</div>
+      <Textarea
+        placeholder="Paste multiple addresses here (separated by a comma)"
+        className="h-24"
+        onBlur={(e) => {
+          const addresses = e.target.value
+            .split(",")
+            .map((addr) => addr.trim());
+          const validAddresses = addresses.filter(
+            (addr) => isAddress(addr) && !config.blacklist.includes(addr)
+          );
+          if (validAddresses.length > 0) {
+            updateConfig({
+              blacklist: [...config.blacklist, ...validAddresses],
+            });
+            e.target.value = "";
+            toast(`Added ${validAddresses.length} new addresses to blacklist`);
+          }
+        }}
+      />
     </div>
   );
 }
@@ -349,54 +424,29 @@ function GeneralSection() {
     </>
   );
 }
-function WhiteListSection() {
-  const [mainConfig, updateMainConfig] = useFrameConfig<Config>();
-  const [config, updateLocalConfig] = useState(mainConfig);
-  const updateConfig = (item: Partial<typeof config>) => {
-    updateLocalConfig({ ...config, ...item });
-  };
-  const whitelist = config.whitelist;
-  const setLocalWhitelist = (pairs: WhiteList[]) => {
-    updateConfig({ whitelist: pairs });
-  };
-  const setMainWhitelist = (pairs: WhiteList[]) => {
-    updateMainConfig({ whitelist: pairs });
-  };
 
+function WhiteListSection() {
+  const [config, updateConfig] = useFrameConfig<Config>();
+  const [newAddress, setNewAddress] = useState("");
+  const [newAmount, setNewAmount] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addWhitelistItem = () => {
-    const amount = config.generalAmount;
-    const newItem = [...whitelist, { address: "", amount }];
-    setLocalWhitelist(newItem);
-    setMainWhitelist(newItem);
+    if (!isAddress(newAddress)) {
+      toast("Invalid address");
+      return;
+    }
+    const amount = Number(newAmount) || config.generalAmount;
+    updateConfig({
+      whitelist: [...config.whitelist, { address: newAddress, amount }],
+    });
+    setNewAddress("");
+    setNewAmount("");
   };
 
   const removeWhitelistItem = (index: number) => {
-    const newItem = whitelist.filter((_, i) => i !== index);
-    setLocalWhitelist(newItem);
-    setMainWhitelist(newItem);
-  };
-
-  const handleInputChange = (
-    index: number,
-    field: "address" | "amount",
-    value: string
-  ) => {
-    const newItem = [...whitelist];
-    //@ts-expect-error: indexing into objects
-    newItem[index][field] = value;
-    setLocalWhitelist(newItem);
-  };
-  const handleInputBlur = (
-    index: number,
-    field: "address" | "amount",
-    value: string | number
-  ) => {
-    const newItem = [...whitelist];
-    //@ts-expect-error: indexing into objects
-    newItem[index][field] = value;
-    setMainWhitelist(newItem);
+    const newWhitelist = config.whitelist.filter((_, i) => i !== index);
+    updateConfig({ whitelist: newWhitelist });
   };
 
   const handleCsvUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -409,19 +459,19 @@ function WhiteListSection() {
       const lines = content.split("\n");
       const newPairs: WhiteList[] = [];
 
-      for (let i = 0; i < lines.length; i++) {
-        let [address, amount] = lines[i].split(",").map((item) => item.trim());
-
-        if (isAddress(address) && amount) {
-          if (isNaN(Number(amount))) amount = config.generalAmount.toString();
-          newPairs.push({ address, amount: Number(amount) });
-        } else if (lines[i].trim() !== "") {
-          continue;
+      for (let line of lines) {
+        let [address, amount] = line.split(",").map((item) => item.trim());
+        if (isAddress(address)) {
+          newPairs.push({
+            address,
+            amount: Number(amount) || config.generalAmount,
+          });
         }
       }
-      const newItem = [...whitelist, ...newPairs];
-      setLocalWhitelist(newItem);
-      setMainWhitelist(newItem);
+
+      updateConfig({
+        whitelist: [...config.whitelist, ...newPairs],
+      });
     };
 
     reader.readAsText(file);
@@ -429,45 +479,17 @@ function WhiteListSection() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      {whitelist.map((pair, index) => (
+    <div className="space-y-4">
+      {config.whitelist?.map((item, index) => (
         <div key={index} className="flex flex-col space-y-2">
-          <div className="flex  gap-2">
-            <div className=" w-full">
+          <div className="flex gap-2">
+            <div className="w-full">
               <Label htmlFor={`address-${index}`}>Address</Label>
-              <Input
-                id={`address-${index}`}
-                value={pair.address}
-                onChange={(e) =>
-                  handleInputChange(index, "address", e.target.value)
-                }
-                onBlur={(e) => {
-                  const address = e.target.value;
-                  if (!isAddress(address)) {
-                    toast("Invalid adresss");
-                    return;
-                  }
-                  handleInputBlur(index, "address", address);
-                }}
-                placeholder="Enter address"
-              />
+              <Input id={`address-${index}`} value={item.address} readOnly />
             </div>
             <div>
               <Label htmlFor={`amount-${index}`}>Amount</Label>
-              <Input
-                id={`amount-${index}`}
-                value={pair.amount}
-                onChange={(e) =>
-                  handleInputChange(index, "amount", e.target.value)
-                }
-                onBlur={(e) => {
-                  let amount = Number(e.target.value);
-                  if (isNaN(amount) || !amount)
-                    amount = mainConfig.generalAmount;
-                  handleInputBlur(index, "amount", amount);
-                }}
-                placeholder="Enter amount (optional)"
-              />
+              <Input id={`amount-${index}`} value={item.amount} readOnly />
             </div>
           </div>
           <Button
@@ -478,7 +500,30 @@ function WhiteListSection() {
           </Button>
         </div>
       ))}
-      <Button onClick={addWhitelistItem}>Add New Pair</Button>
+      <div className="flex flex-col space-y-2">
+        <div className="flex gap-2">
+          <div className="w-full">
+            <Label htmlFor="new-address">New Address</Label>
+            <Input
+              id="new-address"
+              value={newAddress}
+              onChange={(e) => setNewAddress(e.target.value)}
+              placeholder="Enter address"
+            />
+          </div>
+          <div>
+            <Label htmlFor="new-amount">New Amount</Label>
+            <Input
+              id="new-amount"
+              value={newAmount}
+              onChange={(e) => setNewAmount(e.target.value)}
+              placeholder="Enter amount (optional)"
+            />
+          </div>
+        </div>
+        <Button onClick={addWhitelistItem}>Add New Address</Button>
+      </div>
+      <div className="text-center mx-auto w-full">OR</div>
       <div>
         <input
           type="file"
@@ -487,94 +532,13 @@ function WhiteListSection() {
           ref={fileInputRef}
           className="hidden"
         />
-        <Button onClick={() => fileInputRef.current?.click()}>
+        <Button
+          className="w-full"
+          onClick={() => fileInputRef.current?.click()}
+        >
           Upload CSV
         </Button>
       </div>
-      {/* <div className="flex flex-col gap-2 w-full">
-          <h2 className="text-lg font-semibold">Whitelist Type</h2>
-          <RadioGroup.Root
-            defaultValue={whitelistType}
-            className="flex flex-row"
-            onValueChange={(val) => {
-              const value = val as "inputs" | "csv";
-              setWhitelistType(value);
-              if (val === "input" && config.cover.image) {
-                updateConfig({
-                  cover: {
-                    ...config.cover,
-                    image: null,
-                  },
-                });
-              }
-            }}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroup.Item value="inputs" id="inputs" />
-              <Label htmlFor="inputs">Inputs</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroup.Item value="csv" id="csv" />
-              <Label htmlFor="csv">CSV</Label>
-            </div>
-          </RadioGroup.Root>
-        </div>
-        <div className="flex flex-col gap-4 w-full">
-          {whitelistType === "inputs" ? (
-            <>
-              <div className="flex flex-col gap-2 w-full">
-                <h2>Address 1</h2>
-                <Input
-                  className="text-lg flex-1 h-10"
-                  placeholder="0x..."
-                  onBlur={(e) => {
-                    console.log("Address 1 updated");
-                  }}
-                />
-                <h2>Ammount</h2>
-                <Input
-                  className="text-lg flex-1 h-10"
-                  placeholder="Optional"
-                  onBlur={(e) => {
-                    console.log("Address 1 updated");
-                  }}
-                />
-                <Button
-                  onClick={() => {
-                    console.log("Removed Address 1");
-                  }}
-                >
-                  Remove
-                </Button>
-              </div>
-              <Button
-                onClick={() => {
-                  console.log("Added new address");
-                }}
-              >
-                Add Address
-              </Button>
-            </>
-          ) : (
-            <div className="w-fit bg-blue-400">
-              <label
-                htmlFor="uploadFile"
-                className="flex cursor-pointer items-center justify-center rounded-md py-1.5 px-2 text-md font-medium bg-border text-primary hover:bg-secondary-border"
-              >
-                Upload a file
-                <Input
-                  type="file"
-                  id="uploadCsv"
-                  className="sr-only"
-                  accept="application/jpeg"
-                  onChange={async (e) => {
-                    //Get inputs from csv uploaded
-                  }}
-                />
-              </label>
-            </div>
-          )}
-        </div> */}
     </div>
   );
 }
