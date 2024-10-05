@@ -36,7 +36,6 @@ export function FramePreviewButton({
     const mockOptions = useAtomValue(mockOptionsAtom)
     const account = useAccount()
     const {
-        data: hash,
         sendTransactionAsync
     } = useSendTransaction()
 
@@ -68,26 +67,21 @@ export function FramePreviewButton({
                     // get transaction
                     const tx = await getTxData(button.target as string)
                     // check chain
-                    console.log(tx)
-                        await sendTransactionAsync({
-                            chainId: Number(tx.chainId.split(":")[1]),
-                            to: tx.params.to,
-                            value: tx.params.value,
-                            data: tx.params.data
-                        },{
-                            onSettled () {
-                                toast.loading("Transaction Pending")
-                            },
-                            onSuccess () {
-                                toast.success("Transfer Successful!")
-                            },
-                            onError(error:any) {
-                                toast.error(error.cause.shortMessage)
-                            },
-                        })
+                    await sendTransactionAsync({
+                        chainId: Number(tx.chainId.split(":")[1]),
+                        to: tx.params.to,
+                        value: tx.params.value,
+                        data: tx.params.data
+                    },{
+                        onSuccess () {
+                            toast.success("Transfer Successful!")
+                        },
+                        onError(error:any) {
+                            toast.error(error.cause.shortMessage)
+                        },
+                    })
                 } else {
                     // open reown connect modal
-                    console.log(account)
                     ModalController.open()
                 }
                 break
