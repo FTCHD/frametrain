@@ -35,7 +35,17 @@ export default async function txData({
     if (!session.unsignedTransaction) {
         throw new FrameError('Missing transaction')
     }
-
+    const transaction = {
+        chainId: session.unsignedTransaction.chainId,
+        method: 'eth_sendTransaction',
+        params: {
+            to: session.unsignedTransaction.to,
+            value: session.unsignedTransaction.value,
+            data: session.unsignedTransaction.input,
+            abi: [],
+        },
+    }
+    console.log(transaction)
     return {
         transaction: {
             chainId: session.unsignedTransaction.chainId,

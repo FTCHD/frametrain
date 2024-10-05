@@ -1,6 +1,8 @@
 'use client'
 import type { FrameButtonMetadata } from '@/lib/farcaster'
 import { mockOptionsAtom, previewLoadingAtom, previewParametersAtom } from '@/lib/store'
+import { corsFetch } from '@/sdk/scrape'
+import { ModalController } from '@reown/appkit-core'
 import { useAtom, useAtomValue } from 'jotai'
 import { type PropsWithChildren, useCallback } from 'react'
 import {
@@ -9,6 +11,7 @@ import {
     PlusCircle as PlusCircleIcon,
 } from 'react-feather'
 import toast from 'react-hot-toast'
+import { useAccount, useSendTransaction } from 'wagmi'
 
 export function FramePreviewButton({
     children,
@@ -31,6 +34,11 @@ export function FramePreviewButton({
     const [, setPreviewData] = useAtom(previewParametersAtom)
     const previewLoading = useAtomValue(previewLoadingAtom)
     const mockOptions = useAtomValue(mockOptionsAtom)
+    const account = useAccount()
+    const {
+        data: hash,
+        sendTransactionAsync
+    } = useSendTransaction()
 
     const actionCallback = useCallback(() => {
         const newData = {
@@ -52,6 +60,36 @@ export function FramePreviewButton({
             }
             case 'post': {
                 actionCallback()
+                break
+            }
+            case 'tx': {
+                // if not connect
+                if (account.isConnected) {
+                    // get transaction
+                    const tx = await getTxData(button.target as string)
+                    // check chain
+                    console.log(tx)
+                        await sendTransactionAsync({
+                            chainId: Number(tx.chainId.split(":")[1]),
+                            to: tx.params.to,
+                            value: tx.params.value,
+                            data: tx.params.data
+                        },{
+                            onSettled () {
+                                toast.loading("Transaction Pending")
+                            },
+                            onSuccess () {
+                                toast.success("Transfer Successful!")
+                            },
+                            onError(error:any) {
+                                toast.error(error.cause.shortMessage)
+                            },
+                        })
+                } else {
+                    // open reown connect modal
+                    console.log(account)
+                    ModalController.open()
+                }
                 break
             }
             default: {

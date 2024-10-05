@@ -3,7 +3,7 @@
 import { wagmiAdapter, projectId } from '@/lib/wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
-import { mainnet, arbitrum, avalanche, base, optimism, polygon } from '@reown/appkit/networks'
+import { mainnet, arbitrum, base, optimism, polygon, zora, gnosis, binanceSmartChain } from '@reown/appkit/networks'
 import React, { type ReactNode } from 'react'
 import { WagmiProvider, type Config } from 'wagmi'
 
@@ -26,7 +26,7 @@ const metadata = {
 const modal = createAppKit({
     adapters: [wagmiAdapter],
     projectId,
-    networks: [mainnet, arbitrum, avalanche, base, optimism, polygon],
+    networks: [mainnet, optimism, base, zora, arbitrum, gnosis, polygon, binanceSmartChain], // list get from @/sdk/viem
     defaultNetwork: mainnet,
     metadata: metadata,
     features: {

@@ -27,7 +27,6 @@ import { Input } from './shadcn/Input'
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/Popover'
 import { Toggle } from './shadcn/Toggle'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './shadcn/Tooltip'
-import ConnectButton from './foundation/ConnectButton'
 
 export default function FrameEditor({
     frame,
@@ -230,8 +229,6 @@ export default function FrameEditor({
                     >
                         <PlayIcon className="w-4 h-4" />
                     </Toggle>
-
-                    <ConnectButton />
 
                     <Popover>
                         <PopoverTrigger asChild={true}>

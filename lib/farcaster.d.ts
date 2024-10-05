@@ -25,6 +25,7 @@ export type FrameButtonMetadata =
           label: string
           handler?: string
           callback?: string
+          target?: string
       }
 
 export type FramePayload = FramesJSFrameActionPayload
