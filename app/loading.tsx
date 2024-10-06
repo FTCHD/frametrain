@@ -1,4 +1,3 @@
-
 import { Progress } from '@/components/shadcn/Progress'
 
 const FUNNY_MESSAGES = [

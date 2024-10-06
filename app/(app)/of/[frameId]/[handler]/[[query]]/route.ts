@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { client } from '@/db/client';
 import { frameTable, interactionTable } from '@/db/schema';
-import type { BuildFrameData, FramePayload } from '@/lib/farcaster';
+import type { BuildFrameData, FrameRequest } from '@/lib/farcaster';
 import { updateFrameStorage } from '@/lib/frame';
 import { buildFramePage } from '@/lib/serve';
 import type { BaseConfig, BaseStorage } from '@/lib/types';
@@ -11,6 +11,7 @@ import { waitUntil } from '@vercel/functions';
 import { type InferSelectModel, eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { validateFramePayload } from '@/lib/validation';
+import { buildOpenFrameMetadata } from '@/lib/openframe';
 
 export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
@@ -44,7 +45,7 @@ export async function POST(
 
     const template = templates[frame.template];
 
-    const payload = (await request.json()) as FramePayload;
+    const payload = (await request.json()) as FrameRequest;
 
     const handlerFn = template.handlers[params.handler as keyof typeof template.handlers];
 
@@ -93,10 +94,13 @@ export async function POST(
         });
     }
 
+    const openFrameMetadata = buildOpenFrameMetadata(buildParameters);
+
     const renderedFrame = await buildFramePage({
         id: frame.id,
         linkedPage: frame.linkedPage || undefined,
         ...(buildParameters as BuildFrameData),
+        openFrameMetadata,
     });
 
     waitUntil(processFrame(frame, buildParameters, payload));
@@ -111,7 +115,7 @@ export async function POST(
 async function processFrame(
     frame: InferSelectModel<typeof frameTable>,
     parameters: BuildFrameData,
-    payload: FramePayload
+    payload: FrameRequest
 ) {
     const storageData = parameters.storage as BaseStorage | undefined;
 

@@ -49,6 +49,7 @@ export interface BuildFrameData {
         data: Record<string, unknown>
     }[]
     transaction?: TransactionTargetResponse
+    openFrameMetadata?: OpenFrameMetadata
 }
 
 export interface FrameData {
@@ -67,13 +68,6 @@ export interface FrameData {
     url: string
 }
 
-export interface FrameRequest {
-    untrustedData: FrameData
-    trustedData: {
-        messageBytes: string
-    }
-}
-
 export type FrameImageMetadata = {
     src: string
     aspectRatio?: '1.91:1' | '1:1'
@@ -86,4 +80,41 @@ export type FrameMetadataType = {
     postUrl?: string
     refreshPeriod?: number
     state?: object
+}
+
+export interface OpenFrameMetadata {
+    version: string
+    accepts: Record<ClientProtocol, string>
+    image: string
+    buttons?: OpenFrameButton[]
+    postUrl?: string
+    inputText?: string
+    imageAspectRatio?: '1.91:1' | '1:1'
+    imageAlt?: string
+    state?: string
+}
+
+export interface OpenFrameButton {
+    label: string
+    action?: 'post' | 'post_redirect' | 'link' | 'mint' | 'tx'
+    target?: string
+    postUrl?: string
+}
+
+export type ClientProtocol = 'lens' | 'xmtp' | 'anonymous' | 'farcaster'
+
+export interface FrameRequest {
+    clientProtocol: string
+    untrustedData: {
+        url: string
+        unixTimestamp: number
+        buttonIndex: number
+        inputText?: string
+        state?: string
+        address?: string
+        transactionId?: string
+    }
+    trustedData?: {
+        messageBytes: string
+    }
 }

@@ -7,6 +7,7 @@ import type {
     FrameButtonMetadata,
     FramePayload,
     FramePayloadValidated,
+    OpenFrameMetadata,
 } from './farcaster'
 
 export async function buildFramePage({
@@ -60,7 +61,7 @@ export async function buildFramePage({
                   .join('&')
             : ''
 
-    const metadata = await buildFrame({
+    const farcasterMetadata = await buildFrame({
         buttons,
         image: imageData,
         aspectRatio,
@@ -71,24 +72,58 @@ export async function buildFramePage({
         searchParams: searchParams,
     })
 
+    const openFrameMetadataFinal = openFrameMetadata || {
+        version: 'vNext',
+        accepts: {
+            farcaster: 'vNext',
+            lens: '1.0.0',
+            xmtp: 'vNext',
+            anonymous: '1.0.0',
+        },
+        image: imageData,
+        buttons: buttons?.map((button) => ({
+            label: button.label,
+            action: button.action,
+            target: button.target,
+        })),
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/of/${id}`,
+        inputText,
+        imageAspectRatio: aspectRatio,
+    }
+
+    const openFramesMetadata = buildFrame({
+        buttons,
+        image: imageData,
+        aspectRatio,
+        inputText,
+        refreshPeriod,
+        postUrl: `${process.env.NEXT_PUBLIC_HOST}/of/${id}`,
+        handler: handler,
+        searchParams: searchParams,
+        openFrameMetadata: openFrameMetadataFinal,
+    })
+
     const frame = `<html lang="en">
-	<head>
-		${Object.keys(metadata)
-            .map((key) => `<meta property="${key}" content="${metadata[key]}" />`)
-            .join('\n')}
-		<title>&#128642; FrameTrain</title>
-		${linkedPage ? `<script>window.location.href = "${linkedPage}"</script>` : ''}
-	</head>
-	<style>
-		* {
-			background-color: #17101f;
-		}
-	</style>
-	<body>
-		<h1 style='color: #fff; font-family: system-ui;'>&#128642; Hello from FrameTrain</h1>
-	</body>
-	</html>
-	`
+  <head>
+    ${Object.keys(farcasterMetadata)
+        .map((key) => `<meta property="${key}" content="${farcasterMetadata[key]}" />`)
+        .join('\n')}
+    ${Object.keys(openFramesMetadata)
+        .map((key) => `<meta property="${key}" content="${openFramesMetadata[key]}" />`)
+        .join('\n')}
+    <title>&#128642; FrameTrain</title>
+    ${linkedPage ? `<script>window.location.href = "${linkedPage}"</script>` : ''}
+  </head>
+  <style>
+    * {
+      background-color: #17101f;
+    }
+  </style>
+  <body>
+    <h1 style='color: #fff; font-family: system-ui;'>&#128642; Hello from FrameTrain</h1>
+  </body>
+  </html>
+  `
 
     return frame
 }
@@ -170,6 +205,7 @@ export async function buildFrame({
     version = 'vNext',
     handler,
     searchParams,
+    openFrameMetadata,
 }: {
     buttons: FrameButtonMetadata[]
     image: string
@@ -180,68 +216,104 @@ export async function buildFrame({
     version?: string
     handler?: string
     searchParams?: string
+    openFrameMetadata?: OpenFrameMetadata
 }) {
-    // Regular expression to match the pattern YYYY-MM-DD
-    if (!(version === 'vNext' || /^\d{4}-\d{2}-\d{2}$/.test(version))) {
-        throw new Error('Invalid version.')
-    }
+    if (openFrameMetadata) {
+        metadata['of:version'] = openFrameMetadata.version
+        metadata['of:image'] = openFrameMetadata.image
+        metadata['of:image:aspect_ratio'] = openFrameMetadata.imageAspectRatio || aspectRatio
+        metadata['of:post_url'] = openFrameMetadata.postUrl || postUrl
 
-    const metadata: Record<string, string> = {
-        'fc:frame': version,
-        // 'og:image': image,
-        'fc:frame:image': image,
-        'fc:frame:image:aspect_ratio': aspectRatio,
-        'fc:frame:post_url': postUrl + `/${handler}` + '?' + searchParams,
-    }
-
-    if (inputText) {
-        if (inputText.length > 32) {
-            throw new Error('Input text exceeds maximum length of 32 bytes.')
-        }
-        metadata['fc:frame:input:text'] = inputText
-    }
-
-    if (buttons) {
-        if (buttons.length > 4) {
-            throw new Error('Maximum of 4 buttons allowed.')
-        }
-        buttons.forEach((button: FrameButtonMetadata, index: number) => {
-            if (!button.label || button.label.length > 256) {
-                throw new Error('Button label is required and must be maximum of 256 bytes.')
-            }
-            metadata[`fc:frame:button:${index + 1}`] = button.label
-
-            if (button.action) {
-                if (!['post', 'post_redirect', 'mint', 'link', 'tx'].includes(button.action)) {
-                    throw new Error('Invalid button action.')
-                }
-                metadata[`fc:frame:button:${index + 1}:action`] = button.action
-
-                if (button.action === 'tx') {
-                    metadata[`fc:frame:button:${index + 1}:target`] =
-                        postUrl + `/${button.handler || handler}` + '?' + searchParams
-                    if (button.callback) {
-                        metadata[`fc:frame:button:${index + 1}:post_url`] =
-                            postUrl + `/${button.callback}` + '?' + searchParams
-                    }
-                }
-                if (button.action === 'link' || button.action === 'mint') {
-                    metadata[`fc:frame:button:${index + 1}:target`] = button.target
-                }
-            } else {
-                metadata[`fc:frame:button:${index + 1}:action`] = 'post' // Default action
-            }
+        Object.entries(openFrameMetadata.accepts).forEach(([protocol, version]) => {
+            metadata[`of:accepts:${protocol}`] = version
         })
-    }
 
-    if (refreshPeriod) {
-        if (refreshPeriod < 0) {
-            throw new Error('Refresh period must be a positive number.')
+        if (openFrameMetadata.buttons) {
+            openFrameMetadata.buttons.forEach((button, index) => {
+                metadata[`of:button:${index + 1}`] = button.label
+                if (button.action) metadata[`of:button:${index + 1}:action`] = button.action
+                if (button.target) metadata[`of:button:${index + 1}:target`] = button.target
+                if (button.postUrl) metadata[`of:button:${index + 1}:post_url`] = button.postUrl
+            })
         }
-        metadata['fc:frame:refresh_period'] = refreshPeriod.toString()
+
+        if (openFrameMetadata.inputText) {
+            metadata['of:input:text'] = openFrameMetadata.inputText
+        }
+
+        if (openFrameMetadata.imageAlt) {
+            metadata['of:image:alt'] = openFrameMetadata.imageAlt
+        }
+
+        if (openFrameMetadata.state) {
+            metadata['of:state'] = openFrameMetadata.state
+        }
     }
 
     return metadata
+}
+
+// Regular expression to match the pattern YYYY-MM-DD
+if (!(version === 'vNext' || /^\d{4}-\d{2}-\d{2}$/.test(version))) {
+    throw new Error('Invalid version.')
+}
+
+const metadata: Record<string, string> = {
+    'fc:frame': version,
+    // 'og:image': image,
+    'fc:frame:image': image,
+    'fc:frame:image:aspect_ratio': aspectRatio,
+    'fc:frame:post_url': postUrl + `/${handler}` + '?' + searchParams,
+}
+
+if (inputText) {
+    if (inputText.length > 32) {
+        throw new Error('Input text exceeds maximum length of 32 bytes.')
+    }
+    metadata['fc:frame:input:text'] = inputText
+}
+
+if (buttons) {
+    if (buttons.length > 4) {
+        throw new Error('Maximum of 4 buttons allowed.')
+    }
+    buttons.forEach((button: FrameButtonMetadata, index: number) => {
+        if (!button.label || button.label.length > 256) {
+            throw new Error('Button label is required and must be maximum of 256 bytes.')
+        }
+        metadata[`fc:frame:button:${index + 1}`] = button.label
+
+        if (button.action) {
+            if (!['post', 'post_redirect', 'mint', 'link', 'tx'].includes(button.action)) {
+                throw new Error('Invalid button action.')
+            }
+            metadata[`fc:frame:button:${index + 1}:action`] = button.action
+
+            if (button.action === 'tx') {
+                metadata[`fc:frame:button:${index + 1}:target`] =
+                    postUrl + `/${button.handler || handler}` + '?' + searchParams
+                if (button.callback) {
+                    metadata[`fc:frame:button:${index + 1}:post_url`] =
+                        postUrl + `/${button.callback}` + '?' + searchParams
+                }
+            }
+            if (button.action === 'link' || button.action === 'mint') {
+                metadata[`fc:frame:button:${index + 1}:target`] = button.target
+            }
+        } else {
+            metadata[`fc:frame:button:${index + 1}:action`] = 'post' // Default action
+        }
+    })
+}
+
+if (refreshPeriod) {
+    if (refreshPeriod < 0) {
+        throw new Error('Refresh period must be a positive number.')
+    }
+    metadata['fc:frame:refresh_period'] = refreshPeriod.toString()
+}
+
+return metadata
 }
 
 export async function validatePayload(body: FramePayload): Promise<FramePayloadValidated> {

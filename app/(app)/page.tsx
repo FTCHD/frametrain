@@ -11,12 +11,12 @@ import NextLink from 'next/link'
 
 export default async function Home() {
     const sesh = await auth()
-	
-	let templates:
-    | Awaited<ReturnType<typeof getFeaturedTemplates>>
-    | Awaited<ReturnType<typeof getTemplates>> = []
-	
-	let recentFrames: Awaited<ReturnType<typeof getRecentFrameList>> = []
+
+    let templates:
+        | Awaited<ReturnType<typeof getFeaturedTemplates>>
+        | Awaited<ReturnType<typeof getTemplates>> = []
+
+    let recentFrames: Awaited<ReturnType<typeof getRecentFrameList>> = []
 
     if (sesh?.user) {
         recentFrames = await getRecentFrameList()

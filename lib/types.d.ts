@@ -146,8 +146,7 @@ type Octicon =
     | 'typography'
     | 'unmute'
     | 'workflow'
-    | 'versions' 
-
+    | 'versions'
 
 export interface BaseTemplate {
     name: string
@@ -165,3 +164,32 @@ export interface BaseTemplate {
     cover: StaticImageData
     events: string[]
 }
+
+export interface OpenFrameRequest {
+    clientProtocol: string
+    untrustedData: {
+        url: string
+        unixTimestamp: number
+        buttonIndex: number
+        inputText?: string
+        state?: string
+        address?: string
+        transactionId?: string
+    }
+    trustedData?: {
+        messageBytes: string
+    }
+}
+
+
+export type FrameHandler<TConfig, TStorage> = (params: {
+    body: FramePayloadValidated;
+    config: TConfig;
+    storage: TStorage;
+    params: Record<string, string>;
+}) => Promise<BuildFrameData>;
+
+export type TemplateHandlers<TConfig, TStorage> = {
+    initial: FrameHandler<TConfig, TStorage>;
+    [key: string]: FrameHandler<TConfig, TStorage>;
+};
