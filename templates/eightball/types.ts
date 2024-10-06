@@ -1,50 +1,59 @@
 import type { FramePayloadValidated } from '@/lib/farcaster'
-import type { GatingErcType } from '@/sdk/components/gating/types'
+import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
+import type { GatingType } from '@/sdk/components/gating/types'
 
-export type ButtonConfig = {
-    label: string
+export interface ViewConfig {
+    title: { text: string; color?: string }
+    subtitle?: { text: string; color?: string }
+    bottomMessage: { text: string; color?: string }
+    backgroundColor: string
+    textColor: string
 }
 
-export type ErrorDisplayConfig = {
-    style: React.CSSProperties
-    buttons: ButtonConfig[]
-    handler: string
-    errorContent?: string | JSX.Element
-}
-
-export interface Config {
-    cover: {
-        title: string
-        subtitle: string
-        bottomMessage: string
-        backgroundColor: string
-        textColor: string
-    }
-    answer: {
-        title: string
-        bottomMessage: string
-        backgroundColor: string
-        textColor: string
-    }
+export interface Config extends BaseConfig {
+    fontFamily: string
+    fontWeight: string
+    fontStyle: string
+    background: string
     cooldown: number
     isPublic: boolean
-    gating: GatingErcType
+    coverConfig: ViewConfig
+    answerConfig: ViewConfig
+    gating?: GatingType
+    enableGating: boolean
 }
 
-export interface Storage {
+export interface QuestionAnswer {
+    question: string
+    answer: string
+    timestamp: number
+    fid: number
+}
+
+export interface Storage extends BaseStorage {
     lastAnswerTime?: number
-    questions?: Array<{
-        question: string
-        answer: string
-        timestamp: number
-        fid: number
-    }>
+    questions: QuestionAnswer[]
 }
 
 export interface HandlerContext {
-    body: FramePayloadValidated
+    body: {
+        input: {
+            text: string
+        }
+        interactor: {
+            fid: number
+        }
+    }
     config: Config
     storage: Storage
+    params?: Record<string, unknown>
+}
+
+export class Magic8BallError extends Error {
+    constructor(message: string) {
+        super(message)
+        this.name = 'Magic8BallError'
+    }
 }
 
 export const ANSWERS = [
@@ -70,22 +79,12 @@ export const ANSWERS = [
     'Very doubtful',
 ]
 
-export class Magic8BallError extends Error {
-    constructor(message: string) {
-        super(message)
-        this.name = 'Magic8BallError'
-    }
-}
-
 export function getRandomAnswer(): string {
     return ANSWERS[Math.floor(Math.random() * ANSWERS.length)]
 }
 
-export function checkCooldown(lastAnswerTime: number | undefined, cooldown: number): void {
-    if (!lastAnswerTime) return
-
-    const now = Date.now()
-    if (cooldown > 0 && now - lastAnswerTime < cooldown * 1000) {
+export const checkCooldown = (lastAnswerTime: number | undefined, cooldown: number): void => {
+    if (lastAnswerTime && cooldown > 0 && Date.now() - lastAnswerTime < cooldown * 1000) {
         throw new Magic8BallError(`Please wait ${cooldown} seconds between questions`)
     }
 }

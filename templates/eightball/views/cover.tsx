@@ -1,10 +1,25 @@
-import type React from 'react'
 import type { Config } from '..'
+import type React from 'react'
 
-type StyleProps = React.CSSProperties
+export interface CoverConfig {
+    title: string
+    subtitle: string
+    bottomMessage: string
+    backgroundColor: string
+    textColor: string
+}
 
-const defaultStyles: Record<string, StyleProps> = {
-    container: {
+export default function CoverView(config: Config): React.ReactNode {
+    const coverConfig: CoverConfig = {
+        title: config.coverConfig.title?.text || 'Magic 8 Ball',
+        subtitle:
+            config.coverConfig.subtitle?.text || 'Ask a question and receive mystical guidance!',
+        bottomMessage: config.coverConfig.bottomMessage?.text || "Tap 'Ask' to begin",
+        backgroundColor: config.coverConfig?.backgroundColor || '#000000',
+        textColor: config.coverConfig?.textColor || '#FFFFFF',
+    }
+
+    const containerStyle: React.CSSProperties = {
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -14,18 +29,25 @@ const defaultStyles: Record<string, StyleProps> = {
         padding: '40px',
         fontFamily: 'Roboto, sans-serif',
         boxSizing: 'border-box',
-    },
-    title: {
+        backgroundColor: coverConfig.backgroundColor,
+        color: coverConfig.textColor,
+    }
+
+    const titleStyle: React.CSSProperties = {
+        display: 'flex',
         fontSize: '36px',
         fontWeight: 'bold',
         marginBottom: '20px',
-    },
-    ballContainer: {
+    }
+
+    const ballContainerStyle: React.CSSProperties = {
+        display: 'flex',
         position: 'relative',
         width: '200px',
         height: '200px',
-    },
-    outerBall: {
+    }
+
+    const outerBallStyle: React.CSSProperties = {
         width: '100%',
         height: '100%',
         borderRadius: '50%',
@@ -34,8 +56,9 @@ const defaultStyles: Record<string, StyleProps> = {
         justifyContent: 'center',
         alignItems: 'center',
         boxShadow: '0 0 20px rgba(255,255,255,0.3)',
-    },
-    innerBall: {
+    }
+
+    const innerBallStyle: React.CSSProperties = {
         width: '100px',
         height: '100px',
         borderRadius: '50%',
@@ -46,44 +69,29 @@ const defaultStyles: Record<string, StyleProps> = {
         color: 'white',
         fontSize: '64px',
         fontWeight: 'bold',
-    },
-    subtitle: {
+    }
+
+    const subtitleStyle: React.CSSProperties = {
         fontSize: '24px',
         marginTop: '20px',
         textAlign: 'center',
-    },
-    bottomMessage: {
+    }
+
+    const bottomMessageStyle: React.CSSProperties = {
         fontSize: '18px',
         marginTop: '40px',
-    },
-}
-
-const StyledDiv: React.FC<{ style: StyleProps; children?: React.ReactNode }> = ({
-    style,
-    children,
-}) => <div style={style}>{children}</div>
-
-export default function CoverView({ cover }: Config) {
-    const containerStyle = {
-        ...defaultStyles.container,
-        backgroundColor: cover.backgroundColor || 'black',
-        color: cover.textColor || 'white',
     }
 
     return (
-        <StyledDiv style={containerStyle}>
-            <StyledDiv style={defaultStyles.title}>{cover.title || 'Magic 8 Ball'}</StyledDiv>
-            <StyledDiv style={defaultStyles.ballContainer}>
-                <StyledDiv style={defaultStyles.outerBall}>
-                    <StyledDiv style={defaultStyles.innerBall}>8</StyledDiv>
-                </StyledDiv>
-            </StyledDiv>
-            <StyledDiv style={defaultStyles.subtitle}>
-                {cover.subtitle || 'Ask a question and receive mystical guidance!'}
-            </StyledDiv>
-            <StyledDiv style={defaultStyles.bottomMessage}>
-                {cover.bottomMessage || "Tap 'Ask' to begin"}
-            </StyledDiv>
-        </StyledDiv>
+        <div style={containerStyle}>
+            <h1 style={titleStyle}>{coverConfig.title}</h1>
+            <div style={ballContainerStyle}>
+                <div style={outerBallStyle}>
+                    <div style={innerBallStyle}>8</div>
+                </div>
+            </div>
+            <p style={subtitleStyle}>{coverConfig.subtitle}</p>
+            <p style={bottomMessageStyle}>{coverConfig.bottomMessage}</p>
+        </div>
     )
 }

@@ -10,11 +10,16 @@ export default async function initial({
 }: Omit<HandlerContext, 'body'>): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
+    if (!config || Object.keys(config).length === 0) {
+        throw new Error('Config is undefined')
+    }
+
     return {
         buttons: [{ label: 'Ask' }],
         inputText: 'Ask a question...',
         fonts: roboto,
         component: CoverView(config),
         handler: 'ask',
+        aspectRatio: '1.91:1',
     }
 }

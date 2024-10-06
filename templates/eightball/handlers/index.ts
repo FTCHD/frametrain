@@ -1,7 +1,7 @@
-import { initial, ask, page} from './handlers';
+import { initial, ask, page } from './handlers'
 
 export default {
     initial,
     ask,
-    page
+    page,
 }
