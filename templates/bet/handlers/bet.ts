@@ -1,3 +1,5 @@
+'use server'
+
 import type { BuildFrameData } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { validateConfig } from '../utils/validateConfig'

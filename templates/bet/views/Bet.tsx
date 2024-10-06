@@ -1,15 +1,6 @@
-interface BetConfig {
-    background?: string;
-    textColor?: string;
-    claim?: string;
-    owner?: { username: string };
-    opponent?: { username: string };
-    arbitrator?: { username: string };
-    asset?: string;
-    amount?: string;
-}
+import type { Config } from '..'
 
-const BetView: React.FC<{ config: BetConfig }> = ({ config }) => {
+const BetView: React.FC<{ config: Config }> = ({ config }) => {
     const {
         background,
         textColor,
