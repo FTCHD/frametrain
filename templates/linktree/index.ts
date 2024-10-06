@@ -45,11 +45,12 @@ export default {
   Inspector,
   handlers,
   initialConfig: {
+    links: [],
     cover: {
       title: "My Links",
-      titleColor: "#ffffff",
+      titleColor: "#000",
       backgroundColor: "#fbbf24",
-      usernameColor: "#ffffff",
+      usernameColor: "#15803d",
     },
     userData: {
       userImageUrl: "https://i.imgur.com/mt3nbeI.jpg",

@@ -5,8 +5,8 @@ import type {
   FramePayloadValidated,
 } from "@/lib/farcaster";
 import type { Config } from "..";
-import PageView from "../views/Page";
 import CoverView from "../views/Cover";
+import { start } from "repl";
 
 export default async function page({
   body,
@@ -20,7 +20,7 @@ export default async function page({
   params: { nextPage?: number };
 }): Promise<BuildFrameData> {
   let buttons: FrameButtonMetadata[];
-  let nextPage = Number(params.nextPage) ?? 0;
+  let nextPage = isNaN(Number(params.nextPage)) ? 0 : Number(params.nextPage);
 
   if (config.links.length <= 4) {
     buttons = config.links.map((link) => ({
@@ -38,10 +38,10 @@ export default async function page({
       target: link.url,
     }));
 
+    buttons.push({
+      label: "⏭️",
+    });
     if (endIndex < config.links.length) {
-      buttons.push({
-        label: "Next",
-      });
       nextPage++;
     } else {
       nextPage = 0; // Reset to the first page if we're on the last page
@@ -50,7 +50,6 @@ export default async function page({
 
   return {
     buttons,
-    aspectRatio: "1:1",
     component: CoverView(config),
     handler: "initial",
     ...(nextPage > 0 ? { params: { nextPage } } : {}),

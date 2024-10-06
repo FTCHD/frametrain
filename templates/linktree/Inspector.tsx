@@ -5,31 +5,56 @@ import { useFarcasterId, useFrameConfig } from "@/sdk/hooks";
 import { Configuration } from "@/sdk/inspector";
 import { getFarcasterProfiles } from "@/sdk/neynar";
 import {
-    BookOpen,
-    Cast,
-    Github,
-    Globe,
-    Instagram,
-    Linkedin,
-    Twitter,
+  BookOpen,
+  Cast,
+  Github,
+  Globe,
+  Instagram,
+  Linkedin,
+  Twitter,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Config, LinkType } from ".";
+import { Farcaster } from "./icons";
+import toast from "react-hot-toast";
 
 const linkIcons: Record<LinkType, React.ReactNode> = {
-  twitter: <Twitter className="w-5 h-5" />,
-  warpcast: <Cast className="w-5 h-5" />,
-  website: <Globe className="w-5 h-5" />,
-  blog: <BookOpen className="w-5 h-5" />,
-  github: <Github className="w-5 h-5" />,
-  linkedin: <Linkedin className="w-5 h-5" />,
-  instagram: <Instagram className="w-5 h-5" />,
+  twitter: <Twitter className="w-14 h-14" />,
+  warpcast: <Farcaster className="w-14 h-14" />,
+  website: <Globe className="w-14 h-14" />,
+  blog: <BookOpen className="w-14 h-14" />,
+  github: <Github className="w-14 h-14" />,
+  linkedin: <Linkedin className="w-14 h-14" />,
+  instagram: <Instagram className="w-14 h-14" />,
 };
 
 export default function LinkTree() {
+  const [config, updateConfig] = useFrameConfig<Config>();
+  const fid = useFarcasterId();
+  useEffect(() => {
+    async function setUserData() {
+      if (config.userData) {
+        return;
+      }
+      try {
+        const users = await getFarcasterProfiles([fid]);
+        console.log({ users });
+        const user = users[0];
+        const userData = {
+          userImageUrl: user.pfp_url,
+          username: user.username,
+        };
+        updateConfig({
+          userData,
+        });
+      } catch {}
+    }
+
+    setUserData();
+  }, []);
   return (
     <Configuration.Root>
-      <Configuration.Section title="Link Tree">
+      <Configuration.Section title="Links">
         <LinksSection />
       </Configuration.Section>
       <Configuration.Section title="Appearance">
@@ -44,8 +69,22 @@ function LinksSection() {
   const [newLinkType, setNewLinkType] = useState<LinkType>("website");
   const [newLinkUrl, setNewLinkUrl] = useState("");
 
+  function isValidURL(url: string) {
+    try {
+      new URL(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   const addLink = () => {
+    //Check that the new url is a valid url
     if (newLinkUrl) {
+      if (!isValidURL(newLinkUrl)) {
+        toast.error(`Invalid URL: ${newLinkUrl}`);
+        return;
+      }
       updateConfig({
         links: [
           ...(config.links || []),
@@ -75,7 +114,7 @@ function LinksSection() {
       ))}
       <div className="flex items-center space-x-2">
         <select
-          className="border rounded p-2"
+          className="border rounded px-2 py-3"
           value={newLinkType}
           onChange={(e) => setNewLinkType(e.target.value as LinkType)}
         >
@@ -101,30 +140,7 @@ function LinksSection() {
 
 function CoverSection() {
   const [config, updateConfig] = useFrameConfig<Config>();
-  const fid = useFarcasterId();
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    async function setUserData() {
-      if (config.userData) {
-        return;
-      }
-      try {
-        const users = await getFarcasterProfiles([fid]);
-        const user = users[0];
-        const userData = {
-          userImageUrl: user.pfp_url,
-          username: user.username,
-        };
-
-        updateConfig({
-          userData,
-        });
-      } catch {}
-    }
-
-    setUserData();
-  }, []);
-
+  console.log(config);
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
@@ -140,10 +156,10 @@ function CoverSection() {
       <div className="flex flex-col gap-2">
         <h2 className="text-lg font-semibold">Title Text</h2>
         <Input
-          value={config.cover.title || ""}
-          onChange={(e) =>
-            updateConfig({ cover: { ...config.cover, title: e.target.value } })
-          }
+          defaultValue={config.cover.title}
+          onChange={(e) => {
+            updateConfig({ cover: { ...config.cover, title: e.target.value } });
+          }}
           placeholder="Enter title"
         />
       </div>
