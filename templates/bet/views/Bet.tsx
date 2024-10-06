@@ -1,12 +1,25 @@
-export default function BetView(config: Record<string, any>) {
-    const { background, textColor } = config;
+interface BetConfig {
+    background?: string;
+    textColor?: string;
+    claim?: string;
+    owner?: { username: string };
+    opponent?: { username: string };
+    arbitrator?: { username: string };
+    asset?: string;
+    amount?: string;
+}
 
-    const claim = config.claim || 'No claim specified';
-    const owner = config.owner?.username || 'Unknown owner';
-    const opponent = config.opponent?.username || 'Unknown opponent';
-    const arbitrator = config.arbitrator?.username || 'Unknown arbitrator';
-    const asset = config.asset || 'Unknown asset';
-    const amount = config.amount || '0';
+const BetView: React.FC<{ config: BetConfig }> = ({ config }) => {
+    const {
+        background,
+        textColor,
+        claim = 'No claim specified',
+        owner = { username: 'Unknown owner' },
+        opponent = { username: 'Unknown opponent' },
+        arbitrator = { username: 'Unknown arbitrator' },
+        asset = 'Unknown asset',
+        amount = '0'
+    } = config;
 
     const backgroundProp: Record<string, string> = {};
 
@@ -116,3 +129,5 @@ export default function BetView(config: Record<string, any>) {
         </div>
     );
 }
+
+export default BetView;
