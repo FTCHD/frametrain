@@ -14,6 +14,13 @@ export interface User {
     pfp_url?: string
 }
 
+interface User {
+    username: string
+    fid?: number
+    custody_address?: Address
+    pfp_url?: string
+}
+
 export interface Config extends BaseConfig {
     background?: string
     textColor?: string
