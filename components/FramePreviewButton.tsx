@@ -1,6 +1,6 @@
 'use client'
 import type { FrameButtonMetadata } from '@/lib/farcaster'
-import { previewLoadingAtom, previewParametersAtom } from '@/lib/store'
+import { mockOptionsAtom, previewLoadingAtom, previewParametersAtom } from '@/lib/store'
 import { useAtom, useAtomValue } from 'jotai'
 import { type PropsWithChildren, useCallback } from 'react'
 import {
@@ -18,6 +18,7 @@ export function FramePreviewButton({
     state,
     handler,
     params,
+    postUrl,
 }: PropsWithChildren<{
     button: FrameButtonMetadata
     buttonIndex: number
@@ -25,9 +26,11 @@ export function FramePreviewButton({
     state: any
     handler: string | undefined
     params: string | undefined
+    postUrl: string
 }>) {
     const [, setPreviewData] = useAtom(previewParametersAtom)
     const previewLoading = useAtomValue(previewLoadingAtom)
+    const mockOptions = useAtomValue(mockOptionsAtom)
 
     const actionCallback = useCallback(() => {
         const newData = {
@@ -51,7 +54,7 @@ export function FramePreviewButton({
                 break
             }
             default: {
-                toast.error('Use the Warpcast Frames Validator to test transactions!')
+                toast.error('Use the Warpcast Frames Validator to test this feature!')
                 break
             }
         }
