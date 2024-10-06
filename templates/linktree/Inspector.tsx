@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { Config, LinkType } from ".";
 import { Farcaster } from "./icons";
 import toast from "react-hot-toast";
+import { link } from "fs";
 
 const linkIcons: Record<LinkType, React.ReactNode> = {
   twitter: <Twitter className="w-14 h-14" />,
@@ -132,6 +133,7 @@ function LinksSection() {
           onChange={(e) => setNewLinkUrl(e.target.value)}
           className="flex-grow"
         />
+
         <Button onClick={addLink}>Add Link</Button>
       </div>
     </div>
@@ -147,7 +149,7 @@ function CoverSection() {
         <h2 className="text-lg font-semibold">Background Color</h2>
         <ColorPicker
           className="w-full"
-          background={config.cover.usernameColor || "#ffffff"}
+          background={config.cover.backgroundColor}
           setBackground={(value) =>
             updateConfig({ cover: { ...config.cover, backgroundColor: value } })
           }
@@ -168,9 +170,19 @@ function CoverSection() {
         <h2 className="text-lg font-semibold">Title Color</h2>
         <ColorPicker
           className="w-full"
-          background={config.cover.titleColor || "#ffffff"}
+          background={config.cover.titleColor}
           setBackground={(value) =>
             updateConfig({ cover: { ...config.cover, titleColor: value } })
+          }
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold">LinkTree Color</h2>
+        <ColorPicker
+          className="w-full"
+          background={config.cover.linkTreeColor ?? config.cover.titleColor}
+          setBackground={(value) =>
+            updateConfig({ cover: { ...config.cover, linkTreeColor: value } })
           }
         />
       </div>

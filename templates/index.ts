@@ -19,7 +19,6 @@ import substack from "./substack";
 import swap from "./swap";
 import twitter from "./twitter";
 import linktree from "./linktree";
-
 export default {
   linktree,
   pdf,

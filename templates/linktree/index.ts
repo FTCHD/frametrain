@@ -2,7 +2,6 @@ import type { BaseConfig, BaseStorage, BaseTemplate } from "@/lib/types";
 import Inspector from "./Inspector";
 import cover from "./cover.jpg";
 import handlers from "./handlers";
-
 export type LinkType =
   | "twitter"
   | "warpcast"
@@ -22,6 +21,7 @@ export interface Config extends BaseConfig {
   cover: {
     title: string;
     titleColor: string;
+    linkTreeColor?: string;
     backgroundColor: string;
     usernameColor: string;
   };
@@ -33,6 +33,19 @@ export interface Config extends BaseConfig {
 
 export interface Storage extends BaseStorage {}
 
+const defaultConfig: Config = {
+  links: [],
+  cover: {
+    title: "My Links",
+    titleColor: "#000",
+    backgroundColor: "#fbbf24",
+    usernameColor: "#15803d",
+  },
+  userData: {
+    userImageUrl: "https://i.imgur.com/mt3nbeI.jpg",
+    username: "complexlity",
+  },
+};
 export default {
   name: "LinkTree",
   description: "An easy way to share your links",
@@ -44,18 +57,6 @@ export default {
   enabled: true,
   Inspector,
   handlers,
-  initialConfig: {
-    links: [],
-    cover: {
-      title: "My Links",
-      titleColor: "#000",
-      backgroundColor: "#fbbf24",
-      usernameColor: "#15803d",
-    },
-    userData: {
-      userImageUrl: "https://i.imgur.com/mt3nbeI.jpg",
-      username: "complexlity",
-    },
-  },
+  initialConfig: defaultConfig,
   events: [],
 } satisfies BaseTemplate;
