@@ -1,23 +1,27 @@
 "use client";
 import {
-  BasicViewInspector,
   Button,
+  ColorPicker,
   GatingInspector,
   Input,
   Label,
-  RadioGroup,
   Select,
   Switch,
   Textarea,
 } from "@/sdk/components";
-import { useFarcasterId, useFrameConfig, useUploadImage } from "@/sdk/hooks";
+import {
+  useFarcasterId,
+  useFrameConfig,
+  useFrameId,
+  useUploadImage,
+} from "@/sdk/hooks";
 import { Configuration } from "@/sdk/inspector";
-import { useEffect, useRef, useState } from "react";
-import type { Config, LinkButton } from ".";
-import { isAddress } from "viem";
-import toast from "react-hot-toast";
-import { airdropChains } from ".";
 import { X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { isAddress } from "viem";
+import type { Config, LinkButton } from ".";
+import { airdropChains } from ".";
 
 interface WhiteList {
   address: string;
@@ -26,10 +30,12 @@ interface WhiteList {
 export default function Inspector() {
   const userFid = useFarcasterId();
   const [config, updateConfig] = useFrameConfig<Config>();
+  console.log(config);
   useEffect(() => {
-    if (!userFid || config) return;
-    updateConfig({ creatorId: userFid });
-  }, [userFid, config]);
+    if (!userFid || !config) return;
+
+    updateConfig({ creatorId: Number(userFid) });
+  }, [userFid]);
   return (
     <Configuration.Root>
       <Configuration.Section title="General">
@@ -42,11 +48,12 @@ export default function Inspector() {
         <BlackListSection />
       </Configuration.Section>
       <Configuration.Section
-        title="Cover"
+        title="Appearance"
         description="Configure what shows up on the cover screen of your Frame."
       >
-        <CoverSection />
+        <AppearanceSection />
       </Configuration.Section>
+
       <Configuration.Section title="Buttons">
         <ButtonsSection />
       </Configuration.Section>
@@ -93,132 +100,6 @@ function GatingSection() {
           />
         </div>
       )}
-    </div>
-  );
-}
-function CoverSection() {
-  const [config, updateConfig] = useFrameConfig<Config>();
-  const [coverType, setCoverType] = useState<"text" | "image">(
-    config?.cover && "image" in config.cover ? "image" : "text"
-  );
-
-  const uploadImage = useUploadImage();
-
-  return (
-    <div className="flex flex-col gap-4 ">
-      <div className="flex flex-col gap-4 w-full">
-        <h2 className="text-lg font-semibold">Cover Type</h2>
-        <RadioGroup.Root
-          defaultValue={coverType}
-          className="flex flex-row"
-          onValueChange={(val) => {
-            const value = val as "image" | "text";
-            setCoverType(value);
-            if (val === "text" && config.cover.image) {
-              updateConfig({
-                cover: {
-                  ...config.cover,
-                  image: null,
-                },
-              });
-            }
-          }}
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroup.Item value="text" id="text" />
-            <Label htmlFor="text">Text</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroup.Item value="image" id="image" />
-            <Label htmlFor="image">Image</Label>
-          </div>
-        </RadioGroup.Root>
-      </div>
-      <div className="flex flex-col gap-4 w-full">
-        {coverType === "image" ? (
-          <div className="flex flex-col gap-2 w-full">
-            <label
-              htmlFor="cover-image"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              {config.cover.image ? "Update" : "Upload"} Cover Image
-            </label>
-            <Input
-              accept="image/png, image/jpeg, image/gif, image/webp"
-              type="file"
-              id="cover-image"
-              className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-              onChange={async (e) => {
-                if (e.target.files?.[0]) {
-                  const reader = new FileReader();
-                  reader.readAsDataURL(e.target.files[0]);
-
-                  const base64String = (await new Promise((resolve) => {
-                    reader.onload = () => {
-                      const base64String = (reader.result as string).split(
-                        ","
-                      )[1];
-                      resolve(base64String);
-                    };
-                  })) as string;
-
-                  const contentType = e.target.files[0].type as
-                    | "image/png"
-                    | "image/jpeg"
-                    | "image/gif"
-                    | "image/webp";
-
-                  const { filePath } = await uploadImage({
-                    base64String,
-                    contentType,
-                  });
-
-                  if (filePath) {
-                    const image = `${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath}`;
-                    updateConfig({
-                      cover: {
-                        ...config.cover,
-                        image,
-                      },
-                    });
-                  }
-                }
-              }}
-            />
-            {config.cover.image ? (
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  updateConfig({
-                    cover: {
-                      ...config.cover,
-                      image: null,
-                    },
-                  });
-                }}
-                className="w-full"
-              >
-                Remove
-              </Button>
-            ) : null}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4 w-full">
-            <BasicViewInspector
-              name="Cover"
-              title={config.cover.title}
-              subtitle={config.cover.subtitle}
-              bottomMessage={config.cover.bottomMessage}
-              background={config.cover.background}
-              onUpdate={(cover) => {
-                updateConfig({
-                  cover,
-                });
-              }}
-            />
-          </div>
-        )}
-      </div>
     </div>
   );
 }
@@ -351,14 +232,13 @@ function BlackListSection() {
 
 function GeneralSection() {
   const [config, updateConfig] = useFrameConfig<Config>();
-  const [localConfig, setLocalConfig] = useState(config);
   return (
     <>
       <h2 className="text-lg font-semibold">Token Contract Address</h2>
       <Input
         className="text-lg flex-1 h-10"
         placeholder="0x...."
-        value={localConfig.tokenAddress}
+        defaultValue={config.tokenAddress}
         onChange={(e) => {
           updateConfig({
             tokenAddress: e.target.value,
@@ -385,7 +265,7 @@ function GeneralSection() {
       <Input
         className="text-lg flex-1 h-10"
         placeholder="Your address with the tokens"
-        value={localConfig.walletAddress}
+        defaultValue={config.walletAddress}
         onChange={(e) =>
           updateConfig({
             walletAddress: e.target.value,
@@ -396,7 +276,7 @@ function GeneralSection() {
       <Input
         className="text-lg flex-1 h-10"
         placeholder="Amount"
-        value={localConfig.generalAmount}
+        defaultValue={config.generalAmount}
         onChange={(e) => {
           if (isNaN(Number(e.target.value))) {
             return;
@@ -410,14 +290,14 @@ function GeneralSection() {
       <Input
         className="text-lg flex-1 h-10"
         placeholder="Amount"
-        value={localConfig.cooldown}
+        defaultValue={config.cooldown}
         onChange={(e) => {
           let value = e.target.value;
           if (isNaN(Number(value)) || Number(value) < -1) {
             value = "-1";
           }
           updateConfig({
-            generalAmount: Number(value),
+            cooldown: Number(value),
           });
         }}
       />
@@ -485,11 +365,21 @@ function WhiteListSection() {
           <div className="flex gap-2">
             <div className="w-full">
               <Label htmlFor={`address-${index}`}>Address</Label>
-              <Input id={`address-${index}`} value={item.address} readOnly />
+              <Input
+                id={`address-${index}`}
+                value={item.address}
+                readOnly
+                disabled
+              />
             </div>
             <div>
               <Label htmlFor={`amount-${index}`}>Amount</Label>
-              <Input id={`amount-${index}`} value={item.amount} readOnly />
+              <Input
+                id={`amount-${index}`}
+                value={item.amount}
+                readOnly
+                disabled
+              />
             </div>
           </div>
           <Button
@@ -544,26 +434,18 @@ function WhiteListSection() {
 }
 
 function ButtonsSection() {
-  const [mainConfig, updateMainConfig] = useFrameConfig<Config>();
-  const [config, updateLocalConfig] = useState(mainConfig);
+  const [config, updateConfig] = useFrameConfig<Config>();
+  const frameId = useFrameId();
   const buttons = config.buttons;
-
-  const updateConfig = (item: Partial<typeof config>) => {
-    updateLocalConfig({ ...config, ...item });
-  };
 
   const addButton = () => {
     const buttonsIndex = buttons.length + 2;
     const newButton: LinkButton = {
       action: "link",
       label: "button " + buttonsIndex,
-      target: "https://frametra.in/frame/uo49holavp64zan5eu6zgxab",
+      target: "https://frametra.in/frame/" + frameId,
     };
-    updateConfig({
-      //@ts-expect-error: link button should work
-      buttons: [...buttons, newButton],
-    });
-    updateMainConfig({ buttons: [...buttons, newButton] });
+    updateConfig({ buttons: [...buttons, newButton] });
   };
 
   const removeButton = (index: number) => {
@@ -571,8 +453,16 @@ function ButtonsSection() {
       (_, i) => i !== index
     ) as Config["buttons"];
     updateConfig({ buttons: newButtons });
-    updateMainConfig({ buttons: newButtons });
   };
+
+  function isValidUrl(url: string) {
+    try {
+      new URL(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   const handleInputChange = (
     index: number,
@@ -582,15 +472,6 @@ function ButtonsSection() {
     const newButtons = [...buttons] as Config["buttons"];
     newButtons[index][field] = value;
     updateConfig({ buttons: newButtons });
-  };
-  const handleInputBlur = (
-    index: number,
-    field: "target" | "label",
-    value: string
-  ) => {
-    const newButtons = [...buttons] as Config["buttons"];
-    newButtons[index][field] = value;
-    updateMainConfig({ buttons: newButtons });
   };
 
   return (
@@ -602,13 +483,10 @@ function ButtonsSection() {
               <Label htmlFor={`target-${index}`}>Target</Label>
               <Input
                 id={`target-${index}`}
-                value={button.target}
+                defaultValue={button.target}
                 onChange={(e) =>
                   handleInputChange(index, "target", e.target.value)
                 }
-                onBlur={(e) => {
-                  handleInputBlur(index, "target", e.target.value);
-                }}
                 placeholder="External URL"
               />
             </div>
@@ -616,13 +494,10 @@ function ButtonsSection() {
               <Label htmlFor={`label-${index}`}>Label</Label>
               <Input
                 id={`label-${index}`}
-                value={button.label}
+                defaultValue={button.label}
                 onChange={(e) =>
                   handleInputChange(index, "label", e.target.value)
                 }
-                onBlur={(e) => {
-                  handleInputBlur(index, "label", e.target.value);
-                }}
                 placeholder="Label"
               />
             </div>
@@ -636,5 +511,83 @@ function ButtonsSection() {
         <Button onClick={addButton}>Add New Button</Button>
       )}
     </div>
+  );
+}
+
+function AppearanceSection() {
+  const [config, updateConfig] = useFrameConfig<Config>();
+  const uploadImage = useUploadImage();
+
+  return (
+    <>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold">Background</h2>
+        <ColorPicker
+          className="w-full"
+          enabledPickers={["solid", "gradient", "image"]}
+          background={config.cover.background}
+          setBackground={(value) => {
+            const newCover = { ...config.cover, background: value };
+            updateConfig({ cover: newCover });
+          }}
+          uploadBackground={async (base64String, contentType) => {
+            const { filePath } = await uploadImage({
+              base64String: base64String,
+              contentType: contentType,
+            });
+
+            return filePath;
+          }}
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold">Header Text</h2>
+        <Input
+          className="w-full"
+          defaultValue={config.cover.headerText}
+          onChange={(e) => {
+            const newCover = { ...config.cover, headerText: e.target.value };
+            updateConfig({
+              cover: newCover,
+            });
+          }}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold">Header Color</h2>
+        <ColorPicker
+          className="w-full"
+          background={config.cover.headerColor}
+          setBackground={(value) => {
+            console.log(value);
+            const newCover = { ...config.cover, headerColor: value };
+            updateConfig({ cover: newCover });
+          }}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold">SubHeader Text</h2>
+        <Input
+          className="w-full"
+          defaultValue={config.cover.subHeaderText}
+          onChange={(e) => {
+            const newCover = { ...config.cover, subHeaderText: e.target.value };
+            updateConfig({ cover: newCover });
+          }}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold">Sub Header Color</h2>
+        <ColorPicker
+          className="w-full"
+          background={config.cover.subHeaderColor}
+          setBackground={(value) => {
+            const newCover = { ...config.cover, subHeaderColor: value };
+            updateConfig({ cover: newCover });
+          }}
+        />
+      </div>
+    </>
   );
 }

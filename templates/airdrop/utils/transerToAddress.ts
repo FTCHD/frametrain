@@ -10,8 +10,7 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import { mainnet, arbitrum, base, optimism, polygon } from "viem/chains";
 import { airdropChains } from "..";
-import { isNotNull } from "drizzle-orm";
-
+import { parseEther } from "viem";
 type Configuration = {
   operatorPrivateKey: string;
   chain: keyof typeof airdropChains;
@@ -45,7 +44,7 @@ export async function transferTokenToAddress(configuration: Configuration) {
     transport: http(),
     account,
   }).extend(publicActions);
-  const args = [walletAddress, receiverAddress, paymentAmount];
+  const args = [walletAddress, receiverAddress, parseEther(`${paymentAmount}`)];
   const functionName = "transferFrom";
 
   const data = encodeFunctionData({
@@ -58,6 +57,7 @@ export async function transferTokenToAddress(configuration: Configuration) {
       to: tokenAddress as Address,
       data,
     });
+    console.log(txHash);
     return txHash;
   } catch (error) {
     console.log("Something went wrong sending tokens to address");

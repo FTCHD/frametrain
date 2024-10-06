@@ -3,9 +3,10 @@ import type { BuildFrameData, FramePayloadValidated } from "@/lib/farcaster";
 import { runGatingChecks } from "@/lib/gating";
 import { FrameError } from "@/sdk/error";
 import BasicView from "@/sdk/views/BasicView";
-import { type Config } from "..";
+import type { Config, Storage } from "..";
 import { transferTokenToAddress } from "../utils/transerToAddress";
 import ClaimedView from "../views/Claimed";
+import { totalmem } from "os";
 
 export default async function page({
   body,
@@ -29,29 +30,35 @@ export default async function page({
     walletAddress,
     tokenAddress,
   } = config;
-  const { fid: viewerFid, verified_addresses: viewerAddresses } =
-    body.interactor;
+  const { fid: viewerFid, verified_addresses } = body.interactor;
 
   let paymentAmount = generalAmount;
-  const viewerFromStorage = storage[viewerFid];
-
+  const viewerFromStorage = storage.users[viewerFid];
   if (enableGating) {
     await runGatingChecks(body, config.gating);
   }
 
-  //Check if user has already claimed
-  if (viewerFromStorage?.claimed) {
-    throw new FrameError("You've already claimed");
-  }
-
-  if (cooldown != -1) {
+  //Check cool down time is not expired
+  if (cooldown > -1) {
     const viewerFromStorage = storage.users[viewerFid];
-    if (viewerFromStorage?.lastUsage + cooldown * 1000 > Date.now()) {
-      throw new FrameError("You're in cooldown period");
+    const now = Date.now();
+
+    const lastUsage = viewerFromStorage?.lastUsage || 0;
+    const cooldownMs = cooldown * 1000;
+    const cooldownEndTime = lastUsage + cooldownMs;
+
+    if (now < cooldownEndTime) {
+      const timeLeftInSeconds = Math.ceil((cooldownEndTime - now) / 1000);
+      throw new FrameError(`Cooldown. claim again in: ${timeLeftInSeconds}s`);
     }
   }
 
-  if (viewerFid === creatorFid) {
+  //Check if user has already claimed
+  else if (viewerFromStorage?.claimed) {
+    throw new FrameError("You can only claim once!");
+  }
+
+  if (viewerFid === creatorFid && false) {
     //User is creator so return the approve screen
     return {
       buttons: [
@@ -72,9 +79,11 @@ export default async function page({
     };
   }
 
+  const viewerAddresses = verified_addresses.eth_addresses;
+
   //Get blacklist, whitelist or claimed
-  for (let i = 0; i < viewerAddresses.eth_addresses.length; i++) {
-    const address = viewerAddresses.eth_addresses[i];
+  for (let i = 0; i < viewerAddresses.length; i++) {
+    const address = viewerAddresses[i];
     //Check blacklist
     if (blacklist.includes(address)) {
       throw new FrameError("You're not eligible to claim");
@@ -89,16 +98,21 @@ export default async function page({
   }
 
   //Send airdrop amount to user
-  const FRAME_TRAIN_OPERATOR_PRIVATE_KEY = `0x.....`;
+  const FRAME_TRAIN_OPERATOR_PRIVATE_KEY =
+    process.env.FRAME_TRAIN_OPERATOR_PRIVATE_KEY;
+  if (!FRAME_TRAIN_OPERATOR_PRIVATE_KEY) {
+    throw new FrameError("Frame operator details missing is not set");
+  }
   const configuration = {
     operatorPrivateKey: FRAME_TRAIN_OPERATOR_PRIVATE_KEY,
     chain: chain,
     paymentAmount,
-    receiverAddress:
-      viewerAddresses.eth_addresses[0] ?? body.interactor.custody_address,
+    receiverAddress: viewerAddresses[0] ?? body.interactor.custody_address,
     tokenAddress,
     walletAddress,
   };
+  // console.log({ configuration });
+  console.log("Transfering token to address...");
   transferTokenToAddress(configuration);
 
   //Update storage
@@ -109,10 +123,14 @@ export default async function page({
       [viewerFid]: {
         claimed: true,
         lastUsage: Date.now(),
+        username: body.interactor.username,
+        fid: viewerFid,
       },
     },
+    totalAmountEarned: (storage.totalAmountEarned ?? 0) + paymentAmount,
   };
 
+  console.log(newStorage);
   return {
     buttons: [
       {

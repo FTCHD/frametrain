@@ -1,15 +1,17 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from "@/lib/types";
+import { GatingType } from "@/sdk/components/gating/types";
 import Inspector from "./Inspector";
 import cover from "./cover.png";
 import handlers from "./handlers";
-import { BasicViewProps } from "@/sdk/views/BasicView";
-import { GatingType } from "@/sdk/components/gating/types";
 
 export type LinkButton = {
   action: "link";
   label: string;
   target: string;
 };
+
+export type BackgroundType = "color" | "gradient" | "image";
+
 export interface Config extends BaseConfig {
   tokenAddress: string;
 
@@ -20,23 +22,16 @@ export interface Config extends BaseConfig {
     address: string;
     amount: number;
   }[];
+  cover: {
+    background: string;
+    headerColor: string;
+    headerText: string;
+    subHeaderColor: string;
+    subHeaderText: string;
+  };
   blacklist: string[];
   cooldown: number;
-  cover: BasicViewProps & {
-    image?: string;
-    customMessage: {
-      text: string;
-    };
-    color: string;
-  };
   creatorId: number | null;
-  claimed: {
-    text: string;
-    links: Array<{
-      label: string;
-      target: string;
-    }>;
-  };
 
   buttons:
     | []
@@ -57,17 +52,11 @@ const defaultConfig: Config = {
   cooldown: -1,
   creatorId: null,
   cover: {
-    title: {
-      text: "Airdropper",
-    },
-    subtitle: {
-      text: "You're here to receive your free tokens",
-    },
-    customMessage: {
-      text: "Custom Message",
-    },
-    color: "#ffffff",
-    background: "#000000",
+    background: "#ff75c3",
+    headerColor: "#ffe83f",
+    headerText: "Airdropper",
+    subHeaderText: "You're here to receive your free tokens",
+    subHeaderColor: "#ffffff",
   },
   claimed: {
     text: "",
@@ -88,10 +77,10 @@ const defaultConfig: Config = {
 };
 
 export const airdropChains = {
+  base: 8453,
+  polygon: 137,
   ethereum: 1,
   optimism: 10,
-  polygon: 137,
-  base: 8453,
   arbitrum: 42161,
 };
 
@@ -99,10 +88,14 @@ export interface Storage extends BaseStorage {
   users: Record<
     string,
     {
+      fid: string;
+      username: string;
       claimed: boolean;
+      earnings: number;
       lastUsage: number;
     }
   >;
+  totalAmountEarned: number;
 }
 
 const config: BaseTemplate = {

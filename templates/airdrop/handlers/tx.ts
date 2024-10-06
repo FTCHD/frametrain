@@ -9,9 +9,10 @@ import {
   erc20Abi,
   getAbiItem,
   GetAbiItemParameters,
-  maxInt256
+  maxInt256,
 } from "viem";
 import { airdropChains, type Config, type Storage } from "..";
+import { privateKeyToAddress } from "viem/accounts";
 
 export default async function txData({
   config,
@@ -36,25 +37,40 @@ export default async function txData({
   if (userFid !== creatorFid) {
     throw new FrameError("You are not approved to use this function");
   }
+  console.log({config});
+  const FRAME_TRAIN_OPERATOR_PRIVATE_KEY = process.env
+    .FRAME_TRAIN_OPERATOR_PRIVATE_KEY as `0x${string}`;
 
-  const FRAME_TRAIN_OPERATOR_ADDRESS = `0x.....` as `0x${string}`;
+  if (!FRAME_TRAIN_OPERATOR_PRIVATE_KEY) {
+    throw new FrameError("FRAME_TRAIN_OPERATOR_PRIVATE_KEY is not set");
+  }
 
   const chainId = airdropChains[config.chain];
+  console.log(chainId);
 
-  const publicClient = getViem(chain === "ethereum" ? "mainnet" : chain);
-  const args = [FRAME_TRAIN_OPERATOR_ADDRESS, maxInt256];
+  const frameOperatorAddress = privateKeyToAddress(
+    FRAME_TRAIN_OPERATOR_PRIVATE_KEY
+  );
+  console.log(frameOperatorAddress);
+  const args = [frameOperatorAddress, maxInt256];
   const functionName = "approve";
   const abiItem = getAbiItem({
     abi: erc20Abi,
     name: functionName,
     args,
   } as GetAbiItemParameters);
-  const data = encodeFunctionData({
-    abi: erc20Abi,
-    functionName,
-    args,
-  } as EncodeFunctionDataParameters);
-
+  console.log(abiItem);
+  let data;
+  try {
+    data = encodeFunctionData({
+      abi: erc20Abi,
+      functionName,
+      args,
+    } as EncodeFunctionDataParameters);
+  } catch (error) {
+    console.log(error);
+  }
+  console.log(data);
   const abiErrorItems = (erc20Abi as Abi).filter(
     (item) => item.type === "error"
   );
