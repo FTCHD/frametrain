@@ -5,29 +5,21 @@ import handlers from './handlers'
 
 type Address = `0x${string}`
 
+interface User {
+    username: string
+    fid?: number
+    custody_address?: Address
+    pfp_url?: string
+}
+
 export interface Config extends BaseConfig {
     background?: string
     textColor?: string
-    privacy: bool
+    privacy: boolean
     claim: string
-    owner: {
-        username: string
-        fid?: number
-        custody_address?: Address
-        pfp_url?: string
-    } | null
-    opponent: {
-        username: string
-        fid?: number
-        custody_address?: Address
-        pfp_url?: string
-    } | null
-    arbitrator: {
-        username: string
-        fid?: number
-        custody_address?: Address
-        pfp_url?: string
-    } | null
+    owner: User | null
+    opponent: User | null
+    arbitrator: User | null
     asset: Address
     amount: number
 }
