@@ -1,4 +1,4 @@
-import { simulateCall } from '@/lib/debugger'
+import { parseFrameHtml, simulateCall } from '@/lib/debugger'
 import {
     mockOptionsAtom,
     previewErrorAtom,
@@ -53,7 +53,15 @@ export function useRefreshPreview(frameId: string) {
                   }
                 : undefined
 
-            const result = await simulateCall(postUrl, previewParams, mockOptions)
+            const html = await simulateCall(postUrl, previewParams, mockOptions)
+
+            if (!html) {
+                setPreviewError(true)
+                setPreviewLoading(false)
+                return
+            }
+
+            const result = parseFrameHtml(html)
 
             if (!result && !isPost) {
                 setPreviewError(true)
