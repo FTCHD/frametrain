@@ -15,11 +15,10 @@ export async function getUserDataByFarcasterUsername(username: string) {
     const r = (await fetch(`${NEYNAR_API_URL}/farcaster/user/search?q=${username}&limit=1`, options)
         .then((response) => response.json())
         .catch((err) => {
-            console.error('Failed to fetch user data by Farcaster username:', err)
-            throw new Error(`Invalid Farcaster username`)
+            throw new Error(`Invalid Farcaster username ${username}`)
         })) as { result: { users: any[] } }
 
-    const user = r.result.users[0]
+    const user = r?.result?.users?.[0];
     if (!user) {
         throw new Error(`User not found for username: ${username}`)
     }
