@@ -9,7 +9,6 @@ import type { Config } from '.'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
-
     const { privacy, claim, opponent, arbitrator, asset, amount, owner } = config
 
     const fid = useFarcasterId()
