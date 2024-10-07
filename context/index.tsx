@@ -28,7 +28,7 @@ const modal = createAppKit({
     projectId,
     networks: [mainnet, optimism, base, zora, arbitrum, gnosis, polygon, binanceSmartChain], // list get from @/sdk/viem
     defaultNetwork: mainnet,
-    metadata: metadata,
+    metadata,
     features: {
         analytics: false, // Optional - defaults to your Cloud configuration
     }
@@ -36,7 +36,7 @@ const modal = createAppKit({
 
 function ContextProvider({ children }: { children: ReactNode; }) {
     return (
-        <WagmiProvider config={wagmiAdapter.wagmiConfig as Config}>
+        <WagmiProvider config={wagmiAdapter.wagmiConfig}>
             <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         </WagmiProvider>
     )

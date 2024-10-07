@@ -1,7 +1,7 @@
 'use client'
+import { simulateCall } from '@/lib/debugger'
 import type { FrameButtonMetadata } from '@/lib/farcaster'
 import { mockOptionsAtom, previewLoadingAtom, previewParametersAtom } from '@/lib/store'
-import { corsFetch } from '@/sdk/scrape'
 import { ModalController } from '@reown/appkit-core'
 import { useAtom, useAtomValue } from 'jotai'
 import { type PropsWithChildren, useCallback } from 'react'
@@ -65,8 +65,30 @@ export function FramePreviewButton({
                 // if not connect
                 if (account.isConnected) {
                     // get transaction
-                    const tx = await getTxData(button.target as string)
-                    // check chain
+                    const { fid } = mockOptions
+
+                    const previewParams = {
+                        untrustedData: {
+                            fid,
+                            url: button.target,
+                            messageHash: '0xDebug',
+                            timestamp: 0,
+                            network: 1,
+                            buttonIndex: buttonIndex,
+                            inputText: inputText,
+                            state: 'Debug',
+                            castId: {
+                                fid,
+                                hash: '0xDebug',
+                            },
+                        },
+                        trustedData: {
+                            messageBytes: 'Debug'
+                        }
+                    }
+
+                    const txData = await simulateCall(button.target, previewParams, mockOptions)
+                    const tx = JSON.parse(txData as string)
                     await sendTransactionAsync({
                         chainId: Number(tx.chainId.split(":")[1]),
                         to: tx.params.to,
