@@ -5,6 +5,7 @@ import { Table, Avatar, Badge, Button } from "@/sdk/components";
 import { InferSelectModel } from "drizzle-orm";
 import { frameTable } from "@/db/schema";
 import { Storage } from "@/templates/airdrop";
+import unknownImage from "./unknown.png";
 
 interface User {
   fid: string;
@@ -37,13 +38,12 @@ const searchUsers = (storage: Storage, query: string): User[] => {
   );
 };
 
-// Mock data
+// Dummy token information
 const tokenInfo = {
-  name: "AirToken",
-  symbol: "AIR",
-  image: "/placeholder.svg?height=64&width=64",
+  name: "Unknown Token",
+  symbol: "UNK",
+  image: unknownImage.src,
 };
-
 
 export default function AirdropPage({
   frame,
