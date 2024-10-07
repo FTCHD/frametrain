@@ -88,7 +88,7 @@ export function FramePreviewButton({
                     }
 
                     const txData = await simulateCall(button.target, previewParams, mockOptions)
-                    const tx = JSON.parse(txData as string)
+                    const { transaction: tx} = JSON.parse(txData as string)
                     await sendTransactionAsync({
                         chainId: Number(tx.chainId.split(":")[1]),
                         to: tx.params.to,
@@ -113,7 +113,7 @@ export function FramePreviewButton({
                 break
             }
         }
-    }, [button, actionCallback])
+    }, [button, actionCallback, account.isConnected])
 
     return (
         <button
