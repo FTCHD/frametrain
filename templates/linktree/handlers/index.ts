@@ -1,5 +1,5 @@
-import initial from "./initial";
+import initial from './initial'
 
 export default {
-  initial,
-};
+    initial,
+}
