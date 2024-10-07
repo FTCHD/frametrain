@@ -49,10 +49,10 @@ const defaultConfig: Config = {
 export default {
   name: "LinkTree",
   description: "An easy way to share your links",
-  shortDescription: "An easy way to share you links",
-  octicon: "gear", // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
-  creatorFid: "0",
-  creatorName: "FrameTrain",
+  shortDescription: "An easy way to share your links",
+  octicon: "link-external",
+  creatorFid: "213144",
+  creatorName: "Complexlity",
   cover,
   enabled: true,
   Inspector,
