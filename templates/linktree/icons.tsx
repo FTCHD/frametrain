@@ -2,7 +2,6 @@ import type { SVGProps } from 'react'
 import { BookOpen, Github, Globe, Instagram, Linkedin, Twitter } from 'lucide-react'
 import type { LinkType } from './index.ts'
 
-
 function Farcaster({ className }: { className?: string }) {
     return (
         <svg
@@ -54,12 +53,12 @@ function LinkTree(props: SVGProps<SVGSVGElement>) {
     )
 }
 const linkIcons: Record<LinkType, React.ReactNode> = {
-    twitter: <Twitter  />,
-    warpcast: <Farcaster  />,
-    website: <Globe  />,
-    blog: <BookOpen  />,
-    github: <Github  />,
-    linkedin: <Linkedin  />,
-    instagram: <Instagram  />,
+    twitter: <Twitter />,
+    warpcast: <Farcaster />,
+    website: <Globe />,
+    blog: <BookOpen />,
+    github: <Github />,
+    linkedin: <Linkedin />,
+    instagram: <Instagram />,
 }
 export { Farcaster, LinkTree, linkIcons }
