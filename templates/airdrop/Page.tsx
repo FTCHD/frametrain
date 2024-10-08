@@ -6,6 +6,7 @@ import type { Storage, Config } from "@/templates/airdrop";
 import type { InferSelectModel } from "drizzle-orm";
 import { useState } from "react";
 import unknownImage from "./unknown.png";
+import { relativeTime } from "./utils/relativeTime";
 
 interface User {
   fid: string;
@@ -146,7 +147,7 @@ export default function AirdropPage({
                   {tokenInfo.symbol}
                 </Table.Cell>
                 <Table.Cell className="text-purple-200">
-                  {new Date(user.lastUsage).toLocaleDateString()}
+                  {relativeTime(user.lastUsage)}
                 </Table.Cell>
               </Table.Row>
             ))}
