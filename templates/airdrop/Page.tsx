@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { Table, Avatar, Badge, Button } from "@/sdk/components";
-import { InferSelectModel } from "drizzle-orm";
-import { frameTable } from "@/db/schema";
-import { Storage } from "@/templates/airdrop";
+import type { frameTable } from "@/db/schema";
+import { Avatar, Badge, Button, Table } from "@/sdk/components";
+import type { Storage, Config } from "@/templates/airdrop";
+import type { InferSelectModel } from "drizzle-orm";
+import { useState } from "react";
 import unknownImage from "./unknown.png";
 
 interface User {
@@ -51,6 +51,7 @@ export default function AirdropPage({
   frame: InferSelectModel<typeof frameTable>;
 }) {
   const frameStorage = frame.storage as Storage;
+  const frameConfig = frame.config as Config;
   const [sortBy, setSortBy] = useState<"earnings" | "recent">("earnings");
   const sortedUsers = getSortedUsers(frameStorage, sortBy);
   const stats = {
@@ -141,7 +142,8 @@ export default function AirdropPage({
                   </a>
                 </Table.Cell>
                 <Table.Cell className="text-purple-200">
-                  {user.earnings} {tokenInfo.symbol}
+                  {user.earnings ?? frameConfig.generalAmount}{" "}
+                  {tokenInfo.symbol}
                 </Table.Cell>
                 <Table.Cell className="text-purple-200">
                   {new Date(user.lastUsage).toLocaleDateString()}

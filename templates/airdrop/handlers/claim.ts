@@ -6,7 +6,6 @@ import BasicView from "@/sdk/views/BasicView";
 import type { Config, Storage } from "..";
 import { transferTokenToAddress } from "../utils/transerToAddress";
 import ClaimedView from "../views/Claimed";
-import { totalmem } from "os";
 
 export default async function page({
   body,
@@ -33,32 +32,39 @@ export default async function page({
   const { fid: viewerFid, verified_addresses } = body.interactor;
 
   let paymentAmount = generalAmount;
-  const viewerFromStorage = storage.users[viewerFid];
+  let viewerFromStorage;
   if (enableGating) {
     await runGatingChecks(body, config.gating);
   }
+  if (!storage.users) {
+    storage.users = {};
+    viewerFromStorage = undefined;
+  } else {
+    viewerFromStorage = storage.users[viewerFid];
+  }
 
-  //Check cool down time is not expired
-  if (cooldown > -1) {
-    const viewerFromStorage = storage.users[viewerFid];
-    const now = Date.now();
+  //Skip if it's the user's first time. Check cool down time is not expired
+  if (viewerFromStorage) {
+    if (cooldown > -1) {
+      const viewerFromStorage = storage.users[viewerFid];
+      const now = Date.now();
 
-    const lastUsage = viewerFromStorage?.lastUsage || 0;
-    const cooldownMs = cooldown * 1000;
-    const cooldownEndTime = lastUsage + cooldownMs;
+      const lastUsage = viewerFromStorage?.lastUsage || 0;
+      const cooldownMs = cooldown * 1000;
+      const cooldownEndTime = lastUsage + cooldownMs;
 
-    if (now < cooldownEndTime) {
-      const timeLeftInSeconds = Math.ceil((cooldownEndTime - now) / 1000);
-      throw new FrameError(`Cooldown. claim again in: ${timeLeftInSeconds}s`);
+      if (now < cooldownEndTime) {
+        const timeLeftInSeconds = Math.ceil((cooldownEndTime - now) / 1000);
+        throw new FrameError(`Cooldown. claim again in: ${timeLeftInSeconds}s`);
+      }
+    }
+
+    //Check if user has already claimed i.e colldowTime = -1
+    else if (viewerFromStorage.claimed) {
+      throw new FrameError("You can only claim once!");
     }
   }
-
-  //Check if user has already claimed
-  else if (viewerFromStorage?.claimed) {
-    throw new FrameError("You can only claim once!");
-  }
-
-  if (viewerFid === creatorFid && false) {
+  if (viewerFid == creatorFid) {
     //User is creator so return the approve screen
     return {
       buttons: [
@@ -125,6 +131,9 @@ export default async function page({
         lastUsage: Date.now(),
         username: body.interactor.username,
         fid: viewerFid,
+        earnings: viewerFromStorage?.earnings
+          ? viewerFromStorage.earnings + paymentAmount
+          : paymentAmount,
       },
     },
     totalAmountEarned: (storage.totalAmountEarned ?? 0) + paymentAmount,
