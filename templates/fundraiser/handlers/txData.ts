@@ -35,6 +35,7 @@ export default async function txData({
     if (!session.unsignedTransaction) {
         throw new FrameError('Missing transaction')
     }
+
     return {
         transaction: {
             chainId: session.unsignedTransaction.chainId,
