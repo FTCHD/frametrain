@@ -67,6 +67,7 @@ export const Modal = {
     Portal: IModal.DialogPortal,
     Overlay: IModal.DialogOverlay,
     Close: IModal.DialogClose,
+    Footer: IModal.DialogFooter,
 }
 import * as IAvatar from '@/components/shadcn/Avatar'
 export const Avatar = {
