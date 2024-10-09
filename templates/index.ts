@@ -4,7 +4,7 @@ import contract from './contract'
 import discourse from './discourse'
 import figma from './figma'
 import form from './form'
-import formV2 from './form-v2'
+import formV1 from './form-v1'
 import fundraiser from './fundraiser'
 import gated from './gated'
 import gif from './gif'
@@ -14,7 +14,7 @@ import meme from './meme'
 import pdf from './pdf'
 import poll from './poll'
 import presentation from './presentation'
-import presentationV2 from './presentation-v2'
+import presentationV1 from './presentation-v1'
 import quizlet from './quizlet'
 import rss from './rss'
 import substack from './substack'
@@ -29,13 +29,13 @@ export default {
     discourse,
     gif,
     form,
-    formV2,
+    formV1,
     cal,
     medium,
     quizlet,
     luma,
     presentation,
-    presentationV2,
+    presentationV1,
     meme,
     rss,
     swap,

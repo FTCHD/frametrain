@@ -1,5 +1,4 @@
 import type { Config } from '..'
-import template from '../'
 
 export default function CoverView(config: Config) {
     return (
@@ -7,17 +6,17 @@ export default function CoverView(config: Config) {
             style={{
                 width: '100%',
                 height: '100%',
-                backgroundColor: 'black',
+                background: config.backgroundColor,
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
                 fontFamily: 'Roboto',
                 fontSize: '50px',
-                color: '#ffffff',
+                color: `${config.fontColor}`,
             }}
         >
-            {config.text || template.initialConfig.text}
+            {config.coverText}
         </div>
     )
 }
