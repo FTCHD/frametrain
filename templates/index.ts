@@ -18,9 +18,9 @@ import rss from "./rss";
 import substack from "./substack";
 import swap from "./swap";
 import twitter from "./twitter";
-import linktree from "./linktree";
+import bio from "./bio";
 export default {
-  linktree,
+  bio,
   pdf,
   poll,
   figma,
