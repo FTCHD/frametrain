@@ -1,3 +1,4 @@
+import adspot from './adspot'
 import beehiiv from './beehiiv'
 import cal from './cal'
 import contract from './contract'
@@ -21,7 +22,9 @@ import substack from './substack'
 import swap from './swap'
 import twitter from './twitter'
 
-export default {
+
+const templates = {
+    adspot,
     pdf,
     poll,
     figma,
@@ -43,5 +46,8 @@ export default {
     gated,
     contract,
     substack,
-    beehiiv,
+    beehiiv,    
 }
+
+
+export default templates
