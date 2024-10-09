@@ -70,9 +70,82 @@ export default function Inspector() {
                         }}
                     />
                 )}
+
+                {config.coverType === 'image' && (
+                    // https://github.com/kushagrasarathe/image-upload-shadcn/blob/main/src/components/image-upload.tsx#L84
+
+                    <div className="flex flex-row gap-1">
+                        <label
+                            htmlFor="uploadCoverImage"
+                            className="flex flex-1 cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
+                        >
+                            Upload Image
+                            <Input
+                                id="uploadCoverImage"
+                                accept="image/*"
+                                type="file"
+                                disabled={uploading}
+                                onChange={async (e) => {
+                                    if (e.target.files?.[0]) {
+                                        const file = e.target.files?.[0]
+                                        if (uploading) return
+
+                                        const reader = new FileReader()
+                                        reader.readAsDataURL(file)
+
+                                        const base64String = (await new Promise((resolve) => {
+                                            reader.onload = () => {
+                                                const base64String = (
+                                                    reader.result as string
+                                                ).split(',')[1]
+                                                resolve(base64String)
+                                            }
+                                        })) as string
+
+                                        const contentType = e.target.files[0].type as
+                                            | 'image/png'
+                                            | 'image/jpeg'
+                                            | 'image/gif'
+                                            | 'image/webp'
+
+                                        const { fileName } = await uploadImage({
+                                            base64String: base64String,
+                                            contentType: contentType,
+                                        })
+
+                                        const imageUrl =
+                                            process.env.NEXT_PUBLIC_CDN_HOST +
+                                            '/frames/' +
+                                            frameId +
+                                            '/' +
+                                            fileName
+
+                                        updateConfig({ coverImageUrl: imageUrl })
+                                    }
+                                }}
+                                className="sr-only "
+                            />
+                        </label>
+                        <Button
+                            className="flex-1"
+                            variant={'primary'}
+                            onClick={async () => {
+                                const imageUrl = prompt('Enter the image URL')
+
+                                if (imageUrl) {
+                                    updateConfig({
+                                        coverImageUrl: imageUrl,
+                                    })
+                                }
+                            }}
+                        >
+                            Image from URL
+                        </Button>
+                    </div>
+                )}
             </Configuration.Section>
 
-            <Configuration.Section title="Actions">
+            <Configuration.Section title="Slides">
                 <div className="flex flex-row gap-1">
                     <label
                         htmlFor="uploadImage"
@@ -606,6 +679,31 @@ export default function Inspector() {
                                                                 ]?.target
                                                             }
                                                             placeholder="URL"
+                                                            onChange={(e) => {
+                                                                const updatedButtons =
+                                                                    config.slides[
+                                                                        iSlide
+                                                                    ].buttons.map((button, i) => ({
+                                                                        ...button,
+                                                                        target:
+                                                                            i === iButtons
+                                                                                ? e.target.value
+                                                                                : button.target,
+                                                                    }))
+
+                                                                updateConfig({
+                                                                    slides: config.slides.map(
+                                                                        (slide, i) =>
+                                                                            i === iSlide
+                                                                                ? {
+                                                                                      ...slide,
+                                                                                      buttons:
+                                                                                          updatedButtons,
+                                                                                  }
+                                                                                : slide
+                                                                    ),
+                                                                })
+                                                            }}
                                                         />
                                                     )}
                                                     {config.slides[iSlide].buttons?.[iButtons]
@@ -617,6 +715,31 @@ export default function Inspector() {
                                                                 ]?.target
                                                             }
                                                             placeholder="Select slide"
+                                                            onChange={(newValue) => {
+                                                                const updatedButtons =
+                                                                    config.slides[
+                                                                        iSlide
+                                                                    ].buttons.map((button, i) => ({
+                                                                        ...button,
+                                                                        target:
+                                                                            i === iButtons
+                                                                                ? newValue
+                                                                                : button.target,
+                                                                    }))
+
+                                                                updateConfig({
+                                                                    slides: config.slides.map(
+                                                                        (slide, i) =>
+                                                                            i === iSlide
+                                                                                ? {
+                                                                                      ...slide,
+                                                                                      buttons:
+                                                                                          updatedButtons,
+                                                                                  }
+                                                                                : slide
+                                                                    ),
+                                                                })
+                                                            }}
                                                         >
                                                             {config.slides.map(
                                                                 (slide, slideIndex) => (
