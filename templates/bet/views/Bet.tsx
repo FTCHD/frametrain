@@ -1,6 +1,6 @@
-import type { Config } from '..'
+import type { Config, Role } from '..'
 
-const BetView: React.FC<{ config: Config }> = ({ config }) => {
+export default function BetView(config: Config, winner: string | null, opponentAccepted: boolean, role: Role) {
     const {
         background,
         textColor,
@@ -9,19 +9,20 @@ const BetView: React.FC<{ config: Config }> = ({ config }) => {
         opponent = { username: 'Unknown opponent' },
         arbitrator = { username: 'Unknown arbitrator' },
         asset = 'Unknown asset',
-        amount = '0'
-    } = config;
+        amount = '0',
+        privacy = false,
+    } = config
 
-    const backgroundProp: Record<string, string> = {};
+    const backgroundProp: Record<string, string> = {}
 
     if (background) {
         if (background.startsWith('#')) {
-            backgroundProp['backgroundColor'] = background;
+            backgroundProp['backgroundColor'] = background
         } else {
-            backgroundProp['backgroundImage'] = background;
+            backgroundProp['backgroundImage'] = background
         }
     } else {
-        backgroundProp['backgroundImage'] = 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)';
+        backgroundProp['backgroundImage'] = 'linear-gradient(to right, #0f0c29, #0b6bcb, #0f0c29)'
     }
 
     return (
@@ -58,7 +59,8 @@ const BetView: React.FC<{ config: Config }> = ({ config }) => {
                         display: 'flex',
                         fontWeight: '400',
                         fontSize: '30px',
-                        marginBottom: '20px',
+                        marginTop: '20px',
+                        marginBottom: '30px',
                         flexDirection: 'row',
                     }}
                 >
@@ -70,7 +72,7 @@ const BetView: React.FC<{ config: Config }> = ({ config }) => {
                             marginLeft: '5px',
                         }}
                     >
-                        @{owner}
+                        @{owner.username}
                     </span>
                     <span style={{ marginLeft: '5px' }}>and</span>
                     <span
@@ -80,45 +82,73 @@ const BetView: React.FC<{ config: Config }> = ({ config }) => {
                             marginLeft: '5px',
                         }}
                     >
-                        @{opponent}
+                        @{opponent.username}
                     </span>
-                    <span style={{ marginLeft: '5px' }}>, arbitrated by</span>
-                    <span
-                        style={{
-                            fontWeight: '700',
-                            textDecoration: 'underline',
-                            marginLeft: '5px',
-                        }}
-                    >
-                        @{arbitrator}
-                    </span>
+                    {(!privacy || role != 'user') && (
+                        <>
+                            <span style={{ marginLeft: '5px' }}>, arbitrated by</span>
+                            <span
+                                style={{
+                                    fontWeight: '700',
+                                    textDecoration: 'underline',
+                                    marginLeft: '5px',
+                                }}
+                            >
+                                @{arbitrator.username}
+                            </span>
+                        </>
+                    )}
                     <span>!</span>
                 </div>
 
                 {/* Claim content */}
-                <div
-                    style={{
-                        display: 'flex',
-                        marginBottom: '15px',
-                    }}
-                >
-                    {claim}
-                </div>
+                {(!privacy || role != 'user') && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            marginBottom: '30px',
+                        }}
+                    >
+                        {claim}
+                    </div>
+                )}
 
                 {/* Add the sentence for asset and amount */}
-                <div
-                    style={{
-                        display: 'flex',
-                        fontSize: '40px',
-                        marginTop: '20px',
-                        fontWeight: '800',
-                    }}
-                >
-                    for {amount} {asset}
-                </div>
+                {(!privacy || role != 'user') && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            fontSize: '40px',
+                            marginBottom: '40px',
+                            fontWeight: '800',
+                        }}
+                    >
+                        prize: {amount} {asset}
+                    </div>
+                )}
+
+                {/* Add msg according to role */}
+                {role === 'opponent' && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            fontSize: '40px',
+                            marginBottom: '20px',
+                            fontWeight: '800',
+                        }}
+                    >
+                        {winner ? (
+                            winner === 'opponent' 
+                            ? `You won ${config.amount * 2} ${config.asset}.` 
+                            : `You lost ${config.amount * 2} ${config.asset}.`
+                        ) : (
+                            opponentAccepted == true 
+                            ? `You've accepted the bet`
+                            : "Do you accept this bet?"
+                        )}
+                    </div>
+                )}
             </div>
         </div>
-    );
+    )
 }
-
-export default BetView;
