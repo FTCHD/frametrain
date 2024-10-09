@@ -1,23 +1,184 @@
-import type { Config } from '..'
-import template from '../'
+import type { Config, Storage } from '..'
+import { FooterColumn, InfoBox, UserProfile } from '../Components'
+import { formatDate, formatSymbol, shortenHash } from '../utils'
 
-export default function ManageBidderView(config: Config) {
+export default function ManageBidderView({
+    config,
+    bids,
+    user,
+    chainName,
+}: {
+    config: Config
+    bids: Storage['bids']
+    user: { displayName: string; pfp: { url: string } }
+    chainName: string
+}) {
+    const totalAmount = bids.reduce((total, bid) => total + bid.amount, 0)
+
     return (
         <div
             style={{
-                width: '100%',
                 height: '100%',
-                backgroundColor: 'black',
+                width: '100%',
                 display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
-                fontFamily: 'Roboto',
-                fontSize: '50px',
-                color: '#ffffff',
+                flexDirection: 'column',
+                backgroundImage: 'linear-gradient(to top left,#AC32E4,#7918F2,#4801FF)',
+                color: '#E2E2E2',
+                fontSize: 32,
+                padding: '10px',
+                fontFamily: 'Nunito Sans',
+                fontWeight: 400,
             }}
         >
-            Bidder
+            <div
+                style={{
+                    display: 'flex',
+                    flex: 1,
+                    alignItems: 'center',
+                    fontSize: '48px',
+                    fontWeight: 600,
+                    textShadow: '0px 4px 4px rgba(255, 255, 255, 0.08)',
+                    justifyContent: 'center',
+                }}
+            >
+                Ad Rental space by @{config.owner!.fname}
+            </div>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    fontSize: '25px',
+                    gap: '10px',
+                    width: '100%',
+                }}
+            >
+                <div tw="flex items-center">
+                    <span
+                        style={{
+                            opacity: '0.8',
+                            fontWeight: 'medium',
+                        }}
+                    >
+                        Notice:
+                    </span>{' '}
+                    <span
+                        style={{
+                            fontWeight: 'medium',
+                        }}
+                    >
+                        {config.mode === 'auction'
+                            ? 'Winner(s) will be selected after the deadline'
+                            : 'You win the bid if you are the first to bid higher than the initial bid'}
+                    </span>
+                </div>
+            </div>
+            <div
+                style={{
+                    display: 'flex',
+                    flex: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                }}
+            >
+                <div
+                    style={{
+                        display: 'flex',
+                        width: '100%',
+                        flexDirection: 'row',
+                        borderRadius: '32px',
+                        padding: '24px 32px',
+                        border: '1px solid rgba(0, 0, 0, 0.08)',
+                        boxShadow: 'inset 3px 3px 15px 3px rgba(11, 11, 15, 0.08)',
+                        background: 'rgb(221, 221, 221)',
+                    }}
+                >
+                    <div
+                        style={{
+                            display: 'flex',
+                            flex: 1,
+                            gap: '24px',
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '24px',
+                                flex: 1,
+                            }}
+                        >
+                            <InfoBox title="Bid Mode" label={config.mode.toUpperCase()} />
+                        </div>
+                        <div
+                            style={{
+                                width: 1,
+                                height: '100%',
+                                backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                            }}
+                        />
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '24px',
+                                flex: 1,
+                            }}
+                        >
+                            <InfoBox
+                                title={config.mode === 'auction' ? 'Deadline' : 'Duration'}
+                                label={
+                                    config.mode === 'auction'
+                                        ? formatDate(new Date(config.deadline))
+                                        : `${Number.parseInt(config.deadline)} hour(s)`
+                                }
+                            />
+                        </div>
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '24px',
+                                flex: 1,
+                            }}
+                        >
+                            <InfoBox
+                                title="Minimum bid"
+                                label={formatSymbol(config.minBid, config.token!.symbol + '')}
+                            />
+                        </div>
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '24px',
+                                flex: 1,
+                            }}
+                        >
+                            <InfoBox
+                                title="Your bids"
+                                label={`${bids.length} (${formatSymbol(
+                                    totalAmount,
+                                    config.token!.symbol + ''
+                                )})`}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style={{ display: 'flex', gap: '48px', paddingTop: '16x' }}>
+                <FooterColumn title="Token:">
+                    <span> {config.token!.symbol}</span>
+                </FooterColumn>
+                <FooterColumn title="Chain:">
+                    <span>{chainName}</span>
+                </FooterColumn>
+                <FooterColumn title="Owner Address:">
+                    <span>{shortenHash(config.address + '')}</span>
+                </FooterColumn>
+                <FooterColumn title="Owner:">
+                    <UserProfile description={user.displayName} image={user.pfp.url} />
+                </FooterColumn>
+            </div>
         </div>
     )
 }

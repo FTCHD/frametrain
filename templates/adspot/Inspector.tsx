@@ -1,14 +1,13 @@
 'use client'
 import { BasicViewInspector, Button, Input, Label, RadioGroup, Select } from '@/sdk/components'
-import { useFarcasterId, useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { useFarcasterId, useFarcasterName, useFrameConfig, useUploadImage } from '@/sdk/hooks'
 import { Configuration } from '@/sdk/inspector'
 import { type ChainKey, supportedChains } from '@/sdk/viem'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import { useDebouncedCallback } from 'use-debounce'
+import { isAddress } from 'viem'
 import type { Config } from '.'
 import { getAddressFromEns, getTokenSymbol } from './utils'
-import { isAddress } from 'viem'
 
 const chains = supportedChains.filter((chain) => !['blast', 'bsc', 'zora'].includes(chain.key))
 
@@ -23,15 +22,16 @@ export default function Inspector() {
         config.success?.image ? 'image' : 'text'
     )
     const fid = useFarcasterId()
+    const fname = useFarcasterName()
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        if (!config.fid) {
+        if (!config.owner) {
             updateConfig({
-                fid: Number(fid),
+                owner: { fid: Number(fid), fname },
             })
         }
-    }, [config.fid])
+    }, [config.owner])
 
     return (
         <Configuration.Root>
@@ -158,7 +158,7 @@ export default function Inspector() {
                             Token Address{config.token?.symbol ? `=(${config.token?.symbol})` : ''}
                         </h2>
                         <Input
-                            defaultValue={config.token?.address}
+                            defaultValue={config.token?.address || ''}
                             onChange={(e) => {
                                 const address = e.target.value.trim().toLowerCase()
                                 if (address !== '' && !isAddress(address)) {
@@ -257,7 +257,9 @@ export default function Inspector() {
                         <Input
                             defaultValue={
                                 config.mode === 'auction'
-                                    ? config.deadline
+                                    ? new Date(config.deadline)
+                                          .toLocaleString('sv-SE', { timeZone: 'UTC' })
+                                          .slice(0, 16)
                                     : Number.parseInt(config.deadline)
                             }
                             disabled={!config.token?.address}

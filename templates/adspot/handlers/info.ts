@@ -16,13 +16,13 @@ export default async function info({
     storage: Storage
     params: any
 }): Promise<BuildFrameData> {
-    if (!(config.fid && config.token?.chain && config.token?.symbol && config.address)) {
+    if (!(config.owner && config.token?.chain && config.token?.symbol && config.address)) {
         throw new FrameError('Frame not fully configured')
     }
 
     const chain = supportedChains.filter((chain) => chain.key === config.token!.chain)
 
-    const user = await fetchUser(config.fid)
+    const user = await fetchUser(config.owner.fid)
     const fonts = await loadGoogleFontAllVariants('Nunito Sans')
 
     return {

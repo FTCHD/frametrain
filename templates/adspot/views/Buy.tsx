@@ -1,18 +1,19 @@
-import ms from 'ms'
 import type { Config, Storage } from '..'
 import { formatDate, formatSymbol } from '../utils'
 
-type Bid = Storage['bids'][number]
-
-export default function BuyView(config: Config, highestBid: Bid | null, chain: string, bid?: Bid) {
-    const deadline = config.deadline
-    const splitDt = config.mode === 'auction' ? [] : deadline.split('|')
-    const expiryTime = new Date(config.deadline)
-    const deadlineExpired =
-        config.mode === 'auction'
-            ? Date.now() > expiryTime.getTime()
-            : highestBid && Date.now() > new Date(Number(highestBid.ts)).getTime() + ms(splitDt[1])
-
+export default function BuyView({
+    config,
+    highestBid,
+    chain,
+    bid,
+    hasExpired,
+}: {
+    config: Config
+    highestBid: Storage['bids'][number] | null
+    chain: string
+    bid?: Storage['bids'][number]
+    hasExpired: boolean
+}) {
     const steps = {
         auction: [
             'Enter an amount to bid and click on "Bid". Must be more than the current highest bid.',
@@ -29,6 +30,7 @@ export default function BuyView(config: Config, highestBid: Bid | null, chain: s
             )} hour(s), after which it gets reset and others can start bidding`,
         ],
     }
+
     return (
         <div
             style={{
@@ -44,7 +46,20 @@ export default function BuyView(config: Config, highestBid: Bid | null, chain: s
                 fontWeight: 400,
             }}
         >
-            {deadlineExpired ? (
+            <div
+                style={{
+                    display: 'flex',
+                    flex: 1,
+                    alignItems: 'center',
+                    fontSize: '48px',
+                    fontWeight: 600,
+                    textShadow: '0px 4px 4px rgba(255, 255, 255, 0.08)',
+                    justifyContent: 'center',
+                }}
+            >
+                Ad Rental space by @{config.owner!.fname}
+            </div>
+            {hasExpired ? (
                 <div
                     style={{
                         display: 'flex',
@@ -58,7 +73,11 @@ export default function BuyView(config: Config, highestBid: Bid | null, chain: s
                         fontSize: 60,
                     }}
                 >
-                    Deadline Expired! Sorry, you cannot bid at this moment.
+                    Sorry, the deadline has expired! You cannot bid at this moment.
+                </div>
+            ) : bid && config.mode === 'auction' ? (
+                <div tw="flex justify-center items-center text-3xl text-white text-center text-green-500 font-bold">
+                    Your bid was successfully placed!
                 </div>
             ) : (
                 <div
@@ -181,7 +200,9 @@ export default function BuyView(config: Config, highestBid: Bid | null, chain: s
                     </span>
                     {highestBid
                         ? formatSymbol(highestBid.amount, config.token!.symbol + '')
-                        : 'N/A'}
+                        : bid
+                          ? formatSymbol(bid.amount, config.token!.symbol + '')
+                          : 'N/A'}
                 </div>
                 {bid ? (
                     <div
@@ -203,24 +224,28 @@ export default function BuyView(config: Config, highestBid: Bid | null, chain: s
                         {formatSymbol(bid.amount, config.token!.symbol + '')}
                     </div>
                 ) : null}
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        gap: '4px',
-                    }}
-                >
-                    <span
+                {!hasExpired && (
+                    <div
                         style={{
-                            fontSize: 18,
-                            fontWeight: 600,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            gap: '4px',
                         }}
                     >
-                        Deadline{config.mode === 'continuous' && '(reset)'}:
-                    </span>
-                    {config.mode === 'continuous' && highestBid ? formatDate(expiryTime) : 'N/A'}
-                </div>
+                        <span
+                            style={{
+                                fontSize: 18,
+                                fontWeight: 600,
+                            }}
+                        >
+                            {config.mode === 'continuous' ? 'Duration' : '(Deadline)'}:
+                        </span>
+                        {config.mode === 'auction'
+                            ? formatDate(new Date(config.deadline))
+                            : Number.parseInt(config.deadline) + ' hour(s)'}
+                    </div>
+                )}
             </div>
         </div>
     )

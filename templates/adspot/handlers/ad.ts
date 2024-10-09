@@ -1,11 +1,11 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata, FramePayloadValidated } from '@/lib/farcaster'
-import type { Config, Storage } from '..'
-import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import info from './info'
-import buy from './buy'
-import initial from './initial'
 import { FrameError } from '@/sdk/error'
+import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import type { Config, Storage } from '..'
+import bid from './bid'
+import info from './info'
+import initial from './initial'
 
 export default async function ad({
     body,
@@ -21,25 +21,20 @@ export default async function ad({
     const buttonIndex = body.tapped_button.index
     let inputText: string | undefined = undefined
     const inputValue = body.input?.text
-    const isBidder = params?.role === 'bidder'
-    const isOwner = params?.role === 'owner'
 
     if (params?.skip !== 'true' && buttonIndex === 1) {
         return info({ config, storage, params, body })
     }
 
-    if (isBidder) {
-        return buy({
+    if (params?.role === 'bidder') {
+        return bid({
             config,
             body,
             storage,
-            params: {
-                bid: 'true',
-            },
         })
     }
 
-    if (isOwner) {
+    if (params?.role === 'owner') {
         return initial({ config, storage })
     }
 

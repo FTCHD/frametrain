@@ -10,6 +10,10 @@ Dayjs.extend(localizedFormat)
 Dayjs.extend(utc)
 Dayjs.extend(advancedFormat)
 
+export function shortenHash(hash: string) {
+    return hash.slice(0, 10) + '...' + hash.slice(-10)
+}
+
 export function formatDate(date: Date) {
     return Dayjs(date).format('dddd, MMMM D @ LT')
 }

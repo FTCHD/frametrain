@@ -6,7 +6,11 @@ export default function ManageOwnerView({
     config,
     user,
     total,
-}: { config: Config; user?: { displayName: string; pfp: { url: string } }; total: number }) {
+}: {
+    config: Config
+    user?: { displayName: string; pfp: { url: string } }
+    total: { bids: number; amount: number }
+}) {
     return (
         <div
             style={{
@@ -71,8 +75,11 @@ export default function ManageOwnerView({
                             }}
                         >
                             <InfoBox
-                                title="Total bids(amount)"
-                                label={formatSymbol(total, config.token!.symbol + '')}
+                                title="Total bids"
+                                label={`${total.bids}(${formatSymbol(
+                                    total.amount,
+                                    config.token!.symbol + ''
+                                )})`}
                             />
                         </div>
                         <div

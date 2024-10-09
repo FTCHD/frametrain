@@ -1,10 +1,6 @@
 import type { Config } from '..'
 import { FooterColumn, InfoBox, UserProfile } from '../Components'
-import { formatSymbol } from '../utils'
-
-function shortenHash(hash: string) {
-    return hash.slice(0, 10) + '...' + hash.slice(-10)
-}
+import { formatDate, formatSymbol, shortenHash } from '../utils'
 
 export default function InfoView({
     config,
@@ -37,7 +33,7 @@ export default function InfoView({
                     justifyContent: 'center',
                 }}
             >
-                Ad Rental space by {user.displayName}
+                Ad Rental space by @{config.owner!.fname}
             </div>
             <div
                 style={{
@@ -95,7 +91,7 @@ export default function InfoView({
                                 title={config.mode === 'auction' ? 'Deadline' : 'Duration'}
                                 label={
                                     config.mode === 'auction'
-                                        ? config.deadline
+                                        ? formatDate(new Date(config.deadline))
                                         : `${Number.parseInt(config.deadline)} hour(s)`
                                 }
                             />

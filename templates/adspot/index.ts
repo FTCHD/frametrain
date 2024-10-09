@@ -7,7 +7,7 @@ import icon from './icon.jpeg'
 import handlers from './handlers'
 
 export interface Config extends BaseConfig {
-    fid: number | null
+    owner: { fid: number; fname: string } | null
     cover: BasicViewProps & {
         image?: string
     }
@@ -57,7 +57,7 @@ export default {
     handlers,
     initialConfig: {
         deadline: '24h',
-        fid: null,
+        owner: null,
         mode: 'continuous',
         token: null,
         address: null,
@@ -66,7 +66,7 @@ export default {
             background: 'linear-gradient(to top left,#AC32E4,#7918F2,#4801FF)',
             title: { text: 'Farcaster AdSpace' },
             subtitle: { text: 'Welcome to the AdSpace!' },
-            bottomMessage: { text: 'Put your ad here for more exposure.' },
+            bottomMessage: { text: 'Put your ad here for more exposure by placing a bid!' },
         },
         success: {
             background: 'linear-gradient(to top left,#AC32E4,#7918F2,#4801FF)',

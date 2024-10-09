@@ -1,15 +1,19 @@
-import type { Config } from '..'
+import ms from 'ms'
+import type { Config, Storage } from '..'
 import { FooterColumn, InfoBox } from '../Components'
+import { formatDate, formatSymbol } from '../utils'
 
 export default function ManageWinnerView({
     ad,
     config,
+    bid,
 }: {
     ad: {
         image: string
         url?: string
     } | null
     config: Config
+    bid: Storage['bids'][number]
 }) {
     return (
         <div
@@ -65,7 +69,7 @@ export default function ManageWinnerView({
                         />
                     </div>
                 ) : (
-                    <span>No Image</span>
+                    <span>No Ad Image yet</span>
                 )}
                 <div
                     style={{
@@ -100,10 +104,13 @@ export default function ManageWinnerView({
                 </div>
             </div>
             <div style={{ display: 'flex', gap: '48px', paddingTop: '16x' }}>
-                <FooterColumn title="Ad Expires">
+                <FooterColumn title="Your bid">
+                    {formatSymbol(bid.amount, config.token!.symbol + '')}
+                </FooterColumn>
+                <FooterColumn title="Ad Expiration">
                     {config.mode === 'auction'
                         ? config.deadline
-                        : `${Number.parseInt(config.deadline)} hour(s)`}
+                        : `${formatDate(new Date(Number(bid.ts) + ms(config.deadline)))}`}
                 </FooterColumn>
             </div>
         </div>

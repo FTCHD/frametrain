@@ -26,13 +26,8 @@ export default async function success({
 }): Promise<BuildFrameData> {
     const buttons: FrameButtonMetadata[] = []
     const webhooks: NonNullable<BuildFrameData['webhooks']> = []
-    const transactionHash = body.transaction
     const bids = storage.bids || []
     let newStorage = storage || {}
-
-    if (!transactionHash) {
-        throw new FrameError('Failed to fetch transaction hash')
-    }
 
     const fontSet = new Set(['Inter'])
     const fonts: any[] = []
@@ -95,12 +90,14 @@ export default async function success({
         await waitForSession(glide, params.sessionId)
 
         const bid = bids.find((b) => b.id === params.sessionId)
-        if (bid && config.mode === 'continuous') {
+        if (bid) {
             newStorage = {
                 ...storage,
-                winningBid: bid.id,
-                // add tx value to bid
-                bids: bids.map((b) => (b.id === bid.id ? { ...b, tx: txHash, ts: Date.now() } : b)),
+                bids: bids.map((b) => (b.id === bid.id ? { ...b, tx: txHash, approved: true } : b)),
+            }
+
+            if (config.mode === 'continuous') {
+                newStorage.currentBid = bid.id
             }
         }
 
@@ -158,17 +155,23 @@ export default async function success({
 
         if (paid) {
             const bid = bids.find((b) => b.id === params.sessionId)
+
             if (bid && config.mode === 'continuous' && !storage.winningBid) {
                 newStorage = {
                     ...storage,
                     winningBid: bid.id,
                     bids: bids.map((b) =>
                         b.id === bid.id
-                            ? { ...b, tx: txHash, ts: b.ts < Date.now() ? b.ts : Date.now() }
+                            ? {
+                                  ...b,
+                                  tx: txHash,
+                                  approved: true,
+                              }
                             : b
                     ),
                 }
             }
+
             buttons.push(
                 {
                     label: 'Donate again',
