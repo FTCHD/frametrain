@@ -17,7 +17,31 @@ export default function Inspector() {
 
     return (
         <Configuration.Root>
-            <Configuration.Section title="Cover">
+            <Configuration.Section
+                title="Cover"
+                actions={[
+                    config.coverType && config.coverType !== 'disabled' && (
+                        <Select
+                            key={'select success'}
+                            className="p-0 pl-2 border-0 bg-transparent h-fit w-fit focus:ring-0"
+                            defaultValue={config.coverAspectRatio}
+                            placeholder="Select an aspect ratio"
+                            onChange={(newValue) => {
+                                updateConfig({
+                                    coverAspectRatio: newValue,
+                                })
+                            }}
+                        >
+                            <option key="1:1" value="1:1">
+                                1:1
+                            </option>
+                            <option key="1.91:1" value="1.91:1">
+                                1.91:1
+                            </option>
+                        </Select>
+                    ),
+                ]}
+            >
                 {/* <code>{JSON.stringify(config, null, 2)}</code> */}
 
                 {config.coverType && config.coverType !== 'disabled' && (
