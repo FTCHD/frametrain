@@ -80,6 +80,38 @@ export async function POST(
         )
     }
 
+    if (buildParameters.transaction) {
+        return new Response(JSON.stringify(buildParameters.transaction), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+    }
+
+    if (buildParameters.frame) {
+        if (!buildParameters.frame.startsWith(process.env.NEXT_PUBLIC_HOST!)) {
+            return Response.json(
+                { message: 'External frames are not supported in the Preview!' },
+                {
+                    status: 400,
+                }
+            )
+        }
+
+        const html = await fetch(
+            buildParameters.frame.replace(
+                `${process.env.NEXT_PUBLIC_HOST}/f`,
+                `${process.env.NEXT_PUBLIC_HOST}/p`
+            )
+        ).then((res) => res.text())
+
+        return new Response(html, {
+            headers: {
+                'Content-Type': 'text/html',
+            },
+        })
+    }
+
     const renderedFrame = await buildPreviewFramePage({
         id: frame.id,
         buttons: buildParameters.buttons,
