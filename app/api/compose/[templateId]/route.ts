@@ -1,6 +1,6 @@
 import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
-import { validatePayload } from '@/lib/serve'
+import { validatePayload } from '@/lib/farcaster'
 import templates from '@/templates'
 import type { InferInsertModel } from 'drizzle-orm'
 import { encode } from 'next-auth/jwt'
@@ -36,15 +36,21 @@ export async function POST(
     const body = await request.json()
 
     const validatedPayload = await validatePayload(body)
+    if (validatedPayload.protocol !== 'farcaster') {
+        throw new Error('Compose is only supported for Farcaster frames')
+    }
 
     const templateId = params.templateId
 
-    const serializedState = validatedPayload.state.serialized
+    const serializedState = validatedPayload.state
 
-    const { fid, username, pfp_url } = validatedPayload.interactor
+    // TODO is this going to be a problem with the fc: prefix? Should we strip it?
+    const fid = validatedPayload.userId
+    const username = validatedPayload.userName
+    const pfp_url = validatedPayload.userIcon
 
     const args: InferInsertModel<typeof frameTable> = {
-        owner: fid.toString(),
+        owner: fid,
         name: 'New Frame',
         description: undefined,
         config: templates[templateId].initialConfig,
@@ -59,13 +65,13 @@ export async function POST(
         token: {
             name: username,
             picture: pfp_url,
-            sub: fid.toString(),
+            sub: fid,
             user: {
-                'id': fid.toString(),
+                'id': fid,
                 'name': username,
                 'image': pfp_url,
             },
-            uid: fid.toString(),
+            uid: fid,
         },
         secret: process.env.AUTH_SECRET!,
         salt: process.env.AUTH_SESSION_COOKIE_NAME!,
