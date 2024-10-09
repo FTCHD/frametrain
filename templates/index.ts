@@ -4,6 +4,7 @@ import contract from './contract'
 import discourse from './discourse'
 import figma from './figma'
 import form from './form'
+import formV2 from './form-v2'
 import fundraiser from './fundraiser'
 import gated from './gated'
 import gif from './gif'
@@ -28,6 +29,7 @@ export default {
     discourse,
     gif,
     form,
+    formV2,
     cal,
     medium,
     quizlet,
