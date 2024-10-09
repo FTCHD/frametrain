@@ -4,7 +4,7 @@ import { unstable_cache } from 'next/cache'
 
 export const getFeaturedTemplates = unstable_cache(
     async () => {
-        const FEATURED_IDS = ['cal', 'figma', 'poll', 'pdf']
+        const FEATURED_IDS = ['cal', 'figma', 'poll', 'pdf', 'hackernews']
 
         const featuredTemplates = Object.entries(templates)
             .filter(([id, template]) => FEATURED_IDS.includes(id))
