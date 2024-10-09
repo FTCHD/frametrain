@@ -3,9 +3,11 @@ import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
 
-type Address = `0x${string}`
+export type Address = `0x${string}`
 
-interface User {
+export type Role = 'owner' | 'opponent' | 'arbitrator' | 'user'
+
+export interface User {
     username: string
     fid?: number
     custody_address?: Address
@@ -24,7 +26,12 @@ export interface Config extends BaseConfig {
     amount: number
 }
 
-export interface Storage extends BaseStorage {}
+export interface Storage extends BaseStorage {
+    opponentAccepted: boolean
+    winner?: 'owner' | 'opponent' | null
+    arbitrateTimestamp?: bigint
+    payToWinner: boolean
+}
 
 export default {
     name: 'Bet',
