@@ -4,14 +4,14 @@ import { useFrameConfig, useFarcasterId, useFarcasterName, useUploadImage } from
 import { Configuration } from '@/sdk/inspector'
 import { Avatar, Switch } from '@/sdk/components'
 import { getUserDataByFarcasterUsername } from './utils/farcaster'
-import { supportedTokens } from './utils/constant'
+import { supportedTokens, supportedChains } from './utils/constant'
 import { useState, useEffect } from 'react'
 import type { Config } from '.'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
 
-    const { privacy, claim, opponent, arbitrator, amount, owner } = config
+    const { privacy, claim, opponent, arbitrator, amount, owner, token, chain } = config
 
     const fid = useFarcasterId()
     const username = useFarcasterName()
@@ -200,6 +200,23 @@ export default function Inspector() {
 
             {/* Prize Section */}
             <Configuration.Section title="Prize">
+                <h2 className="text-white text-xl font-bold">Chain</h2>
+                <p className="text-white">{chain ? chain: 'No chain selected'}</p>
+
+                <Select
+                    value={config.chain || ''}
+                    placeholder="Select chain"
+                    onChange={(newSelection) => {
+                        updateConfig({ chain: newSelection });
+                    }}
+                >
+                    {supportedChains.map((c) => (
+                        <option key={c.id} value={c.id}>
+                            {c.name}
+                        </option>
+                    ))}
+                </Select>
+
                 <h2 className="text-white text-xl font-bold">Token</h2>
                 <p className="text-white">{config.token ? config.token.name : 'No tokens set'}</p>
 

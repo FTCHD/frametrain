@@ -1,4 +1,5 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
+import { ChainKey } from '@/sdk/viem'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
@@ -20,13 +21,6 @@ export interface User {
     pfp_url?: string
 }
 
-export interface User {
-    username: string
-    fid?: number
-    custody_address?: Address
-    pfp_url?: string
-}
-
 export interface Config extends BaseConfig {
     background?: string
     textColor?: string
@@ -35,8 +29,9 @@ export interface Config extends BaseConfig {
     owner: User | null
     opponent: User | null
     arbitrator: User | null
+    chain: ChainKey
     token: Token
-    amount: number
+    chainamount: number
 }
 
 export interface Storage extends BaseStorage {
@@ -63,6 +58,7 @@ export default {
         owner: null,
         opponent: null,
         arbitrator: null,
+        chain: 'base',
         amount: 0,
     },
     events: [],
