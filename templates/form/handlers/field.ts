@@ -72,7 +72,11 @@ export default async function field({
                     }
                     return {
                         buttons:
-                            config.successButtons?.map((button) => ({ label: button.text })) || [],
+                            config.successButtons?.map((button) =>
+                                button.type === 'link'
+                                    ? { label: button.text, action: 'link', target: button.target }
+                                    : { label: button.text }
+                            ) || [],
                         image: config.successImageUrl,
                         handler: 'success',
                         storage: newStorage,
