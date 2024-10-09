@@ -1,3 +1,4 @@
+import nft from './nft'
 import beehiiv from './beehiiv'
 import cal from './cal'
 import contract from './contract'
@@ -44,4 +45,6 @@ export default {
     contract,
     substack,
     beehiiv,
+    nft,
+    
 }
