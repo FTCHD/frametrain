@@ -18,15 +18,24 @@ export default async function initial({
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
+    storage.opponentAccepted = false
+    storage.winner = null
+    storage.payToWinner = false
+    storage.arbitrateTimestamp = BigInt(0)
+
     return {
         buttons: [
-            { 
-                label: 'Bet'
+            {
+                label: 'Bet',
             },
-            { 
-                label: 'Create Your Own', action: 'link', target: 'https://frametra.in' },
+            {
+                label: 'Create Your Own',
+                action: 'link',
+                target: 'https://frametra.in',
+            },
         ],
         fonts: roboto,
+        storage: storage,
         component: CoverView(config),
         handler: 'bet',
     }
