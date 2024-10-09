@@ -11,16 +11,18 @@ export default async function info({
     config,
     storage,
 }: {
-    body: FramePayloadValidated
+    body?: FramePayloadValidated
     config: Config
     storage: Storage
-    params: any
 }): Promise<BuildFrameData> {
     if (!(config.owner && config.token?.chain && config.token?.symbol && config.address)) {
         throw new FrameError('Frame not fully configured')
     }
 
-    const chain = supportedChains.filter((chain) => chain.key === config.token!.chain)
+    const chain = supportedChains.find((chain) => chain.key === config.token?.chain)
+    if (!chain) {
+        throw new Error(`Unsupported chain: ${config.token!.chain}`)
+    }
 
     const user = await fetchUser(config.owner.fid)
     const fonts = await loadGoogleFontAllVariants('Nunito Sans')
@@ -40,7 +42,7 @@ export default async function info({
         component: InfoView({
             config,
             user,
-            chainName: chain[0].label,
+            chainName: chain.label,
         }),
         handler: 'buy',
         fonts,

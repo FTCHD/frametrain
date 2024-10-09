@@ -47,7 +47,7 @@ export default {
     name: 'AdSpot',
     description: 'Your own rental ad space as a frame.',
     shortDescription: 'Rental ad space Frame',
-    octicon: 'gear', // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
+    octicon: 'note', // https://docs.farcaster.xyz/reference/actions/spec#valid-icons
     creatorFid: '260812',
     creatorName: 'Steve',
     cover,

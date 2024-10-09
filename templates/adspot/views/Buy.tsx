@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type { Config, Storage } from '..'
 import { formatDate, formatSymbol } from '../utils'
 
@@ -14,6 +15,13 @@ export default function BuyView({
     bid?: Storage['bids'][number]
     hasExpired: boolean
 }) {
+    const columnStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: '4px',
+    } as CSSProperties
+
     const steps = {
         auction: [
             'Enter an amount to bid and click on "Bid". Must be more than the current highest bid.',
@@ -124,18 +132,11 @@ export default function BuyView({
                 style={{
                     display: 'flex',
                     gap: '48px',
-                    paddingTop: '16x',
+                    paddingTop: '16px',
                     padding: '40px 50px',
                 }}
             >
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        gap: '4px',
-                    }}
-                >
+                <div style={columnStyle}>
                     <span
                         style={{
                             fontSize: 18,
@@ -146,14 +147,7 @@ export default function BuyView({
                     </span>
                     {chain}
                 </div>
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        gap: '4px',
-                    }}
-                >
+                <div style={columnStyle}>
                     <span
                         style={{
                             fontSize: 18,
@@ -164,14 +158,7 @@ export default function BuyView({
                     </span>
                     {config.token!.symbol}
                 </div>
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        gap: '4px',
-                    }}
-                >
+                <div style={columnStyle}>
                     <span
                         style={{
                             fontSize: 18,
@@ -182,14 +169,7 @@ export default function BuyView({
                     </span>
                     {formatSymbol(config.minBid, config.token!.symbol + '')}
                 </div>
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        gap: '4px',
-                    }}
-                >
+                <div style={columnStyle}>
                     <span
                         style={{
                             fontSize: 18,
@@ -205,14 +185,7 @@ export default function BuyView({
                           : 'N/A'}
                 </div>
                 {bid ? (
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            gap: '4px',
-                        }}
-                    >
+                    <div style={columnStyle}>
                         <span
                             style={{
                                 fontSize: 18,
@@ -225,14 +198,7 @@ export default function BuyView({
                     </div>
                 ) : null}
                 {!hasExpired && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            gap: '4px',
-                        }}
-                    >
+                    <div style={columnStyle}>
                         <span
                             style={{
                                 fontSize: 18,

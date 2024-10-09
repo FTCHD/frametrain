@@ -23,7 +23,7 @@ export default async function ad({
     const inputValue = body.input?.text
 
     if (params?.skip !== 'true' && buttonIndex === 1) {
-        return info({ config, storage, params, body })
+        return info({ config, storage, body })
     }
 
     if (params?.role === 'bidder') {
