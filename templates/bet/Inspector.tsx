@@ -9,6 +9,7 @@ import type { Config } from '.'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
+
     const { privacy, claim, opponent, arbitrator, asset, amount, owner } = config
 
     const fid = useFarcasterId()
@@ -56,7 +57,7 @@ export default function Inspector() {
             }
         } catch (error) {
             updateConfig({
-                [field]: null, 
+                [field]: null,
             })
 
             // Store the invalid input for display
@@ -162,8 +163,8 @@ export default function Inspector() {
                         {opponent?.username
                             ? `${opponent.username} (FID: ${opponent.fid})`
                             : opponentInput
-                            ? `${opponentInput} is invalid`
-                            : 'Please enter a valid opponent username'}
+                              ? `${opponentInput} is invalid`
+                              : 'Please enter a valid opponent username'}
                     </p>
                 </div>
                 <Input
@@ -184,8 +185,8 @@ export default function Inspector() {
                         {arbitrator?.username
                             ? `${arbitrator.username} (FID: ${arbitrator.fid})`
                             : arbitratorInput
-                            ? `${arbitratorInput} is invalid`
-                            : 'Please enter a valid arbitrator username'}
+                              ? `${arbitratorInput} is invalid`
+                              : 'Please enter a valid arbitrator username'}
                     </p>
                 </div>
                 <Input
