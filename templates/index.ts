@@ -13,6 +13,7 @@ import meme from './meme'
 import pdf from './pdf'
 import poll from './poll'
 import presentation from './presentation'
+import presentationV2 from './presentation-v2'
 import quizlet from './quizlet'
 import rss from './rss'
 import substack from './substack'
@@ -32,6 +33,7 @@ export default {
     quizlet,
     luma,
     presentation,
+    presentationV2,
     meme,
     rss,
     swap,
