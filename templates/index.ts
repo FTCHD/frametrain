@@ -18,8 +18,10 @@ import rss from './rss'
 import substack from './substack'
 import swap from './swap'
 import twitter from './twitter'
+import bet from './bet'
 
 export default {
+    bet,
     pdf,
     poll,
     figma,
