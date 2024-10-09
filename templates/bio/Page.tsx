@@ -76,6 +76,7 @@ export default function BrowserPage({
                         >
                             <Link href={link.url} target="_blank">
                                 <button
+                                    type="button"
                                     className="w-full text-lg font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 bg-gradient-to-r from-purple-700 to-pink-700 hover:from-purple-600 hover:to-pink-600 text-purple-100 shadow-md hover:shadow-lg py-2 px-4 rounded-md relative overflow-hidden"
                                     onMouseEnter={() => setHoveredIndex(index)}
                                     onMouseLeave={() => setHoveredIndex(null)}
