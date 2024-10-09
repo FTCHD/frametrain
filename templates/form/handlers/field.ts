@@ -91,7 +91,11 @@ export default async function field({
                     const roboto = await loadGoogleFontAllVariants('Roboto')
                     return {
                         buttons:
-                            config.successButtons?.map((button) => ({ label: button.text })) || [],
+                            config.successButtons?.map((button) =>
+                                button.type === 'link'
+                                    ? { label: button.text, action: 'link', target: button.target }
+                                    : { label: button.text }
+                            ) || [],
                         fonts: roboto,
                         component: BasicView(config.successStyling),
                         handler: 'success',
