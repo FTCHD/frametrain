@@ -1,6 +1,6 @@
-import type { Config } from '..'
+import type { ChoiceField, TextField } from '..'
 
-export default function SuccessView(config: Config) {
+export default function FieldView(field: TextField | ChoiceField) {
     return (
         <div
             style={{
@@ -16,7 +16,7 @@ export default function SuccessView(config: Config) {
                 color: '#ffffff',
             }}
         >
-            Success
+            {field.type || 'no config'}
         </div>
     )
 }

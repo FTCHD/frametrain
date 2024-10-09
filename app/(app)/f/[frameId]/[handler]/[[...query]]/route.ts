@@ -92,6 +92,18 @@ export async function POST(
         })
     }
 
+    if (buildParameters.frame) {
+        waitUntil(processFrame(frame, buildParameters, payload))
+
+        const html = await fetch(buildParameters.frame).then((res) => res.text())
+
+        return new Response(html, {
+            headers: {
+                'Content-Type': 'text/html',
+            },
+        })
+    }
+
     const renderedFrame = await buildFramePage({
         id: frame.id,
         linkedPage: frame.linkedPage || undefined,
@@ -153,8 +165,8 @@ async function processFrame(
     const airstackKey = frame.config?.airstackKey || process.env.AIRSTACK_API_KEY
 
     const airstackPayloadValidated = await validatePayloadAirstack(payload, airstackKey)
-	
-	console.log(JSON.stringify(airstackPayloadValidated, null, 2))
+
+    console.log(JSON.stringify(airstackPayloadValidated, null, 2))
 
     await client
         .insert(interactionTable)
