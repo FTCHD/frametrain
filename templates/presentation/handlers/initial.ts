@@ -42,7 +42,7 @@ export default async function initial({
             buttons: [{ label: 'Start →' }],
             aspectRatio: config.coverAspectRatio,
             image: config.coverImageUrl,
-            handler: 'slide',
+            handler: 'cover',
         }
     }
 
@@ -64,9 +64,6 @@ export default async function initial({
         aspectRatio: config.coverAspectRatio,
         fonts: roboto,
         component: BasicView(config.coverStyling),
-        handler: 'slide',
-        params: {
-            currentSlide: 0,
-        },
+        handler: 'cover',
     }
 }
