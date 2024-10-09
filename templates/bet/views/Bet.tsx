@@ -1,6 +1,11 @@
 import type { Config, Role } from '..'
 
-export default function BetView(config: Config, winner: string | null, opponentAccepted: boolean, role: Role) {
+export default function BetView(
+    config: Config,
+    winner: string | null,
+    opponentAccepted: boolean,
+    role: Role
+) {
     const {
         background,
         textColor,
@@ -8,7 +13,7 @@ export default function BetView(config: Config, winner: string | null, opponentA
         owner = { username: 'Unknown owner' },
         opponent = { username: 'Unknown opponent' },
         arbitrator = { username: 'Unknown arbitrator' },
-        asset = 'Unknown asset',
+        token = { id: '0x0000000000000000000000000000000000000000', name: 'Unknown token' },
         amount = '0',
         privacy = false,
     } = config
@@ -113,7 +118,7 @@ export default function BetView(config: Config, winner: string | null, opponentA
                     </div>
                 )}
 
-                {/* Add the sentence for asset and amount */}
+                {/* Add the sentence for token and amount */}
                 {(!privacy || role != 'user') && (
                     <div
                         style={{
@@ -123,7 +128,7 @@ export default function BetView(config: Config, winner: string | null, opponentA
                             fontWeight: '800',
                         }}
                     >
-                        prize: {amount} {asset}
+                        prize: {amount} {token.name}
                     </div>
                 )}
 
@@ -137,15 +142,13 @@ export default function BetView(config: Config, winner: string | null, opponentA
                             fontWeight: '800',
                         }}
                     >
-                        {winner ? (
-                            winner === 'opponent' 
-                            ? `You won ${config.amount * 2} ${config.asset}.` 
-                            : `You lost ${config.amount * 2} ${config.asset}.`
-                        ) : (
-                            opponentAccepted == true 
-                            ? `You've accepted the bet`
-                            : "Do you accept this bet?"
-                        )}
+                        {winner
+                            ? winner === 'opponent'
+                                ? `You won ${config.amount * 2} ${config.token.name}.`
+                                : `You lost ${config.amount * 2} ${config.token.name}.`
+                            : opponentAccepted == true
+                              ? `You've accepted the bet`
+                              : 'Do you accept this bet?'}
                     </div>
                 )}
             </div>

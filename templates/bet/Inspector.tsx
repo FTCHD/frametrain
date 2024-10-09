@@ -1,16 +1,17 @@
 'use client'
-import { Input, ColorPicker } from '@/sdk/components'
+import { Input, ColorPicker, Select } from '@/sdk/components'
 import { useFrameConfig, useFarcasterId, useFarcasterName, useUploadImage } from '@/sdk/hooks'
 import { Configuration } from '@/sdk/inspector'
 import { Avatar, Switch } from '@/sdk/components'
 import { getUserDataByFarcasterUsername } from './utils/farcaster'
+import { supportedTokens } from './utils/constant'
 import { useState, useEffect } from 'react'
 import type { Config } from '.'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
 
-    const { privacy, claim, opponent, arbitrator, asset, amount, owner } = config
+    const { privacy, claim, opponent, arbitrator, amount, owner } = config
 
     const fid = useFarcasterId()
     const username = useFarcasterName()
@@ -35,7 +36,7 @@ export default function Inspector() {
             }
         }
         fetchData()
-    }, [username, fid])
+    }, [username, fid, updateConfig])
 
     const handleSetRolesOnBlur = async (field: 'opponent' | 'arbitrator', value: string) => {
         try {
@@ -199,15 +200,25 @@ export default function Inspector() {
 
             {/* Prize Section */}
             <Configuration.Section title="Prize">
-                <h2 className="text-white text-xl font-bold">Asset Address</h2>
-                <p className="text-white">{asset || 'No asset set'}</p>
+                <h2 className="text-white text-xl font-bold">Token</h2>
+                <p className="text-white">{config.token ? config.token.name : 'No tokens set'}</p>
 
-                <Input
-                    className="text-lg text-white"
-                    placeholder="Asset address"
-                    defaultValue={asset}
-                    onBlur={(e) => updateConfig({ asset: e.target.value as Address })}
-                />
+                <Select
+                    value={config.token?.id || ''}
+                    placeholder="Select token"
+                    onChange={(newSelection) => {
+                        const selectedToken = supportedTokens.find(token => token.id === newSelection);
+                        if (selectedToken) {
+                            updateConfig({ token: selectedToken });
+                        }
+                    }}
+                >
+                    {supportedTokens.map((token) => (
+                        <option key={token.id} value={token.id}>
+                            {token.name}
+                        </option>
+                    ))}
+                </Select>
 
                 <h2 className="text-white text-xl font-bold">Amount</h2>
                 <p className="text-white">{amount || 'No amount set'}</p>

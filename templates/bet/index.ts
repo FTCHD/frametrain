@@ -7,6 +7,12 @@ export type Address = `0x${string}`
 
 export type Role = 'owner' | 'opponent' | 'arbitrator' | 'user'
 
+export interface Token {
+    id: Address
+    name: string
+}
+    
+
 export interface User {
     username: string
     fid?: number
@@ -29,7 +35,7 @@ export interface Config extends BaseConfig {
     owner: User | null
     opponent: User | null
     arbitrator: User | null
-    asset: Address
+    token: Token
     amount: number
 }
 
@@ -57,7 +63,6 @@ export default {
         owner: null,
         opponent: null,
         arbitrator: null,
-        asset: '0x0',
         amount: 0,
     },
     events: [],
