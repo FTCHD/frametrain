@@ -28,17 +28,18 @@ export default async function initial({
         }
 
         return {
-            buttons: config?.coverButtons?.map((button) =>
-                button.type === 'link'
-                    ? {
-                          label: button.text,
-                          action: 'link',
-                          target: button.target,
-                      }
-                    : {
-                          label: button.text,
-                      }
-            ),
+            // buttons: config?.coverButtons?.map((button) =>
+            //     button.type === 'link'
+            //         ? {
+            //               label: button.text,
+            //               action: 'link',
+            //               target: button.target,
+            //           }
+            //         : {
+            //               label: button.text,
+            //           }
+            // ),
+            buttons: [{ label: 'Start →' }],
             aspectRatio: config.coverAspectRatio,
             image: config.coverImageUrl,
             handler: 'slide',
@@ -48,17 +49,18 @@ export default async function initial({
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
     return {
-        buttons: config?.coverButtons?.map((button) =>
-            button.type === 'link'
-                ? {
-                      label: button.text,
-                      action: 'link',
-                      target: button.target,
-                  }
-                : {
-                      label: button.text,
-                  }
-        ),
+        // buttons: config?.coverButtons?.map((button) =>
+        //     button.type === 'link'
+        //         ? {
+        //               label: button.text,
+        //               action: 'link',
+        //               target: button.target,
+        //           }
+        //         : {
+        //               label: button.text,
+        //           }
+        // ),
+        buttons: [{ label: 'Start →' }],
         aspectRatio: config.coverAspectRatio,
         fonts: roboto,
         component: BasicView(config.coverStyling),
