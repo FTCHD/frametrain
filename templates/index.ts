@@ -18,8 +18,10 @@ import rss from './rss'
 import substack from './substack'
 import swap from './swap'
 import twitter from './twitter'
+import hackernews from './hackernews'
 
 export default {
+    hackernews,
     pdf,
     poll,
     figma,
