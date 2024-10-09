@@ -14,7 +14,7 @@ export interface User {
     pfp_url?: string
 }
 
-interface User {
+export interface User {
     username: string
     fid?: number
     custody_address?: Address
