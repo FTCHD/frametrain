@@ -3,7 +3,7 @@ import { frameTable, interactionTable } from '@/db/schema'
 import type { BuildFrameData, FarcasterFramePayload } from '@/lib/farcaster'
 import { updateFrameStorage } from '@/lib/frame'
 import { buildFramePage } from '@/lib/serve'
-import { isFarcasterFrameActionPayload, validatePayload, validatePayloadAirstack, type FramePayload } from '@/lib/farcaster'
+import { isFarcasterFrameActionPayload, validatePayload, validatePayloadAirstack, type FramePayload } from '@/lib/validate'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
 import templates from '@/templates'
@@ -152,7 +152,7 @@ async function processFrame(
     }
 
     // TODO Do we want to support interaction logging for non-Farcaster frames?
-    if (await isFarcasterFrameActionPayload(payload)) {
+    if (isFarcasterFrameActionPayload(payload)) {
         const airstackKey = frame.config?.airstackKey || process.env.AIRSTACK_API_KEY
     
         const airstackPayloadValidated = await validatePayloadAirstack(payload as FarcasterFramePayload, airstackKey)
