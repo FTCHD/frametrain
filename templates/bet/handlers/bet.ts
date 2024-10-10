@@ -26,7 +26,7 @@ export default async function bet({
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
-    const interactorFid = config.arbitrator?.fid ?? 0
+    const interactorFid = body.interactor.fid
     const interactorRole = getRoleByFid(config, interactorFid)
 
     if (body.tapped_button.index === 1) {

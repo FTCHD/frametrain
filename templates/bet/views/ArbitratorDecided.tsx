@@ -42,7 +42,7 @@ export default function ArbitratorDecidedView(config: Config, storage: Storage) 
                     textWrap: 'balance',
                 }}
             >
-                The winner is @{config.winner}
+                The winner is @{storage.winner}
             </div>
         </div>
     )
