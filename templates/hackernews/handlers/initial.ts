@@ -3,9 +3,11 @@ import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
 import { fetchTopStories, fetchStory } from '../utils/api'
-import StoryView from '../views/Story'
+import StoryView from '../views/story'
 
-export default async function initial({ config, storage }: { config: Config, storage: Storage }): Promise<BuildFrameData> {
+export default async function initial({
+    storage,
+}: { config: Config; storage: Storage }): Promise<BuildFrameData> {
     const fonts = await loadGoogleFontAllVariants('Roboto')
     const topStoryIds = await fetchTopStories()
     const storyId = topStoryIds[0]
@@ -15,10 +17,7 @@ export default async function initial({ config, storage }: { config: Config, sto
     viewedStories.push(storyId)
 
     return {
-        buttons: [
-            { label: 'Visit', action: 'link', target: story.url },
-            { label: 'Next' },
-        ],
+        buttons: [{ label: 'Visit', action: 'link', target: story.url }, { label: 'Next' }],
         fonts,
         component: StoryView(story),
         handler: 'story',

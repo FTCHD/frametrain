@@ -18,7 +18,7 @@ export default function Inspector() {
                         max="10"
                         defaultValue={config.numberOfStories}
                         onChange={(e) =>
-                            updateConfig({ numberOfStories: parseInt(e.target.value, 10) })
+                            updateConfig({ numberOfStories: Number.parseInt(e.target.value, 10) })
                         }
                     />
                 </div>
