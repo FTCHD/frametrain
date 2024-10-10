@@ -5,8 +5,8 @@ import { Configuration } from '@/sdk/inspector'
 import { Avatar, Switch } from '@/sdk/components'
 import { getUserDataByFarcasterUsername } from './utils/farcaster'
 import { supportedTokens, supportedChains } from './utils/constant'
-import { useState, useEffect } from 'react'
-import type { Config } from '.'
+import { useEffect } from 'react'
+import type { Config, User } from '.'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
@@ -14,8 +14,6 @@ export default function Inspector() {
     const fid = useFarcasterId()
     const username = useFarcasterName()
     const uploadImage = useUploadImage()
-    const [opponentInput, setOpponentInput] = useState('')
-    const [arbitratorInput, setArbitratorInput] = useState('')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,11 +43,45 @@ export default function Inspector() {
                     pfp_url: data.pfp_url,
                 },
             })
-            field === 'opponent' ? setOpponentInput('') : setArbitratorInput('')
         } catch (error) {
             updateConfig({ [field]: null })
-            field === 'opponent' ? setOpponentInput(value) : setArbitratorInput(value)
         }
+    }
+
+    function RoleInput({
+        title,
+        user,
+        field,
+    }: {
+        title: string
+        user: User | null
+        field: 'opponent' | 'arbitrator'
+    }) {
+        const lowercaseTitle = title.toLowerCase()
+
+        return (
+            <div className="flex flex-col gap-y-2">
+                <h2 className="text-white text-lg font-bold">{title}</h2>
+                <div className="flex items-center gap-x-2">
+                    {user?.pfp_url && (
+                        <Avatar.Root style={{ width: 36, height: 36 }}>
+                            <Avatar.Image src={user.pfp_url} />
+                        </Avatar.Root>
+                    )}
+                    <p className="text-white">
+                        {user?.username
+                            ? `${user.username} (FID: ${user.fid})`
+                            : `Please enter a valid ${lowercaseTitle} username`}
+                    </p>
+                </div>
+                <Input
+                    className="text-lg text-white"
+                    placeholder={`${title} username`}
+                    defaultValue={user?.username || ''}
+                    onBlur={(e) => handleSetRolesOnBlur(field, e.target.value)}
+                />
+            </div>
+        )
     }
 
     return (
@@ -170,54 +202,8 @@ export default function Inspector() {
                             </p>
                         </div>
                     </div>
-
-                    <div className="flex flex-col gap-y-2">
-                        <h2 className="text-white text-lg font-bold">Opponent</h2>
-                        <div className="flex items-center gap-x-2">
-                            {opponent?.pfp_url && (
-                                <Avatar.Root style={{ width: 36, height: 36 }}>
-                                    <Avatar.Image src={opponent.pfp_url} />
-                                </Avatar.Root>
-                            )}
-                            <p className="text-white">
-                                {opponent?.username
-                                    ? `${opponent.username} (FID: ${opponent.fid})`
-                                    : opponentInput
-                                      ? `${opponentInput} is invalid`
-                                      : 'Please enter a valid opponent username'}
-                            </p>
-                        </div>
-                        <Input
-                            className="text-lg text-white"
-                            placeholder="Opponent username"
-                            defaultValue={opponentInput}
-                            onBlur={(e) => handleSetRolesOnBlur('opponent', e.target.value)}
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-y-2">
-                        <h2 className="text-white text-lg font-bold">Arbitrator</h2>
-                        <div className="flex items-center gap-x-2">
-                            {arbitrator?.pfp_url && (
-                                <Avatar.Root style={{ width: 36, height: 36 }}>
-                                    <Avatar.Image src={arbitrator.pfp_url} />
-                                </Avatar.Root>
-                            )}
-                            <p className="text-white">
-                                {arbitrator?.username
-                                    ? `${arbitrator.username} (FID: ${arbitrator.fid})`
-                                    : arbitratorInput
-                                      ? `${arbitratorInput} is invalid`
-                                      : 'Please enter a valid arbitrator username'}
-                            </p>
-                        </div>
-                        <Input
-                            className="text-lg text-white"
-                            placeholder="Arbitrator username"
-                            defaultValue={arbitratorInput}
-                            onBlur={(e) => handleSetRolesOnBlur('arbitrator', e.target.value)}
-                        />
-                    </div>
+                    <RoleInput title="Opponent" role={opponent} field="opponent" />
+                    <RoleInput title="Arbitrator" role={arbitrator} field="arbitrator" />
                 </div>
             </Configuration.Section>
 
