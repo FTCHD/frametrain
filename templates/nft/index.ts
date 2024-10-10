@@ -3,16 +3,17 @@ import type { GatingType } from '@/sdk/components/gating/types'
 import type { BasicViewProps } from '@/sdk/views/BasicView'
 import type { paths } from '@reservoir0x/reservoir-sdk'
 import Inspector from './Inspector'
+import type { NftInfo } from './common/reservoir'
 import cover from './cover.jpeg'
 import handlers from './handlers'
 import icon from './icon.jpeg'
 
-type NftMetadataArray = NonNullable<
-    paths['/tokens/v7']['get']['responses']['200']['schema']['tokens']
->[number]
-type NftMetadata = {
-    token: NonNullable<NftMetadataArray['token']>
-    market: NftMetadataArray['market']
+type NftOrders = NonNullable<
+    paths['/orders/asks/v5']['get']['responses']['200']['schema']['orders']
+>
+
+type NftMetadata = NftInfo & {
+    orders: NftOrders
 }
 
 export interface Config extends BaseConfig {

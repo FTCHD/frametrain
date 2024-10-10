@@ -1,6 +1,10 @@
 'use server'
 
-import { createClient, reservoirChains as reservoir0xChains } from '@reservoir0x/reservoir-sdk'
+import {
+    createClient,
+    type paths,
+    reservoirChains as reservoir0xChains,
+} from '@reservoir0x/reservoir-sdk'
 import { http, createPublicClient, parseAbi, createWalletClient, hexToBigInt } from 'viem'
 import * as viemChains from 'viem/chains'
 import type { Config } from '..'
@@ -10,6 +14,15 @@ export type ParsedToken = {
     chainId: number
     address: string
     tokenId?: string // Optional
+}
+
+export type NftInfo = {
+    contract: string
+    tokenId: string
+    chainId: number
+    image: string
+    collectionName: string
+    kind?: string
 }
 
 const reservoirChains = [...Object.values(reservoir0xChains)]
@@ -65,42 +78,38 @@ export async function supportsInterface({
 }
 
 export async function getNftInfo({
-    chainId,
-    contractAddress,
+    address,
     tokenId,
-}: { chainId: number; contractAddress: string; tokenId?: string }) {
-    try {
-        const reservoirChain = reservoirChains.find((chain) => chain.id === chainId)
-        const viemChain = Object.values(viemChains).find((chain) => chain.id === chainId)
+}: { address: string; tokenId: string }): Promise<NftInfo> {
+    const req = await fetch(`https://api.reservoir.tools/tokens/v7?tokens=${address}:${tokenId}`)
+    const res = await req.json()
+    const data = res as paths['/tokens/v7']['get']['responses']['200']['schema']['tokens']
+    console.log({ data })
+    if (!data?.length || data[0]?.token) throw Error('Invalid NFT Metadata')
+    if (!data[0]?.token) throw Error('Invalid NFT Metadata')
+    const token = data[0].token
 
-        if (!(reservoirChain && viemChain)) {
-            throw new Error('Unsupported chain')
-        }
-
-        const publicClient = createPublicClient({
-            chain: viemChain,
-            transport: http(),
-        })
-
-        const [isERC721, isERC1155] = await Promise.all([
-            supportsInterface({ interfaceId: ERC721_ERC165, viemChain, contractAddress }),
-            supportsInterface({ interfaceId: ERC1155_ERC165, viemChain, contractAddress }),
-        ])
-
-        await reservoir.actions
-    } catch (e) {
-        console.error(`error at getNftInfo for address ${contractAddress} on ${chainId}`, e)
-
-        throw e
+    return {
+        contract: token.contract,
+        tokenId: token.tokenId,
+        chainId: token.chainId,
+        image: token?.image || '',
+        collectionName: token.collection?.name || 'Collection',
+        kind: token.kind,
     }
 }
 
-export async function getNftMetadata({
-    chainId,
-    contractAddress,
+export async function getNftOrders({
+    contract,
     tokenId,
-}: { chainId: number; contractAddress: string; tokenId?: string }) {
-    // TODO: implement
+    maker,
+}: { contract: string; tokenId: string; maker: string }) {
+    const req = await fetch(
+        `https://api.reservoir.tools/orders/asks/v5?contracts=${contract}:${tokenId}&maker=${maker}`
+    )
+    const res = await req.json()
+    const data = res as paths['/orders/asks/v5']['get']['responses']['200']['schema']['orders']
+    return data || []
 }
 
 export async function buyNft({
@@ -108,8 +117,8 @@ export async function buyNft({
     quantity,
     address,
 }: { nft: Config['nfts'][number]; quantity: number; address: string }) {
-    const reservoirChain = reservoirChains.find((chain) => chain.id === nft.token.chainId)
-    const viemChain = Object.values(viemChains).find((chain) => chain.id === nft.token.chainId)
+    const reservoirChain = reservoirChains.find((chain) => chain.id === nft.chainId)
+    const viemChain = Object.values(viemChains).find((chain) => chain.id === nft.chainId)
 
     if (!(reservoirChain && viemChain)) {
         throw new Error('Unsupported chain')
@@ -125,22 +134,22 @@ export async function buyNft({
         supportsInterface({
             interfaceId: ERC721_ERC165,
             viemChain,
-            contractAddress: nft.token.contract,
+            contractAddress: nft.contract,
         }),
         supportsInterface({
             interfaceId: ERC1155_ERC165,
             viemChain,
-            contractAddress: nft.token.contract,
+            contractAddress: nft.contract,
         }),
     ])
 
     let buyTokenPartial: { token?: string; collection?: string }
     if (isERC721) {
-        buyTokenPartial = { collection: nft.token.contract }
+        buyTokenPartial = { collection: nft.contract }
     } else if (isERC1155) {
-        buyTokenPartial = { token: `${nft.token.contract}:${nft.token.tokenId}` }
+        buyTokenPartial = { token: `${nft.contract}:${nft.tokenId}` }
     } else {
-        buyTokenPartial = { collection: nft.token.contract }
+        buyTokenPartial = { collection: nft.contract }
     }
 
     const res = await reservoir.actions.buyToken({

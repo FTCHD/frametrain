@@ -14,6 +14,7 @@ import type { paths } from '@reservoir0x/reservoir-sdk'
 import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import type { Config } from '.'
+import { getNftInfo, getNftOrders } from './common/reservoir'
 
 async function fetchNftMetadata(address: string, tokenId: string) {
     const res = await corsFetch(
@@ -54,6 +55,7 @@ export default function Inspector() {
 
     const contractAddressInputRef = useRef<HTMLInputElement>(null)
     const contractTokenIdlInputRef = useRef<HTMLInputElement>(null)
+    const walletAddressInputRef = useRef<HTMLInputElement>(null)
 
     return (
         <Configuration.Root>
@@ -189,6 +191,15 @@ export default function Inspector() {
                         />
                     </div>
                     <div className="grid w-full max-w-sm items-center gap-1.5">
+                        <Label htmlFor="wallet">Your wallet address</Label>
+                        <Input
+                            name="wallet"
+                            className="text-lg"
+                            placeholder="0x9u89........."
+                            ref={walletAddressInputRef}
+                        />
+                    </div>
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
                         <Label htmlFor="tokenId">NFT Token ID</Label>
                         <Input
                             type="number"
@@ -197,17 +208,17 @@ export default function Inspector() {
                             placeholder="1"
                             ref={contractTokenIdlInputRef}
                         />
+                        <p className="text-sm text-muted-foreground max-md:text-xs">
+                            This should be the wallet address that made the order(s)
+                        </p>
                     </div>
                     <Button
                         onClick={async () => {
-                            console.log({
-                                contractAddressInputRef: contractAddressInputRef.current?.value,
-                                contractTokenIdlInputRef: contractTokenIdlInputRef.current?.value,
-                            })
                             if (
                                 !(
                                     contractAddressInputRef.current?.value &&
-                                    contractTokenIdlInputRef.current?.value
+                                    contractTokenIdlInputRef.current?.value &&
+                                    walletAddressInputRef.current?.value
                                 )
                             ) {
                                 toast.error('Please input contract address and token id')
@@ -215,10 +226,10 @@ export default function Inspector() {
                             }
 
                             const address = contractAddressInputRef.current.value.trim()
+                            const maker = walletAddressInputRef.current.value.trim()
                             const tokenId = contractTokenIdlInputRef.current.value.trim()
                             const existingNft = config.nfts.find(
-                                (nft) =>
-                                    nft.token.contract === address && nft.token.tokenId === tokenId
+                                (nft) => nft.contract === address && nft.tokenId === tokenId
                             )
 
                             if (existingNft) {
@@ -227,7 +238,20 @@ export default function Inspector() {
                             }
 
                             try {
-                                const nft = await fetchNftMetadata(address, tokenId)
+                                const info = await getNftInfo({ address, tokenId })
+                                const orders = await getNftOrders({
+                                    contract: address,
+                                    tokenId,
+                                    maker,
+                                })
+                                if (orders.length === 0) {
+                                    toast.error('No orders found')
+                                    return
+                                }
+                                const nft = {
+                                    ...info,
+                                    orders,
+                                }
                                 updateConfig({ nfts: [...config.nfts, nft] })
                                 toast.success('NFT added successfully')
                             } catch (e) {
