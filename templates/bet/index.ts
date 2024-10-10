@@ -31,7 +31,7 @@ export interface Config extends BaseConfig {
     arbitrator: User | null
     chain: ChainKey
     token: Token
-    chainamount: number
+    amount: number
 }
 
 export interface Storage extends BaseStorage {

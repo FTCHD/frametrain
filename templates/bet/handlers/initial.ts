@@ -21,7 +21,6 @@ export default async function initial({
     storage.opponentAccepted = false
     storage.winner = null
     storage.payToWinner = false
-    storage.arbitrateTimestamp = BigInt(0)
 
     return {
         buttons: [
