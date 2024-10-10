@@ -64,7 +64,7 @@
         "dayjs": "^1.11.11",
         "drizzle-orm": "^0.30.10",
         "framer-motion": "^11.2.6",
-        "frames.js": "^0.11.0",
+        "frames.js": "^0.19.3",
         "he": "^1.2.0",
         "jotai": "^2.8.2",
         "js-abbreviation-number": "^1.4.0",

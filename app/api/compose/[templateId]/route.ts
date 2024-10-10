@@ -1,6 +1,6 @@
 import { client } from '@/db/client'
 import { frameTable } from '@/db/schema'
-import { validatePayload } from '@/lib/serve'
+import { validatePayloadFarcaster } from '@/lib/farcaster'
 import templates from '@/templates'
 import type { InferInsertModel } from 'drizzle-orm'
 import { encode } from 'next-auth/jwt'
@@ -35,7 +35,7 @@ export async function POST(
 ) {
     const body = await request.json()
 
-    const validatedPayload = await validatePayload(body)
+    const validatedPayload = await validatePayloadFarcaster(body)
 
     const templateId = params.templateId
 
