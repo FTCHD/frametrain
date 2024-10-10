@@ -202,8 +202,8 @@ export default function Inspector() {
                             </p>
                         </div>
                     </div>
-                    <RoleInput title="Opponent" role={opponent} field="opponent" />
-                    <RoleInput title="Arbitrator" role={arbitrator} field="arbitrator" />
+                    <RoleInput title="Opponent" user={opponent} field="opponent" />
+                    <RoleInput title="Arbitrator" user={arbitrator} field="arbitrator" />
                 </div>
             </Configuration.Section>
 
