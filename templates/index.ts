@@ -1,3 +1,4 @@
+import ama from './ama'
 import beehiiv from './beehiiv'
 import cal from './cal'
 import contract from './contract'
@@ -43,5 +44,6 @@ export default {
     gated,
     contract,
     substack,
+    ama,
     beehiiv,
 }
