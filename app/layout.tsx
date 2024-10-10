@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import type React from 'react'
 import './global.css'
+import ContextProvider from '@/context'
 
 export const metadata: Metadata = {
     title: {
@@ -52,7 +53,9 @@ export default function Layout(props: { children: React.ReactNode }) {
                         backgroundColor: '#17101f',
                     }}
                 >
-                    {props.children}
+                    <ContextProvider>
+                        {props.children}
+                    </ContextProvider>
                 </body>
             </html>
         </SessionProvider>

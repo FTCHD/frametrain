@@ -1,6 +1,8 @@
 'use client'
+import { simulateCall } from '@/lib/debugger'
 import type { FrameButtonMetadata } from '@/lib/farcaster'
 import { mockOptionsAtom, previewLoadingAtom, previewParametersAtom } from '@/lib/store'
+import { ModalController } from '@reown/appkit-core'
 import { useAtom, useAtomValue } from 'jotai'
 import { type PropsWithChildren, useCallback } from 'react'
 import {
@@ -9,6 +11,7 @@ import {
     PlusCircle as PlusCircleIcon,
 } from 'react-feather'
 import toast from 'react-hot-toast'
+import { useAccount, useSendTransaction } from 'wagmi'
 
 export function FramePreviewButton({
     children,
@@ -31,6 +34,10 @@ export function FramePreviewButton({
     const [, setPreviewData] = useAtom(previewParametersAtom)
     const previewLoading = useAtomValue(previewLoadingAtom)
     const mockOptions = useAtomValue(mockOptionsAtom)
+    const account = useAccount()
+    const {
+        sendTransactionAsync
+    } = useSendTransaction()
 
     const actionCallback = useCallback(() => {
         const newData = {
@@ -54,12 +61,59 @@ export function FramePreviewButton({
                 actionCallback()
                 break
             }
+            case 'tx': {
+                // if not connect
+                if (account.isConnected) {
+                    // get transaction
+                    const { fid } = mockOptions
+
+                    const previewParams = {
+                        untrustedData: {
+                            fid,
+                            url: button.target,
+                            messageHash: '0xDebug',
+                            timestamp: 0,
+                            network: 1,
+                            buttonIndex: buttonIndex,
+                            inputText: inputText,
+                            state: 'Debug',
+                            castId: {
+                                fid,
+                                hash: '0xDebug',
+                            },
+                        },
+                        trustedData: {
+                            messageBytes: 'Debug'
+                        }
+                    }
+
+                    const txData = await simulateCall(button.target, previewParams, mockOptions)
+                    const tx = JSON.parse(txData as string)
+                    await sendTransactionAsync({
+                        chainId: Number(tx.chainId.split(":")[1]),
+                        to: tx.params.to,
+                        value: tx.params.value,
+                        data: tx.params.data
+                    },{
+                        onSuccess () {
+                            toast.success("Transfer Successful!")
+                        },
+                        onError(error:any) {
+                            toast.error(error.cause.shortMessage)
+                        },
+                    })
+                } else {
+                    // open reown connect modal
+                    ModalController.open()
+                }
+                break
+            }
             default: {
                 toast.error('Use the Warpcast Frames Validator to test this feature!')
                 break
             }
         }
-    }, [button, actionCallback])
+    }, [button, actionCallback, account.isConnected])
 
     return (
         <button
