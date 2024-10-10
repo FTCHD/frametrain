@@ -11,6 +11,7 @@ import gif from './gif'
 import luma from './luma'
 import medium from './medium'
 import meme from './meme'
+import nft from './nft'
 import pdf from './pdf'
 import poll from './poll'
 import presentation from './presentation'
@@ -35,6 +36,7 @@ export default {
     quizlet,
     luma,
     presentation,
+    nft,
     presentationV1,
     meme,
     rss,
