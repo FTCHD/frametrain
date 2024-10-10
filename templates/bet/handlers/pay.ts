@@ -3,10 +3,10 @@
 import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, Storage } from '..'
-import PayView from '../views/Pay'
 import { getGlide } from '@/sdk/glide'
 import { chains, createSession, currencies } from '@paywithglide/glide-js'
+import type { Config, Storage } from '..'
+import PayView from '../views/Pay'
 import { supportedChains } from '@/sdk/viem'
 
 export default async function pay({
