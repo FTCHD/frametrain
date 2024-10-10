@@ -1,5 +1,6 @@
 'use server'
-import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
+import type { BuildFrameData } from '@/lib/farcaster'
+import type { FramePayloadValidated } from '@/lib/validate'
 import type { FramePressConfig } from '../Config'
 import buildFigmaFrame from '../utils/FigmaFrameBuilder'
 
