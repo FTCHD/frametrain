@@ -4,8 +4,9 @@ import { runGatingChecks } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
 import BasicView from '@/sdk/views/BasicView'
 import type { Config, Storage } from '..'
-import { transferTokenToAddress } from '../utils/transerToAddress'
+import { transferTokenToAddress } from '../utils/onchainUtils'
 import ClaimedView from '../views/Claimed'
+import PendingApprovalView from '../views/PendingApproval'
 
 export default async function page({
     body,
@@ -74,13 +75,8 @@ export default async function page({
                     handler: 'tx',
                 },
             ],
-            component: BasicView({
-                ...config.cover,
-                title: { text: 'Approve' },
-                subtitle: {
-                    text: 'Approve our operator to spend tokens on your behalf',
-                },
-            }),
+            component: PendingApprovalView(config)
+            ,
             handler: 'approve',
         }
     }

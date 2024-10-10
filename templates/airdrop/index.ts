@@ -13,7 +13,8 @@ export type BackgroundType = 'color' | 'gradient' | 'image'
 
 export interface Config extends BaseConfig {
     tokenAddress: string
-
+    tokenName:string,
+    tokenSymbol: string
     chain: keyof typeof airdropChains
     walletAddress: string
     generalAmount: number
@@ -39,6 +40,8 @@ export interface Config extends BaseConfig {
 
 const defaultConfig: Config = {
     tokenAddress: '',
+    tokenName: "",
+    tokenSymbol: "",
     chain: 'base',
     walletAddress: '',
     generalAmount: 0,
