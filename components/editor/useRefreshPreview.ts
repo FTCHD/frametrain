@@ -17,11 +17,15 @@ export function useRefreshPreview(frameId: string) {
     const mockOptions = useAtomValue(mockOptionsAtom)
 
     const postUrl = useMemo(() => {
-        const handler = previewData?.handler || ''
-        const params = previewData?.params ? `?${previewData.params}` : ''
+        if (!previewData?.postUrl) {
+            const handler = previewData?.handler || ''
+            const params = previewData?.params ? `?${previewData.params}` : ''
 
-        return `${process.env.NEXT_PUBLIC_HOST}/p/${frameId}/${handler}` + params
-    }, [frameId, previewData])
+            return `${process.env.NEXT_PUBLIC_HOST}/p/${frameId}/${handler}` + params
+        }
+
+        return previewData.postUrl
+    }, [previewData, frameId])
 
     const refreshPreviewCallback = useCallback(async () => {
         try {

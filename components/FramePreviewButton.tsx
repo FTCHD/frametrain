@@ -26,7 +26,7 @@ export function FramePreviewButton({
     state: any
     handler: string | undefined
     params: string | undefined
-    postUrl: string
+    postUrl: string | undefined
 }>) {
     const [, setPreviewData] = useAtom(previewParametersAtom)
     const previewLoading = useAtomValue(previewLoadingAtom)
@@ -34,6 +34,7 @@ export function FramePreviewButton({
 
     const actionCallback = useCallback(() => {
         const newData = {
+            postUrl: postUrl,
             handler: handler,
             inputText: inputText,
             buttonIndex: buttonIndex,
@@ -41,7 +42,7 @@ export function FramePreviewButton({
         }
 
         setPreviewData(newData)
-    }, [buttonIndex, inputText, handler, params, setPreviewData])
+    }, [buttonIndex, inputText, handler, params, postUrl, setPreviewData])
 
     const handleClick = useCallback(async () => {
         switch (button?.action) {

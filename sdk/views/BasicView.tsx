@@ -7,15 +7,18 @@ export type BasicViewStyle = {
     fontStyle?: string
 }
 
-export type BasicViewProps = {
-    title: { text: string } & BasicViewStyle
-    subtitle: { text: string } & BasicViewStyle
-    bottomMessage?: { text?: string } & BasicViewStyle
-    background?: string
-}
+export type BasicViewProps =
+    | {
+          title: { text: string } & BasicViewStyle
+          subtitle?: { text: string } & BasicViewStyle
+          bottomMessage?: { text?: string } & BasicViewStyle
+          background?: string
+      }
+    | undefined
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
-export default function BasicView({ title, subtitle, bottomMessage, background }: BasicViewProps) {
+export default function BasicView(props: BasicViewProps) {
+    const { title, subtitle, bottomMessage, background } = props || {}
     const backgroundProp: Record<string, string> = {}
 
     if (background) {
@@ -46,40 +49,50 @@ export default function BasicView({ title, subtitle, bottomMessage, background }
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
+                justifyContent:
+                    (title && subtitle) || (subtitle && bottomMessage)
+                        ? 'center'
+                        : !title || !subtitle || !bottomMessage
+                          ? 'center'
+                          : 'space-between',
                 padding: '150px 20px',
                 gap: '70px',
                 ...backgroundProp,
             }}
         >
-            <div
-                style={{
-                    fontFamily: title.fontFamily || 'Roboto',
-                    fontSize: `${title.fontFamily || 50}px`,
-                    color: title.color || 'white',
-                    fontStyle: title.fontStyle || 'normal',
-                    fontWeight: title.fontWeight || 'bold',
-                    justifyContent: alignmentToFlex(title.position),
-                }}
-            >
-                {title.text}
-            </div>
-            <div
-                style={{
-                    fontFamily: subtitle.fontFamily || 'Roboto',
-                    fontSize: `${subtitle.fontFamily || 30}px`,
-                    color: subtitle.color || 'white',
-                    fontStyle: subtitle.fontStyle || 'medium',
-                    fontWeight: subtitle.fontWeight || 'bold',
-                    justifyContent: alignmentToFlex(subtitle.position),
-                }}
-            >
-                {subtitle.text}
-            </div>
+            {title && (
+                <div
+                    style={{
+                        fontFamily: title.fontFamily || 'Roboto',
+                        fontSize: `${title.fontSize || 50}px`,
+                        color: title.color || 'white',
+                        fontStyle: title.fontStyle || 'normal',
+                        fontWeight: title.fontWeight || 'bold',
+                        justifyContent: alignmentToFlex(title.position),
+                    }}
+                >
+                    {title.text}
+                </div>
+            )}
+            {subtitle && (
+                <div
+                    style={{
+                        fontFamily: subtitle.fontFamily || 'Roboto',
+                        fontSize: `${subtitle.fontSize || 30}px`,
+                        color: subtitle.color || 'white',
+                        fontStyle: subtitle.fontStyle || 'medium',
+                        fontWeight: subtitle.fontWeight || 'bold',
+                        justifyContent: alignmentToFlex(subtitle.position),
+                    }}
+                >
+                    {subtitle.text}
+                </div>
+            )}
             {bottomMessage && (
                 <div
                     style={{
                         fontFamily: bottomMessage.fontFamily || 'Roboto',
-                        fontSize: `${bottomMessage.fontFamily || 20}px`,
+                        fontSize: `${bottomMessage.fontSize || 20}px`,
                         color: bottomMessage.color || 'white',
                         fontStyle: bottomMessage.fontStyle || 'normal',
                         fontWeight: bottomMessage.fontWeight || 'lighter',
