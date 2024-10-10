@@ -19,7 +19,7 @@ export default async function txData({
         throw new FrameError('Frame not fully configured')
     }
 
-    const nft = config.nfts.find((n) => n.address === params?.nftAddress)
+    const nft = config.nfts.find((n) => n.token.contract === params?.nftAddress)
     const quantity = params?.quantity === undefined ? 1 : Number.parseInt(params?.quantity)
 
     if (!nft) {

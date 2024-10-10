@@ -85,7 +85,6 @@ export async function getNftInfo({
         const [isERC721, isERC1155] = await Promise.all([
             supportsInterface({ interfaceId: ERC721_ERC165, viemChain, contractAddress }),
             supportsInterface({ interfaceId: ERC1155_ERC165, viemChain, contractAddress }),
-            ,
         ])
 
         await reservoir.actions
@@ -109,8 +108,8 @@ export async function buyNft({
     quantity,
     address,
 }: { nft: Config['nfts'][number]; quantity: number; address: string }) {
-    const reservoirChain = reservoirChains.find((chain) => chain.id === nft.chainId)
-    const viemChain = Object.values(viemChains).find((chain) => chain.id === nft.chainId)
+    const reservoirChain = reservoirChains.find((chain) => chain.id === nft.token.chainId)
+    const viemChain = Object.values(viemChains).find((chain) => chain.id === nft.token.chainId)
 
     if (!(reservoirChain && viemChain)) {
         throw new Error('Unsupported chain')
@@ -122,13 +121,26 @@ export async function buyNft({
         chain: viemChain,
     })
 
+    const [isERC721, isERC1155] = await Promise.all([
+        supportsInterface({
+            interfaceId: ERC721_ERC165,
+            viemChain,
+            contractAddress: nft.token.contract,
+        }),
+        supportsInterface({
+            interfaceId: ERC1155_ERC165,
+            viemChain,
+            contractAddress: nft.token.contract,
+        }),
+    ])
+
     let buyTokenPartial: { token?: string; collection?: string }
-    if (nft.tokenStandard === 'ERC721') {
-        buyTokenPartial = { collection: nft.address }
-    } else if (nft.tokenStandard === 'ERC1155') {
-        buyTokenPartial = { token: `${nft.address}:${nft.tokenId}` }
+    if (isERC721) {
+        buyTokenPartial = { collection: nft.token.contract }
+    } else if (isERC1155) {
+        buyTokenPartial = { token: `${nft.token.contract}:${nft.token.tokenId}` }
     } else {
-        buyTokenPartial = { collection: nft.address }
+        buyTokenPartial = { collection: nft.token.contract }
     }
 
     const res = await reservoir.actions.buyToken({

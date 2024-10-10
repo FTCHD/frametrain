@@ -1,19 +1,22 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
 import type { GatingType } from '@/sdk/components/gating/types'
 import type { BasicViewProps } from '@/sdk/views/BasicView'
+import type { paths } from '@reservoir0x/reservoir-sdk'
 import Inspector from './Inspector'
 import cover from './cover.jpeg'
 import handlers from './handlers'
 import icon from './icon.jpeg'
 
+type NftMetadataArray = NonNullable<
+    paths['/tokens/v7']['get']['responses']['200']['schema']['tokens']
+>[number]
+type NftMetadata = {
+    token: NonNullable<NftMetadataArray['token']>
+    market: NftMetadataArray['market']
+}
+
 export interface Config extends BaseConfig {
-    nfts: {
-        chainId: number
-        address: string
-        tokenId: string
-        tokenStandard: 'ERC721' | 'ERC1155' | 'OTHER'
-        royalty: number
-    }[]
+    nfts: NftMetadata[]
     owner: {
         username: string
         fid: number

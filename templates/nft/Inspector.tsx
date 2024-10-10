@@ -17,18 +17,14 @@ import type { Config } from '.'
 
 async function fetchNftMetadata(address: string, tokenId: string) {
     const res = await corsFetch(
-        `api.reservoir.tools/tokens/v7?tokens=${address}:${tokenId}?format=json`
+        `https://api.reservoir.tools/tokens/v7?tokens=${address}:${tokenId}`
     )
     if (!res) throw Error('Failed to fetch NFT Metadata')
-    const data = JSON.parse(res) as
-        | {
-              'statusCode': number
-              'error': string
-              'message': string
-          }
-        | paths['/tokens/v7']['get']['responses']['200']['schema']['tokens']
-
-    if (!data || 'statusCode' in data || !data.length) throw Error('Invalid NFT Metadata')
+    const data = JSON.parse(
+        res
+    ) as paths['/tokens/v7']['get']['responses']['200']['schema']['tokens']
+    console.log({ data })
+    if (!data?.length) throw Error('Invalid NFT Metadata')
 
     return data[0]
 }
@@ -184,19 +180,30 @@ export default function Inspector() {
                         this NFT is listed before you proceed.
                     </p>
                     <div className="grid w-full max-w-sm items-center gap-1.5">
-                        <Label htmlFor="email">NFT contract address</Label>
+                        <Label htmlFor="address">NFT contract address</Label>
                         <Input
+                            name="address"
                             className="text-lg"
                             placeholder="0x9u89........."
                             ref={contractAddressInputRef}
                         />
                     </div>
                     <div className="grid w-full max-w-sm items-center gap-1.5">
-                        <Label htmlFor="email">NFT contract address</Label>
-                        <Input className="text-lg" placeholder="1" ref={contractTokenIdlInputRef} />
+                        <Label htmlFor="tokenId">NFT Token ID</Label>
+                        <Input
+                            type="number"
+                            name="tokenId"
+                            className="text-lg"
+                            placeholder="1"
+                            ref={contractTokenIdlInputRef}
+                        />
                     </div>
                     <Button
                         onClick={async () => {
+                            console.log({
+                                contractAddressInputRef: contractAddressInputRef.current?.value,
+                                contractTokenIdlInputRef: contractTokenIdlInputRef.current?.value,
+                            })
                             if (
                                 !(
                                     contractAddressInputRef.current?.value &&
@@ -209,16 +216,24 @@ export default function Inspector() {
 
                             const address = contractAddressInputRef.current.value.trim()
                             const tokenId = contractTokenIdlInputRef.current.value.trim()
+                            const existingNft = config.nfts.find(
+                                (nft) =>
+                                    nft.token.contract === address && nft.token.tokenId === tokenId
+                            )
+
+                            if (existingNft) {
+                                toast.error('NFT already exists')
+                                return
+                            }
 
                             try {
                                 const nft = await fetchNftMetadata(address, tokenId)
-                                console.log(nft)
+                                updateConfig({ nfts: [...config.nfts, nft] })
+                                toast.success('NFT added successfully')
                             } catch (e) {
                                 const error = e as Error
                                 toast.error(error.message)
                             }
-
-                            // updateConfig({ text: displayLabelInputRef.current.value })
 
                             contractTokenIdlInputRef.current.value = ''
                             contractAddressInputRef.current.value = ''
@@ -228,22 +243,6 @@ export default function Inspector() {
                         Add NFT
                     </Button>
                 </div>
-                <div className="flex flex-col gap-2 ">
-                    <Label htmlFor="email">NFT contract address</Label>
-                    <Input
-                        className="text-lg"
-                        placeholder="Input something"
-                        ref={contractAddressInputRef}
-                    />
-                </div>
-
-                <Button
-                    variant="destructive"
-                    className="w-full "
-                    onClick={() => updateConfig({ text: '' })}
-                >
-                    Delete
-                </Button>
             </Configuration.Section>
             <Configuration.Section
                 title="Success"
