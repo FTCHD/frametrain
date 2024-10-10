@@ -3,7 +3,7 @@ import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
 import type { Config, Storage } from '..'
-import ArbitratorDecidedView from '../views/arbitratorDecided'
+import ArbitratorDecidedView from '../views/ArbitratorDecided'
 
 export default async function arbitratorDecided({
     body,
