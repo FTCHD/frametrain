@@ -32,13 +32,13 @@ export interface Config extends BaseConfig {
     chain: ChainKey
     token: Token
     amount: number
+    deadline: number
 }
 
 export interface Storage extends BaseStorage {
     opponentAccepted: boolean
     winner?: 'owner' | 'opponent' | null
-    arbitrateTimestamp?: bigint
-    payToWinner: boolean
+    arbitrateTimestamp?: number
 }
 
 export default {

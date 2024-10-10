@@ -29,6 +29,12 @@ export default async function arbitratorDecided({
     } else {
         throw new FrameError('Invalid button pressed')
     }
+    
+    // If the deadline is in the past, throw an error
+    if (config.deadline < Date.now()) {
+        throw new FrameError('Deadline is in the past')
+    }
+    storage.arbitrateTimestamp = Date.now()
 
     return {
         buttons: [{ label: 'Back to Bet' }],
