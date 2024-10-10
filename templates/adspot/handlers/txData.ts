@@ -38,7 +38,7 @@ export default async function txData({
 
     return {
         transaction: {
-            chainId: session.unsignedTransaction.chainId,
+            chainId: `eip155:${session.unsignedTransaction.chainId}`,
             method: 'eth_sendTransaction',
             params: {
                 to: session.unsignedTransaction.to,
