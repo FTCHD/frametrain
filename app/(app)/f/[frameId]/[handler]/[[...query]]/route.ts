@@ -57,6 +57,10 @@ export async function POST(
 
     try {
         buildParameters = await handlerFn({
+            frame: {
+                id: frame.id,
+                owner: frame.owner,
+            },
             body: validatedPayload,
             config: frame.config as BaseConfig,
             storage: frame.storage as BaseStorage,
