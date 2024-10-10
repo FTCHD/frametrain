@@ -1,6 +1,6 @@
-import type { Config } from '..'
+import type { Config, Storage } from '..'
 
-export default function ArbitratorDecidedView(config: Config, opponentAccepted: boolean) {
+export default function ArbitratorDecidedView(config: Config, storage: Storage) {
     const { background, textColor } = config
     const backgroundProp: Record<string, string> = {}
 

@@ -65,7 +65,7 @@ export default function BetView(
                         fontWeight: '400',
                         fontSize: '30px',
                         marginTop: '20px',
-                        marginBottom: '30px',
+                        marginBottom: '20px',
                         flexDirection: 'row',
                     }}
                 >
@@ -77,7 +77,7 @@ export default function BetView(
                             marginLeft: '5px',
                         }}
                     >
-                        @{owner.username}
+                        @{owner?.username}
                     </span>
                     <span style={{ marginLeft: '5px' }}>and</span>
                     <span
@@ -87,7 +87,7 @@ export default function BetView(
                             marginLeft: '5px',
                         }}
                     >
-                        @{opponent.username}
+                        @{opponent?.username}
                     </span>
                     {(!privacy || role != 'user') && (
                         <>
@@ -99,41 +99,15 @@ export default function BetView(
                                     marginLeft: '5px',
                                 }}
                             >
-                                @{arbitrator.username}
+                                @{arbitrator?.username}
                             </span>
                         </>
                     )}
                     <span>!</span>
                 </div>
 
-                {/* Claim content */}
-                {(!privacy || role != 'user') && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            marginBottom: '30px',
-                        }}
-                    >
-                        {claim}
-                    </div>
-                )}
-
                 {/* Add the sentence for token and amount */}
                 {(!privacy || role != 'user') && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            fontSize: '40px',
-                            marginBottom: '40px',
-                            fontWeight: '800',
-                        }}
-                    >
-                        prize: {amount} {token.name}
-                    </div>
-                )}
-
-                {/* Add msg according to role */}
-                {role === 'opponent' && (
                     <div
                         style={{
                             display: 'flex',
@@ -142,13 +116,49 @@ export default function BetView(
                             fontWeight: '800',
                         }}
                     >
-                        {winner
-                            ? winner === 'opponent'
-                                ? `You won ${config.amount * 2} ${config.token.name}.`
-                                : `You lost ${config.amount * 2} ${config.token.name}.`
-                            : opponentAccepted == true
-                              ? `You've accepted the bet`
-                              : 'Do you accept this bet?'}
+                        prize: {amount} {token.name}
+                    </div>
+                )}
+
+                {/* Claim content */}
+                {(!privacy || role != 'user') && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            marginBottom: '20px',
+                        }}
+                    >
+                        {claim}
+                    </div>
+                )}
+
+                {/* Add msg according to role */}
+                {role === 'opponent' && winner == null && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            fontSize: '40px',
+                            marginBottom: '20px',
+                            fontWeight: '800',
+                        }}
+                    >
+                        {opponentAccepted ? "You've accepted the bet" : 'Do you accept this bet?'}
+                    </div>
+                )}
+
+                {/* Add winner information */}
+                {winner && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            fontSize: '40px',
+                            fontWeight: '800',
+                        }}
+                    >
+                        <p style={{ marginBottom: '10px' }}>The bet has been settled!</p>
+                        <p>Winner: @{winner}</p>
                     </div>
                 )}
             </div>
