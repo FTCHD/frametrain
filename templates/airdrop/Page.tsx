@@ -66,9 +66,9 @@ export default function AirdropPage({
                     </Avatar.Fallback>
                 </Avatar.Root>
                 <div>
-                    <h1 className="text-2xl font-bold text-purple-300">{tokenInfo.name}</h1>
+                    <h1 className="text-2xl font-bold text-purple-300">{frameConfig.tokenName ?? tokenInfo.name}</h1>
                     <Badge variant="secondary" className="bg-purple-700 text-purple-100">
-                        {tokenInfo.symbol}
+                        {frameConfig.tokenSymbol ?? tokenInfo.symbol}
                     </Badge>
                 </div>
             </div>
