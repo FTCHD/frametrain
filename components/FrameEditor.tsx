@@ -69,7 +69,9 @@ export default function FrameEditor({
             return
         }
 
-        setUpdating(true)
+        // setUpdating(true)
+
+        await new Promise((resolve) => setTimeout(resolve, 500))
 
         const newConfig = Object.assign({}, frame.draftConfig, props)
 
@@ -77,8 +79,8 @@ export default function FrameEditor({
 
         refreshPreview()
 
-        setUpdating(false)
-    }, 1000)
+        // setUpdating(false)
+    }, 2000)
 
     function updateConfig(props: Record<string, any>) {
         if (!props || Object.keys(props).length === 0) {
@@ -87,9 +89,9 @@ export default function FrameEditor({
 
         const newConfig = Object.assign({}, temporaryConfig, props)
 
-        setTemporaryConfig(newConfig)
-
         writeConfig(newConfig)
+
+        setTemporaryConfig(newConfig)
     }
 
     async function updateName() {
