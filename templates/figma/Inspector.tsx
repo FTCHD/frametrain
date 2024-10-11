@@ -36,6 +36,7 @@ export default function Inspector() {
             buttonIndex: 0,
             inputText: '',
             params: `slideId=${id}`,
+            postUrl: undefined
         })
     }
 
@@ -126,6 +127,7 @@ export default function Inspector() {
     }
 
     // Must run after rendering as it modifies the document <head>
+    // biome-ignore lint/correctness/useExhaustiveDependencies: circular rulese
     useEffect(() => {
         if (!config.slides) return
         for (const slide of config.slides) {
@@ -137,7 +139,7 @@ export default function Inspector() {
                 }
             }
         }
-    }, [config.slides, identifyFontsUsed])
+    }, [config.slides])
 
     // Setup default slides if this is a new instance
     useEffect(() => {
@@ -169,140 +171,132 @@ export default function Inspector() {
 
     return (
         <Configuration.Root>
-            <Configuration.Section title="PAT">
-                {editingFigmaPAT ? (
-                    <FigmaTokenEditor
-                        figmaPAT={config.figmaPAT}
-                        onChange={updateFigmaPAT}
-                        onCancel={() => setEditingFigmaPAT(false)}
-                    />
-                ) : (
-                    <Button onClick={() => setEditingFigmaPAT(true)} variant={'secondary'}>
-                        <KeySquareIcon className="mr-1" />
-                        Figma PAT
-                    </Button>
-                )}
+            <Configuration.Section title="Figma Login">
+                <FigmaTokenEditor
+                    figmaAccessToken={config.figmaAccessToken}
+                    onChange={updateFigmaPAT}
+                    onCancel={() => setEditingFigmaPAT(false)}
+                />
+                
             </Configuration.Section>
 
-            {!editingFigmaPAT ? (
-                <Configuration.Section title="Figma Designs">
-                    <div className="w-full flex items-center justify-between">
-                        <div className="flex flex-row items-center justify-end gap-2">
-                            <Button onClick={() => swapSlide('left')} disabled={!canMoveLeft}>
-                                <ArrowBigLeftDashIcon /> Move left
-                            </Button>
-                            <Button onClick={() => swapSlide('right')} disabled={!canMoveRight}>
-                                Move right <ArrowBigRightDashIcon />
-                            </Button>
-                            <Button
-                                variant="destructive"
-                                disabled={!canDelete}
-                                onClick={removeSlide}
-                            >
-                                <Trash2Icon />
-                            </Button>
-                        </div>
+            <Configuration.Section title="Figma Designs">
+                <div className="w-full flex items-center justify-between">
+                    <div className="flex flex-row items-center justify-end gap-2">
+                        <Button onClick={() => swapSlide('left')} disabled={!canMoveLeft}>
+                            <ArrowBigLeftDashIcon /> Move left
+                        </Button>
+                        <Button onClick={() => swapSlide('right')} disabled={!canMoveRight}>
+                            Move right <ArrowBigRightDashIcon />
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            disabled={!canDelete}
+                            onClick={removeSlide}
+                        >
+                            <Trash2Icon />
+                        </Button>
                     </div>
-                    <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'auto' }}>
-                        {config.slides.map((slideConfig, index) => (
+                </div>
+                <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'auto' }}>
+                    {config.slides.map((slideConfig, index) => (
+                        <div
+                            key={slideConfig.id}
+                            onClick={() => {
+                                setSelectedSlideIndex(index)
+                                previewSlide(slideConfig.id)
+                            }}
+                            className={`w-40 h-40 flex items-center justify-center mr-1 border-[1px] rounded-md cursor-pointer select-none ${
+                                selectedSlideIndex === index
+                                    ? 'border-highlight'
+                                    : 'border-input'
+                            }`}
+                        >
                             <div
-                                key={slideConfig.id}
-                                onClick={() => {
-                                    setSelectedSlideIndex(index)
-                                    previewSlide(slideConfig.id)
+                                style={{
+                                    'transform':
+                                        slideConfig.aspectRatio == '1:1'
+                                            ? 'scale(0.245)'
+                                            : 'scale(0.130)',
+                                    // Handle the case where no image has been configured but we need a min-width
+                                    ...(!slideConfig.baseImagePaths
+                                        ? {
+                                                'width':
+                                                    slideConfig.aspectRatio == '1:1'
+                                                        ? dimensionsForRatio['1/1'].width
+                                                        : dimensionsForRatio['1.91/1'].height,
+                                            }
+                                        : {}),
+                                    'overflow': 'clip',
                                 }}
-                                className={`w-40 h-40 flex items-center justify-center mr-1 border-[1px] rounded-md cursor-pointer select-none ${
-                                    selectedSlideIndex === index
-                                        ? 'border-highlight'
-                                        : 'border-input'
-                                }`}
                             >
-                                <div
-                                    style={{
-                                        'transform':
-                                            slideConfig.aspectRatio == '1:1'
-                                                ? 'scale(0.245)'
-                                                : 'scale(0.130)',
-                                        // Handle the case where no image has been configured but we need a min-width
-                                        ...(!slideConfig.baseImagePaths
-                                            ? {
-                                                  'width':
-                                                      slideConfig.aspectRatio == '1:1'
-                                                          ? dimensionsForRatio['1/1'].width
-                                                          : dimensionsForRatio['1.91/1'].height,
-                                              }
-                                            : {}),
-                                        'overflow': 'clip',
-                                    }}
-                                >
-                                    <FigmaView slideConfig={slideConfig} />
+                                <FigmaView slideConfig={slideConfig} />
+                            </div>
+                        </div>
+                    ))}
+
+                    {figmaUnderstood ? (
+                        <div
+                            className="w-40 h-40 flex items-center justify-center mr-1 border-input border-[1px] rounded-md cursor-pointer"
+                            onClick={addSlide}
+                        >
+                            <span className="text-4xl">+</span>
+                        </div>
+                    ) : (
+                        <AlertDialog.Root>
+                            <AlertDialog.Trigger>
+                                <div className="w-40 h-40 flex items-center justify-center mr-1 border-input border-[1px] rounded-md cursor-pointer">
+                                    <span className="text-4xl">+</span>
                                 </div>
-                            </div>
-                        ))}
-
-                        {figmaUnderstood ? (
-                            <div
-                                className="w-40 h-40 flex items-center justify-center mr-1 border-input border-[1px] rounded-md cursor-pointer"
-                                onClick={addSlide}
-                            >
-                                <span className="text-4xl">+</span>
-                            </div>
-                        ) : (
-                            <AlertDialog.Root>
-                                <AlertDialog.Trigger>
-                                    <div className="w-40 h-40 flex items-center justify-center mr-1 border-input border-[1px] rounded-md cursor-pointer">
-                                        <span className="text-4xl">+</span>
-                                    </div>
-                                </AlertDialog.Trigger>
-                                <AlertDialog.Content>
-                                    <AlertDialog.Header>
-                                        <AlertDialog.Title>Resolution Notice</AlertDialog.Title>
-                                        <AlertDialog.Description className="flex flex-col gap-4">
-                                            The Figma URL entered must lead to an artboard/section
-                                            that is either 630x630 or 1200x630 pixels in size.
-                                            <div className="flex flex-row items-center gap-2">
-                                                <Checkbox
-                                                    id="figmaUnderstood"
-                                                    onCheckedChange={(e) =>
-                                                        (figmaUnderstoodRef.current = e === true)
-                                                    }
-                                                />
-                                                <Label htmlFor="figmaUnderstood">
-                                                    Don't show again.
-                                                </Label>
-                                            </div>
-                                        </AlertDialog.Description>
-                                    </AlertDialog.Header>
-                                    <AlertDialog.Footer>
-                                        <AlertDialog.Cancel>Back</AlertDialog.Cancel>
-                                        <AlertDialog.Action
-                                            onClick={() => {
-                                                addSlide()
-
-                                                if (figmaUnderstoodRef.current) {
-                                                    setFigmaUnderstood(true)
+                            </AlertDialog.Trigger>
+                            <AlertDialog.Content>
+                                <AlertDialog.Header>
+                                    <AlertDialog.Title>Resolution Notice</AlertDialog.Title>
+                                    <AlertDialog.Description className="flex flex-col gap-4">
+                                        The Figma URL entered must lead to an artboard/section
+                                        that is either 630x630 or 1200x630 pixels in size.
+                                        <div className="flex flex-row items-center gap-2">
+                                            <Checkbox
+                                                id="figmaUnderstood"
+                                                onCheckedChange={(e) =>
+                                                    (figmaUnderstoodRef.current = e === true)
                                                 }
-                                            }}
-                                        >
-                                            Understood
-                                        </AlertDialog.Action>
-                                    </AlertDialog.Footer>
-                                </AlertDialog.Content>
-                            </AlertDialog.Root>
-                        )}
-                    </div>
+                                            />
+                                            <Label htmlFor="figmaUnderstood">
+                                                Don't show again.
+                                            </Label>
+                                        </div>
+                                    </AlertDialog.Description>
+                                </AlertDialog.Header>
+                                <AlertDialog.Footer>
+                                    <AlertDialog.Cancel>Back</AlertDialog.Cancel>
+                                    <AlertDialog.Action
+                                        onClick={() => {
+                                            addSlide()
 
-                    {config.slides?.[selectedSlideIndex] && (
-                        <SlideEditor
-                            key={config.slides[selectedSlideIndex].id}
-                            slideConfig={config.slides[selectedSlideIndex]}
-                            figmaPAT={config.figmaPAT}
-                            buttonTargets={buttonTargets}
-                            onUpdate={(updatedSlideConfig) => updateSlide(updatedSlideConfig)}
-                        />
+                                            if (figmaUnderstoodRef.current) {
+                                                setFigmaUnderstood(true)
+                                            }
+                                        }}
+                                    >
+                                        Understood
+                                    </AlertDialog.Action>
+                                </AlertDialog.Footer>
+                            </AlertDialog.Content>
+                        </AlertDialog.Root>
                     )}
-                </Configuration.Section>
-            ) : undefined}
+                </div>
+
+                {config.slides?.[selectedSlideIndex] && (
+                    <SlideEditor
+                        key={config.slides[selectedSlideIndex].id}
+                        slideConfig={config.slides[selectedSlideIndex]}
+                        figmaPAT={config.figmaPAT}
+                        buttonTargets={buttonTargets}
+                        onUpdate={(updatedSlideConfig) => updateSlide(updatedSlideConfig)}
+                    />
+                )}
+            </Configuration.Section>
         </Configuration.Root>
     )
 }

@@ -13,6 +13,8 @@ import type {
     TextLayerConfigs,
 } from '../Config'
 import { getFigmaDesign, svgToDataUrl } from '../utils/FigmaApi'
+import { useSession } from 'next-auth/react'
+import type { FrameTrainSession } from '@/auth'
 
 const SVG_TEXT_DEBUG_ENABLED = false
 
@@ -22,7 +24,6 @@ type PropertiesTabProps = {
     description: string
     textLayers: TextLayerConfigs
     aspectRatio: AspectRatio
-    figmaPAT: string
     figmaUrl?: string
     figmaMetadata?: FigmaMetadata
     onUpdateTitle: (title: string) => void
@@ -42,7 +43,6 @@ export const PropertiesTab = ({
     description,
     textLayers,
     aspectRatio,
-    figmaPAT,
     figmaUrl,
     figmaMetadata,
     onUpdateTitle,
@@ -55,13 +55,18 @@ export const PropertiesTab = ({
     const [newUrl, setNewUrl] = useState(figmaUrl)
     const [isUpdating, setIsUpdating] = useState(false)
 
+    // Access the figmaAccessToken from the session
+    const { data: session } = useSession();
+    const figmaAccessToken = (session as FrameTrainSession)?.figmaAccessToken;
+
+
     const updateUrl = async () => {
         console.debug(`updateFigmaUrl(${slideConfigId})`)
 
         setIsUpdating(true)
 
         // Fetch the Figma design
-        const figmaDesignResult = await getFigmaDesign(figmaPAT, newUrl)
+        const figmaDesignResult = await getFigmaDesign(figmaAccessToken!, newUrl)
         if (!figmaDesignResult.success) {
             toast.error(figmaDesignResult.error)
             setIsUpdating(false)
@@ -210,16 +215,16 @@ export const PropertiesTab = ({
                     <Input
                         type="url"
                         placeholder={
-                            figmaPAT
+                            figmaAccessToken
                                 ? 'Figma Frame > right click > copy as > copy link'
                                 : 'Configure Figma PAT first'
                         }
-                        disabled={!figmaPAT}
+                        disabled={!figmaAccessToken}
                         value={newUrl}
                         onChange={(e) => setNewUrl(e.target.value)}
                         className="mr-2"
                     />
-                    <Button disabled={isUpdating || !figmaPAT || !newUrl} onClick={updateUrl}>
+                    <Button disabled={isUpdating || !figmaAccessToken || !newUrl} onClick={updateUrl}>
                         {isUpdating && (
                             <>
                                 <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />

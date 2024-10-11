@@ -1,6 +1,57 @@
 import { createAppClient, viemConnector } from '@farcaster/auth-client'
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import type { Provider } from "next-auth/providers";
+import type { Session } from 'next-auth';
+
+// Extend the Session type to include figmaAccessToken
+export interface FrameTrainSession extends Session {
+    figmaAccessToken?: string;
+}
+
+export interface FrameTrainSession extends Session {
+    figmaAccessToken?: string;
+}
+
+const FigmaProvider: Provider = {
+    id: "figma",
+    name: "Figma",
+    type: "oauth",
+    authorization: {
+        url: "https://www.figma.com/oauth",
+        params: {
+            scope: "files:read",
+            response_type: "code",
+            state: "{}"
+        },
+    },
+    token: {
+        url: "https://api.figma.com/v1/oauth/token",
+        async request(context: any) {
+            const provider = context.provider;
+
+            const res = await fetch(
+                `https://api.figma.com/v1/oauth/token?client_id=${provider.clientId}&client_secret=${provider.clientSecret}&redirect_uri=${provider.CallbackUrl}&code=${context.params.code}&grant_type=authorization_code`,
+                { method: "POST" }
+            );
+            const json = await res.json();
+
+            return { tokens: json };
+        },
+    },
+    userinfo: "https://api.figma.com/v1/me",
+    profile(profile) {
+        return {
+            id: profile.id,
+            name: `${profile.handle}`,
+            email: profile.email,
+            image: profile.img_url,nre
+        };
+    },
+    clientId: process.env.FIGMA_CLIENT_ID,
+    clientSecret: process.env.FIGMA_CLIENT_SECRET
+};
+
 
 export const {
     handlers: { GET, POST },
@@ -63,19 +114,25 @@ export const {
                 }
             },
         }),
+        FigmaProvider,
     ],
     callbacks: {
         jwt: async ({ token, user, account, profile, trigger }) => {
-            if (user) token.user = user
             if (user) {
+                token.user = user
                 token.uid = user.id
+            }
+            if (account?.provider === 'figma') {
+                // If the user is connecting Figma, store the access token for Figma
+                token.figmaAccessToken = account.access_token;
             }
             return token
         },
         session: async ({ session, token, user }) => {
-            if (token.user) session.user = { ...session.user, id: (token.user as any).id }
-            //  session.user.uid = user.uid;
-            return session
+            const frameTrainSession = session as FrameTrainSession;
+            if (token.user) frameTrainSession.user = { ...frameTrainSession.user, id: (token.user as any).id };
+            frameTrainSession.figmaAccessToken = token.figmaAccessToken as string | undefined;
+            return frameTrainSession;
         },
     },
     events: {
