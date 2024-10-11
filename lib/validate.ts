@@ -195,7 +195,7 @@ function standardizeLensPayload(request: LensFrameRequest, response: LensFrameRe
 }
 
 function standardizeXmtpPayload(payload: XmtpFrameMessageReturnType): FramePayloadValidated {
-    const userId = `xmtp:${payload.address}`
+    const userId = `xmtp:${payload.verifiedWalletAddress}`
     return {
         protocol: 'xmtp',
         url: payload.url,
@@ -203,7 +203,7 @@ function standardizeXmtpPayload(payload: XmtpFrameMessageReturnType): FramePaylo
         inputText: payload.inputText,
         state: payload.state,
         transaction: payload.transactionId,
-        address: payload.address,
+        address: payload.verifiedWalletAddress,
         timestamp: new Date(payload.unixTimestamp),
         userId: userId,
         userName: userId, // TODO use xmtp client?
