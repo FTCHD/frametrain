@@ -12,6 +12,7 @@ import {
 } from 'viem'
 import { privateKeyToAddress } from 'viem/accounts'
 import { type Config, type Storage, airdropChains } from '..'
+import { getDetailsFromPaymentCurrency } from '../utils/onchainUtils'
 
 export default async function txData({
     config,
@@ -36,7 +37,6 @@ export default async function txData({
     if (userFid !== creatorFid) {
         throw new FrameError('You are not approved to use this function')
     }
-    console.log({ config })
     const FRAME_TRAIN_OPERATOR_PRIVATE_KEY = process.env
         .FRAME_TRAIN_OPERATOR_PRIVATE_KEY as `0x${string}`
 
@@ -45,7 +45,6 @@ export default async function txData({
     }
 
     const chainId = airdropChains[config.chain]
-    console.log(chainId)
 
     const frameOperatorAddress = privateKeyToAddress(FRAME_TRAIN_OPERATOR_PRIVATE_KEY)
     console.log(frameOperatorAddress)
@@ -69,14 +68,33 @@ export default async function txData({
     }
     console.log(data)
     const abiErrorItems = (erc20Abi as Abi).filter((item) => item.type === 'error')
+    let toAddress = config.tokenAddress
+    let toChain = chainId
+    if (config.crossTokenEnabled && config.crossToken.chain && config.crossToken.symbol) {
+        const chainName = config.chain === 'ethereum' ? 'mainnet' : config.chain
+        const crossTokenKey = `${chainName}/${config.tokenAddress}`
+        const crossTokens = config.crossTokens[crossTokenKey]
 
+        const crossToken = crossTokens?.find(
+            (token) =>
+                token.currencySymbol === config.crossToken.symbol &&
+                token.chainName.toLowerCase() === config.crossToken.chain
+        )
+        if (crossToken) {
+            const chainAndAddress = getDetailsFromPaymentCurrency(crossToken.paymentCurrency)
+            if (chainAndAddress.chainId && chainAndAddress.hexAddress) {
+                toAddress = chainAndAddress.hexAddress
+                toChain = chainAndAddress.chainId
+            }
+        }
+    }
     return {
         buttons: [],
         transaction: {
-            chainId: `eip155:${chainId}`,
+            chainId: `eip155:${toChain}`,
             method: 'eth_sendTransaction',
             params: {
-                to: config.tokenAddress as `0x${string}`,
+                to: toAddress as `0x${string}`,
                 value: '0',
                 data: data,
                 abi: [abiItem!, ...abiErrorItems],

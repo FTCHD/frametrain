@@ -4,7 +4,7 @@ import { runGatingChecks } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
 import BasicView from '@/sdk/views/BasicView'
 import type { Config, Storage } from '..'
-import { transferTokenToAddress } from '../utils/onchainUtils'
+import { transferTokenToAddress, transferTokenToAddressUsingGlide } from '../utils/onchainUtils'
 import ClaimedView from '../views/Claimed'
 import PendingApprovalView from '../views/PendingApproval'
 
@@ -75,8 +75,7 @@ export default async function page({
                     handler: 'tx',
                 },
             ],
-            component: PendingApprovalView(config)
-            ,
+            component: PendingApprovalView(config),
             handler: 'approve',
         }
     }
@@ -114,6 +113,20 @@ export default async function page({
     }
     // console.log({ configuration });
     console.log('Transfering token to address...')
+    if (config.crossTokenEnabled && config.crossToken.chain && config.crossToken.symbol) {
+        const chainName = config.chain === 'ethereum' ? 'mainnet' : config.chain
+        const crossTokenKey = `${chainName}/${config.tokenAddress}`
+        const crossTokens = config.crossTokens[crossTokenKey]
+
+        const crossToken = crossTokens?.find(
+            (token) =>
+                token.currencySymbol === config.crossToken.symbol &&
+                token.chainName.toLowerCase() === config.crossToken.chain
+        )
+        if (crossToken) {
+            transferTokenToAddressUsingGlide(configuration, crossToken)
+        }
+    }
     transferTokenToAddress(configuration)
 
     //Update storage

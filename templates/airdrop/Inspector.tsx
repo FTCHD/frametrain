@@ -14,10 +14,11 @@ import { Configuration } from '@/sdk/inspector'
 import { X } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
-import { isAddress } from 'viem'
+import { type Address, isAddress } from 'viem'
 import type { Config, LinkButton } from '.'
 import { airdropChains } from '.'
-import { getContractDetails } from './utils/onchainUtils'
+import { getContractDetails, getCrossChainTokenDetails } from './utils/onchainUtils'
+import { unique } from 'drizzle-orm/mysql-core'
 
 interface WhiteList {
     address: string
@@ -218,53 +219,94 @@ function BlackListSection() {
     )
 }
 
-const tokenDetailsMap = new Map<
-    { address: string; chain: string },
-    { name: string; symbol: string }
->()
-
 function GeneralSection() {
     const [config, updateConfig] = useFrameConfig<Config>()
-
-    const chainName = useMemo(
-        () => (config.chain === 'ethereum' ? 'mainnet' : config.chain),
-        [config.chain]
-    )
-    const tokenAddress = useMemo(
-        () => (isAddress(config.tokenAddress) ? config.tokenAddress : ''),
-        [config.tokenAddress]
-    )
-    const fetchContractDetails = useCallback(async () => {
-        if (tokenAddress) {
-            let details = tokenDetailsMap.get({ address: tokenAddress, chain: chainName }) ?? null
-            if (!details) {
-                console.log("I couldn't get what I wanted from the map...")
-                details = await getContractDetails(chainName, tokenAddress)
-                if (details) {
-                    tokenDetailsMap.set({ address: tokenAddress, chain: chainName }, details)
-                }
-            }
-            updateConfig({
-                tokenName: details?.name ?? '',
-                tokenSymbol: details?.symbol ?? '',
-            })
-            if (!details) {
-                toast.error(
-                    `Couldn't fetch contract details for ${tokenAddress} on ${chainName} chain`
-                )
-            }
-        } else {
-            console.log('Token address is not found')
-            updateConfig({
-                tokenName: '',
-                tokenSymbol: '',
-            })
-        }
-    }, [chainName, tokenAddress, updateConfig])
+    const chainName = config.chain === 'ethereum' ? 'mainnet' : config.chain
+    const tokenAddress = config.tokenAddress as Address
+    const crossTokenKey = `${chainName}/${tokenAddress}`
 
     useEffect(() => {
+        async function fetchContractDetails() {
+            console.log('I will run...')
+            if (config.tokenAddress && config.chain && isAddress(config.tokenAddress)) {
+                console.log('I am here')
+                const details = await getContractDetails(chainName, tokenAddress)
+                console.log(details)
+                const crossTokens = config.crossTokens?.[crossTokenKey]
+                console.log(crossTokens)
+                if (!crossTokens && config.crossTokenEnabled) {
+                    console.log('I will fetch')
+                    const crossTokenDetails = await getCrossChainTokenDetails(
+                        chainName,
+                        tokenAddress as Address,
+                        config.tokenSymbol
+                    )
+
+                    if (crossTokenDetails) {
+                        const newConfig = {
+                            tokenName: details?.name ?? '',
+                            tokenSymbol: details?.symbol ?? '',
+                            crossTokens: {
+                                ...config.crossTokens,
+                                [crossTokenKey]: crossTokenDetails,
+                            },
+                        }
+
+                        updateConfig({ ...newConfig })
+                        return
+                    }
+                }
+                updateConfig({
+                    tokenName: details?.name ?? '',
+                    tokenSymbol: details?.symbol ?? '',
+                    crossToken: !details
+                        ? {
+                              chain: '',
+                              symbol: '',
+                          }
+                        : config.crossToken,
+                })
+
+                if (!details) {
+                    toast.error(
+                        `Couldn't fetch contract details for ${tokenAddress} on ${chainName} chain`
+                    )
+                }
+            }
+        }
         fetchContractDetails()
-    }, [fetchContractDetails])
+    }, [config.tokenAddress, config.chain, config.crossTokenEnabled])
+
+    const [availableTokens, uniqueChains] = (() => {
+        if (!config.crossTokens || !tokenAddress || !config.chain || !isAddress(tokenAddress)) {
+            return [{}, []]
+        }
+
+        const tokens = config.crossTokens[crossTokenKey]
+
+        if (!tokens) {
+            return [{}, []]
+        }
+
+        const uniqueChains = [...new Set(tokens.map((token) => token.chainName.toLowerCase()))]
+
+        const reducedTokens = tokens.reduce(
+            (acc, token) => {
+                const tokenChain = token.chainName.toLowerCase()
+                if (!acc[tokenChain]) {
+                    acc[tokenChain] = []
+                }
+                acc[tokenChain].push(token)
+                return acc
+            },
+            {} as Record<string, typeof tokens>
+        )
+
+        return [reducedTokens, uniqueChains]
+    })()
+
+    console.log(config.tokenSymbol)
+
     return (
         <>
             <h2 className="text-lg font-semibold">Token Contract Address</h2>
@@ -295,6 +337,67 @@ function GeneralSection() {
                 ))}
             </Select>
 
+            <div className="flex items-center space-x-2 mt-4">
+                <Switch
+                    id="cross-token"
+                    checked={config.crossTokenEnabled}
+                    onCheckedChange={(checked) => {
+                        updateConfig({ crossTokenEnabled: checked })
+                    }}
+                />
+                <Label htmlFor="cross-token">Cross token</Label>
+            </div>
+            {config.crossTokenEnabled && uniqueChains.length > 0 && (
+                <>
+                    <div>
+                        <Label htmlFor="cross-token">Cross Token Chain</Label>
+                        <Select
+                            defaultValue={config.crossToken?.chain ?? ''}
+                            onChange={async (value) => {
+                                updateConfig({
+                                    crossToken: {
+                                        chain: value as keyof typeof airdropChains,
+                                    },
+                                })
+                            }}
+                        >
+                            <option value="">Select a token</option>
+                            {uniqueChains.map((option) => (
+                                <option key={option} value={option}>
+                                    {option[0].toUpperCase() + option.slice(1)}
+                                </option>
+                            ))}
+                        </Select>
+                    </div>
+
+                    {availableTokens?.[config.crossToken?.chain] && (
+                        <div>
+                            <Label htmlFor="cross-token-symbol">Cross Token Symbol</Label>
+                            <Select
+                                defaultValue={config.crossToken?.symbol ?? ''}
+                                onChange={async (value) => {
+                                    if (!config.crossToken.chain) return
+                                    updateConfig({
+                                        crossToken: {
+                                            chain: config.crossToken.chain,
+                                            symbol: value as keyof typeof airdropChains,
+                                        },
+                                    })
+                                }}
+                            >
+                                {availableTokens[config.crossToken.chain].map((option) => (
+                                    <option
+                                        key={option.currencySymbol}
+                                        value={option.currencySymbol}
+                                    >
+                                        {option.currencyName} {option.currencySymbol}
+                                    </option>
+                                ))}
+                            </Select>
+                        </div>
+                    )}
+                </>
+            )}
             <h2>Airdropper Address</h2>
             <Input
                 className="text-lg flex-1 h-10"
@@ -576,7 +679,6 @@ function AppearanceSection() {
                     className="w-full"
                     background={config.cover.headerColor}
                     setBackground={(value) => {
-                        console.log(value)
                         const newCover = { ...config.cover, headerColor: value }
                         updateConfig({ cover: newCover })
                     }}

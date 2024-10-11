@@ -3,6 +3,7 @@ import type { GatingType } from '@/sdk/components/gating/types'
 import Inspector from './Inspector'
 import cover from './cover.png'
 import handlers from './handlers'
+import type { Token } from './utils/onchainUtils'
 
 export type LinkButton = {
     action: 'link'
@@ -13,9 +14,17 @@ export type BackgroundType = 'color' | 'gradient' | 'image'
 
 export interface Config extends BaseConfig {
     tokenAddress: string
-    tokenName:string,
+    tokenName: string
     tokenSymbol: string
     chain: keyof typeof airdropChains
+    crossTokenEnabled: boolean
+    crossTokens: {
+        [key: string]: Token[]
+    }
+    crossToken: {
+        chain: keyof typeof airdropChains | ''
+        symbol: string
+    }
     walletAddress: string
     generalAmount: number
     whitelist: {
@@ -40,9 +49,15 @@ export interface Config extends BaseConfig {
 
 const defaultConfig: Config = {
     tokenAddress: '',
-    tokenName: "",
-    tokenSymbol: "",
+    tokenName: '',
+    tokenSymbol: '',
     chain: 'base',
+    crossTokenEnabled: false,
+    crossTokens: {},
+    crossToken: {
+        chain: '',
+        symbol: '',
+    },
     walletAddress: '',
     generalAmount: 0,
     whitelist: [],
