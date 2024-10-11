@@ -37,7 +37,8 @@ export default async function txData({
     if (userFid !== creatorFid) {
         throw new FrameError('You are not approved to use this function')
     }
-    const FRAME_TRAIN_OPERATOR_PRIVATE_KEY = process.env.FRAME_TRAIN_OPERATOR_PRIVATE_KEY as `0x${string}`
+    const FRAME_TRAIN_OPERATOR_PRIVATE_KEY = process.env
+        .FRAME_TRAIN_OPERATOR_PRIVATE_KEY as `0x${string}`
 
     if (!FRAME_TRAIN_OPERATOR_PRIVATE_KEY) {
         throw new FrameError('FRAME_TRAIN_OPERATOR_PRIVATE_KEY is not set')
@@ -46,7 +47,6 @@ export default async function txData({
     const chainId = airdropChains[config.chain]
 
     const frameOperatorAddress = privateKeyToAddress(FRAME_TRAIN_OPERATOR_PRIVATE_KEY)
-    console.log(frameOperatorAddress)
     const args = [frameOperatorAddress, maxInt256]
     const functionName = 'approve'
     const abiItem = getAbiItem({
@@ -54,7 +54,6 @@ export default async function txData({
         name: functionName,
         args,
     } as GetAbiItemParameters)
-    console.log(abiItem)
     let data
     try {
         data = encodeFunctionData({
@@ -62,10 +61,7 @@ export default async function txData({
             functionName,
             args,
         } as EncodeFunctionDataParameters)
-    } catch (error) {
-        console.log(error)
-    }
-    console.log(data)
+    } catch (error) {}
     const abiErrorItems = (erc20Abi as Abi).filter((item) => item.type === 'error')
     let toAddress = config.tokenAddress
     let toChain = chainId
@@ -83,7 +79,8 @@ export default async function txData({
             const chainAndAddress = getDetailsFromPaymentCurrency(crossToken.paymentCurrency)
             if (chainAndAddress.chainId && chainAndAddress.hexAddress) {
                 toAddress = chainAndAddress.hexAddress
-                toChain = chainAndAddress.chainId
+                toChain =
+                    chainAndAddress.chainId as (typeof airdropChains)[keyof typeof airdropChains]
             }
         }
     }

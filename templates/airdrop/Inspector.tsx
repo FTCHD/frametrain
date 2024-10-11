@@ -227,15 +227,10 @@ function GeneralSection() {
 
     useEffect(() => {
         async function fetchContractDetails() {
-            console.log('I will run...')
             if (config.tokenAddress && config.chain && isAddress(config.tokenAddress)) {
-                console.log('I am here')
                 const details = await getContractDetails(chainName, tokenAddress)
-                console.log(details)
                 const crossTokens = config.crossTokens?.[crossTokenKey]
-                console.log(crossTokens)
                 if (!crossTokens && config.crossTokenEnabled) {
-                    console.log('I will fetch')
                     const crossTokenDetails = await getCrossChainTokenDetails(
                         chainName,
                         tokenAddress as Address,
@@ -282,15 +277,17 @@ function GeneralSection() {
             return [{}, []]
         }
 
-        const tokens = config.crossTokens[crossTokenKey]
+        const allTokens = config.crossTokens[crossTokenKey]
 
-        if (!tokens) {
+        if (!allTokens) {
             return [{}, []]
         }
+        //Remove native tokens because there's no way to do transferFrom with native tokens. Only leave erc20 tokens. See /handlers/tx for approval code
+        const erc20tokens = allTokens.filter((token) => !token.paymentCurrency.includes('slip44'))
 
-        const uniqueChains = [...new Set(tokens.map((token) => token.chainName.toLowerCase()))]
+        const uniqueChains = [...new Set(erc20tokens.map((token) => token.chainName.toLowerCase()))]
 
-        const reducedTokens = tokens.reduce(
+        const reducedTokens = erc20tokens.reduce(
             (acc, token) => {
                 const tokenChain = token.chainName.toLowerCase()
                 if (!acc[tokenChain]) {
@@ -299,13 +296,11 @@ function GeneralSection() {
                 acc[tokenChain].push(token)
                 return acc
             },
-            {} as Record<string, typeof tokens>
+            {} as Record<string, typeof erc20tokens>
         )
 
         return [reducedTokens, uniqueChains]
     })()
-
-    console.log(config.tokenSymbol)
 
     return (
         <>

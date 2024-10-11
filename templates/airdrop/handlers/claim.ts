@@ -7,6 +7,7 @@ import type { airdropChains, Config, Storage } from '..'
 import { transferTokenToAddress, transferTokenToAddressUsingGlide } from '../utils/onchainUtils'
 import ClaimedView from '../views/Claimed'
 import PendingApprovalView from '../views/PendingApproval'
+import { waitUntil } from '@vercel/functions'
 
 export default async function page({
     body,
@@ -91,7 +92,7 @@ export default async function page({
         }
         //Check whitelist
         const userInWhiteList = whitelist.find((item) => item.address === address)
-        if (!!userInWhiteList) {
+        if (userInWhiteList) {
             paymentAmount = userInWhiteList.amount ?? generalAmount
             //No need for a user to be in both black and whitelist so just break
             break
@@ -111,8 +112,6 @@ export default async function page({
         tokenAddress,
         walletAddress,
     }
-    // console.log({ configuration });
-    console.log('Transfering token to address...')
     if (config.crossTokenEnabled && config.crossToken.chain && config.crossToken.symbol) {
         const chainName = config.chain === 'ethereum' ? 'mainnet' : config.chain
         const crossTokenKey = `${chainName}/${config.tokenAddress}`
@@ -126,11 +125,13 @@ export default async function page({
 
         if (crossToken) {
             configuration.chain = crossToken.chainName.toLowerCase() as keyof typeof airdropChains
-
-            transferTokenToAddressUsingGlide(configuration, crossToken, config)
+            //Wait until ensure the transaction is at least sent before the frame returns
+            waitUntil(transferTokenToAddressUsingGlide(configuration, crossToken, config))
         }
     }
-    transferTokenToAddress(configuration)
+    if (!config.crossTokenEnabled) {
+        transferTokenToAddress(configuration)
+    }
 
     //Update storage
     const newStorage = {
@@ -150,7 +151,6 @@ export default async function page({
         totalAmountEarned: (storage.totalAmountEarned ?? 0) + paymentAmount,
     }
 
-    console.log(newStorage)
     return {
         buttons: [
             {

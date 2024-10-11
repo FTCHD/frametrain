@@ -3,9 +3,10 @@ import {
     type CAIP19,
     createGlideConfig,
     createSession,
+    currencies,
     listPaymentOptions,
     updatePaymentTransaction,
-    waitForSession
+    waitForSession,
 } from '@paywithglide/glide-js'
 import type { Address } from 'viem'
 import {
@@ -32,13 +33,13 @@ type Configuration = {
     tokenAddress: string
     walletAddress: string
 }
-const chainKeyToChain = {
+export const chainKeyToChain = {
     mainnet: mainnet,
     arbitrum: arbitrum,
     base: base,
     optimism: optimism,
     polygon: polygon,
-}
+} as const
 
 export const glideConfig = createGlideConfig({
     projectId: process.env.GLIDE_PROJECT_ID!,
@@ -75,10 +76,8 @@ export async function transferTokenToAddress(configuration: Configuration) {
             to: tokenAddress as Address,
             data,
         })
-        console.log(txHash)
         return txHash
     } catch (error) {
-        console.log('Something went wrong sending tokens to address')
         return null
     }
 }
@@ -106,12 +105,12 @@ export async function transferTokenToAddressUsingGlide(
         account,
     }).extend(publicActions)
 
-    // Create Glide session for payment
-    const glidePaymentAmount = paymentAmount * Number(crossToken.paymentAmount)
-    const contractPaymentAmount =
-        config.tokenSymbol?.toLowerCase() === 'usdc'
-            ? parseUnits(`${paymentAmount}`, 6)
-            : parseEther(`${paymentAmount}`)
+    const glidePaymentAmount = Number(paymentAmount) * Number(crossToken.paymentAmount)
+    //@ts-expect-error: config.tokenSymbol may not be a key of currencies
+    const contractPaymentAmount = currencies?.[config.tokenSymbol?.toLowerCase()]?.decimals
+        ? //@ts-expect-error: config.tokenSymbol may not be a key of currencies
+          parseUnits(`${paymentAmount}`, currencies?.[config.tokenSymbol?.toLowerCase()]?.decimals)
+        : parseEther(`${paymentAmount}`)
     const session = await createSession(glideConfig, {
         paymentCurrency: crossToken.paymentCurrency,
         paymentAmount: glidePaymentAmount,
@@ -129,26 +128,19 @@ export async function transferTokenToAddressUsingGlide(
     // Convert the `transfer` unsigned transaction to `transferFrom`
     //@ts-expect-error: session.unsignedTransaction returns untyped
     const transaction = convertTransferToTransferFrom(session.unsignedTransaction, walletAddress)
-
     // Send the transaction using the wallet client
     try {
-        console.log('Sending transaction...')
         const txHash = await walletClient.sendTransaction(transaction)
-        console.log('Transaction sent! Hash:', txHash)
 
+        //TODO: Abstract to this side downwards to a different route
         // Update the Glide payment transaction
-        console.log('Updating payment transaction with Glide...')
         const { success } = await updatePaymentTransaction(glideConfig, {
             sessionId: session.sessionId,
             hash: txHash as `0x${string}`,
         })
 
-        console.log({ success })
-
         // Wait for session to complete
-        console.log('Waiting for session...')
         const res = await waitForSession(glideConfig, session.sessionId)
-        console.log({ res })
 
         return txHash
     } catch (error) {
@@ -218,7 +210,6 @@ export async function getCrossChainTokenDetails(
 ) {
     const GLIDE_PROJECT_ID =
         process.env.GLIDE_PROJECT_ID || process.env.NEXT_PUBLIC_GLIDE_PROJECT_ID
-    console.log(GLIDE_PROJECT_ID)
     if (!GLIDE_PROJECT_ID) {
         throw new Error('GLIDE_PROJECT_ID is not set')
     }
@@ -228,11 +219,9 @@ export async function getCrossChainTokenDetails(
         chains: Object.values(chainKeyToChain),
     })
     const chainId = chainKeyToChain[chain].id
-    console.log('fetching item....')
     const dummyRecepientAddress = '0x8ff47879d9eE072b593604b8b3009577Ff7d6809'
     try {
         const amount = tokenSymbol?.toLowerCase() === 'usdc' ? parseUnits('1', 6) : parseEther('1')
-        console.log(amount)
         const paymentOptions = await listPaymentOptions(glideConfig, {
             chainId,
             address: contractAddress,
@@ -240,7 +229,6 @@ export async function getCrossChainTokenDetails(
             functionName: 'transfer',
             args: [dummyRecepientAddress, amount],
         })
-        console.log(paymentOptions)
         return paymentOptions
     } catch (error) {
         console.error('Error fetching token details:', error)

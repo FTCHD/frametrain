@@ -51,7 +51,6 @@ export default function AirdropPage({
     frame: InferSelectModel<typeof frameTable>
 }) {
     const frameStorage = frame.storage as Storage
-    console.log(frameStorage)
     const frameConfig = frame.config as Config
     const [sortBy, setSortBy] = useState<'earnings' | 'recent'>('earnings')
     const sortedUsers = getSortedUsers(frameStorage, sortBy)
