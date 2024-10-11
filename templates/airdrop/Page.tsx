@@ -16,6 +16,7 @@ interface User {
     lastUsage: number
 }
 const getUsers = (storage: Storage): User[] => {
+    if (!storage?.user) return []
     return Object.values(storage.users)
 }
 
