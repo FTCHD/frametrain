@@ -1,8 +1,9 @@
 import { client } from '@/db/client'
 import { frameTable, interactionTable } from '@/db/schema'
-import type { BuildFrameData, FramePayload } from '@/lib/farcaster'
+import type { BuildFrameData, FarcasterFramePayload } from '@/lib/farcaster'
 import { updateFrameStorage } from '@/lib/frame'
-import { buildFramePage, validatePayload, validatePayloadAirstack } from '@/lib/serve'
+import { buildFramePage } from '@/lib/serve'
+import { isFarcasterFrameActionPayload, validatePayload, validatePayloadAirstack, type FramePayload } from '@/lib/validate'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
 import templates from '@/templates'
@@ -166,26 +167,30 @@ async function processFrame(
         }
     }
 
-    const airstackKey = frame.config?.airstackKey || process.env.AIRSTACK_API_KEY
+    // TODO Do we want to support interaction logging for non-Farcaster frames?
+    if (isFarcasterFrameActionPayload(payload)) {
+        const airstackKey = frame.config?.airstackKey || process.env.AIRSTACK_API_KEY
+    
+        const airstackPayloadValidated = await validatePayloadAirstack(payload as FarcasterFramePayload, airstackKey)
+        
+        console.log(JSON.stringify(airstackPayloadValidated, null, 2))
+    
+        await client
+            .insert(interactionTable)
+            .values({
+                frame: frame.id,
+                fid: airstackPayloadValidated.message.data.fid.toString(),
+                buttonIndex:
+                    airstackPayloadValidated.message.data.frameActionBody.buttonIndex.toString(),
+                inputText: airstackPayloadValidated.message.data.frameActionBody.inputText || undefined,
+                state: airstackPayloadValidated.message.data.frameActionBody.state || undefined,
+                transactionHash:
+                    airstackPayloadValidated.message.data.frameActionBody.transactionId || undefined,
+                castFid: airstackPayloadValidated.message.data.frameActionBody.castId.fid.toString(),
+                castHash: airstackPayloadValidated.message.data.frameActionBody.castId.hash,
+                createdAt: new Date(),
+            })
+            .run()
+    }
 
-    const airstackPayloadValidated = await validatePayloadAirstack(payload, airstackKey)
-
-    console.log(JSON.stringify(airstackPayloadValidated, null, 2))
-
-    await client
-        .insert(interactionTable)
-        .values({
-            frame: frame.id,
-            fid: airstackPayloadValidated.message.data.fid.toString(),
-            buttonIndex:
-                airstackPayloadValidated.message.data.frameActionBody.buttonIndex.toString(),
-            inputText: airstackPayloadValidated.message.data.frameActionBody.inputText || undefined,
-            state: airstackPayloadValidated.message.data.frameActionBody.state || undefined,
-            transactionHash:
-                airstackPayloadValidated.message.data.frameActionBody.transactionId || undefined,
-            castFid: airstackPayloadValidated.message.data.frameActionBody.castId.fid.toString(),
-            castHash: airstackPayloadValidated.message.data.frameActionBody.castId.hash,
-            createdAt: new Date(),
-        })
-        .run()
 }
