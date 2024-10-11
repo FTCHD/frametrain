@@ -1,29 +1,29 @@
+import { FrameError } from '@/sdk/error'
 import {
     type CAIP19,
     createGlideConfig,
     createSession,
-    currencies,
     listPaymentOptions,
     updatePaymentTransaction,
-    waitForSession,
+    waitForSession
 } from '@paywithglide/glide-js'
 import type { Address } from 'viem'
 import {
-    http,
     type EncodeFunctionDataParameters,
     createPublicClient,
     createWalletClient,
+    decodeFunctionData,
     encodeFunctionData,
     erc20Abi,
+    http,
     parseEther,
     parseUnits,
     publicActions,
-    decodeFunctionData,
 } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { arbitrum, base, mainnet, optimism, polygon } from 'viem/chains'
+import type { Config } from '../index'
 import { airdropChains } from '../index'
-import { FrameError } from '@/sdk/error'
 type Configuration = {
     operatorPrivateKey: string
     chain: keyof typeof airdropChains
@@ -84,7 +84,8 @@ export async function transferTokenToAddress(configuration: Configuration) {
 }
 export async function transferTokenToAddressUsingGlide(
     configuration: Configuration,
-    crossToken: Token
+    crossToken: Token,
+    config: Config
 ) {
     const {
         operatorPrivateKey,
@@ -106,14 +107,19 @@ export async function transferTokenToAddressUsingGlide(
     }).extend(publicActions)
 
     // Create Glide session for payment
+    const glidePaymentAmount = paymentAmount * Number(crossToken.paymentAmount)
+    const contractPaymentAmount =
+        config.tokenSymbol?.toLowerCase() === 'usdc'
+            ? parseUnits(`${paymentAmount}`, 6)
+            : parseEther(`${paymentAmount}`)
     const session = await createSession(glideConfig, {
         paymentCurrency: crossToken.paymentCurrency,
-        paymentAmount,
+        paymentAmount: glidePaymentAmount,
         chainId: airdropChains[chain],
         address: tokenAddress as Address,
         abi: erc20Abi,
         functionName: 'transfer',
-        args: [receiverAddress, parseUnits(`${paymentAmount}`, currencies.usdc.decimals)],
+        args: [receiverAddress, contractPaymentAmount],
     })
 
     if (!session || !session.unsignedTransaction) {

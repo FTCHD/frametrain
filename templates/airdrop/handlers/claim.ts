@@ -127,7 +127,7 @@ export default async function page({
         if (crossToken) {
             configuration.chain = crossToken.chainName.toLowerCase() as keyof typeof airdropChains
 
-            transferTokenToAddressUsingGlide(configuration, crossToken)
+            transferTokenToAddressUsingGlide(configuration, crossToken, config)
         }
     }
     transferTokenToAddress(configuration)
