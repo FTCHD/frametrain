@@ -16,12 +16,13 @@ interface User {
     lastUsage: number
 }
 const getUsers = (storage: Storage): User[] => {
-    if (!storage?.user) return []
+    if (!(storage && 'users' in storage)) return []
     return Object.values(storage.users)
 }
 
 const getSortedUsers = (storage: Storage, sortBy: 'earnings' | 'recent'): User[] => {
     const users = getUsers(storage)
+
     return users.sort((a, b) =>
         sortBy === 'earnings' ? b.earnings - a.earnings : b.lastUsage - a.lastUsage
     )
@@ -50,9 +51,11 @@ export default function AirdropPage({
     frame: InferSelectModel<typeof frameTable>
 }) {
     const frameStorage = frame.storage as Storage
+    console.log(frameStorage)
     const frameConfig = frame.config as Config
     const [sortBy, setSortBy] = useState<'earnings' | 'recent'>('earnings')
     const sortedUsers = getSortedUsers(frameStorage, sortBy)
+    console.log(sortedUsers)
     const stats = {
         totalSent: frameStorage.totalAmountEarned ?? 0,
         peopleGiven: sortedUsers.length,
@@ -139,7 +142,8 @@ export default function AirdropPage({
                                     </a>
                                 </Table.Cell>
                                 <Table.Cell className="text-purple-200">
-                                    {user.earnings ?? frameConfig.generalAmount} {tokenInfo.symbol}
+                                    {user.earnings ?? frameConfig.generalAmount}{' '}
+                                    {frameConfig.tokenSymbol ?? tokenInfo.symbol}
                                 </Table.Cell>
                                 <Table.Cell className="text-purple-200">
                                     {relativeTime(user.lastUsage)}
