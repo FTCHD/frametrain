@@ -3,7 +3,7 @@ import type { BuildFrameData, FramePayloadValidated } from '@/lib/farcaster'
 import { runGatingChecks } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
 import BasicView from '@/sdk/views/BasicView'
-import type { Config, Storage } from '..'
+import type { airdropChains, Config, Storage } from '..'
 import { transferTokenToAddress, transferTokenToAddressUsingGlide } from '../utils/onchainUtils'
 import ClaimedView from '../views/Claimed'
 import PendingApprovalView from '../views/PendingApproval'
@@ -123,7 +123,10 @@ export default async function page({
                 token.currencySymbol === config.crossToken.symbol &&
                 token.chainName.toLowerCase() === config.crossToken.chain
         )
+
         if (crossToken) {
+            configuration.chain = crossToken.chainName.toLowerCase() as keyof typeof airdropChains
+
             transferTokenToAddressUsingGlide(configuration, crossToken)
         }
     }

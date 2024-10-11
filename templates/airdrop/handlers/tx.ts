@@ -37,8 +37,7 @@ export default async function txData({
     if (userFid !== creatorFid) {
         throw new FrameError('You are not approved to use this function')
     }
-    const FRAME_TRAIN_OPERATOR_PRIVATE_KEY = process.env
-        .FRAME_TRAIN_OPERATOR_PRIVATE_KEY as `0x${string}`
+    const FRAME_TRAIN_OPERATOR_PRIVATE_KEY = process.env.FRAME_TRAIN_OPERATOR_PRIVATE_KEY as `0x${string}`
 
     if (!FRAME_TRAIN_OPERATOR_PRIVATE_KEY) {
         throw new FrameError('FRAME_TRAIN_OPERATOR_PRIVATE_KEY is not set')

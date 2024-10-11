@@ -95,7 +95,7 @@ export const airdropChains = {
     ethereum: 1,
     optimism: 10,
     arbitrum: 42161,
-}
+} as const
 
 export interface Storage extends BaseStorage {
     users: Record<

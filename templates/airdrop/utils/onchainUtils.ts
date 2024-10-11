@@ -22,7 +22,7 @@ import {
 } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { arbitrum, base, mainnet, optimism, polygon } from 'viem/chains'
-import type { airdropChains } from '..'
+import { airdropChains } from '../index'
 import { FrameError } from '@/sdk/error'
 type Configuration = {
     operatorPrivateKey: string
@@ -108,8 +108,8 @@ export async function transferTokenToAddressUsingGlide(
     // Create Glide session for payment
     const session = await createSession(glideConfig, {
         paymentCurrency: crossToken.paymentCurrency,
-        //@ts-expect-error
-        chainId: crossToken.chainId,
+        paymentAmount,
+        chainId: airdropChains[chain],
         address: tokenAddress as Address,
         abi: erc20Abi,
         functionName: 'transfer',
