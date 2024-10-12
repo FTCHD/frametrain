@@ -14,13 +14,15 @@ export default async function counterpartyAccepted({
     storage: Storage
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    storage.opponentAccepted = true
+    let newStorage = { ...storage }
+    newStorage.opponentAccepted = true
 
+    newStorage = Object.assign(storage, newStorage)
     return {
         buttons: [{ label: 'Back' }],
         fonts: roboto,
-        storage: storage,
-        component: CounterpartyAcceptedView(config, storage.opponentAccepted),
+        storage: newStorage,
+        component: CounterpartyAcceptedView(config, newStorage.opponentAccepted),
         handler: 'bet',
     }
 }

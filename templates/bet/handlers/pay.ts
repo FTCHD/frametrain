@@ -20,7 +20,9 @@ export default async function pay({
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
-    if (!storage.winner) {
+    let newStorage = { ...storage }
+
+    if (!newStorage.winner) {
         throw new FrameError('No winner has been decided yet.')
     }
 
@@ -29,7 +31,7 @@ export default async function pay({
     }
 
     const winnerAddress =
-        storage.winner === 'owner'
+        newStorage.winner === 'owner'
             ? config.owner?.custody_address
             : config.opponent?.custody_address
 
@@ -57,6 +59,7 @@ export default async function pay({
             address: winnerAddress,
         })
 
+        newStorage = Object.assign(storage, newStorage)
         return {
             buttons: [
                 { label: 'Back' },
@@ -67,8 +70,8 @@ export default async function pay({
                 },
             ],
             fonts: roboto,
-            storage: storage,
-            component: PayView(config, storage),
+            storage: newStorage,
+            component: PayView(config, newStorage),
             handler: 'bet',
             params: { sessionId: session.sessionId },
         }

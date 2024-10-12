@@ -18,10 +18,12 @@ export default async function initial({
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
-    storage.opponentAccepted = false
-    storage.winner = null
-    storage.payToWinner = false
+    let newStorage = { ...storage }
+    newStorage.opponentAccepted = false
+    newStorage.winner = null
+    newStorage.payToWinner = false
 
+    newStorage = Object.assign(storage, newStorage)
     return {
         buttons: [
             {
@@ -34,7 +36,7 @@ export default async function initial({
             },
         ],
         fonts: roboto,
-        storage: storage,
+        storage: newStorage,
         component: CoverView(config),
         handler: 'bet',
     }

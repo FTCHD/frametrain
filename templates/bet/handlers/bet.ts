@@ -29,52 +29,58 @@ export default async function bet({
     const interactorFid = body.interactor.fid
     const interactorRole = getRoleByFid(config, interactorFid)
 
+    let newStorage = { ...storage }
+
     if (body.tapped_button.index === 1) {
         if (interactorRole === 'owner') {
             // handle owner case when there is a winner
-            if (storage.winner == 'opponent') {
+            if (newStorage.winner == 'opponent') {
+                newStorage = Object.assign(storage, newStorage)
                 return {
-                    buttons: [{ label: `Pay to ${storage.winner}` }],
-                    storage: storage,
-                    component: PayView(config, storage),
+                    buttons: [{ label: `Pay to ${newStorage.winner}` }],
+                    storage: newStorage,
+                    component: PayView(config, newStorage),
                     handler: 'pay',
                 }
             }
         } else if (interactorRole === 'opponent') {
-            if (!storage.opponentAccepted) {
+            if (!newStorage.opponentAccepted) {
+                newStorage = Object.assign(storage, newStorage)
                 return {
                     buttons: [{ label: 'Accept the bet' }],
-                    storage: storage,
+                    storage: newStorage,
                     component: BetView(
                         config,
-                        storage.winner ?? null,
-                        storage.opponentAccepted,
+                        newStorage.winner ?? null,
+                        newStorage.opponentAccepted,
                         interactorRole
                     ),
                     handler: 'counterpartyAccepted',
                 }
             }
-            if (storage.opponentAccepted && storage.winner) {
+            if (newStorage.opponentAccepted && newStorage.winner) {
+                newStorage = Object.assign(storage, newStorage)
                 return {
-                    buttons: [{ label: `Pay to ${storage.winner}` }],
-                    storage: storage,
-                    component: PayView(config, storage),
+                    buttons: [{ label: `Pay to ${newStorage.winner}` }],
+                    storage: newStorage,
+                    component: PayView(config, newStorage),
                     handler: 'pay',
                 }
             }
         } else if (interactorRole === 'arbitrator') {
-            if (storage.opponentAccepted && !storage.winner) {
+            if (newStorage.opponentAccepted && !newStorage.winner) {
+                newStorage = Object.assign(storage, newStorage)
                 return {
                     buttons: [
                         { label: 'Back' },
                         { label: `Owner Wins` },
                         { label: `Opponent Wins` },
                     ],
-                    storage: storage,
+                    storage: newStorage,
                     component: BetView(
                         config,
-                        storage.winner ?? null,
-                        storage.opponentAccepted,
+                        newStorage.winner ?? null,
+                        newStorage.opponentAccepted,
                         interactorRole
                     ),
                     handler: 'arbitratorDecided',
@@ -83,19 +89,20 @@ export default async function bet({
         }
     }
 
+    newStorage = Object.assign(storage, newStorage)
     return {
         buttons: [
             { label: 'Back' },
-            { label: `Accepted: ${storage.opponentAccepted}` },
-            { label: `Winner: ${storage.winner ?? 'Not decided'}` },
+            { label: `Accepted: ${newStorage.opponentAccepted}` },
+            { label: `Winner: ${newStorage.winner ?? 'Not decided'}` },
         ],
         fonts: roboto,
-        storage: storage,
+        storage: newStorage,
         aspectRatio: '1.91:1',
         component: BetView(
             config,
-            storage.winner ?? null,
-            storage.opponentAccepted,
+            newStorage.winner ?? null,
+            newStorage.opponentAccepted,
             interactorRole
         ),
         handler: 'initial',
