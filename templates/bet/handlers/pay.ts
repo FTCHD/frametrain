@@ -40,19 +40,19 @@ export default async function pay({
     const glide = getGlide(config.chain)
 
     try {
-        const chainId = supportedChains.find((chain) => chain.key === config.chain)?.id
+        const chain = Object.keys(chains).find((chain) => (chains as any)[chain].id === glide.chains[0].id)
 
-        if (!chainId) {
+        if (!chain) {
             throw new FrameError('Unsupported chain')
         }
 
         const paymentCurrencyOnChain = (currencies as any)[config.token.name.toLowerCase()].on(
-            (chains as any)[chainId]
+            (chains as any)[chain]
         )
 
         const session = await createSession(glide, {
             paymentAmount: config.amount * 2, // Double the bet amount
-            chainId: chainId,
+            chainId: glide.chains[0].id,
             paymentCurrency: paymentCurrencyOnChain,
             address: winnerAddress,
         })
