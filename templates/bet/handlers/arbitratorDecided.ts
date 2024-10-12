@@ -23,7 +23,7 @@ export default async function arbitratorDecided({
     }
 
     // If the deadline is in the past, throw an error
-    if (config.deadline < Date.now()) {
+    if (config.deadline * 1000 < Date.now()) {
         throw new FrameError('Deadline is in the past')
     }
 
