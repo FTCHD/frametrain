@@ -14,10 +14,11 @@ export default async function counterpartyAccepted({
     storage: Storage
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    let newStorage = { ...storage }
-    newStorage.opponentAccepted = true
+    let newStorage = storage
 
-    newStorage = Object.assign(storage, newStorage)
+    newStorage = Object.assign(storage, {
+        opponentAccepted: true
+    })
     return {
         buttons: [{ label: 'Back' }],
         fonts: roboto,

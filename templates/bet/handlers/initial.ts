@@ -18,12 +18,12 @@ export default async function initial({
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
-    let newStorage = { ...storage }
-    newStorage.opponentAccepted = false
-    newStorage.winner = null
-    newStorage.payToWinner = false
-
-    newStorage = Object.assign(storage, newStorage)
+    let newStorage = storage
+    newStorage = Object.assign(storage, {
+        opponentAccepted: false,
+        winner: null,
+        payToWinner: false,
+    })
     return {
         buttons: [
             {

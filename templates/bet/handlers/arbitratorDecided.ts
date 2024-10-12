@@ -15,29 +15,35 @@ export default async function arbitratorDecided({
     storage: Storage
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    let newStorage = { ...storage }
+    let newStorage = storage
 
     // Ensure only the arbitrator can make this decision
     if (body.interactor.fid !== config.arbitrator?.fid) {
         throw new FrameError('Only the arbitrator can decide the winner')
     }
 
-    // Set the winner based on the button pressed
-    if (body.tapped_button.index === 1) {
-        newStorage.winner = 'owner'
-    } else if (body.tapped_button.index === 2) {
-        newStorage.winner = 'opponent'
-    } else {
-        throw new FrameError('Invalid button pressed')
-    }
-    
     // If the deadline is in the past, throw an error
     if (config.deadline < Date.now()) {
         throw new FrameError('Deadline is in the past')
     }
-    newStorage.arbitrateTimestamp = Date.now()
 
-    newStorage = Object.assign(storage, newStorage)
+    // Set the winner based on the button pressed
+    if (body.tapped_button.index === 1) {
+        newStorage = Object.assign(storage, {
+            winner: 'owner',
+        })
+    } else if (body.tapped_button.index === 2) {
+        newStorage = Object.assign(storage, {
+            winner: 'opponent',
+        })
+    } else {
+        throw new FrameError('Invalid button pressed')
+    }
+
+    newStorage = Object.assign(storage, {
+        arbitrateTimestamp: Date.now(),
+    })
+
     return {
         buttons: [{ label: 'Back to Bet' }],
         fonts: roboto,
