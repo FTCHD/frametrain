@@ -28,11 +28,11 @@ export default async function arbitratorDecided({
     }
 
     // Set the winner based on the button pressed
-    if (body.tapped_button.index === 1) {
+    if (body.tapped_button.index === 2) {
         newStorage = Object.assign(storage, {
             winner: 'owner',
         })
-    } else if (body.tapped_button.index === 2) {
+    } else if (body.tapped_button.index === 3) {
         newStorage = Object.assign(storage, {
             winner: 'opponent',
         })

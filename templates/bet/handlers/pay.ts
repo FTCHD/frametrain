@@ -7,7 +7,6 @@ import { getGlide } from '@/sdk/glide'
 import { chains, createSession, currencies } from '@paywithglide/glide-js'
 import type { Config, Storage } from '..'
 import PayView from '../views/Pay'
-import { supportedChains } from '@/sdk/viem'
 
 export default async function pay({
     body,
