@@ -53,9 +53,10 @@ export default async function bet({
                     handler: 'counterpartyAccepted',
                 }
             }
-            if (storage.opponentAccepted && storage.winner) {
+            if (storage.opponentAccepted && storage.winner == 'owner') {
+                const winner = storage.winner == 'owner' ? config.owner : config.opponent
                 return {
-                    buttons: [{ label: `Pay to ${storage.winner}` }],
+                    buttons: [{ label: `Pay to @${winner?.username}` }],
                     storage,
                     component: PayView(config, storage),
                     handler: 'pay',
