@@ -30,16 +30,16 @@ export default async function bet({
     const interactorRole = getRoleByFid(config, interactorFid)
 
     if (body.tapped_button.index === 1) {
-        if (interactorRole === 'owner') {
-            if (storage.winner == 'opponent') {
-                return {
-                    buttons: [{ label: `Pay to ${storage.winner}` }],
-                    storage,
-                    component: PayView(config, storage),
-                    handler: 'pay',
-                }
+        if (interactorRole === 'owner' && storage.winner === 'opponent') {
+            return {
+                buttons: [{ label: `Pay to @${config.opponent?.username}` }],
+                storage,
+                component: PayView(config, storage),
+                handler: 'pay',
             }
-        } else if (interactorRole === 'opponent') {
+        } 
+        
+        if (interactorRole === 'opponent') {
             if (!storage.opponentAccepted) {
                 return {
                     buttons: [{ label: 'Accept the bet' }],
@@ -53,16 +53,18 @@ export default async function bet({
                     handler: 'counterpartyAccepted',
                 }
             }
-            if (storage.opponentAccepted && storage.winner == 'owner') {
-                const winner = storage.winner == 'owner' ? config.owner : config.opponent
+            
+            if (storage.opponentAccepted && storage.winner === 'owner') {
                 return {
-                    buttons: [{ label: `Pay to @${winner?.username}` }],
+                    buttons: [{ label: `Pay to @${config.owner?.username}` }],
                     storage,
                     component: PayView(config, storage),
                     handler: 'pay',
                 }
             }
-        } else if (interactorRole === 'arbitrator') {
+        }
+        
+        if (interactorRole === 'arbitrator') {
             if (storage.opponentAccepted && !storage.winner) {
                 return {
                     buttons: [
@@ -82,7 +84,6 @@ export default async function bet({
             }
         }
     }
-
     return {
         buttons: [
             { label: 'Back' },
