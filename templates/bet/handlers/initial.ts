@@ -5,10 +5,7 @@ import type { Config, Storage } from '..'
 import CoverView from '../views/Cover'
 
 export default async function initial({
-    body,
     config,
-    storage,
-    params,
 }: {
     // GET requests don't have a body.
     body: undefined
@@ -18,12 +15,6 @@ export default async function initial({
 }): Promise<BuildFrameData> {
     const roboto = await loadGoogleFontAllVariants('Roboto')
 
-    let newStorage = storage
-    newStorage = Object.assign(storage, {
-        opponentAccepted: false,
-        winner: null,
-        payToWinner: false,
-    })
     return {
         buttons: [
             {
@@ -36,7 +27,6 @@ export default async function initial({
             },
         ],
         fonts: roboto,
-        storage: newStorage,
         component: CoverView(config),
         handler: 'bet',
     }
