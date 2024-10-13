@@ -1,9 +1,9 @@
 
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
+import ContextProvider from '@/lib/context'
 import type React from 'react'
 import './global.css'
-import ContextProvider from '@/context'
 
 export const metadata: Metadata = {
     title: {

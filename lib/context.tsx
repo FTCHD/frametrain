@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
 import { mainnet, arbitrum, base, optimism, polygon, zora, gnosis, binanceSmartChain } from '@reown/appkit/networks'
 import React, { type ReactNode } from 'react'
-import { WagmiProvider, type Config } from 'wagmi'
+import { WagmiProvider } from 'wagmi'
 
 // Set up queryClient
 const queryClient = new QueryClient()
@@ -18,8 +18,8 @@ if (!projectId) {
 const metadata = {
     name: "FrameTrain",
     description: "Farcaster Frames Builder",
-    url: "https://frametra.in", // origin must match your domain & subdomain
-    icons: ["/og.png"]
+    url: process.env.NEXT_PUBLIC_HOST || 'http://localhost:3000', // origin must match your domain & subdomain
+    icons: ["/favicons/icon-192.png"]
 }
 
 // Create the modal
