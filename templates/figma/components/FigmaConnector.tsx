@@ -12,6 +12,16 @@ export default function FigmaTokenEditor() {
     router.push(`/api/auth/figma?original_url=${encodeURIComponent(currentPage)}`);
   };
 
+  const handleSignout = async () => {
+    await fetch('/api/auth/figma/signout', {
+      method: 'POST'
+    });
+
+    // Refresh the page
+    // biome-ignore lint/correctness/noSelfAssign: <explanation>
+    window.location.href = window.location.href;
+  };
+
   return (
     <div>
       {loading ? (
@@ -21,7 +31,9 @@ export default function FigmaTokenEditor() {
           Connect Figma Account
         </Button>
       ) : (
-        <p>Figma Account Connected</p>
+        <Button onClick={handleSignout} variant="secondary">
+          Sign Out
+        </Button>
       )}
     </div>
   );
