@@ -15,6 +15,7 @@ import type {
 import { getFigmaDesign, svgToDataUrl } from '../utils/FigmaApi'
 import { useSession } from 'next-auth/react'
 import type { FrameTrainSession } from '@/auth'
+import { useFigmaToken } from './FigmaTokenContext'
 
 const SVG_TEXT_DEBUG_ENABLED = false
 
@@ -55,10 +56,7 @@ export const PropertiesTab = ({
     const [newUrl, setNewUrl] = useState(figmaUrl)
     const [isUpdating, setIsUpdating] = useState(false)
 
-    // Access the figmaAccessToken from the session
-    const { data: session } = useSession();
-    const figmaAccessToken = (session as FrameTrainSession)?.figmaAccessToken;
-
+    const { figmaAccessToken, loading } = useFigmaToken();
 
     const updateUrl = async () => {
         console.debug(`updateFigmaUrl(${slideConfigId})`)
@@ -187,8 +185,12 @@ export const PropertiesTab = ({
     const aspectRatioFormatted = !figmaMetadata
         ? ''
         : figmaMetadata.aspectRatio % 1 === 0
-          ? figmaMetadata?.aspectRatio?.toString() + ':1'
-          : figmaMetadata?.aspectRatio?.toFixed(2) + ':1'
+            ? figmaMetadata?.aspectRatio?.toString() + ':1'
+            : figmaMetadata?.aspectRatio?.toFixed(2) + ':1'
+
+    if (loading) {
+        return <div>Loading...</div>
+    }
 
     return (
         <div>
@@ -217,7 +219,7 @@ export const PropertiesTab = ({
                         placeholder={
                             figmaAccessToken
                                 ? 'Figma Frame > right click > copy as > copy link'
-                                : 'Configure Figma PAT first'
+                                : 'Connect Figma Account'
                         }
                         disabled={!figmaAccessToken}
                         value={newUrl}

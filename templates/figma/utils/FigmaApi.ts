@@ -227,11 +227,11 @@ export async function getFigmaDesign(
  * See: https://www.figma.com/developers/api#get-files-endpoint
  */
 export async function getFigmaFile(
-    figmaPAT: string,
+    figmaAccessToken: string,
     linkUrl?: string
 ): Promise<FigmaApiResult<FigmaFile>> {
     try {
-        if (!figmaPAT) {
+        if (!figmaAccessToken) {
             return { success: false, error: 'Personal Access Token (PAT) is missing or empty' }
         }
 
@@ -245,7 +245,8 @@ export async function getFigmaFile(
             {
                 method: 'GET',
                 headers: {
-                    'X-FIGMA-TOKEN': figmaPAT,
+                    'Authorization': `Bearer ${figmaAccessToken}`,
+                    'X-FIGMA-TOKEN': figmaAccessToken,
                 },
                 cache: 'no-store', // always get the latest
             }
@@ -274,11 +275,11 @@ export async function getFigmaFile(
  * See: https://www.figma.com/developers/api#get-images-endpoint
  */
 export async function getFigmaSvgImage(
-    figmaPAT: string,
+    figmaAccessToken: string,
     linkUrl?: string
 ): Promise<FigmaApiResult<FigmaSvgImage>> {
     try {
-        if (!figmaPAT) {
+        if (!figmaAccessToken) {
             return { success: false, error: 'Personal Access Token (PAT) is missing or empty' }
         }
 
@@ -292,7 +293,8 @@ export async function getFigmaSvgImage(
             {
                 method: 'GET',
                 headers: {
-                    'X-FIGMA-TOKEN': figmaPAT,
+                    'Authorization': `Bearer ${figmaAccessToken}`,
+                    'X-FIGMA-TOKEN': figmaAccessToken,
                 },
                 cache: 'no-store', // PERFORMANCE: think about how we can avoid this
             }
