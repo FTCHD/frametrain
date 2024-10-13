@@ -1,4 +1,4 @@
-// import 'server-only'
+import 'server-only'
 
 import { FrameError } from '@/sdk/error'
 import { getGlide } from '@/sdk/glide'
