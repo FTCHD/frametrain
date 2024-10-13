@@ -3,7 +3,7 @@ import type { GatingType } from '@/sdk/components/gating/types'
 import Inspector from './Inspector'
 import cover from './cover.png'
 import handlers from './handlers'
-import type { Token } from './utils/onchainUtils'
+import type { Token } from './utils/server_onchainUtils'
 
 export type LinkButton = {
     action: 'link'

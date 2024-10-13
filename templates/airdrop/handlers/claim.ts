@@ -4,7 +4,10 @@ import { runGatingChecks } from '@/lib/gating'
 import { FrameError } from '@/sdk/error'
 import BasicView from '@/sdk/views/BasicView'
 import type { airdropChains, Config, Storage } from '..'
-import { transferTokenToAddress, transferTokenToAddressUsingGlide } from '../utils/onchainUtils'
+import {
+    transferTokenToAddress,
+    transferTokenToAddressUsingGlide,
+} from '../utils/server_onchainUtils'
 import ClaimedView from '../views/Claimed'
 import PendingApprovalView from '../views/PendingApproval'
 import { waitUntil } from '@vercel/functions'
@@ -117,7 +120,7 @@ export default async function page({
         const crossTokenKey = `${chainName}/${config.tokenAddress}`
         const crossTokens = config.crossTokens[crossTokenKey]
 
-        const crossToken = crossTokens?.find(
+        const crossToken = crossTokens?.find( 
             (token) =>
                 token.currencySymbol === config.crossToken.symbol &&
                 token.chainName.toLowerCase() === config.crossToken.chain

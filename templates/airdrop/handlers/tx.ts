@@ -12,7 +12,7 @@ import {
 } from 'viem'
 import { privateKeyToAddress } from 'viem/accounts'
 import { type Config, type Storage, airdropChains } from '..'
-import { getDetailsFromPaymentCurrency } from '../utils/onchainUtils'
+import { getDetailsFromPaymentCurrency } from '../utils/server_onchainUtils'
 
 export default async function txData({
     config,

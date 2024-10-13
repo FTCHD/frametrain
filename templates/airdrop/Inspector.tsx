@@ -12,13 +12,12 @@ import {
 import { useFarcasterId, useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { Configuration } from '@/sdk/inspector'
 import { X } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { type Address, isAddress } from 'viem'
 import type { Config, LinkButton } from '.'
 import { airdropChains } from '.'
-import { getContractDetails, getCrossChainTokenDetails } from './utils/onchainUtils'
-import { unique } from 'drizzle-orm/mysql-core'
+import { getContractDetails } from './utils/server_onchainUtils'
 
 interface WhiteList {
     address: string
@@ -225,30 +224,57 @@ function GeneralSection() {
     const tokenAddress = config.tokenAddress as Address
     const crossTokenKey = `${chainName}/${tokenAddress}`
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Config/updateconfig changes on every update to config so adding exhaustive deps is not really doing any help
     useEffect(() => {
         async function fetchContractDetails() {
             if (config.tokenAddress && config.chain && isAddress(config.tokenAddress)) {
-                const details = await getContractDetails(chainName, tokenAddress)
+                const queryParams = new URLSearchParams({
+                    chain: chainName,
+                    address: tokenAddress,
+                })
+                const detailsResponse = await fetch(`/api/contract-details?${queryParams}`)
+                let details
+                if (!detailsResponse.ok) {
+                    details = null
+                } else {
+                    details = await detailsResponse.json()
+                }
+
                 const crossTokens = config.crossTokens?.[crossTokenKey]
                 if (!crossTokens && config.crossTokenEnabled) {
-                    const crossTokenDetails = await getCrossChainTokenDetails(
-                        chainName,
-                        tokenAddress as Address,
-                        config.tokenSymbol
-                    )
-
-                    if (crossTokenDetails) {
-                        const newConfig = {
-                            tokenName: details?.name ?? '',
-                            tokenSymbol: details?.symbol ?? '',
-                            crossTokens: {
-                                ...config.crossTokens,
-                                [crossTokenKey]: crossTokenDetails,
-                            },
+                    try {
+                        const queryParams = new URLSearchParams({
+                            chain: chainName,
+                            address: tokenAddress,
+                            symbol: config.tokenSymbol,
+                        })
+                        const crossChainDetailsResponse = await fetch(
+                            `/api/cross-chain-token-details?${queryParams}`
+                        )
+                        let crossTokenDetails
+                        if (!crossChainDetailsResponse.ok) {
+                            crossTokenDetails = null
+                            // throw new Error('Failed to fetch cross-chain token details')
+                        } else {
+                            crossTokenDetails = await crossChainDetailsResponse.json()
                         }
 
-                        updateConfig({ ...newConfig })
-                        return
+                        if (crossTokenDetails) {
+                            const newConfig = {
+                                tokenName: details?.name ?? '',
+                                tokenSymbol: details?.symbol ?? '',
+                                crossTokens: {
+                                    ...config.crossTokens,
+                                    [crossTokenKey]: crossTokenDetails,
+                                },
+                            }
+
+                            updateConfig({ ...newConfig })
+                            return
+                        }
+                    } catch (error) {
+                        console.error('Error fetching cross-chain  details:', error)
+                        toast.error('Failed to fetch cross-chain token details')
                     }
                 }
                 updateConfig({
@@ -264,14 +290,19 @@ function GeneralSection() {
 
                 if (!details) {
                     toast.error(
-                        `Couldn't fetch contract details for ${tokenAddress} on ${chainName} chain`
+                        `Couldn't fetch contract details for ${config.tokenAddress} on ${config.chain} chain`
                     )
                 }
             }
         }
         fetchContractDetails()
-    }, [config.tokenAddress, config.chain, config.crossTokenEnabled])
-
+    }, [
+        config.tokenAddress,
+        config.chain,
+        config.crossTokenEnabled,
+        config.tokenSymbol,
+        updateConfig,
+    ])
     const [availableTokens, uniqueChains] = (() => {
         if (!config.crossTokens || !tokenAddress || !config.chain || !isAddress(tokenAddress)) {
             return [{}, []]
@@ -332,7 +363,7 @@ function GeneralSection() {
                 ))}
             </Select>
 
-            <div className="flex items-center space-x-2 mt-4">
+            <div className="flex items-center space-x-2 py-6">
                 <Switch
                     id="cross-token"
                     checked={config.crossTokenEnabled}
@@ -366,7 +397,7 @@ function GeneralSection() {
                     </div>
 
                     {availableTokens?.[config.crossToken?.chain] && (
-                        <div>
+                        <div className="py-2">
                             <Label htmlFor="cross-token-symbol">Cross Token Symbol</Label>
                             <Select
                                 defaultValue={config.crossToken?.symbol ?? ''}

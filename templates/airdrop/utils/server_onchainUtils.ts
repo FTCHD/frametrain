@@ -1,7 +1,9 @@
+import 'server-only'
+
 import { FrameError } from '@/sdk/error'
+import { getGlide } from '@/sdk/glide'
 import {
     type CAIP19,
-    createGlideConfig,
     createSession,
     currencies,
     listPaymentOptions,
@@ -40,11 +42,6 @@ export const chainKeyToChain = {
     optimism: optimism,
     polygon: polygon,
 } as const
-
-export const glideConfig = createGlideConfig({
-    projectId: process.env.GLIDE_PROJECT_ID!,
-    chains: Object.values(chainKeyToChain),
-})
 
 export async function transferTokenToAddress(configuration: Configuration) {
     const {
@@ -111,6 +108,8 @@ export async function transferTokenToAddressUsingGlide(
         ? //@ts-expect-error: config.tokenSymbol may not be a key of currencies
           parseUnits(`${paymentAmount}`, currencies?.[config.tokenSymbol?.toLowerCase()]?.decimals)
         : parseEther(`${paymentAmount}`)
+    const chainName = chain == 'ethereum' ? 'mainnet' : chain
+    const glideConfig = getGlide(chainName)
     const session = await createSession(glideConfig, {
         paymentCurrency: crossToken.paymentCurrency,
         paymentAmount: glidePaymentAmount,
@@ -206,29 +205,29 @@ export async function getContractDetails(
 export async function getCrossChainTokenDetails(
     chain: keyof typeof chainKeyToChain,
     contractAddress: Address,
-    tokenSymbol?: string
+    tokenSymbol: string
 ) {
-    const GLIDE_PROJECT_ID =
-        process.env.GLIDE_PROJECT_ID || process.env.NEXT_PUBLIC_GLIDE_PROJECT_ID
-    if (!GLIDE_PROJECT_ID) {
-        throw new Error('GLIDE_PROJECT_ID is not set')
-    }
-
-    const glideConfig = createGlideConfig({
-        projectId: GLIDE_PROJECT_ID,
-        chains: Object.values(chainKeyToChain),
-    })
     const chainId = chainKeyToChain[chain].id
     const dummyRecepientAddress = '0x8ff47879d9eE072b593604b8b3009577Ff7d6809'
     try {
-        const amount = tokenSymbol?.toLowerCase() === 'usdc' ? parseUnits('1', 6) : parseEther('1')
-        const paymentOptions = await listPaymentOptions(glideConfig, {
-            chainId,
-            address: contractAddress,
-            abi: erc20Abi,
-            functionName: 'transfer',
-            args: [dummyRecepientAddress, amount],
-        })
+        //@ts-expect-error: ts not sure if token symbol can index curencies`
+        const amount = currencies?.[tokenSymbol?.toLowerCase()]?.decimals
+            ? //@ts-expect-error: ts not sure if token symbol can index curencies`
+              parseUnits('1', currencies?.[tokenSymbol?.toLowerCase()]?.decimals)
+            : parseEther('1')
+
+        const glideConfig = getGlide(chain)
+        const paymentOptions = await listPaymentOptions(
+            glideConfig,
+            //@ts-expect-error: Ts expects accounts but it works without accounts
+            {
+                chainId,
+                address: contractAddress,
+                abi: erc20Abi,
+                functionName: 'transfer',
+                args: [dummyRecepientAddress, amount],
+            }
+        )
         return paymentOptions
     } catch (error) {
         console.error('Error fetching token details:', error)
