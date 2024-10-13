@@ -241,7 +241,8 @@ function GeneralSection() {
                 }
 
                 const crossTokens = config.crossTokens?.[crossTokenKey]
-                if (!crossTokens && config.crossTokenEnabled) {
+
+                if ((!crossTokens || crossTokens.length === 0) && config.crossTokenEnabled) {
                     try {
                         const queryParams = new URLSearchParams({
                             chain: chainName,

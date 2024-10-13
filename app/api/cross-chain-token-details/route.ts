@@ -4,14 +4,6 @@ import { NextResponse } from 'next/server'
 import { isAddress } from 'viem'
 import * as z from 'zod'
 
-const getCachedCrossChainTokenDetails = unstable_cache(
-    async (chain: Schema['chain'], address: Schema['address'], symbol: Schema['symbol']) => {
-        return await getCrossChainTokenDetails(chain, address, symbol)
-    },
-    ['cross-chain-token-details'],
-    { revalidate: 3600 }
-)
-
 export const schema = z.object({
     chain: z.enum(['mainnet', 'arbitrum', 'base', 'optimism', 'polygon']),
     address: z.string().refine((value) => isAddress(value), {
@@ -38,9 +30,20 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 })
     }
     const { chain, address, symbol } = data
+    const cacheKey = `${chain}-${address}-${symbol}`
 
     try {
-        const crossTokenDetails = await getCachedCrossChainTokenDetails(chain, address, symbol)
+        const crossTokenDetails = await unstable_cache(
+            async () => getCrossChainTokenDetails(chain, address, symbol),
+            [cacheKey],
+            {
+                //Revalidate once an hour since glide can change options at any point
+                revalidate: 3600,
+                tags: ['cross-chain-token-details'],
+            }
+        )()
+
+        console.log(crossTokenDetails)
 
         if (crossTokenDetails) {
             return NextResponse.json(crossTokenDetails)

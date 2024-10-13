@@ -1,4 +1,4 @@
-import 'server-only'
+// import 'server-only'
 
 import { FrameError } from '@/sdk/error'
 import { getGlide } from '@/sdk/glide'
@@ -43,6 +43,7 @@ export const chainKeyToChain = {
     polygon: polygon,
 } as const
 
+const farcasterSupportedChains = Object.keys(chainKeyToChain) as (keyof typeof chainKeyToChain)[]
 export async function transferTokenToAddress(configuration: Configuration) {
     const {
         operatorPrivateKey,
@@ -210,24 +211,22 @@ export async function getCrossChainTokenDetails(
     const chainId = chainKeyToChain[chain].id
     const dummyRecepientAddress = '0x8ff47879d9eE072b593604b8b3009577Ff7d6809'
     try {
-        //@ts-expect-error: ts not sure if token symbol can index curencies`
-        const amount = currencies?.[tokenSymbol?.toLowerCase()]?.decimals
-            ? //@ts-expect-error: ts not sure if token symbol can index curencies`
-              parseUnits('1', currencies?.[tokenSymbol?.toLowerCase()]?.decimals)
-            : parseEther('1')
+        const symbol = tokenSymbol?.toLowerCase()
+        let decimals
+        if (!(currencies && symbol in currencies)) decimals = null
+        decimals = currencies[symbol as keyof typeof currencies]?.decimals
+        const amount = decimals ? parseUnits('1', decimals) : parseEther('1')
 
-        const glideConfig = getGlide(chain)
-        const paymentOptions = await listPaymentOptions(
-            glideConfig,
-            //@ts-expect-error: Ts expects accounts but it works without accounts
-            {
-                chainId,
-                address: contractAddress,
-                abi: erc20Abi,
-                functionName: 'transfer',
-                args: [dummyRecepientAddress, amount],
-            }
-        )
+        const glideConfig = getGlide(farcasterSupportedChains)
+        // console.log(glideConfig)
+
+        const paymentOptions = await listPaymentOptions(glideConfig, {
+            chainId,
+            address: contractAddress,
+            abi: erc20Abi,
+            functionName: 'transfer',
+            args: [dummyRecepientAddress, amount],
+        })
         return paymentOptions
     } catch (error) {
         console.error('Error fetching token details:', error)

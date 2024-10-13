@@ -4,14 +4,6 @@ import { NextResponse } from 'next/server'
 import { isAddress } from 'viem'
 import * as z from 'zod'
 
-const getCachedContractDetails = unstable_cache(
-    async (chain: Schema['chain'], address: Schema['address']) => {
-        return await getContractDetails(chain, address)
-    },
-    ['cross-chain-token-details'],
-    { revalidate: 3600 }
-)
-
 export const schema = z.object({
     chain: z.enum(['mainnet', 'arbitrum', 'base', 'optimism', 'polygon']),
     address: z.string().refine((value) => isAddress(value), {
@@ -35,9 +27,17 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 })
     }
     const { chain, address } = data
-
+    const cacheKey = `${chain}-${address}`
     try {
-        const crossTokenDetails = await getCachedContractDetails(chain, address)
+        const crossTokenDetails = await unstable_cache(
+            async () => getContractDetails(chain, address),
+            [cacheKey],
+            {
+                //Never revalidate since the token contract details never changes
+                revalidate: false,
+                tags: ['contract-details'],
+            }
+        )()
 
         if (crossTokenDetails) {
             return NextResponse.json(crossTokenDetails)
