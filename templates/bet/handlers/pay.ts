@@ -29,8 +29,8 @@ export default async function pay({
 
     const winnerAddress =
         storage.winner == 'owner'
-            ? config.owner?.custody_address
-            : config.opponent?.custody_address
+            ? config.owner?.wallet_address
+            : config.opponent?.wallet_address
 
     if (!winnerAddress) {
         throw new FrameError('Winner address not found.')

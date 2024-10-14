@@ -24,11 +24,15 @@ export async function getUserDataByFarcasterUsername(username: string) {
     }
 
     for (const user of users) {
-        const { fid, custody_address, username: returnedUsername, pfp_url } = user
+        const { fid, custody_address, verified_addresses, username: returnedUsername, pfp_url } = user
 
         // check if this is the user we want
         if (username === returnedUsername) {
-            return { fid, custody_address, returnedUsername, pfp_url }
+            let wallet_address = custody_address;
+            if (verified_addresses && Array.isArray(verified_addresses.eth_addresses) && verified_addresses.eth_addresses.length > 0) {
+                wallet_address = verified_addresses.eth_addresses[0];
+            }
+            return { fid, wallet_address, username: returnedUsername, pfp_url }
         }
     }
     throw new Error(`User not found for username: ${username}`)

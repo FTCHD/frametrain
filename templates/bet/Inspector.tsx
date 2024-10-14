@@ -10,7 +10,7 @@ import type { Config, User } from '.'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<Config>()
-    const { privacy, claim, opponent, arbitrator, amount, owner, token, chain, deadline } = config
+    const { privacy, claim, opponent, arbitrator, amount, owner, chain, deadline } = config
     const fid = useFarcasterId()
     const username = useFarcasterName()
     const uploadImage = useUploadImage()
@@ -23,7 +23,7 @@ export default function Inspector() {
                     owner: {
                         username,
                         fid: fid,
-                        custody_address: data.custody_address,
+                        wallet_address: data.wallet_address,
                         pfp_url: data.pfp_url,
                     },
                 })
@@ -39,7 +39,7 @@ export default function Inspector() {
                 [field]: {
                     username: value,
                     fid: data.fid,
-                    custody_address: data.custody_address,
+                    wallet_address: data.wallet_address,
                     pfp_url: data.pfp_url,
                 },
             })

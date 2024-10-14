@@ -16,7 +16,7 @@ export interface Token {
 export interface User {
     username: string
     fid?: number
-    custody_address?: Address
+    wallet_address?: Address
     pfp_url?: string
 }
 
