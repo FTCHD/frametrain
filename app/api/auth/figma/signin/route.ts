@@ -7,8 +7,18 @@ import { type NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
     const { FIGMA_CLIENT_ID, NEXT_PUBLIC_HOST } = process.env;
 
+    // biome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
+    if (!FIGMA_CLIENT_ID || !NEXT_PUBLIC_HOST) {
+        return NextResponse.json({ error: 'Missing environment variables' }, { status: 500 });
+    }
+
     // Get the original page URL from query params or referrer header
     const originalUrl = request.nextUrl.searchParams.get('original_url');
+
+    // URL redirection attacks
+    if (!originalUrl?.startsWith(NEXT_PUBLIC_HOST)) {
+        return NextResponse.json({ error: 'Invalid redirect URL' }, { status: 400 });
+    }
 
     const redirectUri = `${NEXT_PUBLIC_HOST}/api/auth/figma/callback`;
     const state = JSON.stringify({

@@ -118,15 +118,15 @@ export type FigmaFile = {
  *
  */
 export async function getFigmaDesign(
-    figmaPAT: string,
+    figmaAccessToken: string,
     linkUrl?: string
 ): Promise<FigmaApiResult<FigmaDesign>> {
     try {
-        const fileResult = await getFigmaFile(figmaPAT, linkUrl)
+        const fileResult = await getFigmaFile(figmaAccessToken, linkUrl)
         if (!fileResult.success) return fileResult
         const file = fileResult.value
 
-        const svgResult = await getFigmaSvgImage(figmaPAT, linkUrl)
+        const svgResult = await getFigmaSvgImage(figmaAccessToken, linkUrl)
         if (!svgResult.success) return svgResult
         const svg = svgResult.value
 

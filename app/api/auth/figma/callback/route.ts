@@ -8,11 +8,20 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const { FIGMA_CLIENT_ID, FIGMA_CLIENT_SECRET, NEXT_PUBLIC_HOST } = process.env;
 
+    // biome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
+    if (!FIGMA_CLIENT_ID || !FIGMA_CLIENT_SECRET || !NEXT_PUBLIC_HOST) {
+        return NextResponse.json({ error: 'Missing environment variables' }, { status: 500 });
+    }
+
     // Retrieve the stored state from the cookie and verify the CSRF token
     const stateParam = searchParams.get('state');
     const storedState = request.cookies.get('oauth_state')?.value;
+    // biome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
+    if (!stateParam || !storedState) {
+        return NextResponse.json({ error: 'Missing state parameter' }, { status: 500 });
+    }
     if (storedState !== stateParam) {
-        return NextResponse.json({ error: 'State mismatch. Possible CSRF attack.' }, { status: 400 });
+        return NextResponse.json({ error: 'State mismatch. Possible CSRF attack.' }, { status: 500 });
     }
 
     // Get the original page URL from the state

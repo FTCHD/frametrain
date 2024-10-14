@@ -13,8 +13,6 @@ import type {
     TextLayerConfigs,
 } from '../Config'
 import { getFigmaDesign, svgToDataUrl } from '../utils/FigmaApi'
-import { useSession } from 'next-auth/react'
-import type { FrameTrainSession } from '@/auth'
 import { useFigmaToken } from './FigmaTokenContext'
 
 const SVG_TEXT_DEBUG_ENABLED = false
