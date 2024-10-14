@@ -9,7 +9,7 @@ export default function FigmaTokenEditor() {
 
   const handleConnectFigma = () => {
     const currentPage = window.location.href;
-    router.push(`/api/auth/figma?original_url=${encodeURIComponent(currentPage)}`);
+    router.push(`/api/auth/figma/signin?original_url=${encodeURIComponent(currentPage)}`);
   };
 
   const handleSignout = async () => {
