@@ -8,7 +8,7 @@ export function getRoleByFid(config: Config, fid: number): 'owner' | 'opponent' 
   }
 
   for (const [role, roleFid] of Object.entries(roles)) {
-    if (roleFid === fid) {
+    if (Number(roleFid) === fid) {
       return role as 'owner' | 'opponent' | 'arbitrator'
     }
   }
