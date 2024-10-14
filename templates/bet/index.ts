@@ -12,7 +12,6 @@ export interface Token {
     id: Address
     name: string
 }
-    
 
 export interface User {
     username: string
