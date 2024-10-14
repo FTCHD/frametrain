@@ -1,7 +1,6 @@
 import type { FigmaTextLayer } from './utils/FigmaApi'
 
 export interface FramePressConfig {
-    figmaPAT: string
     slides: SlideConfig[]
     nextSlideId: number
 }

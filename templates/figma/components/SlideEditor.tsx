@@ -14,13 +14,12 @@ import { PropertiesTab } from './PropertiesTab'
 import { TextLayerDesigner } from './TextLayerDesigner'
 
 type SlideDesignerProps = {
-    figmaPAT: string
     slideConfig: SlideConfig
     buttonTargets: ButtonTarget[]
     onUpdate: (updatedSlideConfig: SlideConfig) => void
 }
 
-const SlideDesigner = ({ figmaPAT, slideConfig, buttonTargets, onUpdate }: SlideDesignerProps) => {
+const SlideDesigner = ({ slideConfig, buttonTargets, onUpdate }: SlideDesignerProps) => {
     function updateTitle(title: string) {
         onUpdate({ ...slideConfig, title })
     }
@@ -80,7 +79,6 @@ const SlideDesigner = ({ figmaPAT, slideConfig, buttonTargets, onUpdate }: Slide
                         description={slideConfig.description}
                         textLayers={slideConfig.textLayers}
                         aspectRatio={slideConfig.aspectRatio}
-                        figmaPAT={figmaPAT}
                         figmaUrl={slideConfig.figmaUrl}
                         figmaMetadata={slideConfig.figmaMetadata}
                         onUpdateTitle={updateTitle}
