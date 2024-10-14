@@ -27,11 +27,10 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 })
     }
     const { chain, address } = data
-    const cacheKey = `${chain}-${address}`
     try {
         const crossTokenDetails = await unstable_cache(
             async () => getContractDetails(chain, address),
-            [cacheKey],
+            [chain, address],
             {
                 //Never revalidate since the token contract details never changes
                 revalidate: false,

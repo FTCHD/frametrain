@@ -30,12 +30,11 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 })
     }
     const { chain, address, symbol } = data
-    const cacheKey = `${chain}-${address}-${symbol}`
-
+    
     try {
         const crossTokenDetails = await unstable_cache(
             async () => getCrossChainTokenDetails(chain, address, symbol),
-            [cacheKey],
+            [chain, address, symbol],
             {
                 //Revalidate once an hour since glide can change options at any point
                 revalidate: 3600,
