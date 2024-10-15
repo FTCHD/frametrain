@@ -12,7 +12,7 @@ import {
 } from 'viem'
 import { privateKeyToAddress } from 'viem/accounts'
 import { type Config, type Storage, airdropChains } from '..'
-import { getDetailsFromPaymentCurrency } from '../utils/server_onchainUtils'
+import { getDetailsFromPaymentCurrency } from '../utils/lib'
 
 export default async function txData({
     config,
@@ -32,7 +32,7 @@ export default async function txData({
 }): Promise<BuildFrameData> {
     const userFid = body.interactor.fid
     const creatorFid = config.creatorId
-    const chain = config.chain
+    const configChain = config.chain
 
     if (userFid !== creatorFid) {
         throw new FrameError('You are not approved to use this function')
@@ -44,7 +44,7 @@ export default async function txData({
         throw new FrameError('FRAME_TRAIN_OPERATOR_PRIVATE_KEY is not set')
     }
 
-    const chainId = airdropChains[config.chain]
+    const chainId = airdropChains[configChain]
 
     const frameOperatorAddress = privateKeyToAddress(FRAME_TRAIN_OPERATOR_PRIVATE_KEY)
     const args = [frameOperatorAddress, maxInt256]

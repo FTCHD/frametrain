@@ -3,7 +3,7 @@ import type { GatingType } from '@/sdk/components/gating/types'
 import Inspector from './Inspector'
 import cover from './cover.png'
 import handlers from './handlers'
-import type { Token } from './utils/server_onchainUtils'
+import type { PaymentOption } from '@paywithglide/glide-js'
 
 export type LinkButton = {
     action: 'link'
@@ -19,7 +19,7 @@ export interface Config extends BaseConfig {
     chain: keyof typeof airdropChains
     crossTokenEnabled: boolean
     crossTokens: {
-        [key: string]: Token[]
+        [key: string]: PaymentOption[] | undefined | null
     }
     crossToken: {
         chain: keyof typeof airdropChains | ''
