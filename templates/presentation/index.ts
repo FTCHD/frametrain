@@ -1,49 +1,93 @@
-import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import type { BasicViewProps } from '@/sdk/views/BasicView'
+import type { BaseConfig, BaseTemplate } from '@/lib/types'
 import Inspector from './Inspector'
 import cover from './cover.avif'
 import handlers from './handlers'
 import icon from './icon.avif'
 
-export type SlideButton = {
-    text: string
-    type: 'link' | 'slide' | 'frame' | 'disabled'
+export type BackgroundType = 'color' | 'gradient' | 'image'
+export type CustomButtonType = 'navigate' | 'link' | 'mint'
+export type CustomButtons = Array<{
+    type: CustomButtonType
+    label: string
     target: string
-}
-
-export type Slide = {
-    imageUrl: string
-    buttons: SlideButton[]
+}>
+export interface Slide {
+    type: 'text' | 'image'
     aspectRatio: '1:1' | '1.91:1'
+    objectFit: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down'
+    background: {
+        type: BackgroundType
+        value: string
+    }
+    image?: string
+    title?: {
+        text: string
+        font: string
+        color: string
+        style: string
+        weight: string
+    }
+    content?: {
+        text: string
+        font: string
+        color: string
+        weight: string
+        align: 'left' | 'center' | 'right'
+    }
+    buttons: CustomButtons
 }
 
 export interface Config extends BaseConfig {
-    text: string
-    coverType: 'disabled' | 'image' | 'text'
-    coverImageUrl?: string
-    coverAspectRatio: '1:1' | '1.91:1'
-    coverStyling?: BasicViewProps
-    coverButtons?: SlideButton[]
     slides: Slide[]
 }
 
-export interface Storage extends BaseStorage {}
+const DEFAULT_SLIDE: Slide = {
+    type: 'text',
+    aspectRatio: '1:1',
+    objectFit: 'cover',
+    background: {
+        type: 'color',
+        value: 'linear-gradient(245deg, rgb(252,136,0), rgb(252,0,162))',
+    },
+    title: {
+        text: '',
+        color: '#1c1c1c',
+        weight: '700',
+        font: 'Inter',
+        style: 'normal',
+    },
+    content: {
+        text: '',
+        color: '#000000',
+        font: 'Roboto',
+        align: 'left',
+        weight: '400',
+    },
+    buttons: [
+        {
+            type: 'navigate',
+            label: 'Navigate',
+            target: '1',
+        },
+    ],
+}
+
+export const PRESENTATION_DEFAULTS: Config = {
+    slides: [DEFAULT_SLIDE],
+}
 
 export default {
     name: 'Presentation',
     description: 'Turn images and long texts into powerful slideshows.',
-    shortDescription: 'PDF, Images + more!',
+    shortDescription: "'member PowerPoint?",
+    icon: icon,
     octicon: 'versions',
     creatorFid: '661506',
     creatorName: 'oynozan',
     cover,
-    icon,
+    initialConfig: PRESENTATION_DEFAULTS,
     enabled: true,
     Inspector,
     handlers,
-    initialConfig: {
-        coverType: 'disabled',
-        slides: [],
-    },
     events: [],
 } satisfies BaseTemplate

@@ -1,69 +1,27 @@
 'use server'
 import type { BuildFrameData } from '@/lib/farcaster'
-import { FrameError } from '@/sdk/error'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import BasicView from '@/sdk/views/BasicView'
-import type { Config, Storage } from '..'
-import cover from './cover'
+import { type Config, PRESENTATION_DEFAULTS } from '..'
+import { renderCustomButtons } from '../utils'
+import CoverView from '../views/Cover'
 
 export default async function initial({
-    body,
     config,
-    storage,
-    params,
 }: {
-    // GET requests don't have a body.
-    body: undefined
     config: Config
-    storage: Storage
-    params: any
 }): Promise<BuildFrameData> {
-    if (!config?.coverType || config.coverType === 'disabled') {
-        return await cover({ body, config, storage, params })
-    }
+    const c = Object.keys(config).includes('slides') ? config : PRESENTATION_DEFAULTS
 
-    if (config.coverType === 'image') {
-        if (!config.coverImageUrl) {
-            throw new FrameError('No image set')
-        }
+    const contentFont = await loadGoogleFontAllVariants(c.slides[0]?.content?.font || 'Roboto')
+    const titleFont = await loadGoogleFontAllVariants(c.slides[0]?.title?.font || 'Inter')
 
-        return {
-            // buttons: config?.coverButtons?.map((button) =>
-            //     button.type === 'link'
-            //         ? {
-            //               label: button.text,
-            //               action: 'link',
-            //               target: button.target,
-            //           }
-            //         : {
-            //               label: button.text,
-            //           }
-            // ),
-            buttons: [{ label: 'Start →' }],
-            aspectRatio: config.coverAspectRatio,
-            image: config.coverImageUrl,
-            handler: 'cover',
-        }
-    }
-
-    const roboto = await loadGoogleFontAllVariants('Roboto')
+    const buttons = await renderCustomButtons(c.slides[0]?.buttons)
 
     return {
-        // buttons: config?.coverButtons?.map((button) =>
-        //     button.type === 'link'
-        //         ? {
-        //               label: button.text,
-        //               action: 'link',
-        //               target: button.target,
-        //           }
-        //         : {
-        //               label: button.text,
-        //           }
-        // ),
-        buttons: [{ label: 'Start →' }],
-        aspectRatio: config.coverAspectRatio,
-        fonts: roboto,
-        component: BasicView(config.coverStyling),
-        handler: 'cover',
+        buttons,
+        fonts: [...contentFont, ...titleFont],
+        aspectRatio: c.slides[0]?.aspectRatio || '1:1',
+        component: CoverView(c.slides[0]),
+        handler: 'page',
     }
 }

@@ -57,10 +57,6 @@ export async function POST(
 
     try {
         buildParameters = await handlerFn({
-            frame: {
-                id: frame.id,
-                owner: frame.owner,
-            },
             body: validatedPayload,
             config: frame.draftConfig as BaseConfig,
             storage: frame.storage as BaseStorage,
@@ -82,38 +78,6 @@ export async function POST(
                 status: 500,
             }
         )
-    }
-
-    if (buildParameters.transaction) {
-        return new Response(JSON.stringify(buildParameters.transaction), {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-    }
-
-    if (buildParameters.frame) {
-        if (!buildParameters.frame.startsWith(process.env.NEXT_PUBLIC_HOST!)) {
-            return Response.json(
-                { message: 'External frames are not supported in the Preview!' },
-                {
-                    status: 400,
-                }
-            )
-        }
-
-        const html = await fetch(
-            buildParameters.frame.replace(
-                `${process.env.NEXT_PUBLIC_HOST}/f`,
-                `${process.env.NEXT_PUBLIC_HOST}/p`
-            )
-        ).then((res) => res.text())
-
-        return new Response(html, {
-            headers: {
-                'Content-Type': 'text/html',
-            },
-        })
     }
 
     const renderedFrame = await buildPreviewFramePage({

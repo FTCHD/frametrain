@@ -79,6 +79,7 @@ export default async function TemplateList() {
                                 <TemplateCard
                                     key={id}
                                     template={templates[id as keyof typeof templates] as any}
+                                    id={id}
                                 />
                             ))}
                         </div>

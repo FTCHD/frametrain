@@ -1,9 +1,7 @@
-import cover from './cover'
 import initial from './initial'
-import slide from './slide'
+import page from './page'
 
 export default {
     initial,
-    cover,
-    slide,
+    page,
 }

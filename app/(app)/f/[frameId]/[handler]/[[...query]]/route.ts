@@ -57,10 +57,6 @@ export async function POST(
 
     try {
         buildParameters = await handlerFn({
-            frame: {
-                id: frame.id,
-                owner: frame.owner,
-            },
             body: validatedPayload,
             config: frame.config as BaseConfig,
             storage: frame.storage as BaseStorage,
@@ -92,18 +88,6 @@ export async function POST(
         return new Response(JSON.stringify(buildParameters.transaction), {
             headers: {
                 'Content-Type': 'application/json',
-            },
-        })
-    }
-
-    if (buildParameters.frame) {
-        waitUntil(processFrame(frame, buildParameters, payload))
-
-        const html = await fetch(buildParameters.frame).then((res) => res.text())
-
-        return new Response(html, {
-            headers: {
-                'Content-Type': 'text/html',
             },
         })
     }
@@ -169,8 +153,8 @@ async function processFrame(
     const airstackKey = frame.config?.airstackKey || process.env.AIRSTACK_API_KEY
 
     const airstackPayloadValidated = await validatePayloadAirstack(payload, airstackKey)
-
-    console.log(JSON.stringify(airstackPayloadValidated, null, 2))
+	
+	console.log(JSON.stringify(airstackPayloadValidated, null, 2))
 
     await client
         .insert(interactionTable)

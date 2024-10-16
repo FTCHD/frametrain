@@ -1,12 +1,7 @@
 'use client'
 import { useRefreshPreview } from '@/components/editor/useRefreshPreview'
 import type { frameTable } from '@/db/schema'
-import {
-    updateFrameConfig,
-    updateFrameLinkedPage,
-    updateFrameName,
-    updateFrameStorage,
-} from '@/lib/frame'
+import { updateFrameConfig, updateFrameLinkedPage, updateFrameName } from '@/lib/frame'
 import { previewParametersAtom } from '@/lib/store'
 import type templates from '@/templates'
 import type { InferSelectModel } from 'drizzle-orm'
@@ -69,9 +64,7 @@ export default function FrameEditor({
             return
         }
 
-        // setUpdating(true)
-
-        await new Promise((resolve) => setTimeout(resolve, 500))
+        setUpdating(true)
 
         const newConfig = Object.assign({}, frame.draftConfig, props)
 
@@ -79,8 +72,8 @@ export default function FrameEditor({
 
         refreshPreview()
 
-        // setUpdating(false)
-    }, 2000)
+        setUpdating(false)
+    }, 1000)
 
     function updateConfig(props: Record<string, any>) {
         if (!props || Object.keys(props).length === 0) {
@@ -89,9 +82,9 @@ export default function FrameEditor({
 
         const newConfig = Object.assign({}, temporaryConfig, props)
 
-        writeConfig(newConfig)
-
         setTemporaryConfig(newConfig)
+
+        writeConfig(newConfig)
     }
 
     async function updateName() {
@@ -103,18 +96,6 @@ export default function FrameEditor({
         setUpdating(true)
         await updateFrameName(frame.id, temporaryName)
         setUpdating(false)
-    }
-
-    function updateStorage(props: Record<string, any>) {
-        console.log('updating storage')
-        if (!props || Object.keys(props).length === 0) {
-            console.log('NOT updating storage')
-            return
-        }
-
-        const newStorage = Object.assign({}, frame.storage, props)
-
-        updateFrameStorage(frame.id, newStorage)
     }
 
     useEffect(() => {
@@ -329,7 +310,6 @@ export default function FrameEditor({
                                 config: temporaryConfig as typeof template.initialConfig,
                                 storage: frame.storage!,
                                 update: updateConfig,
-                                updateStorage: updateStorage,
                                 fid: fid,
                                 fname: fname,
                                 // setLoading

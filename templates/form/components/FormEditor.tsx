@@ -51,7 +51,7 @@ function downloadCSV(storage: Storage, fileName: string, inputNames: string[]): 
 }
 
 export default function FormEditor({ isEditing = false }: { isEditing?: boolean }) {
-    const [storage] = useFrameStorage<Storage>()
+    const storage = useFrameStorage() as Storage
     const [config, updateConfig] = useFrameConfig<Config>()
 
     const fields: fieldTypes[] = config.fields || []

@@ -109,7 +109,6 @@ function ValidFrame({ metadata }: { metadata: FrameMetadataWithImageObject }) {
                                     state={metadata.state}
                                     handler={handler}
                                     params={params}
-                                    postUrl={postUrl}
                                 >
                                     {button.label}
                                 </FramePreviewButton>

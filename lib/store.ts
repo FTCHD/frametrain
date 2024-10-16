@@ -1,19 +1,12 @@
 import { atom } from 'jotai'
-import type { parseFrameHtml } from './debugger'
+import type { simulateCall } from './debugger'
 
 export const previewLoadingAtom = atom(false)
 export const previewErrorAtom = atom(false)
 export const previewParametersAtom = atom<
-    | {
-          postUrl: string | undefined
-          handler?: string
-          buttonIndex: number
-          inputText: string
-          params?: string
-      }
-    | undefined
+    { handler?: string; buttonIndex: number; inputText: string; params?: string } | undefined
 >(undefined)
-export const previewStateAtom = atom<Awaited<ReturnType<typeof parseFrameHtml>> | undefined>(
+export const previewStateAtom = atom<Awaited<ReturnType<typeof simulateCall>> | undefined>(
     undefined
 )
 

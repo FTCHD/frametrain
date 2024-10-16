@@ -41,107 +41,113 @@ export function BasicViewInspector({
     ...slide
 }: BasicViewInspectorProps) {
     return (
-        <div className="flex flex-col gap-2 w-full">
-            <div className="flex flex-col w-full">
-                <h2 className="text-md font-medium">{name} Title</h2>
-                <Input
-                    className="py-2 text-lg"
-                    defaultValue={slide.title?.text}
-                    onChange={async (e) => {
-                        const text = e.target.value.trim()
-                        if (text === '') {
-                            toast.error(`Please enter a ${name} title`)
-                            return
-                        }
-                        onUpdate({
-                            ...slide,
-                            title: { ...slide.title, text },
-                        })
-                    }}
-                    placeholder={`${name} title`}
-                />
-            </div>
-            <div className="flex flex-col w-full">
-                <h2 className="text-md font-medium">{name} Subtitle</h2>
-                <Input
-                    className="py-2 text-lg"
-                    defaultValue={slide?.subtitle?.text}
-                    onChange={async (e) => {
-                        const text = e.target.value.trim()
-                        if (text === '') {
-                            toast.error(`Please enter a ${name} subtitle`)
-                            return
-                        }
+        <div className="flex flex-col gap-4 w-full">
+            <div className="flex flex-col gap-2 w-full">
+                <div className="flex flex-col w-full">
+                    <h2 className="text-lg">{name} Title</h2>
+                    <Input
+                        className="py-2 text-lg"
+                        defaultValue={slide.title?.text}
+                        onChange={async (e) => {
+                            const text = e.target.value.trim()
+                            if (text === '') {
+                                toast.error(`Please enter a ${name} title`)
+                                return
+                            }
+                            onUpdate({
+                                ...slide,
+                                title: { ...slide.title, text },
+                            })
+                        }}
+                        placeholder={`${name} title`}
+                    />
+                </div>
+                <div className="flex flex-col w-full">
+                    <h2 className="text-lg">{name} Subtitle</h2>
+                    <Input
+                        className="py-2 text-lg"
+                        defaultValue={slide?.subtitle?.text}
+                        onChange={async (e) => {
+                            const text = e.target.value.trim()
+                            if (text === '') {
+                                toast.error(`Please enter a ${name} subtitle`)
+                                return
+                            }
 
+                            onUpdate({
+                                ...slide,
+                                subtitle: { ...slide.subtitle, text },
+                            })
+                        }}
+                        placeholder={`${name} subtitle`}
+                    />
+                </div>
+                <div className="flex flex-col w-full">
+                    <h2 className="text-lg">{name} Bottom Message</h2>
+                    <Input
+                        className="py-2 text-lg"
+                        defaultValue={slide?.bottomMessage?.text}
+                        onChange={async (e) => {
+                            const value = e.target.value.trim()
+                            onUpdate({
+                                ...slide,
+                                bottomMessage: {
+                                    ...slide.bottomMessage,
+                                    text: value === '' ? undefined : value,
+                                },
+                            })
+                        }}
+                        placeholder="your custom message"
+                    />
+                </div>
+            </div>
+            {slide.children}
+            <div className="flex flex-col gap-2 w-full">
+                <h2 className="text-lg text-center">{name} customizations</h2>
+                <BasicViewStyleConfig
+                    name={titleName}
+                    background={slide.background}
+                    config={slide.title || {}}
+                    updateConfig={(style) => {
                         onUpdate({
                             ...slide,
-                            subtitle: { ...slide.subtitle, text },
+                            title: {
+                                text: slide.title?.text,
+                                ...style,
+                            },
                         })
                     }}
-                    placeholder={`${name} subtitle`}
+                    setBackground={(background) => {
+                        onUpdate({ ...slide, background })
+                    }}
                 />
-            </div>
-            <div className="flex flex-col w-full">
-                <h2 className="text-md font-medium">{name} Bottom Message</h2>
-                <Input
-                    className="py-2 text-lg"
-                    defaultValue={slide?.bottomMessage?.text}
-                    onChange={async (e) => {
-                        const value = e.target.value.trim()
+                <BasicViewStyleConfig
+                    name={subtitleName}
+                    config={slide.subtitle || {}}
+                    updateConfig={(style) => {
+                        onUpdate({
+                            ...slide,
+                            subtitle: {
+                                ...slide.subtitle,
+                                ...style,
+                            },
+                        })
+                    }}
+                />
+                <BasicViewStyleConfig
+                    name={bottomMessageName}
+                    config={slide.bottomMessage || {}}
+                    updateConfig={(style) => {
                         onUpdate({
                             ...slide,
                             bottomMessage: {
                                 ...slide.bottomMessage,
-                                text: value === '' ? undefined : value,
+                                ...style,
                             },
                         })
                     }}
-                    placeholder="Your custom message"
                 />
             </div>
-            <BasicViewStyleConfig
-                name={titleName}
-                background={slide.background}
-                config={slide.title || {}}
-                updateConfig={(style) => {
-                    onUpdate({
-                        ...slide,
-                        title: {
-                            text: slide.title?.text,
-                            ...style,
-                        },
-                    })
-                }}
-                setBackground={(background) => {
-                    onUpdate({ ...slide, background })
-                }}
-            />
-            <BasicViewStyleConfig
-                name={subtitleName}
-                config={slide.subtitle || {}}
-                updateConfig={(style) => {
-                    onUpdate({
-                        ...slide,
-                        subtitle: {
-                            ...slide.subtitle,
-                            ...style,
-                        },
-                    })
-                }}
-            />
-            <BasicViewStyleConfig
-                name={bottomMessageName}
-                config={slide.bottomMessage || {}}
-                updateConfig={(style) => {
-                    onUpdate({
-                        ...slide,
-                        bottomMessage: {
-                            ...slide.bottomMessage,
-                            ...style,
-                        },
-                    })
-                }}
-            />
         </div>
     )
 }
@@ -158,8 +164,8 @@ export const BasicViewStyleConfig = ({
     return (
         <>
             {setBackground ? (
-                <div className="flex flex-col w-full">
-                    <h2 className="text-md font-medium">Slide background</h2>
+                <div className="flex flex-col gap-2 w-full">
+                    <h2 className="text-lg font-semibold">Slide background</h2>
                     <ColorPicker
                         className="w-full"
                         enabledPickers={['solid', 'gradient', 'image']}
@@ -178,8 +184,8 @@ export const BasicViewStyleConfig = ({
                     />
                 </div>
             ) : null}
-            <div className="flex flex-col w-full">
-                <h2 className="text-md font-medium">{name} Color</h2>
+            <div className="flex flex-col gap-2 w-full">
+                <h2 className="text-lg font-semibold">{name} Color</h2>
                 <ColorPicker
                     className="w-full"
                     background={config?.color || 'white'}
@@ -188,8 +194,8 @@ export const BasicViewStyleConfig = ({
                     }}
                 />
             </div>
-            <div className="flex flex-col w-full">
-                <label className="text-md font-medium">
+            <div className="flex flex-col gap-2 w-full">
+                <label className="text-lg font-semibold">
                     {name} Size ({fontSize}px)
                 </label>
 
@@ -204,8 +210,8 @@ export const BasicViewStyleConfig = ({
                     }}
                 />
             </div>
-            <div className="flex flex-col w-full">
-                <h2 className="text-md font-medium">{name} Font</h2>
+            <div className="flex flex-col gap-2 w-full">
+                <h2 className="text-lg font-semibold">{name} Font</h2>
                 <FontFamilyPicker
                     defaultValue={config?.fontFamily || 'Roboto'}
                     onSelect={(fontFamily) => {
@@ -213,8 +219,8 @@ export const BasicViewStyleConfig = ({
                     }}
                 />
             </div>
-            <div className="flex flex-col  w-full">
-                <h2 className="text-md font-medium">{name} Style</h2>
+            <div className="flex flex-col gap-2 w-full">
+                <h2 className="text-lg font-semibold">{name} Style</h2>
                 <FontStylePicker
                     currentFont={config?.fontFamily || 'Roboto'}
                     defaultValue={config?.fontStyle || 'normal'}
@@ -223,8 +229,8 @@ export const BasicViewStyleConfig = ({
                     }}
                 />
             </div>
-            <div className="flex flex-col  w-full">
-                <h2 className="text-md font-medium">{name} Weight</h2>
+            <div className="flex flex-col gap-2 w-full">
+                <h2 className="text-lg font-semibold">{name} Weight</h2>
                 <FontWeightPicker
                     currentFont={config?.fontFamily || 'Roboto'}
                     defaultValue={config?.fontWeight || 'normal'}
@@ -233,8 +239,8 @@ export const BasicViewStyleConfig = ({
                     }}
                 />
             </div>
-            <div className="flex flex-col  w-full">
-                <h2 className="text-md font-medium">{name} Position</h2>
+            <div className="flex flex-col gap-2 w-full">
+                <h2 className="text-lg font-semibold">{name} Position</h2>
                 <Select
                     defaultValue={config?.position || 'center'}
                     onChange={(value) => {

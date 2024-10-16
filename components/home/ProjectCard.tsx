@@ -25,6 +25,7 @@ export default function ProjectCard({
     frame,
 }: { frame: Awaited<ReturnType<typeof getRecentFrameList>>[number] }) {
     const { id, name, template, interactionCount } = frame
+    const frameUrl = `${process.env.NEXT_PUBLIC_HOST}/f/${frame.id}`
 
     const [isDeletingFrame, setIsDeletingFrame] = useState(false)
     const [showDeleteFrameModal, setShowDeleteFrameModal] = useState(false)
@@ -73,7 +74,7 @@ export default function ProjectCard({
                     <ContextMenuItem
                         className="gap-2"
                         onClick={() => {
-                            navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_HOST}/f/${id}`)
+                            navigator.clipboard.writeText(frameUrl)
                             toast.success('Frame Url copied!')
                         }}
                     >
@@ -104,10 +105,10 @@ export default function ProjectCard({
             </ContextMenu>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Delete {name}?</DialogTitle>
+                    <DialogTitle>Delete {frameUrl}</DialogTitle>
                     <DialogDescription>
-                        Warning: Deleting this frame will remove all of its config and state, are
-                        you sure?
+                        Warning: Are you absolutely sure? Deleting this frame will remove all of its
+                        config and state. This action cannot be undone – proceed with caution.
                     </DialogDescription>
                 </DialogHeader>
                 <form
@@ -130,14 +131,15 @@ export default function ProjectCard({
                         <div className="grid flex-1 gap-2">
                             <label htmlFor="verification" className="block text-sm text-gray-700">
                                 To verify, type{' '}
-                                <span className="font-semibold dark:text-red-600">{id}</span> below
+                                <span className="font-semibold dark:text-red-600">{frameUrl}</span>{' '}
+                                below
                             </label>
                             <div className="relative mt-1 rounded-md shadow-sm">
                                 <BaseInput
                                     type="text"
                                     name="verification"
                                     id="verification"
-                                    pattern={id}
+                                    pattern={frameUrl}
                                     required={true}
                                     autoComplete="off"
                                     className="w-full"

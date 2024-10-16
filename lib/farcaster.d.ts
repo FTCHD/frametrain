@@ -49,7 +49,6 @@ export interface BuildFrameData {
         data: Record<string, unknown>
     }[]
     transaction?: TransactionTargetResponse
-    frame?: string
 }
 
 export interface FrameData {

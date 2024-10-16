@@ -290,76 +290,79 @@ export default function Inspector() {
                                         success,
                                     })
                                 }}
-                            />
-                            <div className="flex flex-col w-full">
-                                <h2 className="text-lg">Add a Link</h2>
-                                <div className="flex flex-row gap-2 w-full items-center">
-                                    <Input
-                                        disabled={disableLinksField}
-                                        ref={linkInputRef}
-                                        className="text-lg border rounded py-2 px-4 w-full"
-                                        type="url"
-                                    />
-                                    {!disableLinksField ? (
-                                        <Button
-                                            type="button"
+                            >
+                                <div className="flex flex-col gap-2 w-full">
+                                    <h2 className="text-lg">Add a Link</h2>
+                                    <div className="flex flex-row gap-2 w-full items-center">
+                                        <Input
                                             disabled={disableLinksField}
-                                            className="px-4 py-2 rounded-md"
-                                            onClick={() => {
-                                                if (
-                                                    !linkInputRef.current ||
-                                                    config.links?.length >= 4
-                                                )
-                                                    return
+                                            ref={linkInputRef}
+                                            className="text-lg border rounded py-2 px-4 w-full"
+                                            type="url"
+                                        />
+                                        {!disableLinksField ? (
+                                            <Button
+                                                type="button"
+                                                disabled={disableLinksField}
+                                                className="px-4 py-2 rounded-md"
+                                                onClick={() => {
+                                                    if (
+                                                        !linkInputRef.current ||
+                                                        config.links?.length >= 4
+                                                    )
+                                                        return
 
-                                                const link = linkInputRef.current.value.trim()
+                                                    const link = linkInputRef.current.value.trim()
 
-                                                if (link.length < 10) return
+                                                    if (link.length < 10) return
 
-                                                updateConfig({
-                                                    links: [...(config.links || []), link],
-                                                })
+                                                    updateConfig({
+                                                        links: [...(config.links || []), link],
+                                                    })
 
-                                                linkInputRef.current.value = ''
-                                            }}
-                                        >
-                                            Add Link
-                                        </Button>
-                                    ) : null}
-                                </div>
-                            </div>
-                            <div className="flex flex-col">
-                                <h2 className="text-2xl font-semibold">Manage Links</h2>
-                                {!config.links?.length ? (
-                                    <p className="italic text-gray-300">Links added yet!</p>
-                                ) : (
-                                    <div className="w-full flex flex-col gap-2">
-                                        {config.links?.map((link, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex flex-row items-center justify-between bg-slate-50 bg-opacity-10 p-2 rounded"
+                                                    linkInputRef.current.value = ''
+                                                }}
                                             >
-                                                <span>
-                                                    {index + 1}. {link}
-                                                </span>
-                                                <Button
-                                                    variant={'destructive'}
-                                                    onClick={() =>
-                                                        updateConfig({
-                                                            links: [
-                                                                ...config.links.slice(0, index),
-                                                                ...config.links.slice(index + 1),
-                                                            ],
-                                                        })
-                                                    }
-                                                >
-                                                    <TrashIcon />
-                                                </Button>
-                                            </div>
-                                        ))}
+                                                Add Link
+                                            </Button>
+                                        ) : null}
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <h2 className="text-2xl font-semibold">Manage Links</h2>
+                                    {!config.links?.length ? (
+                                        <p className="italic text-gray-300">Links added yet!</p>
+                                    ) : (
+                                        <div className="w-full flex flex-col gap-2">
+                                            {config.links?.map((link, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex flex-row items-center justify-between bg-slate-50 bg-opacity-10 p-2 rounded"
+                                                >
+                                                    <span>
+                                                        {index + 1}. {link}
+                                                    </span>
+                                                    <Button
+                                                        variant={'destructive'}
+                                                        onClick={() =>
+                                                            updateConfig({
+                                                                links: [
+                                                                    ...config.links.slice(0, index),
+                                                                    ...config.links.slice(
+                                                                        index + 1
+                                                                    ),
+                                                                ],
+                                                            })
+                                                        }
+                                                    >
+                                                        <TrashIcon />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </BasicViewInspector>
                         </div>
                     )}
                 </div>

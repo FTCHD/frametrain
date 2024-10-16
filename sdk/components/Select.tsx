@@ -1,4 +1,3 @@
-import { cn } from '@/lib/shadcn'
 import { type ComponentPropsWithoutRef, forwardRef } from 'react'
 
 const Select = forwardRef<
@@ -14,10 +13,7 @@ const Select = forwardRef<
             {...props}
             ref={ref}
             onChange={props.onChange ? (e) => props.onChange!(e.currentTarget.value) : undefined}
-            className={cn(
-                'flex h-12 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
-                className
-            )}
+            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
             style={{
                 MozAppearance: 'none',
                 WebkitAppearance: 'none',
@@ -30,7 +26,7 @@ const Select = forwardRef<
             }}
             defaultValue={props.defaultValue || ''}
         >
-            <option disabled={true} value="" key="placeholder">
+            <option disabled={true} value="">
                 {placeholder}
             </option>
             {children}

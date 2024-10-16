@@ -152,7 +152,9 @@ export async function simulateCall(
     // 	   return
     // }
 
-    return res.text()
+    const html = await res.text()
+
+    return parseFrameHtml(html)
 }
 
 ////////////////////////////////////////////////
