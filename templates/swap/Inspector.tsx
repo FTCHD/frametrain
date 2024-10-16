@@ -128,7 +128,8 @@ export default function Inspector() {
                                 })
 
                                 toast.success(`Pool found on ${pool.chain}`)
-                            } catch {
+                            } catch (e) {
+                                console.error(`Swap error ${poolAddress}`, e)
                                 toast.error('Pool not found on any supported chain')
                             }
                         }}
@@ -663,7 +664,7 @@ export default function Inspector() {
                                             <h2 className="text-lg">Success Subtitle</h2>
                                             <Input
                                                 className="py-2 text-lg"
-                                                defaultValue={config.success?.subtitle.text}
+                                                defaultValue={config.success?.subtitle?.text}
                                                 onChange={async (e) => {
                                                     const subtitle = e.target.value.trim()
 
