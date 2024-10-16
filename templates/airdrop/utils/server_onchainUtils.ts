@@ -88,11 +88,11 @@ export async function transferTokenToAddressUsingGlide(
     }).extend(publicActions)
 
     const glidePaymentAmount = Number(paymentAmount) * Number(crossToken.paymentAmount)
-    const tokenInfo = currencies[config.tokenSymbol?.toLowerCase() as keyof typeof currencies];
+    const tokenInfo = currencies[config.tokenSymbol?.toLowerCase() as keyof typeof currencies]
     const contractPaymentAmount = tokenInfo?.decimals
         ? parseUnits(`${paymentAmount}`, tokenInfo.decimals)
-        : parseEther(`${paymentAmount}`);
-        
+        : parseEther(`${paymentAmount}`)
+
     const chainName = chain == 'ethereum' ? 'mainnet' : chain
     const glideConfig = getGlide(chainName)
     const session = await createSession(glideConfig, {

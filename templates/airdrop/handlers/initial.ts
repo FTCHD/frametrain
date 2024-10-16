@@ -1,9 +1,9 @@
 'use server'
-import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
+import type { BuildFrameData } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
+import * as z from 'zod'
 import type { Config, LinkButton, Storage } from '..'
 import Cover from '../views/Cover'
-import * as z from 'zod'
 
 export default async function initial({
     body,
