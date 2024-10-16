@@ -11,13 +11,14 @@ import {
 } from '@/sdk/components'
 import { useFarcasterId, useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { Configuration } from '@/sdk/inspector'
-import { X } from 'lucide-react'
+import { Info, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { type Address, isAddress } from 'viem'
 import type { Config, LinkButton } from '.'
 import { airdropChains } from '.'
 import { getContractDetails, getCrossChainTokenDetails } from './utils/server_onchainUtils'
+import { cn } from '@/lib/shadcn'
 
 interface WhiteList {
     address: string
@@ -255,6 +256,7 @@ function GeneralSection() {
     })()
 
     const currentTokens = availableTokens?.[config.crossToken?.chain]
+    const crossTokenSwitchDisabled = !(config.tokenName && config.tokenSymbol)
 
     return (
         <div className="flex flex-col gap-4">
@@ -326,51 +328,72 @@ function GeneralSection() {
                     ))}
                 </Select>
             </div>
-            {config.tokenName && config.tokenSymbol && (
-                <div className="flex items-center pt-4 gap-2">
-                    <Switch
-                        disabled={!(chainName && tokenAddress)}
-                        id="cross-token"
-                        checked={config.crossTokenEnabled}
-                        onCheckedChange={async (checked) => {
-                            if (
-                                checked &&
-                                !(chainName && tokenAddress && isAddress(tokenAddress))
-                            ) {
-                                toast.error('Please select a chain and add token address')
-                                return
-                            }
-                            const crossTokenKey = `${chainName}/${tokenAddress}`
-                            let crossTokenDetails = config.crossTokens?.[crossTokenKey]
+            <div className="flex items-center pt-4 gap-2 relative">
+                <Switch
+                    disabled={crossTokenSwitchDisabled}
+                    id="cross-token"
+                    checked={config.crossTokenEnabled}
+                    onCheckedChange={async (checked) => {
+                        if (checked && !(chainName && tokenAddress && isAddress(tokenAddress))) {
+                            toast.error('Please select a chain and add token address')
+                            return
+                        }
+                        const crossTokenKey = `${chainName}/${tokenAddress}`
+                        let crossTokenDetails = config.crossTokens?.[crossTokenKey]
 
+                        if (!crossTokenDetails || crossTokenDetails.length === 0) {
+                            crossTokenDetails = await getCrossChainTokenDetails(
+                                chainName,
+                                tokenAddress,
+                                config.tokenSymbol
+                            )
                             if (!crossTokenDetails || crossTokenDetails.length === 0) {
-                                crossTokenDetails = await getCrossChainTokenDetails(
-                                    chainName,
-                                    tokenAddress,
-                                    config.tokenSymbol
-                                )
-                                if (!crossTokenDetails || crossTokenDetails.length === 0) {
-                                    toast.error('Failed to fetch cross-chain token details')
-                                    return
-                                }
-
-                                updateConfig({
-                                    crossTokenEnabled: checked,
-                                    crossTokens: {
-                                        ...config.crossTokens,
-                                        [crossTokenKey]: crossTokenDetails,
-                                    },
-                                })
+                                toast.error('Failed to fetch cross-chain token details')
                                 return
                             }
+
                             updateConfig({
                                 crossTokenEnabled: checked,
+                                crossTokens: {
+                                    ...config.crossTokens,
+                                    [crossTokenKey]: crossTokenDetails,
+                                },
                             })
-                        }}
-                    />
-                    <Label htmlFor="cross-token">Cross token Payment</Label>
-                </div>
-            )}
+                            return
+                        }
+                        updateConfig({
+                            crossTokenEnabled: checked,
+                        })
+                    }}
+                    className={cn(crossTokenSwitchDisabled && 'opacity-50 cursor-not-allowed')}
+                />
+                <Label
+                    htmlFor="cross-token"
+                    className={cn(
+                        'relative',
+                        crossTokenSwitchDisabled && 'opacity-50 cursor-not-allowed'
+                    )}
+                >
+                    Cross token Payment
+                </Label>
+                {crossTokenSwitchDisabled && (
+                    <span className="relative group">
+                        <Info className="h-4 w-4 text-red-400" />
+                        <span
+                            className={cn(
+                                'absolute left-0 bottom-full mb-2 bg-gray-800 text-white p-2 rounded-md text-sm invisible',
+                                'group-hover:visible hover:bg-green-400',
+
+                                'w-[200px]'
+                            )}
+                        >
+                            Token not supported for cross payment (try popular tokens like usdc,
+                            dai, etc)
+                        </span>
+                    </span>
+                )}
+            </div>
+
             {config.crossTokenEnabled && uniqueChains.length > 0 && (
                 <div className="flex flex-col gap-4 py-4">
                     <div className="flex flex-col gap-2">
@@ -431,7 +454,7 @@ function GeneralSection() {
                     )}
                 </div>
             )}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 pt-2">
                 <h2>Airdropper Address</h2>
                 <Input
                     className="text-lg flex-1 h-10"
