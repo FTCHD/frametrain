@@ -21,11 +21,13 @@ export const farcasterSupportedChains = [
     'polygon',
 ] as const
 
-export const chainKeyToChain = farcasterSupportedChains.reduce((acc, chain) => {
-    //@ts-expect-error
-    acc[chain] = getViem(chain).chain
-    return acc
-}, {}) as Record<(typeof farcasterSupportedChains)[number], Chain>
+export const chainKeyToChain = farcasterSupportedChains.reduce(
+    (acc, chain) => {
+        acc[chain] = getViem(chain as (typeof farcasterSupportedChains)[number]).chain
+        return acc
+    },
+    {} as Record<(typeof farcasterSupportedChains)[number], Chain>
+)
 
 export function convertTransferToTransferFrom(
     unsignedTransaction: { chainId: string; input: Address; to: string; value: bigint },
@@ -36,15 +38,12 @@ export function convertTransferToTransferFrom(
         data: unsignedTransaction.input,
     })
 
-    const transferFromData = {
-        functionName: 'transferFrom',
-        args: [payerAddress, decoded.args[0] as `0x${string}`, decoded.args[1] as bigint],
-        abi: erc20Abi,
-    } as const
-
     // Encode the function data
-    //@ts-expect-error:
-    const data = encodeFunctionData(transferFromData)
+    const data = encodeFunctionData({
+        abi: erc20Abi,
+        functionName: 'transferFrom',
+        args: [payerAddress as Address, decoded.args[0] as Address, decoded.args[1] as bigint],
+    })
     return {
         to: unsignedTransaction.to as Address,
         data,
@@ -61,7 +60,7 @@ export function getDetailsFromPaymentCurrency(caip19: string) {
 
     // Extract the chainId from the "eip155:{chainId}" part
     const chainPart = parts[0].split(':')
-    let chainId = null
+    let chainId: number | null = null
 
     if (chainPart.length === 2 && chainPart[0] === 'eip155') {
         chainId = Number(chainPart[1])
@@ -72,7 +71,7 @@ export function getDetailsFromPaymentCurrency(caip19: string) {
 
     // Check the second part (slip44 or erc20)
     const typePart = parts[1].split(':')
-    let hexAddress = null
+    let hexAddress: string | null = null
 
     if (typePart.length === 2) {
         if (typePart[0] === 'erc20') {

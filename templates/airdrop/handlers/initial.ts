@@ -1,8 +1,9 @@
 'use server'
 import type { BuildFrameData, FrameButtonMetadata } from '@/lib/farcaster'
 import { loadGoogleFontAllVariants } from '@/sdk/fonts'
-import type { Config, Storage } from '..'
+import type { Config, LinkButton, Storage } from '..'
 import Cover from '../views/Cover'
+import * as z from 'zod'
 
 export default async function initial({
     body,
@@ -17,31 +18,24 @@ export default async function initial({
     params: any
 }): Promise<BuildFrameData> {
     function isValidUrl(url: string) {
-        try {
-            new URL(url)
-            return true
-        } catch (e) {
-            return false
-        }
+        const { success } = z.string().url().min(1).safeParse(url)
+        return success
     }
 
     const roboto = await loadGoogleFontAllVariants('Roboto')
-    const buttons: FrameButtonMetadata[] = config.buttons.map((button) => {
-        let target = button.target
-        if (!isValidUrl(target)) {
-            //never gonna give you up youtube link
-            target = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-        }
-        let label = button.label
-        if (!label) {
-            label = 'Button ' + (buttons.indexOf(button) + 1)
-        }
-        return {
-            label,
-            action: 'link',
-            target,
-        }
-    })
+    function createButton(button: any, index: number): LinkButton {
+        const target = isValidUrl(button.target)
+            ? button.target
+            : 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+        const label = button.label || `Button ${index + 1}`
+        return { label, action: 'link', target }
+    }
+
+    // In the main function
+    if (!Array.isArray(config.buttons)) {
+        throw new Error('Invalid config: buttons must be an array')
+    }
+    const buttons = config.buttons.map(createButton)
 
     return {
         buttons: [{ label: 'Claim' }, ...buttons],

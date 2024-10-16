@@ -2,7 +2,7 @@ import type { Config } from '..'
 
 export default function Cover(config: Config) {
     const cover = config.cover
-    const { background, headerColor, subHeaderColor, subHeaderText } = cover
+    const { background, headerColor, subHeaderColor, subHeaderText, headerText } = cover
     const backgroundProp: Record<string, string> = {}
 
     if (background) {
@@ -43,7 +43,7 @@ export default function Cover(config: Config) {
                     lineHeight: '1.4',
                 }}
             >
-                {config.cover.headerText}
+                {headerText}
             </div>
             <div
                 style={{
@@ -51,7 +51,7 @@ export default function Cover(config: Config) {
                     color: subHeaderColor,
                 }}
             >
-                {config.cover.subHeaderText}
+                {subHeaderText}
             </div>
         </div>
     )
