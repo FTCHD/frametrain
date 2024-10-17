@@ -42,7 +42,7 @@ export default async function txData({
                     value: session.unsignedTransaction.value,
                     data: session.unsignedTransaction.input
                         ? `0x${session.unsignedTransaction.input.replace(/^0x/, '')}`
-                        : '0x', // to make sure the data is a valid hex string
+                        : '0x0', // to make sure the data is a valid hex string,
                     abi: [],
                 },
             },
