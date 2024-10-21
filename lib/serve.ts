@@ -33,7 +33,7 @@ export async function buildFramePage({
 
     if (component) {
         const renderedImage = new ImageResponse(component, {
-            ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+            ...dimensionsForRatio[aspectRatio === '1.91:1' ? '1.91/1' : '1/1'],
             fonts,
         })
 
@@ -115,7 +115,7 @@ export async function buildPreviewFramePage({
 
     if (component) {
         const renderedImage = new ImageResponse(component, {
-            ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+            ...dimensionsForRatio[aspectRatio === '1.91:1' ? '1.91/1' : '1/1'],
             fonts,
         })
 
@@ -163,7 +163,7 @@ export async function buildPreviewFramePage({
 export async function buildFrame({
     buttons,
     image,
-    aspectRatio = '1.91:1',
+    aspectRatio = '1:1',
     inputText,
     postUrl,
     refreshPeriod,
@@ -274,28 +274,4 @@ export async function validatePayload(body: FramePayload): Promise<FramePayloadV
     console.log(r.action)
 
     return r.action
-}
-export async function validatePayloadAirstack(
-    body: FramePayload,
-    airstackKey: string
-): Promise<any> {
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/octet-stream',
-            'x-airstack-hubs': airstackKey,
-        },
-        body: new Uint8Array(
-            body.trustedData.messageBytes.match(/.{1,2}/g)!.map((byte) => Number.parseInt(byte, 16))
-        ),
-    }
-
-    const r = await fetch('https://hubs.airstack.xyz/v1/validateMessage', options)
-        .then((response) => response.json())
-        .catch((err) => {
-            console.error(err)
-            throw new Error('AIRSTACK_PAYLOAD_COULD_NOT_BE_VALIDATED')
-        })
-
-    return r
 }

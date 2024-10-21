@@ -69,7 +69,9 @@ export default function FrameEditor({
             return
         }
 
-        setUpdating(true)
+        // setUpdating(true)
+
+        await new Promise((resolve) => setTimeout(resolve, 500))
 
         const newConfig = Object.assign({}, frame.draftConfig, props)
 
@@ -77,8 +79,8 @@ export default function FrameEditor({
 
         refreshPreview()
 
-        setUpdating(false)
-    }, 1000)
+        // setUpdating(false)
+    }, 2000)
 
     function updateConfig(props: Record<string, any>) {
         if (!props || Object.keys(props).length === 0) {
@@ -87,9 +89,9 @@ export default function FrameEditor({
 
         const newConfig = Object.assign({}, temporaryConfig, props)
 
-        setTemporaryConfig(newConfig)
-
         writeConfig(newConfig)
+
+        setTemporaryConfig(newConfig)
     }
 
     async function updateName() {
@@ -251,38 +253,6 @@ export default function FrameEditor({
                                     defaultValue={frame.linkedPage || undefined}
                                     className="w-full"
                                     onChange={updateLinkedPage}
-                                />
-                            </div>
-                        </PopoverContent>
-                    </Popover>
-
-                    <Popover>
-                        <PopoverTrigger asChild={true}>
-                            <Button variant="outline">
-                                <span className="hidden md:block">Earn Moxie</span>
-                                <WallpaperIcon className="hidden w-4 h-4 max-md:inline" />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-80 max-md:w-screen">
-                            <div className="grid gap-4">
-                                <div className="space-y-2">
-                                    <h4 className="font-medium leading-none">Earn Moxie</h4>
-                                    <p className="text-sm text-muted-foreground">
-                                        Connect your own Airstack key to earn Moxie when other
-                                        farcasters interact with your Frame!
-                                    </p>
-                                </div>
-                                <Input
-                                    id="airstackKey"
-                                    type="text"
-                                    placeholder="Enter your Airstack API key"
-                                    defaultValue={temporaryConfig?.airstackKey || undefined}
-                                    className="w-full"
-                                    onChange={(e) => {
-                                        updateConfig({
-                                            airstackKey: e.target.value || undefined,
-                                        })
-                                    }}
                                 />
                             </div>
                         </PopoverContent>

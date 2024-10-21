@@ -5,16 +5,16 @@ export type BasicViewStyle = {
     fontWeight?: string
     fontFamily?: string
     fontStyle?: string
+    textAlign?: 'left' | 'center' | 'right'
 }
 
-export type BasicViewProps =
-    | {
-          title: { text: string } & BasicViewStyle
-          subtitle?: { text: string } & BasicViewStyle
-          bottomMessage?: { text?: string } & BasicViewStyle
-          background?: string
-      }
-    | undefined
+export type BasicViewProps = {
+    title: { text: string } & BasicViewStyle
+    subtitle?: { text: string } & BasicViewStyle
+    bottomMessage?: { text?: string } & BasicViewStyle
+    background?: string
+}
+   
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export default function BasicView(props: BasicViewProps) {
@@ -63,6 +63,7 @@ export default function BasicView(props: BasicViewProps) {
             {title && (
                 <div
                     style={{
+                        textAlign: title.textAlign || 'left',
                         fontFamily: title.fontFamily || 'Roboto',
                         fontSize: `${title.fontSize || 50}px`,
                         color: title.color || 'white',
@@ -77,6 +78,7 @@ export default function BasicView(props: BasicViewProps) {
             {subtitle && (
                 <div
                     style={{
+                        textAlign: subtitle.textAlign || 'left',
                         fontFamily: subtitle.fontFamily || 'Roboto',
                         fontSize: `${subtitle.fontSize || 30}px`,
                         color: subtitle.color || 'white',
@@ -91,6 +93,7 @@ export default function BasicView(props: BasicViewProps) {
             {bottomMessage && (
                 <div
                     style={{
+                        textAlign: bottomMessage.textAlign || 'left',
                         fontFamily: bottomMessage.fontFamily || 'Roboto',
                         fontSize: `${bottomMessage.fontSize || 20}px`,
                         color: bottomMessage.color || 'white',
