@@ -31,7 +31,7 @@ export async function buildFramePage({
 
     if (component) {
         const renderedImage = new ImageResponse(component, {
-            ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+            ...dimensionsForRatio[aspectRatio === '1.91:1' ? '1.91/1' : '1/1'],
             fonts,
         })
 
@@ -113,7 +113,7 @@ export async function buildPreviewFramePage({
 
     if (component) {
         const renderedImage = new ImageResponse(component, {
-            ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+            ...dimensionsForRatio[aspectRatio === '1.91:1' ? '1.91/1' : '1/1'],
             fonts,
         })
 
@@ -161,7 +161,7 @@ export async function buildPreviewFramePage({
 export async function buildFrame({
     buttons,
     image,
-    aspectRatio = '1.91:1',
+    aspectRatio = '1:1',
     inputText,
     postUrl,
     refreshPeriod,

@@ -13,6 +13,7 @@ import type {
     TextLayerConfigs,
 } from '../Config'
 import { getFigmaDesign, svgToDataUrl } from '../utils/FigmaApi'
+import { useFigmaToken } from './FigmaTokenContext'
 
 const SVG_TEXT_DEBUG_ENABLED = false
 
@@ -22,7 +23,6 @@ type PropertiesTabProps = {
     description: string
     textLayers: TextLayerConfigs
     aspectRatio: AspectRatio
-    figmaPAT: string
     figmaUrl?: string
     figmaMetadata?: FigmaMetadata
     onUpdateTitle: (title: string) => void
@@ -42,7 +42,6 @@ export const PropertiesTab = ({
     description,
     textLayers,
     aspectRatio,
-    figmaPAT,
     figmaUrl,
     figmaMetadata,
     onUpdateTitle,
@@ -55,13 +54,15 @@ export const PropertiesTab = ({
     const [newUrl, setNewUrl] = useState(figmaUrl)
     const [isUpdating, setIsUpdating] = useState(false)
 
+    const { figmaAccessToken, loading } = useFigmaToken();
+
     const updateUrl = async () => {
         console.debug(`updateFigmaUrl(${slideConfigId})`)
 
         setIsUpdating(true)
 
         // Fetch the Figma design
-        const figmaDesignResult = await getFigmaDesign(figmaPAT, newUrl)
+        const figmaDesignResult = await getFigmaDesign(figmaAccessToken!, newUrl)
         if (!figmaDesignResult.success) {
             toast.error(figmaDesignResult.error)
             setIsUpdating(false)
@@ -182,8 +183,12 @@ export const PropertiesTab = ({
     const aspectRatioFormatted = !figmaMetadata
         ? ''
         : figmaMetadata.aspectRatio % 1 === 0
-          ? figmaMetadata?.aspectRatio?.toString() + ':1'
-          : figmaMetadata?.aspectRatio?.toFixed(2) + ':1'
+            ? figmaMetadata?.aspectRatio?.toString() + ':1'
+            : figmaMetadata?.aspectRatio?.toFixed(2) + ':1'
+
+    if (loading) {
+        return <div>Loading...</div>
+    }
 
     return (
         <div>
@@ -210,16 +215,16 @@ export const PropertiesTab = ({
                     <Input
                         type="url"
                         placeholder={
-                            figmaPAT
+                            figmaAccessToken
                                 ? 'Figma Frame > right click > copy as > copy link'
-                                : 'Configure Figma PAT first'
+                                : 'Connect Figma Account'
                         }
-                        disabled={!figmaPAT}
+                        disabled={!figmaAccessToken}
                         value={newUrl}
                         onChange={(e) => setNewUrl(e.target.value)}
                         className="mr-2"
                     />
-                    <Button disabled={isUpdating || !figmaPAT || !newUrl} onClick={updateUrl}>
+                    <Button disabled={isUpdating || !figmaAccessToken || !newUrl} onClick={updateUrl}>
                         {isUpdating && (
                             <>
                                 <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />

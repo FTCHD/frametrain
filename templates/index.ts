@@ -1,7 +1,11 @@
+import ama from './ama'
+import adspot from './adspot'
+import amazon from './amazon'
 import beehiiv from './beehiiv'
 import cal from './cal'
 import contract from './contract'
 import discourse from './discourse'
+import eightball from './eightball'
 import figma from './figma'
 import form from './form'
 import formV1 from './form-v1'
@@ -20,8 +24,10 @@ import rss from './rss'
 import substack from './substack'
 import swap from './swap'
 import twitter from './twitter'
+import bet from './bet'
 
 export default {
+    bet,
     pdf,
     poll,
     figma,
@@ -43,5 +49,9 @@ export default {
     gated,
     contract,
     substack,
+    ama,
     beehiiv,
+    adspot,
+    amazon,
+    eightball,
 }
