@@ -51,7 +51,7 @@ export default async function buildFigmaFrame(
 
     function createView(): [ReactElement, FontConfig[]] {
         // biome-ignore lint/complexity/useSimplifiedLogicExpression: horrible advice
-        if (!config.figmaPAT || !slideConfig || !slideConfig.figmaUrl)
+        if (!slideConfig || !slideConfig.figmaUrl)
             return [NoFigmaView(), []]
 
         const view = FigmaView({ slideConfig })
