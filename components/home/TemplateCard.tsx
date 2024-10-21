@@ -37,7 +37,7 @@ export default function TemplateCard({
     return (
         <button
             type="button"
-            className={`transition ease-in-out group w-[350px] h-[380px] flex flex-col rounded-md border-[#32383E] border hover:border-[#12467B]   ${
+            className={`transition ease-in-out group w-full h-[380px] flex flex-col rounded-md border-[#32383E] border md:max-w-[380px] hover:border-[#12467B] ${
                 isLoading ? 'animate-pulse' : ''
             }`}
             disabled={isLoading}
