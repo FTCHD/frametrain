@@ -6,17 +6,17 @@ export default function CoverView(config: Config) {
             style={{
                 width: '100%',
                 height: '100%',
-                background: config.backgroundColor,
+                backgroundColor: 'black',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
                 fontFamily: 'Roboto',
                 fontSize: '50px',
-                color: `${config.fontColor}`,
+                color: '#ffffff',
             }}
         >
-            {config.coverText}
+            Press "VIEW"
         </div>
     )
 }
