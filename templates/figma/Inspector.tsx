@@ -6,23 +6,21 @@ import { Configuration } from '@/sdk/inspector'
 import {
     ArrowBigLeftDashIcon,
     ArrowBigRightDashIcon,
-    KeySquareIcon,
     Trash2Icon,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import type { FramePressConfig, SlideConfig, TextLayerConfigs } from './Config'
-import FigmaTokenEditor from './components/FigmaTokenEditor'
 import SlideEditor from './components/SlideEditor'
 import { DEFAULT_SLIDES, INITIAL_BUTTONS } from './constants'
 import FontConfig from './utils/FontConfig'
 import { FigmaView } from './views/FigmaView'
+import { FigmaTokenProvider } from './components/FigmaTokenContext'
+import FigmaConnector from './components/FigmaConnector'
 
 export default function Inspector() {
     const [config, updateConfig] = useFrameConfig<FramePressConfig>()
     const [_, setPreviewData] = useFramePreview()
-
-    const [editingFigmaPAT, setEditingFigmaPAT] = useState(config.figmaPAT === undefined)
     const [selectedSlideIndex, setSelectedSlideIndex] = useState(0)
 
     const [figmaUnderstood, setFigmaUnderstood] = useLocalStorage('figmaUnderstood', false)
@@ -36,18 +34,11 @@ export default function Inspector() {
             buttonIndex: 0,
             inputText: '',
             params: `slideId=${id}`,
+            postUrl: undefined
         })
     }
 
     // Configuration updates
-    function updateFigmaPAT(updatedPAT: string) {
-        console.debug('Inspector::updateFigmaPAT()')
-        setEditingFigmaPAT(false)
-        updateConfig({
-            figmaPAT: updatedPAT,
-        })
-    }
-
     function updateSlide(updatedSlide: SlideConfig) {
         console.debug(`Inspector::updateSlide(${updatedSlide.id})`)
 
@@ -126,6 +117,7 @@ export default function Inspector() {
     }
 
     // Must run after rendering as it modifies the document <head>
+    // biome-ignore lint/correctness/useExhaustiveDependencies: circular rulese
     useEffect(() => {
         if (!config.slides) return
         for (const slide of config.slides) {
@@ -137,7 +129,7 @@ export default function Inspector() {
                 }
             }
         }
-    }, [config.slides, identifyFontsUsed])
+    }, [config.slides])
 
     // Setup default slides if this is a new instance
     useEffect(() => {
@@ -168,23 +160,12 @@ export default function Inspector() {
     const canDelete = config.slides?.length != 1 // must always be one slide visible
 
     return (
-        <Configuration.Root>
-            <Configuration.Section title="PAT">
-                {editingFigmaPAT ? (
-                    <FigmaTokenEditor
-                        figmaPAT={config.figmaPAT}
-                        onChange={updateFigmaPAT}
-                        onCancel={() => setEditingFigmaPAT(false)}
-                    />
-                ) : (
-                    <Button onClick={() => setEditingFigmaPAT(true)} variant={'secondary'}>
-                        <KeySquareIcon className="mr-1" />
-                        Figma PAT
-                    </Button>
-                )}
-            </Configuration.Section>
+        <FigmaTokenProvider>
+            <Configuration.Root>
+                <Configuration.Section title="Figma Login">
+                    <FigmaConnector />
+                </Configuration.Section>
 
-            {!editingFigmaPAT ? (
                 <Configuration.Section title="Figma Designs">
                     <div className="w-full flex items-center justify-between">
                         <div className="flex flex-row items-center justify-end gap-2">
@@ -211,11 +192,10 @@ export default function Inspector() {
                                     setSelectedSlideIndex(index)
                                     previewSlide(slideConfig.id)
                                 }}
-                                className={`w-40 h-40 flex items-center justify-center mr-1 border-[1px] rounded-md cursor-pointer select-none ${
-                                    selectedSlideIndex === index
-                                        ? 'border-highlight'
-                                        : 'border-input'
-                                }`}
+                                className={`w-40 h-40 flex items-center justify-center mr-1 border-[1px] rounded-md cursor-pointer select-none ${selectedSlideIndex === index
+                                    ? 'border-highlight'
+                                    : 'border-input'
+                                    }`}
                             >
                                 <div
                                     style={{
@@ -226,11 +206,11 @@ export default function Inspector() {
                                         // Handle the case where no image has been configured but we need a min-width
                                         ...(!slideConfig.baseImagePaths
                                             ? {
-                                                  'width':
-                                                      slideConfig.aspectRatio == '1:1'
-                                                          ? dimensionsForRatio['1/1'].width
-                                                          : dimensionsForRatio['1.91/1'].height,
-                                              }
+                                                'width':
+                                                    slideConfig.aspectRatio == '1:1'
+                                                        ? dimensionsForRatio['1/1'].width
+                                                        : dimensionsForRatio['1.91/1'].height,
+                                            }
                                             : {}),
                                         'overflow': 'clip',
                                     }}
@@ -296,14 +276,13 @@ export default function Inspector() {
                         <SlideEditor
                             key={config.slides[selectedSlideIndex].id}
                             slideConfig={config.slides[selectedSlideIndex]}
-                            figmaPAT={config.figmaPAT}
                             buttonTargets={buttonTargets}
                             onUpdate={(updatedSlideConfig) => updateSlide(updatedSlideConfig)}
                         />
                     )}
                 </Configuration.Section>
-            ) : undefined}
-        </Configuration.Root>
+            </Configuration.Root>
+        </FigmaTokenProvider>
     )
 }
 
