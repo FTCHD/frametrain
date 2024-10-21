@@ -9,15 +9,30 @@ interface SectionProps {
     title: string
     children: ReactNode
     description?: string
+    actions?: ReactNode[]
 }
 
-function Section({ title, children, description }: SectionProps): ReactElement {
-	const { ref } = useScrollSection(title)
-	
+function Section({ title, children, description, actions }: SectionProps): ReactElement {
+    const { ref } = useScrollSection(title)
+
     return (
-        <div className="flex flex-col gap-2" ref={ref}>
+        <div className="flex flex-col gap-1" ref={ref}>
             <div className="flex flex-col gap-1 w-full">
-                <h2 className="text-xl font-semibold max-md:text-base">{title}</h2>
+                <div className="flex flex-row gap-1 w-full group items-center">
+                    <h2 className="text-xl font-semibold max-md:text-base">{title}</h2>
+                    {actions && (
+                        <div className="flex flex-row gap-1 items-center">
+                            {actions.map((action, iAction) => (
+                                <div
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 max-md:opacity-100"
+                                    key={iAction}
+                                >
+                                    {action}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
                 {description && (
                     <p className="text-sm text-muted-foreground max-w-[80%] max-md:text-xs">
                         {description}
@@ -110,7 +125,7 @@ function Root(props: {
                     })}
                 </div>
             )}
-            <div className="flex px-4 pb-0 overflow-y-scroll max-h-[calc(100vh-180px)] flex-col gap-5 max-md:gap-3 max-md:pb-14">
+            <div className="flex px-4 pb-0 overflow-y-scroll max-h-[calc(100vh-180px)] flex-col gap-4 max-md:gap-3 max-md:pb-14">
                 {validChildren}
             </div>
         </div>

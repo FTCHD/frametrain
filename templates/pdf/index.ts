@@ -23,7 +23,7 @@ export default {
     octicon: 'stack',
     creatorFid: '2',
     creatorName: 'Varun',
-    enabled: true,
+    enabled: false,
     Inspector,
     handlers,
     cover,

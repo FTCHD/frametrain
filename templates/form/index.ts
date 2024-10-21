@@ -1,91 +1,87 @@
 import type { BaseConfig, BaseStorage, BaseTemplate } from '@/lib/types'
-import type { GatingType } from '@/sdk/components/gating/types'
-import type { BasicViewStyle } from '@/sdk/views/BasicView'
 import Inspector from './Inspector'
 import cover from './cover.avif'
 import handlers from './handlers'
 import icon from './icon.avif'
 
-export type fieldTypes = {
-    fieldName: string
-    fieldDescription: string
-    fieldExample: string
+export type SlideButton =
+    | {
+          text: string
+          type: 'link'
+          target: string
+      }
+    | {
+          text: string
+          type: 'slide'
+          target: number
+      }
+    | {
+          text: string
+          type: 'frame'
+          target: string
+      }
+
+export type TextField = {
+    type: 'text'
+    label: string
+    message: string
+    regexp?: string
+    placeholder: string
     required: boolean
-    fieldType: 'text' | 'number' | 'email' | 'phone' | 'address'
-    fieldNameStyle?: BasicViewStyle
-    fieldDescriptionStyle?: BasicViewStyle
-    fieldExampleStyle?: BasicViewStyle
-    background?: string
 }
 
+export type ChoiceField = {
+    type: 'choice'
+    label: string
+    message: string
+    options: string[]
+}
+
+export type FormField = TextField | ChoiceField
+
 export interface Config extends BaseConfig {
-    owner: {
-        username: string
-        fid: number
-    } | null
-    fields: fieldTypes[]
-    backgroundColor: string
-    fontColor: string
-    coverText: string
-    aboutText: string
-    successText: string
-    shareText: string
-    frameId: string | undefined
-    allowDuplicates: boolean
-    gating: GatingType | undefined
-    enableGating: boolean | undefined
+    coverType: 'disabled' | 'image' | 'text'
+    coverImageUrl?: string
+    coverAspectRatio: '1:1' | '1.91:1'
+    coverStyling?: {
+        title: { text: string }
+        subtitle: { text: string }
+        bottomMessage: { text: string }
+        background: string
+    }
+    successType: 'disabled' | 'image' | 'text' | 'frame'
+    successFrameUrl?: string
+    successImageUrl?: string
+    successAspectRatio: '1:1' | '1.91:1'
+    successStyling?: {
+        title: { text: string }
+        subtitle: { text: string }
+        bottomMessage: { text: string }
+        background: string
+    }
+    successButtons?: SlideButton[]
+    fields: FormField[]
 }
 
 export interface Storage extends BaseStorage {
-    inputNames: string[]
-    data: {
-        fid: number
-        values: {
-            field: string
-            value: string
-        }[]
-        timestamp: number
-    }[]
+    submissions: Record<string, Record<string, any>>
 }
 
 export default {
     name: 'Form',
     description: 'Create forms, save the user inputs, and even download them as CSV!',
     shortDescription: 'Download as CSV',
-    icon: icon,
     octicon: 'project',
     creatorFid: '417554',
     creatorName: 'onten.eth',
+    icon,
     cover,
     enabled: true,
     Inspector,
     handlers,
     initialConfig: {
         fields: [],
-        owner: null,
-        backgroundColor: 'linear-gradient(120deg, #f6d365 0%, #fda085 40%)',
-        fontColor: '#FFFFFF',
-        aboutText: 'This is a form frame!',
-        coverText: 'Untitled form',
-        shareText: `I'm inviting you all to fill out my new form!`,
-        successText: 'Your response has been recorded!',
-        frameId: undefined,
-        allowDuplicates: false,
-        enableGating: false,
-        gating: {
-            enabled: [],
-            requirements: {
-                maxFid: 0,
-                minFid: 0,
-                score: 0,
-                channels: [],
-                exactFids: [],
-                erc20: null,
-                erc721: null,
-                erc1155: null,
-                moxie: null,
-            },
-        },
+        successType: 'image',
     },
     events: [],
 } satisfies BaseTemplate
