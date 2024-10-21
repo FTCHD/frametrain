@@ -1,9 +1,11 @@
-import about from './about'
+import cover from './cover'
+import field from './field'
 import initial from './initial'
-import input from './input'
+import success from './success'
 
 export default {
     initial,
-    input,
-    about,
+    cover,
+    field,
+    success,
 }

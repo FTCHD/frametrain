@@ -5,6 +5,7 @@ import discourse from './discourse'
 import ecommerce from './ecommerce'
 import figma from './figma'
 import form from './form'
+import formV1 from './form-v1'
 import fundraiser from './fundraiser'
 import gated from './gated'
 import gif from './gif'
@@ -14,6 +15,7 @@ import meme from './meme'
 import pdf from './pdf'
 import poll from './poll'
 import presentation from './presentation'
+import presentationV1 from './presentation-v1'
 import quizlet from './quizlet'
 import rss from './rss'
 import substack from './substack'
@@ -28,12 +30,14 @@ export default {
     discourse,
     gif,
     form,
+    formV1,
     cal,
     medium,
     quizlet,
     luma,
     ecommerce,
     presentation,
+    presentationV1,
     meme,
     rss,
     swap,

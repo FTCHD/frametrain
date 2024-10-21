@@ -303,9 +303,17 @@ export async function updateFrameCalls(id: string, calls: number) {
 }
 
 export async function updateFramePreview(id: string, preview: string) {
-    // extract whats after "property="og:image" content="data:image/png;base64," from preview
-    let previewImage = preview.split('data:image/png;base64,')[1]
-    previewImage = previewImage.split('"')[0]
+    let previewImage = preview.match(/<meta property="fc:frame:image" content="([^"]+)"/)?.[0]
+
+    if (!previewImage) {
+        return
+    }
+
+    previewImage = previewImage?.split('content="')[1].split('"')[0]
+
+    if (previewImage.startsWith('data:image/png;base64,')) {
+        previewImage = previewImage.split('data:image/png;base64,')[1]
+    }
 
     await uploadPreview({
         frameId: id,
