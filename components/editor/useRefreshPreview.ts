@@ -1,4 +1,4 @@
-import { simulateCall } from '@/lib/debugger'
+import { parseFrameHtml, simulateCall } from '@/lib/debugger'
 import {
     mockOptionsAtom,
     previewErrorAtom,
@@ -17,11 +17,15 @@ export function useRefreshPreview(frameId: string) {
     const mockOptions = useAtomValue(mockOptionsAtom)
 
     const postUrl = useMemo(() => {
-        const handler = previewData?.handler || ''
-        const params = previewData?.params ? `?${previewData.params}` : ''
+        if (!previewData?.postUrl) {
+            const handler = previewData?.handler || ''
+            const params = previewData?.params ? `?${previewData.params}` : ''
 
-        return `${process.env.NEXT_PUBLIC_HOST}/p/${frameId}/${handler}` + params
-    }, [frameId, previewData])
+            return `${process.env.NEXT_PUBLIC_HOST}/p/${frameId}/${handler}` + params
+        }
+
+        return previewData.postUrl
+    }, [previewData, frameId])
 
     const refreshPreviewCallback = useCallback(async () => {
         try {
@@ -53,7 +57,15 @@ export function useRefreshPreview(frameId: string) {
                   }
                 : undefined
 
-            const result = await simulateCall(postUrl, previewParams, mockOptions)
+            const html = await simulateCall(postUrl, previewParams, mockOptions)
+
+            if (!html) {
+                setPreviewError(true)
+                setPreviewLoading(false)
+                return
+            }
+
+            const result = parseFrameHtml(html)
 
             if (!result && !isPost) {
                 setPreviewError(true)
