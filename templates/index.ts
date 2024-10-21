@@ -1,3 +1,4 @@
+import adspot from './adspot'
 import amazon from './amazon'
 import beehiiv from './beehiiv'
 import cal from './cal'
@@ -46,6 +47,7 @@ export default {
     contract,
     substack,
     beehiiv,
+    adspot,
     amazon,
     eightball,
 }
