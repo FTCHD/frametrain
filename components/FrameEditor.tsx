@@ -258,38 +258,6 @@ export default function FrameEditor({
                         </PopoverContent>
                     </Popover>
 
-                    <Popover>
-                        <PopoverTrigger asChild={true}>
-                            <Button variant="outline">
-                                <span className="hidden md:block">Earn Moxie</span>
-                                <WallpaperIcon className="hidden w-4 h-4 max-md:inline" />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-80 max-md:w-screen">
-                            <div className="grid gap-4">
-                                <div className="space-y-2">
-                                    <h4 className="font-medium leading-none">Earn Moxie</h4>
-                                    <p className="text-sm text-muted-foreground">
-                                        Connect your own Airstack key to earn Moxie when other
-                                        farcasters interact with your Frame!
-                                    </p>
-                                </div>
-                                <Input
-                                    id="airstackKey"
-                                    type="text"
-                                    placeholder="Enter your Airstack API key"
-                                    defaultValue={temporaryConfig?.airstackKey || undefined}
-                                    className="w-full"
-                                    onChange={(e) => {
-                                        updateConfig({
-                                            airstackKey: e.target.value || undefined,
-                                        })
-                                    }}
-                                />
-                            </div>
-                        </PopoverContent>
-                    </Popover>
-
                     {/*                  
                         <TooltipProvider delayDuration={0}>
                             <Tooltip>
