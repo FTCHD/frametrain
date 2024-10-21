@@ -1,3 +1,4 @@
+import ama from './ama'
 import adspot from './adspot'
 import amazon from './amazon'
 import beehiiv from './beehiiv'
@@ -46,6 +47,7 @@ export default {
     gated,
     contract,
     substack,
+    ama,
     beehiiv,
     adspot,
     amazon,
