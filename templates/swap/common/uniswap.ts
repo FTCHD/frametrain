@@ -4,6 +4,48 @@ import { parseAbi } from 'abitype'
 import { erc20Abi, getContract } from 'viem'
 import { uniswapChains } from './format'
 
+interface Pool {
+    type: string
+    address: string
+    api_address: string
+    price_in_usd: string
+    reserve_in_usd: string
+    from_volume_in_usd: string
+    to_volume_in_usd: string
+    price_percent_change: string
+    network: {
+        name: string
+        image_url: string
+        identifier: string
+    }
+    dex: {
+        name: string
+        identifier: string
+        image_url: string
+    }
+    tokens: {
+        name: string
+        symbol: string
+        address: string
+        image_url: string
+        is_base_token: boolean
+    }[]
+    volume_percent_change_24h: string | null
+    pool_creation_date: string
+}
+
+interface SearchResponseData {
+    id: string
+    type: string
+    attributes: {
+        networks: any[]
+        dexes: any[]
+        pools: Pool[]
+        pairs: any[]
+        tags: any[]
+    }
+}
+
 const uniswapAbi = parseAbi([
     'function token0() view returns (address)',
     'function token1() view returns (address)',
@@ -21,8 +63,8 @@ export const getPoolClient = async (address: `0x${string}`) => {
         try {
             await contract.read.token0()
             return client
-        } catch {
-            console.error(`Failed to fetch token0 for ${address} on ${chain}`)
+        } catch (e) {
+            console.error(`Failed to fetch token0 for ${address} on ${chain.key}`, e)
         }
     }
 
@@ -33,55 +75,42 @@ async function getTokenData({
     address,
     client,
 }: { address: `0x${string}`; client: ReturnType<typeof getViem> }) {
-    try {
-        const token = getContract({
-            client,
-            address,
-            abi: erc20Abi,
-        })
+    const token = getContract({
+        client,
+        address,
+        abi: erc20Abi,
+    })
 
-        const name = await token.read.name()
-        const symbol = await token.read.symbol()
-        const decimals = await token.read.decimals()
-        const logo = await getTokenLogo(client.chain.id, address)
+    const name = await token.read.name()
+    const symbol = await token.read.symbol()
+    const decimals = await token.read.decimals()
+    const logo = 'https://assets.geckoterminal.com/bqu4tzciplldg2ojzx6ww5hd09ii'
 
-        return {
-            name,
-            symbol,
-            decimals,
-            address,
-            logo,
-        }
-    } catch (error) {
-        console.error(`Failed to fetch token data for ${address}`, error)
+    return {
+        name,
+        symbol,
+        decimals,
+        address,
+        logo,
     }
-    return null
 }
 
-async function getTokenLogo(network: number, address: string) {
-    const chain = uniswapChains.find((c) => c.id === network)
-    if (!chain) {
-        throw new Error('Invalid network')
-    }
-    const name = chain.key === 'mainnet' ? 'eth' : chain.key
-    const url = `https://api.geckoterminal.com/api/v2/networks/${name}/tokens/${address}`
+async function getPoolTokenLogos(poolAddress: string): Promise<string[]> {
+    //   example https://app.geckoterminal.com/api/p1/search?query=0x00a59c2d0f0f4837028D47a391decbffC1e10608
+    const request = await fetch(`https://app.geckoterminal.com/api/p1/search?query=${poolAddress}`)
 
-    const response = await fetch(url)
-    const data = (await response.json()) as {
-        'data': {
-            'id': 'string'
-            'type': 'string'
-            'attributes': {
-                'name': string
-                'address': string
-                'symbol': string
-                'decimals': number
-                image_url: string
-            }
-        }
+    const response = await request.json()
+    const data = response.data as SearchResponseData
+
+    if (
+        data?.type !== 'search' ||
+        data.attributes.pools.length !== 1 ||
+        data.attributes.pools[0].address.toLowerCase() !== poolAddress
+    ) {
+        throw new Error('Invalid pool')
     }
 
-    return data.data.attributes.image_url
+    return data.attributes.pools[0].tokens.map((token) => token.image_url)
 }
 
 export async function getPoolData(address: `0x${string}`) {
@@ -98,9 +127,10 @@ export async function getPoolData(address: `0x${string}`) {
         getTokenData({ address: address1, client }),
     ])
 
-    if (!(token0 && token1)) {
-        throw new Error('Failed to fetch token data')
-    }
+    const [token0Logo, token1Logo] = await getPoolTokenLogos(pool.address.toLowerCase())
+    token0.logo = token0Logo
+    token1.logo = token1Logo
+
     const network = {
         id: client.chain.id,
         name: client.chain.name,
