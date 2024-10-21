@@ -1,659 +1,869 @@
 'use client'
-import {
-    Button,
-    ColorPicker,
-    FontFamilyPicker,
-    FontStylePicker,
-    FontWeightPicker,
-    Input,
-    Select,
-} from '@/sdk/components'
-import { useFrameConfig, useUploadImage } from '@/sdk/hooks'
+import { BasicViewInspector, Button, Input, Select } from '@/sdk/components'
+import { useFrameConfig, useFrameId, useUploadImage } from '@/sdk/hooks'
 import { Configuration } from '@/sdk/inspector'
-import { LoaderIcon, Trash2Icon } from 'lucide-react'
-import { type ChangeEvent, useEffect, useMemo, useState } from 'react'
-import toast from 'react-hot-toast'
-import { type Config, type CustomButtonType, PRESENTATION_DEFAULTS, type Slide } from '.'
-
-type IImageTypes = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
+import { Trash } from 'lucide-react'
+import type { PDFPageProxy } from 'pdfjs-dist/types/web/interfaces'
+import { useState } from 'react'
+import type { Config, Slide, SlideButton } from '.'
+import getPDFDocument, { createPDFPage, renderPDFToCanvas } from './utils'
 
 export default function Inspector() {
-    const uploadImage = useUploadImage()
-
-    // General States
     const [config, updateConfig] = useFrameConfig<Config>()
+    const uploadImage = useUploadImage()
+    const frameId = useFrameId()
 
-    // Image States
-    const [loading, setLoading] = useState(false)
-
-    // Slide states
-    const [currentSlideIndex, setSlideIndex] = useState(0)
-
-    const slide = useMemo(() => {
-        return config.slides[currentSlideIndex] //|| PRESENTATION_DEFAULTS.slides[0]
-    }, [config, currentSlideIndex])
-
-    /* USE-EFFECTs */
-    // Apply default presentation if no slide has left
-    useEffect(() => {
-        if (!config?.slides?.length) updateConfig(PRESENTATION_DEFAULTS)
-    }, [config, updateConfig])
-
-    /* FUNCTIONs */
-    function updateSlide(data: any): void {
-        const newSlides = config.slides.with(currentSlideIndex, {
-            ...PRESENTATION_DEFAULTS.slides[0],
-            ...config.slides[currentSlideIndex],
-            ...data,
-        })
-
-        updateConfig({ slides: newSlides })
-    }
-
-    function swapSlide(direction: 'left' | 'right'): void {
-        const og = { ...slide }
-        const slides = [...config.slides]
-
-        if (direction === 'left') {
-            if (currentSlideIndex === 0) return
-
-            slides[currentSlideIndex] = { ...slides[currentSlideIndex - 1] }
-            slides[currentSlideIndex - 1] = og
-            setSlideIndex((s) => s - 1)
-        } else {
-            if (currentSlideIndex === slides.length - 1) return
-
-            slides[currentSlideIndex] = { ...slides[currentSlideIndex + 1] }
-            slides[currentSlideIndex + 1] = og
-            setSlideIndex((s) => s + 1)
-        }
-
-        updateConfig({ slides })
-    }
-
-    function updateButtonTarget(newTarget: string, index: number): void {
-        const newButtons = slide.buttons.map((b, buttonIndex) =>
-            buttonIndex === index ? { ...b, target: newTarget } : b
-        )
-        updateSlide({ buttons: newButtons })
-    }
-
-    async function getUploadImageProps(
-        e: ChangeEvent<HTMLInputElement>
-    ): Promise<{ base64String: string; contentType: IImageTypes } | null> {
-        if (!e.target.files?.[0]) return null
-        setLoading(true)
-
-        const reader = new FileReader()
-        reader.readAsDataURL(e.target.files[0])
-
-        const base64String = (await new Promise((resolve) => {
-            reader.onload = () => {
-                const base64String = (reader.result as string).split(',')[1]
-                resolve(base64String)
-            }
-        })) as string
-
-        const contentType = e.target.files[0].type as IImageTypes
-        setLoading(false)
-
-        return {
-            base64String,
-            contentType,
-        }
-    }
+    const [uploading, setUploading] = useState(false)
 
     return (
         <Configuration.Root>
-            <Configuration.Section title="Slides">
-                {/* Slide Buttons */}
-                <div className="flex flex-row items-center justify-end gap-2">
-                    <Button onClick={() => swapSlide('left')} disabled={currentSlideIndex === 0}>
-                        &lt; Move left
-                    </Button>
-                    <Button
-                        onClick={() => swapSlide('right')}
-                        disabled={currentSlideIndex === config?.slides?.length - 1}
-                    >
-                        Move right &gt;
-                    </Button>
-                    <Button
-                        variant="destructive"
-                        disabled={config?.slides?.length < 2}
-                        onClick={() => {
-                            const newSlides = config.slides
-                            newSlides.splice(currentSlideIndex, 1)
-                            setSlideIndex((c) => Math.max(0, c - 1))
-                            updateConfig({ slides: newSlides })
+            <Configuration.Section
+                title="Cover"
+                actions={[
+                    config.coverType && config.coverType !== 'disabled' && (
+                        <Select
+                            key={'select success'}
+                            className="p-0 pl-2 border-0 bg-transparent h-fit w-fit focus:ring-0"
+                            defaultValue={config.coverAspectRatio}
+                            placeholder="Select an aspect ratio"
+                            onChange={(newValue) => {
+                                updateConfig({
+                                    coverAspectRatio: newValue,
+                                })
+                            }}
+                        >
+                            <option key="1:1" value="1:1">
+                                1:1
+                            </option>
+                            <option key="1.91:1" value="1.91:1">
+                                1.91:1
+                            </option>
+                        </Select>
+                    ),
+                ]}
+            >
+                {/* <code>{JSON.stringify(config, null, 2)}</code> */}
+
+                {config.coverType && config.coverType !== 'disabled' && (
+                    <Select
+                        defaultValue={config.coverType}
+                        onChange={(newValue) => {
+                            updateConfig({ coverType: newValue })
                         }}
+                        placeholder="Select a cover type"
                     >
-                        <Trash2Icon />
-                    </Button>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                    <div
-                        onClick={() => {
+                        <option key="disabled" value="disabled">
+                            Disabled
+                        </option>
+                        <option key="image" value="image">
+                            Image
+                        </option>
+                        <option key="text" value="text">
+                            Text
+                        </option>
+                    </Select>
+                )}
+
+                {(!config.coverType || config.coverType === 'disabled') && (
+                    <Select
+                        onChange={(newValue) => {
+                            updateConfig({ coverType: newValue })
+                        }}
+                        placeholder="Select a type to enable the cover"
+                    >
+                        <option key="image" value="image">
+                            Image
+                        </option>
+                        <option key="text" value="text">
+                            Text
+                        </option>
+                    </Select>
+                )}
+
+                {config.coverType === 'text' && (
+                    <BasicViewInspector
+                        name="Cover"
+                        title={config?.coverStyling?.title || { text: '' }}
+                        subtitle={config?.coverStyling?.subtitle || { text: '' }}
+                        bottomMessage={config?.coverStyling?.bottomMessage || { text: '' }}
+                        background={config?.coverStyling?.background}
+                        onUpdate={(coverStyling) => {
                             updateConfig({
-                                slides: config.slides.concat([
-                                    {
-                                        ...PRESENTATION_DEFAULTS.slides[0],
-                                        buttons: [
-                                            {
-                                                type: 'navigate',
-                                                label: 'Back',
-                                                target: (config.slides.length - 1).toString(),
-                                            },
-                                        ],
-                                    },
-                                ]),
+                                coverStyling,
                             })
                         }}
-                        className="w-40 h-40 flex items-center justify-center p-2 border-input border-[1px] rounded-md cursor-pointer"
-                    >
-                        <span className="text-4xl">+</span>
-                    </div>
-
-                    {config.slides?.map((slide: Slide, i: number) => {
-                        const isCurrent = i === currentSlideIndex
-                        const content = slide?.content?.text
-                        const title = slide?.title?.text
-
-                        const background: any = {}
-
-                        switch (slide.background?.type) {
-                            case 'color': {
-                                background['background'] = slide.background.value // Covers gradients and solid colors at the same time
-                                break
-                            }
-                            case 'image':
-                                background['backgroundImage'] = slide.background.value
-                        }
-
-                        /* Images */
-                        if (slide?.image && slide.type === 'image') {
-                            background['backgroundImage'] = `url(${slide.image})`
-                            background['backgroundRepeat'] = 'no-repeat'
-                            //! check this
-                            background['backgroundSize'] = '100% 100%'
-                            background['backgroundPosition'] = 'center'
-                        }
-
-                        return (
-                            <div
-                                key={'s-' + i}
-                                onClick={() => setSlideIndex(i)}
-                                style={{ ...background }}
-                                className={`w-40 h-40 flex items-center justify-center text-xs p-2 border-input border-[1px] rounded-md cursor-pointer ${
-                                    isCurrent
-                                        ? 'outline outline-2 outline-blue-300'
-                                        : 'outline-none'
-                                }`}
-                            >
-                                {slide?.type === 'image' && slide.image && (
-                                    <img
-                                        src={slide.image}
-                                        alt="Slide content"
-                                        height={10}
-                                        width={10}
-                                        className="h-full w-full rounded-md"
-                                    />
-                                )}
-                                {slide.type === 'text' && (content || title) && (
-                                    <div className="flex flex-col gap-2">
-                                        {title && (
-                                            <h2
-                                                className="text-lg text-center"
-                                                style={{
-                                                    // fontFamily: slide.title?.font,
-                                                    color: slide.title?.color,
-                                                    fontWeight: slide.title?.weight,
-                                                }}
-                                            >
-                                                {title}
-                                            </h2>
-                                        )}
-
-                                        {content && (
-                                            <span
-                                                className="text-xs"
-                                                style={{
-                                                    // fontFamily: slide.content?.font,
-                                                    color: slide.content?.color,
-                                                    textAlign: slide.content?.align,
-                                                    fontWeight: slide.content?.weight,
-                                                }}
-                                            >
-                                                {content.slice(0, 120) +
-                                                    (content.length > 120 ? '...' : '')}
-                                            </span>
-                                        )}
-                                    </div>
-                                )}
-                                {!slide.image && !content && !title && (
-                                    <span className="block -rotate-45 font-bold text-[#ffffff50] text-4xl">
-                                        EMPTY
-                                    </span>
-                                )}
-                            </div>
-                        )
-                    })}
-                </div>
-            </Configuration.Section>
-            <Configuration.Section title="Current Slide">
-                <h2 className="text-lg font-semibold">Type</h2>
-                <Select
-                    defaultValue={slide.type || 'text'}
-                    onChange={(type) => updateSlide({ type: type as 'text' | 'image' })}
-                >
-                    <option value={'text'}>Text</option>
-                    <option value={'image'}>Image</option>
-                </Select>
-                <h2 className="text-lg font-semibold">Aspect Ratio</h2>
-                <Select
-                    defaultValue={slide.aspectRatio || '1:1'}
-                    onChange={(value) =>
-                        updateSlide({ aspectRatio: value as typeof slide.aspectRatio })
-                    }
-                >
-                    <option value={'1:1'}>1:1</option>
-                    <option value={'1.91:1'}>1.91:1</option>
-                </Select>
-                {slide?.type === 'text' && (
-                    <>
-                        <h2 className="text-lg font-semibold">Background</h2>
-                        <ColorPicker
-                            enabledPickers={['solid', 'gradient', 'image']}
-                            className="w-full"
-                            background={
-                                slide?.background?.value ||
-                                PRESENTATION_DEFAULTS.slides[0].background.value
-                            }
-                            setBackground={(value: string) =>
-                                updateSlide({
-                                    background: {
-                                        type: value.includes('url') ? 'image' : 'color',
-                                        value,
-                                    },
-                                })
-                            }
-                            uploadBackground={async (base64String, contentType) => {
-                                const { filePath } = await uploadImage({
-                                    base64String: base64String,
-                                    contentType: contentType,
-                                })
-                                updateSlide({
-                                    background: {
-                                        type: 'image',
-                                        value: filePath,
-                                    },
-                                })
-                                return filePath
-                            }}
-                        />
-                    </>
+                    />
                 )}
-                {slide?.type === 'image' && (
-                    <>
-                        <h2 className="text-lg font-semibold">Object Fit</h2>
-                        <Select
-                            defaultValue={slide.objectFit || 'fill'}
-                            onChange={(value) =>
-                                updateSlide({ objectFit: value as typeof slide.objectFit })
-                            }
+
+                {config.coverType === 'image' && (
+                    // https://github.com/kushagrasarathe/image-upload-shadcn/blob/main/src/components/image-upload.tsx#L84
+
+                    <div className="flex flex-row gap-1">
+                        <label
+                            htmlFor="uploadCoverImage"
+                            className="flex flex-1 cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
                         >
-                            <option value={'fill'}>Fill</option>
-                            <option value={'contain'}>Contain</option>
-                            <option value={'cover'}>Cover</option>
-                            <option value={'none'}>None</option>
-                            <option value={'scale-down'}>Scale Down</option>
-                        </Select>
-                    </>
-                )}
-                {/* Buttons */}
-                <h2 className="text-lg font-semibold">Buttons</h2>
-                <div className="flex flex-col gap-3">
-                    {slide?.buttons?.map((button, i) => {
-                        return (
-                            <div key={currentSlideIndex} className="flex flex-col gap-1">
-                                <div className="flex flex-row items-center gap-2">
-                                    <Select
-                                        defaultValue={button.type || 'navigate'}
-                                        onChange={(type) => {
-                                            const newButtons = slide.buttons.map((b, j) => {
-                                                if (i === j) {
-                                                    return {
-                                                        ...b,
-                                                        type: type as CustomButtonType,
-                                                        target: '',
-                                                    }
-                                                }
-                                                return b
-                                            })
-                                            updateSlide({ buttons: newButtons })
-                                        }}
-                                    >
-                                        <option value={'navigate'}>Navigate</option>
-                                        <option value={'link'}>Link</option>
-                                        <option value={'mint'}>Mint</option>
-                                    </Select>
+                            Upload Image
+                            <Input
+                                id="uploadCoverImage"
+                                accept="image/*"
+                                type="file"
+                                disabled={uploading}
+                                onChange={async (e) => {
+                                    if (e.target.files?.[0]) {
+                                        const file = e.target.files?.[0]
+                                        if (uploading) return
 
-                                    <Input
-                                        className="text-lg flex-1 h-10"
-                                        placeholder="Button Text"
-                                        defaultValue={button?.label}
-                                        onBlur={(e) => {
-                                            const newButtons = slide.buttons.map((b, index) => {
-                                                if (index === i) {
-                                                    return {
-                                                        ...b,
-                                                        label: e.target.value,
-                                                    }
-                                                }
-                                                return b
-                                            })
-                                            updateSlide({ buttons: newButtons })
-                                        }}
-                                    />
+                                        const reader = new FileReader()
+                                        reader.readAsDataURL(file)
 
-                                    {button.type === 'navigate' && (
-                                        <Select
-                                            defaultValue={button?.target || ''}
-                                            onChange={(v) => updateButtonTarget(v, i)}
-                                        >
-                                            {config.slides.map((_, slideIndex) => (
-                                                <option
-                                                    disabled={slideIndex === currentSlideIndex}
-                                                    key={slideIndex}
-                                                    value={slideIndex.toString()}
-                                                >
-                                                    Slide #{slideIndex + 1}
-                                                </option>
-                                            ))}
-                                        </Select>
-                                    )}
-
-                                    {['link', 'mint'].includes(button.type) && (
-                                        <Input
-                                            className="text-lg flex-1 h-10"
-                                            placeholder={
-                                                button.type === 'link' ? 'Link' : 'Zora NFT ID'
+                                        const base64String = (await new Promise((resolve) => {
+                                            reader.onload = () => {
+                                                const base64String = (
+                                                    reader.result as string
+                                                ).split(',')[1]
+                                                resolve(base64String)
                                             }
-                                            defaultValue={button?.target || ''}
-                                            onBlur={(e) => updateButtonTarget(e.target.value, i)}
-                                        />
-                                    )}
+                                        })) as string
 
-                                    {slide.buttons.length > 1 && (
-                                        <Button
-                                            className="flex items-center h-10 w-10 text-2xl text-white"
-                                            variant="destructive"
-                                            onClick={() => {
-                                                const newButtons = slide.buttons.filter(
-                                                    (_, index) => index !== i
-                                                )
-                                                updateSlide({ buttons: newButtons })
-                                            }}
-                                        >
-                                            -
-                                        </Button>
-                                    )}
-                                </div>
-                            </div>
-                        )
-                    })}
-                    {(slide?.buttons?.length || 0 < 4) && (
+                                        const contentType = e.target.files[0].type as
+                                            | 'image/png'
+                                            | 'image/jpeg'
+                                            | 'image/gif'
+                                            | 'image/webp'
+
+                                        const { fileName } = await uploadImage({
+                                            base64String: base64String,
+                                            contentType: contentType,
+                                        })
+
+                                        const imageUrl =
+                                            process.env.NEXT_PUBLIC_CDN_HOST +
+                                            '/frames/' +
+                                            frameId +
+                                            '/' +
+                                            fileName
+
+                                        updateConfig({ coverImageUrl: imageUrl })
+                                    }
+                                }}
+                                className="sr-only "
+                            />
+                        </label>
                         <Button
-                            className="flex items-center w-full p-3 bg-[#ffffff10] text-3xl text-gray-300 hover:bg-[#ffffff15]"
-                            onClick={() => {
-                                updateSlide({
-                                    buttons: [
-                                        ...(slide?.buttons || []),
+                            className="flex-1"
+                            variant={'primary'}
+                            onClick={async () => {
+                                const imageUrl = prompt('Enter the image URL')
+
+                                if (imageUrl) {
+                                    updateConfig({
+                                        coverImageUrl: imageUrl,
+                                    })
+                                }
+                            }}
+                        >
+                            Image from URL
+                        </Button>
+                    </div>
+                )}
+            </Configuration.Section>
+
+            <Configuration.Section title="Slides">
+                <div className="flex flex-row gap-1">
+                    <label
+                        htmlFor="uploadImage"
+                        className="flex flex-1 cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
+                    >
+                        Upload Image
+                        <Input
+                            id="uploadImage"
+                            accept="image/*"
+                            type="file"
+                            disabled={uploading}
+                            onChange={async (e) => {
+                                if (e.target.files?.[0]) {
+                                    const file = e.target.files?.[0]
+                                    if (uploading) return
+
+                                    setUploading(true)
+
+                                    const reader = new FileReader()
+                                    reader.readAsDataURL(e.target.files[0])
+
+                                    const base64String = (await new Promise((resolve) => {
+                                        reader.onload = () => {
+                                            const base64String = (reader.result as string).split(
+                                                ','
+                                            )[1]
+                                            resolve(base64String)
+                                        }
+                                    })) as string
+
+                                    const contentType = e.target.files[0].type as
+                                        | 'image/png'
+                                        | 'image/jpeg'
+                                        | 'image/gif'
+                                        | 'image/webp'
+
+                                    const { fileName } = await uploadImage({
+                                        base64String: base64String,
+                                        contentType: contentType,
+                                    })
+
+                                    const lastSlideIndex = config.slides?.length || 0
+
+                                    const slideButtons: SlideButton[] = []
+
+                                    if (lastSlideIndex > 0) {
+                                        slideButtons.push({
+                                            text: 'Back',
+                                            type: 'slide',
+                                            target: (lastSlideIndex - 1).toString(),
+                                        })
+                                    }
+
+                                    const newSlide: Slide = {
+                                        imageUrl:
+                                            process.env.NEXT_PUBLIC_CDN_HOST +
+                                            '/frames/' +
+                                            frameId +
+                                            '/' +
+                                            fileName,
+                                        buttons: slideButtons,
+                                        aspectRatio: '1:1',
+                                    }
+
+                                    updateConfig({
+                                        slides: [...(config.slides || []), newSlide],
+                                    })
+
+                                    setUploading(false)
+                                }
+                            }}
+                            className="sr-only "
+                        />
+                    </label>
+                    <Button
+                        className="flex-1"
+                        variant={'primary'}
+                        onClick={async () => {
+                            const imageUrl = prompt('Enter the image URL')
+
+                            if (imageUrl) {
+                                const slideButtons: SlideButton[] = []
+
+                                const slidesCount = config.slides?.length
+
+                                if (slidesCount > 0) {
+                                    slideButtons.push({
+                                        text: 'Back',
+                                        type: 'slide',
+                                        target: (slidesCount - 1).toString(),
+                                    })
+                                }
+
+                                updateConfig({
+                                    slides: [
+                                        ...(config.slides || []),
                                         {
-                                            type: 'navigate',
-                                            label: 'Go',
-                                            target: config.slides.length.toString(),
+                                            imageUrl: imageUrl,
+                                            aspectRatio: '1:1',
+                                            buttons: slideButtons,
                                         },
                                     ],
                                 })
+                            }
+                        }}
+                    >
+                        Image from URL
+                    </Button>
+
+                    <label
+                        htmlFor="uploadPdf"
+                        className="flex flex-1 cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
+                    >
+                        Upload PDF
+                        <Input
+                            id="uploadPdf"
+                            accept="application/pdf"
+                            type="file"
+                            disabled={uploading}
+                            onChange={(e) => {
+                                if (e.target.files?.[0]) {
+                                    const file = e.target.files?.[0]
+                                    if (uploading) return
+
+                                    const reader = new FileReader()
+                                    reader.addEventListener(
+                                        'load',
+                                        async () => {
+                                            const url = reader.result as string
+                                            setUploading(true)
+
+                                            const pages = []
+                                            let pageNumber = 1
+                                            const pdfDocument = await getPDFDocument(url)
+                                            while (pageNumber <= pdfDocument.numPages) {
+                                                const pdfPage = (await createPDFPage(
+                                                    pdfDocument,
+                                                    pageNumber
+                                                )) as PDFPageProxy
+                                                const viewport = pdfPage.getViewport({ scale: 2 })
+                                                const { height, width } = viewport
+                                                const canvas = document.createElement('canvas')
+                                                canvas.width = width
+                                                canvas.height = height
+
+                                                await renderPDFToCanvas(pdfPage, canvas)
+                                                const ctx = canvas.getContext('2d')
+                                                if (ctx) {
+                                                    pages.push(canvas.toDataURL('image/jpeg'))
+                                                }
+                                                pageNumber++
+                                            }
+
+                                            const additionalSlides: Slide[] = []
+
+                                            for (let i = 0; i < pages.length; i++) {
+                                                const page = pages[i]
+
+                                                const { fileName } = await uploadImage({
+                                                    base64String: page.replace(
+                                                        'data:image/jpeg;base64,',
+                                                        ''
+                                                    ),
+                                                    contentType: 'image/jpeg',
+                                                })
+
+                                                const lastSlideIndex =
+                                                    (config.slides?.length || 0) + i
+
+                                                console.log(lastSlideIndex, i)
+
+                                                const slideButtons: SlideButton[] = []
+
+                                                if (lastSlideIndex > 0) {
+                                                    slideButtons.push({
+                                                        text: 'Back',
+                                                        type: 'slide',
+                                                        target: (lastSlideIndex - 1).toString(),
+                                                    })
+                                                }
+
+                                                if (i < pages.length - 1) {
+                                                    slideButtons.push({
+                                                        text: 'Next',
+                                                        type: 'slide',
+                                                        target: (lastSlideIndex + 1).toString(),
+                                                    })
+                                                }
+
+                                                const newSlide: Slide = {
+                                                    imageUrl:
+                                                        process.env.NEXT_PUBLIC_CDN_HOST +
+                                                        '/frames/' +
+                                                        frameId +
+                                                        '/' +
+                                                        fileName,
+                                                    buttons: slideButtons,
+                                                    aspectRatio: '1.91:1',
+                                                }
+
+                                                additionalSlides.push(newSlide)
+                                            }
+
+                                            updateConfig({
+                                                slides: [
+                                                    ...(config.slides || []),
+                                                    ...additionalSlides,
+                                                ],
+                                            })
+
+                                            setUploading(false)
+                                        },
+                                        false
+                                    )
+
+                                    reader.readAsDataURL(file)
+                                }
                             }}
-                        >
-                            +
-                        </Button>
-                    )}
+                            className="sr-only"
+                        />
+                    </label>
+                    <Button
+                        variant="destructive"
+                        className="flex-1"
+                        onClick={() => {
+                            updateConfig({ slides: [] })
+                        }}
+                    >
+                        Delete All Slides
+                    </Button>
                 </div>
             </Configuration.Section>
-            <Configuration.Section title="Title & Content">
-                {slide?.type === 'image' ? (
-                    <div key={currentSlideIndex} className="flex flex-col gap-4">
-                        <h2 className="text-lg font-semibold">Image</h2>
-                        <div className="flex flex-col gap-5">
-                            <label
-                                htmlFor="uploadFile"
-                                className="flex cursor-pointer items-center justify-center rounded-md py-1.5 px-2 text-md font-medium bg-border text-primary hover:bg-secondary-border"
-                            >
-                                Upload a file
-                                <Input
-                                    type="file"
-                                    id="uploadFile"
-                                    className="sr-only"
-                                    accept="application/jpeg"
-                                    onChange={async (e) => {
-                                        const props = await getUploadImageProps(e)
-                                        if (!props)
-                                            toast.error(
-                                                'An error occured while uploading the image'
-                                            )
 
-                                        let { filePath } = await uploadImage({
-                                            base64String: props?.base64String as string,
-                                            contentType: props?.contentType as IImageTypes,
-                                        })
+            {config.slides?.map((slide, iSlide) => (
+                <Configuration.Section
+                    key={iSlide}
+                    title={`Slide #${iSlide + 1}`}
+                    actions={[
+                        <Button
+                            key={iSlide}
+                            onClick={() => {
+                                if (config.slides.length === 1) {
+                                    updateConfig({
+                                        slides: undefined,
+                                    })
+                                    return
+                                }
 
-                                        filePath = `${process.env.NEXT_PUBLIC_CDN_HOST}/${filePath}`
+                                const confirmed = confirm(
+                                    'Deleting this field will also delete all submissions for this field, are you sure?'
+                                )
 
-                                        updateSlide({ image: filePath })
-                                    }}
-                                />
-                            </label>
-                        </div>
-                        <div className="flex flex-col">
-                            <div className="flex flex-row justify-between items-center">
-                                <h3 className="text-lg font-semibold">Uploaded Images</h3>
-                                {loading && <LoaderIcon className="animate-spin" />}
-                            </div>
-                            <div className="flex flex-row flex-wrap gap-4 mt-2">
-                                {slide?.image ? (
-                                    <img
-                                        src={slide.image}
-                                        width={200}
-                                        height={200}
-                                        alt="Slider item"
-                                        className="rounded-md"
-                                    />
-                                ) : (
-                                    <p>There are no images yet</p>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div key={currentSlideIndex} className="flex flex-col gap-4">
-                        {/* Title */}
-                        <h2 className="text-lg font-semibold">Title</h2>
-                        <Input
-                            className="text-lg"
-                            placeholder="Title"
-                            defaultValue={slide?.title?.text}
-                            onBlur={(e) => {
-                                updateSlide({
-                                    title: {
-                                        ...slide?.title,
-                                        text: e.target.value,
-                                    },
-                                })
+                                if (confirmed) {
+                                    updateConfig({
+                                        slides: config.slides.filter((_, i) => i !== iSlide),
+                                    })
+                                }
                             }}
-                        />
-
-                        <h2 className="text-lg font-semibold">Title Color</h2>
-                        <ColorPicker
-                            className="w-full"
-                            background={
-                                slide?.title?.color || PRESENTATION_DEFAULTS.slides[0].title!.color
-                            }
-                            setBackground={(value: string) =>
-                                updateSlide({
-                                    title: {
-                                        ...slide?.title,
-                                        color: value,
-                                    },
-                                })
-                            }
-                        />
-
-                        <h2 className="text-lg font-semibold">Title Font</h2>
-                        <FontFamilyPicker
-                            defaultValue={
-                                slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
-                            }
-                            onSelect={(font) => {
-                                updateSlide({
-                                    title: {
-                                        ...slide?.title,
-                                        font,
-                                    },
-                                })
-                            }}
-                        />
-
-                        <h2 className="text-lg font-semibold">Title Weight</h2>
-                        <FontWeightPicker
-                            currentFont={
-                                slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
-                            }
-                            defaultValue={
-                                slide?.title?.weight ||
-                                PRESENTATION_DEFAULTS.slides[0].title!.weight
-                            }
-                            onSelect={(weight: string) => {
-                                updateSlide({
-                                    title: {
-                                        ...slide?.title,
-                                        weight,
-                                    },
-                                })
-                            }}
-                        />
-
-                        <h2 className="text-lg font-semibold">Title Style</h2>
-                        <FontStylePicker
-                            currentFont={
-                                slide?.title?.font || PRESENTATION_DEFAULTS.slides[0].title!.font
-                            }
-                            defaultValue={
-                                slide?.title?.style || PRESENTATION_DEFAULTS.slides[0].title!.style
-                            }
-                            onSelect={(style: string) =>
-                                updateSlide({
-                                    title: {
-                                        ...slide?.title,
-                                        style,
-                                    },
-                                })
-                            }
-                        />
-
-                        {/* Content */}
-                        <h2 className="text-lg font-semibold">Content</h2>
-
-                        <textarea
-                            defaultValue={slide?.content?.text || ''}
-                            placeholder="Your content"
-                            onBlur={(e) => {
-                                updateSlide({
-                                    content: {
-                                        ...slide?.content,
-                                        text: e.target.value,
-                                    },
-                                })
-                            }}
-                            className="text-lg p-2 border-input border-[1px] rounded-md bg-transparent resize-y min-h-[184px]"
-                        />
-
-                        <h2 className="text-lg font-semibold">Content Color</h2>
-                        <ColorPicker
-                            className="w-full"
-                            background={
-                                slide?.content?.color ||
-                                PRESENTATION_DEFAULTS.slides[0].content!.color
-                            }
-                            setBackground={(value: string) =>
-                                updateSlide({
-                                    content: {
-                                        ...slide?.content,
-                                        color: value,
-                                    },
-                                })
-                            }
-                        />
-
-                        <h2 className="text-lg font-semibold">Content Font</h2>
-                        <FontFamilyPicker
-                            defaultValue={
-                                slide?.content?.font ||
-                                PRESENTATION_DEFAULTS.slides[0].content!.font
-                            }
-                            onSelect={(font) => {
-                                updateSlide({
-                                    content: {
-                                        ...slide?.content,
-                                        font,
-                                    },
-                                })
-                            }}
-                        />
-
-                        <h2 className="text-lg font-semibold">Content Weight</h2>
-                        <FontWeightPicker
-                            currentFont={
-                                slide?.content?.font ||
-                                PRESENTATION_DEFAULTS.slides[0].content!.font
-                            }
-                            defaultValue={
-                                slide?.content?.weight ||
-                                PRESENTATION_DEFAULTS.slides[0].content!.weight
-                            }
-                            onSelect={(weight: string) => {
-                                updateSlide({
-                                    content: {
-                                        ...slide?.content,
-                                        weight,
-                                    },
-                                })
-                            }}
-                        />
-
-                        <h2 className="text-lg font-semibold">Content Align</h2>
-                        <Select
-                            defaultValue={
-                                slide?.content?.align ||
-                                PRESENTATION_DEFAULTS.slides[0].content!.align
-                            }
-                            onChange={(value) =>
-                                updateSlide({
-                                    content: {
-                                        ...slide?.content,
-                                        align: value as 'left' | 'center' | 'right',
-                                    },
-                                })
-                            }
+                            variant="link"
+                            size={'sm'}
                         >
-                            <option value={'left'}>Left</option>
-                            <option value={'center'}>Center</option>
-                            <option value={'right'}>Right</option>
-                        </Select>
+                            <Trash size={16} className="text-red-500" />
+                        </Button>,
+                        <Select
+                            key={iSlide + 'select'}
+                            className="p-0 pl-2 border-0 bg-transparent h-fit w-14 focus:ring-0"
+                            defaultValue={slide.aspectRatio}
+                            placeholder="Select an aspect ratio"
+                            onChange={(newValue) => {
+                                updateConfig({
+                                    slides: config.slides.map((slide, i) =>
+                                        i === iSlide
+                                            ? {
+                                                  ...slide,
+                                                  aspectRatio: newValue,
+                                              }
+                                            : slide
+                                    ),
+                                })
+                            }}
+                        >
+                            <option key="1:1" value="1:1">
+                                1:1
+                            </option>
+                            <option key="1.91:1" value="1.91:1">
+                                1.91:1
+                            </option>
+                        </Select>,
+                    ]}
+                >
+                    {/* <p>{JSON.stringify(slide)}</p> */}
+                    <div className="flex flex-col gap-2">
+                        <div className="flex flex-row gap-2">
+                            <div className="flex flex-col w-1/4">
+                                <img
+                                    src={slide.imageUrl}
+                                    alt="Slide"
+                                    className="h-full w-full object-contain"
+                                />
+                                <label
+                                    htmlFor={`replaceImage-${iSlide}`}
+                                    className="flex flex-1 cursor-pointer items-center justify-center rounded-md  py-1.5 px-2 text-md font-medium bg-border  text-primary hover:bg-secondary-border"
+                                >
+                                    Replace Image
+                                    <Input
+                                        id={`replaceImage-${iSlide}`}
+                                        accept="image/*"
+                                        type="file"
+                                        disabled={uploading}
+                                        onChange={async (e) => {
+                                            if (e.target.files?.[0]) {
+                                                const file = e.target.files?.[0]
+                                                if (uploading) return
+
+                                                setUploading(true)
+
+                                                const reader = new FileReader()
+                                                reader.readAsDataURL(file)
+
+                                                const base64String = (await new Promise(
+                                                    (resolve) => {
+                                                        reader.onload = () => {
+                                                            const base64String = (
+                                                                reader.result as string
+                                                            ).split(',')[1]
+                                                            resolve(base64String)
+                                                        }
+                                                    }
+                                                )) as string
+
+                                                const contentType = e.target.files[0].type as
+                                                    | 'image/png'
+                                                    | 'image/jpeg'
+                                                    | 'image/gif'
+                                                    | 'image/webp'
+
+                                                const { fileName } = await uploadImage({
+                                                    base64String: base64String,
+                                                    contentType: contentType,
+                                                })
+
+                                                updateConfig({
+                                                    slides: config.slides.map((slide, i) =>
+                                                        i === iSlide
+                                                            ? {
+                                                                  ...slide,
+                                                                  imageUrl:
+                                                                      process.env
+                                                                          .NEXT_PUBLIC_CDN_HOST +
+                                                                      '/frames/' +
+                                                                      frameId +
+                                                                      '/' +
+                                                                      fileName,
+                                                              }
+                                                            : slide
+                                                    ),
+                                                })
+
+                                                setUploading(false)
+                                            }
+                                        }}
+                                        className="sr-only "
+                                    />
+                                </label>
+                            </div>
+
+                            <div className="flex flex-col justify-between w-3/4 gap-1">
+                                {Array.from({ length: 4 }).map((_, iButtons) => (
+                                    <div
+                                        key={iButtons}
+                                        className="flex flex-row items-center gap-1"
+                                    >
+                                        {!config.slides[iSlide].buttons?.[iButtons] ? (
+                                            <div className="flex items-center w-full">
+                                                <Select
+                                                    key={iButtons + 'select-active-button-type'}
+                                                    onChange={(newValue) => {
+                                                        // add this button
+                                                        const updatedButtons = [
+                                                            ...config.slides[iSlide].buttons,
+                                                            {
+                                                                type: newValue,
+                                                                target: '',
+                                                            },
+                                                        ]
+
+                                                        updateConfig({
+                                                            slides: config.slides.map((slide, i) =>
+                                                                i === iSlide
+                                                                    ? {
+                                                                          ...slide,
+                                                                          buttons: updatedButtons,
+                                                                      }
+                                                                    : slide
+                                                            ),
+                                                        })
+                                                    }}
+                                                    placeholder="Select a type to enable this button"
+                                                >
+                                                    <option key="active-link" value="link">
+                                                        Link
+                                                    </option>
+                                                    <option key="active-slide" value="slide">
+                                                        Slide
+                                                    </option>
+                                                    <option key="active-frame" value="frame">
+                                                        Frame
+                                                    </option>
+                                                </Select>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="flex items-center w-1/5">
+                                                    <Select
+                                                        key={iButtons + 'select-button-type'}
+                                                        defaultValue={
+                                                            config.slides[iSlide].buttons?.[
+                                                                iButtons
+                                                            ]?.type
+                                                        }
+                                                        onChange={(newValue) => {
+                                                            if (newValue === 'disabled') {
+                                                                // remove this button
+                                                                const updatedButtons =
+                                                                    config.slides[
+                                                                        iSlide
+                                                                    ].buttons.filter(
+                                                                        (_, i) => i !== iButtons
+                                                                    )
+
+                                                                console.log(
+                                                                    'updatedButtons',
+                                                                    updatedButtons
+                                                                )
+
+                                                                updateConfig({
+                                                                    slides: config.slides.map(
+                                                                        (slide, i) =>
+                                                                            i === iSlide
+                                                                                ? {
+                                                                                      ...slide,
+                                                                                      buttons:
+                                                                                          updatedButtons,
+                                                                                  }
+                                                                                : slide
+                                                                    ),
+                                                                })
+                                                                return
+                                                            }
+
+                                                            const existingButton =
+                                                                config.slides[iSlide].buttons?.[
+                                                                    iButtons
+                                                                ]
+
+                                                            if (existingButton) {
+                                                                // update this button
+                                                                const updatedButtons =
+                                                                    config.slides[
+                                                                        iSlide
+                                                                    ].buttons.map((button, i) =>
+                                                                        i === iButtons
+                                                                            ? {
+                                                                                  ...button,
+                                                                                  type: newValue,
+                                                                                  target: '',
+                                                                              }
+                                                                            : button
+                                                                    )
+
+                                                                updateConfig({
+                                                                    slides: config.slides.map(
+                                                                        (slide, i) =>
+                                                                            i === iSlide
+                                                                                ? {
+                                                                                      ...slide,
+                                                                                      buttons:
+                                                                                          updatedButtons,
+                                                                                  }
+                                                                                : slide
+                                                                    ),
+                                                                })
+                                                            } else {
+                                                                // add this button
+                                                                const updatedButtons = [
+                                                                    ...config.slides[iSlide]
+                                                                        .buttons,
+                                                                    {
+                                                                        type: newValue,
+                                                                        target: '',
+                                                                    },
+                                                                ]
+
+                                                                updateConfig({
+                                                                    slides: config.slides.map(
+                                                                        (slide, i) =>
+                                                                            i === iSlide
+                                                                                ? {
+                                                                                      ...slide,
+                                                                                      buttons:
+                                                                                          updatedButtons,
+                                                                                  }
+                                                                                : slide
+                                                                    ),
+                                                                })
+                                                            }
+                                                        }}
+                                                        placeholder="Select type"
+                                                    >
+                                                        <option key="disabled" value="disabled">
+                                                            Disabled
+                                                        </option>
+                                                        <option key="link" value="link">
+                                                            Link
+                                                        </option>
+                                                        <option key="slide" value="slide">
+                                                            Slide
+                                                        </option>
+                                                        <option key="frame" value="frame">
+                                                            Frame
+                                                        </option>
+                                                    </Select>
+                                                </div>
+                                                <div className="flex items-center w-2/5">
+                                                    {config.slides[iSlide].buttons?.[iButtons]
+                                                        ?.type === 'link' && (
+                                                        <Input
+                                                            defaultValue={
+                                                                config.slides[iSlide].buttons?.[
+                                                                    iButtons
+                                                                ]?.target
+                                                            }
+                                                            placeholder="URL"
+                                                            onChange={(e) => {
+                                                                const updatedButtons =
+                                                                    config.slides[
+                                                                        iSlide
+                                                                    ].buttons.map((button, i) => ({
+                                                                        ...button,
+                                                                        target:
+                                                                            i === iButtons
+                                                                                ? e.target.value
+                                                                                : button.target,
+                                                                    }))
+
+                                                                updateConfig({
+                                                                    slides: config.slides.map(
+                                                                        (slide, i) =>
+                                                                            i === iSlide
+                                                                                ? {
+                                                                                      ...slide,
+                                                                                      buttons:
+                                                                                          updatedButtons,
+                                                                                  }
+                                                                                : slide
+                                                                    ),
+                                                                })
+                                                            }}
+                                                        />
+                                                    )}
+                                                    {config.slides[iSlide].buttons?.[iButtons]
+                                                        ?.type === 'slide' && (
+                                                        <Select
+                                                            defaultValue={
+                                                                config.slides[iSlide].buttons?.[
+                                                                    iButtons
+                                                                ]?.target
+                                                            }
+                                                            placeholder="Select slide"
+                                                            onChange={(newValue) => {
+                                                                const updatedButtons =
+                                                                    config.slides[
+                                                                        iSlide
+                                                                    ].buttons.map((button, i) => ({
+                                                                        ...button,
+                                                                        target:
+                                                                            i === iButtons
+                                                                                ? newValue
+                                                                                : button.target,
+                                                                    }))
+
+                                                                updateConfig({
+                                                                    slides: config.slides.map(
+                                                                        (slide, i) =>
+                                                                            i === iSlide
+                                                                                ? {
+                                                                                      ...slide,
+                                                                                      buttons:
+                                                                                          updatedButtons,
+                                                                                  }
+                                                                                : slide
+                                                                    ),
+                                                                })
+                                                            }}
+                                                        >
+                                                            {config.slides.map(
+                                                                (slide, slideIndex) => (
+                                                                    <option
+                                                                        key={slideIndex}
+                                                                        value={slideIndex.toString()}
+                                                                        disabled={
+                                                                            slideIndex === iSlide
+                                                                        }
+                                                                    >
+                                                                        Slide #{slideIndex + 1}
+                                                                    </option>
+                                                                )
+                                                            )}
+                                                        </Select>
+                                                    )}
+                                                    {config.slides[iSlide].buttons?.[iButtons]
+                                                        ?.type === 'frame' && (
+                                                        <Input
+                                                            defaultValue={
+                                                                config.slides[iSlide].buttons?.[
+                                                                    iButtons
+                                                                ]?.target
+                                                            }
+                                                            placeholder="Frame URL"
+                                                            onChange={(e) => {
+                                                                const updatedButtons =
+                                                                    config.slides[
+                                                                        iSlide
+                                                                    ].buttons.map((button, i) => ({
+                                                                        ...button,
+                                                                        target:
+                                                                            i === iButtons
+                                                                                ? e.target.value
+                                                                                : button.target,
+                                                                    }))
+
+                                                                updateConfig({
+                                                                    slides: config.slides.map(
+                                                                        (slide, i) =>
+                                                                            i === iSlide
+                                                                                ? {
+                                                                                      ...slide,
+                                                                                      buttons:
+                                                                                          updatedButtons,
+                                                                                  }
+                                                                                : slide
+                                                                    ),
+                                                                })
+                                                            }}
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div className="flex items-center w-2/5">
+                                                    {config.slides[iSlide].buttons?.[iButtons]
+                                                        ?.type && (
+                                                        <Input
+                                                            defaultValue={
+                                                                config.slides[iSlide].buttons?.[
+                                                                    iButtons
+                                                                ]?.text
+                                                            }
+                                                            placeholder="Label"
+                                                            onChange={(e) => {
+                                                                const updatedButtons =
+                                                                    config.slides[
+                                                                        iSlide
+                                                                    ].buttons.map((button, i) => ({
+                                                                        ...button,
+                                                                        text:
+                                                                            i === iButtons
+                                                                                ? e.target.value
+                                                                                : button.text,
+                                                                    }))
+
+                                                                updateConfig({
+                                                                    slides: config.slides.map(
+                                                                        (slide, i) =>
+                                                                            i === iSlide
+                                                                                ? {
+                                                                                      ...slide,
+                                                                                      buttons:
+                                                                                          updatedButtons,
+                                                                                  }
+                                                                                : slide
+                                                                    ),
+                                                                })
+                                                            }}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
-                )}
-            </Configuration.Section>
+                </Configuration.Section>
+            ))}
         </Configuration.Root>
     )
 }

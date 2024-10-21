@@ -49,14 +49,14 @@ export function useFrameId() {
     return context.frameId
 }
 
-export function useFrameStorage() {
+export function useFrameStorage<T>() {
     const context = useContext(InspectorContext)
 
     if (!context) {
         throw new Error('useFrameStorage must be used within an InspectorProvider')
     }
 
-    return context.storage
+    return [context.storage, context.updateStorage] as [T, (props: Partial<T>) => void]
 }
 
 export function useUploadImage() {

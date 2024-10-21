@@ -21,6 +21,12 @@ const nextConfig = {
             bodySizeLimit: '10mb',
         },
     },
+    // error: Module not found: Can't resolve 'pino-pretty' in wagmi package
+    // https://github.com/pinojs/pino/issues/688#issuecomment-2190022471
+    webpack: (config) => {
+        config.externals.push("pino-pretty", "encoding");
+        return config;
+    },
 }
 
 export default nextConfig;

@@ -1,3 +1,5 @@
+'use server'
+
 import type {
     Channel as NeynarChannel,
     User as NeynarUser,
@@ -27,8 +29,8 @@ export type FrameButtonMetadata =
           callback?: string
       }
 
-export type FramePayload = FramesJSFrameActionPayload
-export type FramePayloadValidated = NeynarValidatedFrameActionResponse['action']
+export type FarcasterFramePayload = FramesJSFrameActionPayload
+export type FarcasterFramePayloadValidated = NeynarValidatedFrameActionResponse['action']
 
 export type FarcasterUserInfo = NeynarUser
 export type FarcasterChannel = NeynarChannel
@@ -49,6 +51,7 @@ export interface BuildFrameData {
         data: Record<string, unknown>
     }[]
     transaction?: TransactionTargetResponse
+    frame?: string
 }
 
 export interface FrameData {

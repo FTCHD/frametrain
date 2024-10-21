@@ -5,8 +5,6 @@ import sharp from 'sharp'
 import type {
     BuildFrameData,
     FrameButtonMetadata,
-    FramePayload,
-    FramePayloadValidated,
 } from './farcaster'
 
 export async function buildFramePage({
@@ -33,7 +31,7 @@ export async function buildFramePage({
 
     if (component) {
         const renderedImage = new ImageResponse(component, {
-            ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+            ...dimensionsForRatio[aspectRatio === '1.91:1' ? '1.91/1' : '1/1'],
             fonts,
         })
 
@@ -115,7 +113,7 @@ export async function buildPreviewFramePage({
 
     if (component) {
         const renderedImage = new ImageResponse(component, {
-            ...dimensionsForRatio[aspectRatio === '1:1' ? '1/1' : '1.91/1'],
+            ...dimensionsForRatio[aspectRatio === '1.91:1' ? '1.91/1' : '1/1'],
             fonts,
         })
 
@@ -163,7 +161,7 @@ export async function buildPreviewFramePage({
 export async function buildFrame({
     buttons,
     image,
-    aspectRatio = '1.91:1',
+    aspectRatio = '1:1',
     inputText,
     postUrl,
     refreshPeriod,
@@ -241,61 +239,49 @@ export async function buildFrame({
         metadata['fc:frame:refresh_period'] = refreshPeriod.toString()
     }
 
+    // Open Frames version the handler supports
+    metadata['of:version'] = 'vNext'
+
+    // Lens Protocol Open Frames version the handler supports
+    metadata['of:accepts:lens'] = '1.0.0'
+
+    // XMTP Open Frames version the handler supports
+    metadata['of:accepts:xmtp'] = 'vNext'
+
+    // Map of equivalent Farcaster Frame tags to Open Frame tags
+    // For clarity and to aid searchability of the codebase,
+    // we use explicit keys here rather than e.g. search and replace
+    // See: https://www.openframes.xyz/#farcaster-compatibility
+    const openFrameEquivalentTags: Record<string, string> = {
+        'fc:frame:state': 'of:state',
+        'fc:frame:image': 'of:image',
+        'fc:frame:image:aspect_ratio': 'of:image:aspect_ratio',
+        'fc:frame:post_url': 'of:post_url',
+        'fc:frame:input:text': 'of:input:text',
+        'fc:frame:button:1': 'of:button:1',
+        'fc:frame:button:1:action': 'of:button:1:action',
+        'fc:frame:button:1:target': 'of:button:1:target',
+        'fc:frame:button:1:post_url': 'of:button:1:post_url',
+        'fc:frame:button:2': 'of:button:2',
+        'fc:frame:button:2:action': 'of:button:2:action',
+        'fc:frame:button:2:target': 'of:button:2:target',
+        'fc:frame:button:2:post_url': 'of:button:2:post_url',
+        'fc:frame:button:3': 'of:button:3',
+        'fc:frame:button:3:action': 'of:button:3:action',
+        'fc:frame:button:3:target': 'of:button:3:target',
+        'fc:frame:button:3:post_url': 'of:button:3:post_url',
+        'fc:frame:button:4': 'of:button:4',
+        'fc:frame:button:4:action': 'of:button:4:action',
+        'fc:frame:button:4:target': 'of:button:4:target',
+        'fc:frame:button:4:post_url': 'of:button:4:post_url',
+    }
+
+    for (const [farcasterFramesTag, value] of Object.entries(metadata)) {
+        const openFramesTag = openFrameEquivalentTags[farcasterFramesTag]
+        if (openFramesTag) {
+            metadata[openFramesTag] = value
+        }
+    }
+
     return metadata
-}
-
-export async function validatePayload(body: FramePayload): Promise<FramePayloadValidated> {
-    const options = {
-        method: 'POST',
-        headers: {
-            accept: 'application/json',
-            api_key: process.env.NEYNAR_API_KEY!,
-            'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-            cast_reaction_context: true,
-            follow_context: true,
-            signer_context: true,
-            message_bytes_in_hex: body.trustedData.messageBytes,
-        }),
-    }
-
-    const r = await fetch('https://api.neynar.com/v2/farcaster/frame/validate', options)
-        .then((response) => response.json())
-        .catch((err) => {
-            console.error(err)
-            throw new Error('PAYLOAD_COULD_NOT_BE_VALIDATED')
-        })
-
-    if (!r.valid) {
-        throw new Error('PAYLOAD_NOT_VALID')
-    }
-
-    console.log(r.action)
-
-    return r.action
-}
-export async function validatePayloadAirstack(
-    body: FramePayload,
-    airstackKey: string
-): Promise<any> {
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/octet-stream',
-            'x-airstack-hubs': airstackKey,
-        },
-        body: new Uint8Array(
-            body.trustedData.messageBytes.match(/.{1,2}/g)!.map((byte) => Number.parseInt(byte, 16))
-        ),
-    }
-
-    const r = await fetch('https://hubs.airstack.xyz/v1/validateMessage', options)
-        .then((response) => response.json())
-        .catch((err) => {
-            console.error(err)
-            throw new Error('AIRSTACK_PAYLOAD_COULD_NOT_BE_VALIDATED')
-        })
-
-    return r
 }

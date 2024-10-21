@@ -1,6 +1,8 @@
 'use client'
+import { simulateCall } from '@/lib/debugger'
 import type { FrameButtonMetadata } from '@/lib/farcaster'
-import { previewLoadingAtom, previewParametersAtom } from '@/lib/store'
+import { mockOptionsAtom, previewLoadingAtom, previewParametersAtom } from '@/lib/store'
+import { ModalController } from '@reown/appkit-core'
 import { useAtom, useAtomValue } from 'jotai'
 import { type PropsWithChildren, useCallback } from 'react'
 import {
@@ -9,6 +11,7 @@ import {
     PlusCircle as PlusCircleIcon,
 } from 'react-feather'
 import toast from 'react-hot-toast'
+import { useAccount, useSendTransaction } from 'wagmi'
 
 export function FramePreviewButton({
     children,
@@ -18,6 +21,7 @@ export function FramePreviewButton({
     state,
     handler,
     params,
+    postUrl,
 }: PropsWithChildren<{
     button: FrameButtonMetadata
     buttonIndex: number
@@ -25,12 +29,19 @@ export function FramePreviewButton({
     state: any
     handler: string | undefined
     params: string | undefined
+    postUrl: string | undefined
 }>) {
     const [, setPreviewData] = useAtom(previewParametersAtom)
     const previewLoading = useAtomValue(previewLoadingAtom)
+    const mockOptions = useAtomValue(mockOptionsAtom)
+    const account = useAccount()
+    const {
+        sendTransactionAsync
+    } = useSendTransaction()
 
     const actionCallback = useCallback(() => {
         const newData = {
+            postUrl: postUrl,
             handler: handler,
             inputText: inputText,
             buttonIndex: buttonIndex,
@@ -38,7 +49,7 @@ export function FramePreviewButton({
         }
 
         setPreviewData(newData)
-    }, [buttonIndex, inputText, handler, params, setPreviewData])
+    }, [buttonIndex, inputText, handler, params, postUrl, setPreviewData])
 
     const handleClick = useCallback(async () => {
         switch (button?.action) {
@@ -50,12 +61,59 @@ export function FramePreviewButton({
                 actionCallback()
                 break
             }
+            case 'tx': {
+                // if not connect
+                if (account.isConnected) {
+                    // get transaction
+                    const { fid } = mockOptions
+
+                    const previewParams = {
+                        untrustedData: {
+                            fid,
+                            url: button.target,
+                            messageHash: '0xDebug',
+                            timestamp: 0,
+                            network: 1,
+                            buttonIndex: buttonIndex,
+                            inputText: inputText,
+                            state: 'Debug',
+                            castId: {
+                                fid,
+                                hash: '0xDebug',
+                            },
+                        },
+                        trustedData: {
+                            messageBytes: 'Debug'
+                        }
+                    }
+
+                    const txData = await simulateCall(button.target, previewParams, mockOptions)
+                    const tx = JSON.parse(txData as string)
+                    await sendTransactionAsync({
+                        chainId: Number(tx.chainId.split(":")[1]),
+                        to: tx.params.to,
+                        value: tx.params.value,
+                        data: tx.params.data
+                    },{
+                        onSuccess () {
+                            toast.success("Transfer Successful!")
+                        },
+                        onError(error:any) {
+                            toast.error(error.cause.shortMessage)
+                        },
+                    })
+                } else {
+                    // open reown connect modal
+                    ModalController.open()
+                }
+                break
+            }
             default: {
-                toast.error('Use the Warpcast Frames Validator to test transactions!')
+                toast.error('Use the Warpcast Frames Validator to test this feature!')
                 break
             }
         }
-    }, [button, actionCallback])
+    }, [button, actionCallback, account.isConnected])
 
     return (
         <button
