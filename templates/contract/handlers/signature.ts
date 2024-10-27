@@ -94,6 +94,7 @@ export default async function signature({
             },
         ],
         component: BasicView(view),
+        aspectRatio: '1.91:1',
         handler: 'confirm',
         params: {
             currentIndex: signatureIndex,

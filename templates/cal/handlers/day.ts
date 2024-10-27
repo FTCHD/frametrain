@@ -195,6 +195,7 @@ export default async function date({
         ],
         fonts,
         component: PageView(config, datesArray, date, event.formattedDuration),
+        aspectRatio: '1.91:1',
         handler: 'day',
         inputText: 'Enter day as 03 or 3',
         params: {

@@ -18,6 +18,7 @@ export default async function initial({ config }: { config: Config }): Promise<B
                   text: config.cover.text,
                   configuration: config.cover.configuration,
               }),
+
         handler: 'page',
         image: config.cover.image,
         aspectRatio:

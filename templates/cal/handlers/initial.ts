@@ -22,5 +22,6 @@ export default async function initial({ config }: { config: Config }): Promise<B
         fonts: fonts,
         component: CoverView(config),
         handler: 'duration',
+        aspectRatio: '1.91:1',
     }
 }
