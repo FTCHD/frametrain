@@ -87,6 +87,7 @@ export default async function review({
         storage: newStorage,
         fonts,
         component: ReviewAnswersView({ total: qnas.length, qna, userAnswer }),
+        aspectRatio: '1.91:1',
         handler: lastPage ? 'success' : 'review',
         params: !lastPage ? { currentPage: nextPage } : undefined,
         webhooks,

@@ -92,6 +92,7 @@ export default async function estimate({
             },
         ],
         component: PriceView({ token0, token1, network: config.pool.network, amount, estimates }),
+        aspectRatio: '1.91:1',
         handler: 'success',
         params: {
             buyAmount: amount,

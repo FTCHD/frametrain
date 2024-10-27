@@ -252,5 +252,6 @@ export default async function hour({
             slot: 0,
             month,
         },
+        aspectRatio: '1.91:1',
     }
 }
