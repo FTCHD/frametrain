@@ -10,6 +10,7 @@ export default async function initial({ config }: { config: Config }): Promise<B
             { label: `${config.buttonLabel}`, action: 'link', target: `${config.buttonLink}` },
         ],
         image: config.gifUrl,
+        aspectRatio: '1.91:1',
         fonts: roboto,
     }
 }

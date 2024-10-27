@@ -13,7 +13,6 @@ export default async function initial({ config }: { config: Config }): Promise<B
                 label: 'Read →',
             },
         ],
-        aspectRatio: '1:1',
         fonts: georgia,
         component: CoverView({
             article: config.article,
