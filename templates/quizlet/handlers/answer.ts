@@ -140,7 +140,6 @@ export default async function answer({
                   config
               )
             : QuestionView({ qna: nextQna, total: qnaCount }),
-        aspectRatio: '1.91:1',
         handler: lastPage ? 'results' : 'answer',
         params: lastPage ? { quizId: currentQuizId } : { currentPage: nextPage },
         webhooks,

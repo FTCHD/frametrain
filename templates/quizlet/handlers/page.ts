@@ -78,7 +78,6 @@ export default async function page({
         component: config.answerOnce
             ? ResultsView(config.qna.length, scores, config)
             : QuestionView({ qna, total: config.qna.length }),
-        aspectRatio: '1.91:1',
         handler: config.answerOnce ? 'results' : 'answer',
         params: !config.answerOnce ? { quizId } : undefined,
         webhooks,

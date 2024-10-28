@@ -59,7 +59,6 @@ export default async function initial({
         fonts,
         image: config.cover.image,
         component: config.cover.image ? undefined : BasicView(config.cover),
-        aspectRatio: '1.91:1',
         handler: 'confirmation',
     }
 }

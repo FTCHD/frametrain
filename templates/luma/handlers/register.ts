@@ -99,7 +99,6 @@ export async function register({
             },
         ],
         component: SuccessView(config.event.title),
-        aspectRatio: '1.91:1',
         handler: 'success',
         webhooks: [
             {

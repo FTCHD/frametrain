@@ -105,7 +105,6 @@ export default async function initial({
                 network: pool.network.name,
                 ...config,
             }),
-            aspectRatio: '1.91:1',
             handler: 'estimate',
         }
     }

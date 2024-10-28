@@ -42,7 +42,6 @@ export default async function initial({
         buttons,
         image: config.cover.image,
         component: config.cover.image ? undefined : BasicView(cover),
-        aspectRatio: '1.91:1',
         handler: 'signature',
     }
 }

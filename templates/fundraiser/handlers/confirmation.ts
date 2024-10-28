@@ -116,7 +116,6 @@ export default async function confirmation({
                 config,
                 amount: formatSymbol(amount, config.token.symbol),
             }),
-            aspectRatio: '1.91:1',
             handler: 'status',
             params: { sessionId: session.sessionId, amount },
         }

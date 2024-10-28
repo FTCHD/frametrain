@@ -39,7 +39,6 @@ export default async function initial({ config }: { config: Config }): Promise<B
         ],
         fonts: font,
         component: event ? EventView({ event, ...rest }) : CoverView(config),
-        aspectRatio: '1.91:1',
         inputText: buttons.length === 2 ? 'Enter your email address' : undefined,
         handler: buttons.length === 2 ? 'register' : undefined,
     }

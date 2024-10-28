@@ -107,7 +107,6 @@ export default async function duration({
         })),
         fonts: fonts,
         component: PageView(config),
-        aspectRatio: '1.91:1',
         handler: 'day',
     }
 }

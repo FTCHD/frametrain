@@ -143,7 +143,6 @@ export default async function status({
                 sessionId: params.sessionId,
             },
             fonts,
-            aspectRatio: '1.91:1',
         }
         const MAX_RETRIES = 3
 

@@ -73,7 +73,6 @@ export default async function page({
         fonts,
         webhooks,
         storage,
-        aspectRatio: '1.91:1',
     }
 
     if (config.success.image) {

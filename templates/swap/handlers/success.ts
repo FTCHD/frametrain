@@ -75,7 +75,6 @@ export default async function success({
             },
         ],
         handler: 'more',
-        aspectRatio: '1.91:1',
     }
     const ts = Number(params.ts)
     const latestSwapData = storage.swapData[body.interactor.fid].find((tsData) => tsData.ts === ts)

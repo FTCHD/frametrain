@@ -151,7 +151,6 @@ export default async function month({
         ],
         fonts: fonts,
         component: MonthView(config, month, event.formattedDuration),
-        aspectRatio: '1.91:1',
         handler: 'month',
         inputText: 'Enter month as January or 1',
         params: {

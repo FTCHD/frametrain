@@ -34,7 +34,6 @@ export default async function results({
         buttons: [{ label: '→' }],
         fonts: roboto,
         component: ReviewAnswersView({ qna, total: qnas.length, userAnswer }),
-        aspectRatio: '1.91:1',
         handler: 'review',
         params: { currentPage: 1, quizId: params?.quizId },
     }
