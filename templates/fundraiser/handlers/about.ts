@@ -39,6 +39,7 @@ export default async function about({
         ],
         image: config.about.image,
         component: config.about.image ? undefined : BasicView(config.about),
+        aspectRatio: '1.91:1',
         handler: 'success',
     }
 }

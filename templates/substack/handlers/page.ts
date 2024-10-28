@@ -54,7 +54,6 @@ export default async function page({
 
     return {
         buttons: buttons,
-        aspectRatio: '1:1',
         fonts: georgia,
         component: PageView({
             page: page || [],

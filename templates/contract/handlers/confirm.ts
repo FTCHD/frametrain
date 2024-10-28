@@ -130,6 +130,7 @@ export default async function confirm({
             },
         ],
         component: BasicView(view),
+        aspectRatio: '1.91:1',
         handler: 'confirm',
         params: {
             currentIndex: nextIndex,

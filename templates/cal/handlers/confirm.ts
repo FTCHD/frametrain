@@ -130,6 +130,7 @@ export default async function confirm({
         ],
         fonts: fonts,
         component: PageView(config),
+        aspectRatio: '1.91:1',
         handler: 'initial',
         webhooks,
     }

@@ -36,6 +36,7 @@ export default async function initial({
         buttons: [{ label: config.label || 'VIEW' }],
         fonts,
         component: BasicView(config.cover),
+        aspectRatio: '1.91:1',
         handler: 'page',
     }
 }

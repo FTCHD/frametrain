@@ -109,7 +109,7 @@ export default function CoverView(config: Config) {
                 </div>
             ) : undefined}
 
-            {config.gatingOptions.nftGating ? (
+            {config?.gatingOptions?.nftGating ? (
                 <div
                     style={{
                         fontSize: '30px',
@@ -121,7 +121,7 @@ export default function CoverView(config: Config) {
                     {`ℹ️ Only ${config.nftOptions.nftName || 'NFT'} holders can book.`}
                 </div>
             ) : undefined}
-            {config.gatingOptions.karmaGating ? (
+            {config?.gatingOptions?.karmaGating ? (
                 <div
                     style={{
                         fontSize: '30px',
