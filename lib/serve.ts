@@ -275,3 +275,27 @@ export async function validatePayload(body: FramePayload): Promise<FramePayloadV
 
     return r.action
 }
+export async function validatePayloadAirstack(
+    body: FramePayload,
+    airstackKey: string
+): Promise<any> {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/octet-stream',
+            'x-airstack-hubs': airstackKey,
+        },
+        body: new Uint8Array(
+            body.trustedData.messageBytes.match(/.{1,2}/g)!.map((byte) => Number.parseInt(byte, 16))
+        ),
+    }
+
+    const r = await fetch('https://hubs.airstack.xyz/v1/validateMessage', options)
+        .then((response) => response.json())
+        .catch((err) => {
+            console.error(err)
+            throw new Error('AIRSTACK_PAYLOAD_COULD_NOT_BE_VALIDATED')
+        })
+
+    return r
+}

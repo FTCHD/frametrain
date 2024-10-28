@@ -1,8 +1,8 @@
 import { client } from '@/db/client'
-import { frameTable } from '@/db/schema'
+import { frameTable, interactionTable } from '@/db/schema'
 import type { BuildFrameData, FramePayload } from '@/lib/farcaster'
 import { updateFrameStorage } from '@/lib/frame'
-import { buildFramePage, validatePayload } from '@/lib/serve'
+import { buildFramePage, validatePayload, validatePayloadAirstack } from '@/lib/serve'
 import type { BaseConfig, BaseStorage } from '@/lib/types'
 import { FrameError } from '@/sdk/error'
 import templates from '@/templates'
@@ -166,4 +166,26 @@ async function processFrame(
         }
     }
 
+    const airstackKey = frame.config?.airstackKey || process.env.AIRSTACK_API_KEY
+
+    const airstackPayloadValidated = await validatePayloadAirstack(payload, airstackKey)
+
+    console.log(JSON.stringify(airstackPayloadValidated, null, 2))
+
+    await client
+        .insert(interactionTable)
+        .values({
+            frame: frame.id,
+            fid: airstackPayloadValidated.message.data.fid.toString(),
+            buttonIndex:
+                airstackPayloadValidated.message.data.frameActionBody.buttonIndex.toString(),
+            inputText: airstackPayloadValidated.message.data.frameActionBody.inputText || undefined,
+            state: airstackPayloadValidated.message.data.frameActionBody.state || undefined,
+            transactionHash:
+                airstackPayloadValidated.message.data.frameActionBody.transactionId || undefined,
+            castFid: airstackPayloadValidated.message.data.frameActionBody.castId.fid.toString(),
+            castHash: airstackPayloadValidated.message.data.frameActionBody.castId.hash,
+            createdAt: new Date(),
+        })
+        .run()
 }
