@@ -42,18 +42,15 @@ export async function POST(
     request: NextRequest,
     { params }: { params: { templateId: keyof typeof templates } }
 ) {
-    const searchParams: Record<string, string> = {}
-
-    request.nextUrl.searchParams.forEach((value, key) => {
-        searchParams[key] = value
-    })
-
-    console.log('searchParams', searchParams)
+    const searchParams: Record<string, string | undefined> = {
+        q: request.nextUrl.searchParams.get('q') || undefined,
+        t: request.nextUrl.searchParams.get('t') || undefined,
+    }
 
     if (searchParams.q) {
         return Response.json({
             type: 'form',
-            title: 'Create a Frame',
+            title: searchParams.t || 'Mini App',
             url: searchParams.q,
         })
     }
