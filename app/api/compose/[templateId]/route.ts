@@ -4,6 +4,7 @@ import { validatePayload } from '@/lib/serve'
 import templates from '@/templates'
 import type { InferInsertModel } from 'drizzle-orm'
 import { encode } from 'next-auth/jwt'
+import type { NextRequest } from 'next/server'
 
 export async function GET(
     request: Request,
@@ -30,9 +31,19 @@ export async function GET(
 }
 
 export async function POST(
-    request: Request,
+    request: NextRequest,
     { params }: { params: { templateId: keyof typeof templates } }
 ) {
+    const q = request.nextUrl.searchParams.get('q')
+
+    if (!q) {
+        return Response.json({
+            type: 'form',
+            title: 'Create a Frame',
+            url: q,
+        })
+    }
+
     const body = await request.json()
 
     const validatedPayload = await validatePayload(body)
