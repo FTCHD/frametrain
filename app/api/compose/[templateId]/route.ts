@@ -34,13 +34,19 @@ export async function POST(
     request: NextRequest,
     { params }: { params: { templateId: keyof typeof templates } }
 ) {
-    const q = request.nextUrl.searchParams.get('q')
+    const searchParams: Record<string, string> = {}
 
-    if (!q) {
+    request.nextUrl.searchParams.forEach((value, key) => {
+        searchParams[key] = value
+    })
+
+    console.log('searchParams', searchParams)
+
+    if (searchParams.q) {
         return Response.json({
             type: 'form',
             title: 'Create a Frame',
-            url: q,
+            url: searchParams.q,
         })
     }
 
