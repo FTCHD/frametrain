@@ -7,7 +7,7 @@ import { encode } from 'next-auth/jwt'
 import type { NextRequest } from 'next/server'
 
 export async function GET(
-    request: Request,
+    request: NextRequest,
     { params }: { params: { templateId: keyof typeof templates } }
 ) {
     const template = templates[params.templateId]
@@ -15,6 +15,14 @@ export async function GET(
     if (!template?.shortDescription) {
         throw new Error('This template is not yet supported')
     }
+
+    const searchParams: Record<string, string> = {}
+
+    request.nextUrl.searchParams.forEach((value, key) => {
+        searchParams[key] = value
+    })
+
+    console.log('searchParams', searchParams)
 
     return Response.json({
         'type': 'composer',
