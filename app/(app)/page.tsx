@@ -27,13 +27,13 @@ export default async function Home() {
     }
 
     return (
-        <div className="flex flex-col p-5 w-full h-full gap-5">
+        <div className="flex flex-col w-full h-full lg:container">
             <Header />
             <div className="flex flex-grow justify-center items-center">
                 <div className="flex flex-col w-full">
-                    <div className="flex flex-col p-4 space-y-8 w-full md:pl-4">
+                    <div className="flex flex-col p-4 space-y-8 w-full mb-6">
                         <div className="flex flex-row w-full items-center gap-8">
-                            <h1 className="text-3xl font-semibold">🖼️ Frames</h1>
+                            <h2 className="text-3xl font-semibold">🖼️ Frames</h2>
                             {sesh?.user && (
                                 <NextLink href="/frames">
                                     <p className="group text-sm flex flex-row gap-1 items-center text-[#ffffff90] border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90]">
@@ -55,23 +55,23 @@ export default async function Home() {
                                     ))}
                                 </div>
                             ) : (
-                                <h4 className="text-center">
+                                <p className="text-center">
                                     No frames yet. <br /> <br /> Check out the templates below and
                                     create your first one!
-                                </h4>
+                                </p>
                             )
                         ) : (
                             <div className="flex flex-col justify-between items-center space-y-4">
-                                <h1 className="text-4xl font-bold">Welcome to Frametrain!</h1>
-                                <h1 className="text-xl">Sign in with Farcaster to get started</h1>
+                                <h1 className="text-3xl font-bold text-center md:text-4xl">Welcome to Frametrain!</h1>
+                                <p className="text-gray-300 text-base text-center md:text-lg">Sign in with Farcaster to get started</p>
                                 <AccountButton />
                             </div>
                         )}
                     </div>
 
                     <div className="flex flex-col p-4 space-y-8 md:pl-4">
-                        <div className="flex flex-row w-full items-center gap-8">
-                            <h1 className="text-3xl font-semibold">💎 Templates</h1>
+                        <div className="flex flex-row w-full items-center justify-between">
+                            <h2 className="text-2xl font-semibold md:text-3xl">💎 Templates</h2>
                             <NextLink href="/templates">
                                 <p className="group text-sm flex flex-row gap-1 items-center text-[#ffffff90] border border-[#ffffff30] rounded-xl p-1 px-3 hover:border-[#ffffff90]">
                                     All templates{' '}
@@ -83,7 +83,7 @@ export default async function Home() {
                                 </p>
                             </NextLink>
                         </div>
-                        <div className="flex flex-col flex-wrap gap-4 items-start md:flex-row">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
                             {Object.values(templates).map((template) => (
                                 <TemplateCard key={template.name} template={template} />
                             ))}
@@ -104,9 +104,9 @@ export default async function Home() {
                         'https://github.com/FTCHD/frametrain?tab=readme-ov-file#revenue-sharing-wip'
                     }
                 >
-                    <h1 className="text-sm font-medium hover:text-blue-500 hover:font-bold  transition-all duration-140">
+                    <p className="text-sm font-medium hover:text-blue-500 hover:font-bold transition-all duration-140">
                         🔍 Looking for a template? Build it yourself and get paid for it!
-                    </h1>
+                    </p>
                 </NextLink>
             </div>
         </div>
